@@ -113,9 +113,38 @@
   .engine-badge.fallback{color:var(--mistake);border-color:var(--mistake);}
 
   #analysis-results{display:none;margin-top:26px;gap:26px;}
-  #analysis-results.show{display:grid;grid-template-columns:420px 1fr;}
-  .board-col{display:flex;flex-direction:column;gap:12px;align-items:center;}
+  #analysis-results.show{display:grid;grid-template-columns:460px 1fr;}
+  .board-col{display:flex;flex-direction:column;gap:14px;align-items:center;}
+
+  /* ---- Wooden board frame + coordinates (shared by both boards) ---- */
+  .board-frame{
+    position:relative;
+    display:inline-block;
+    padding:14px 14px 30px 32px;
+    background:linear-gradient(160deg,#4A2E1B 0%, #8B5E3C 45%, #5E3A20 100%);
+    border-radius:14px;
+    box-shadow:0 22px 45px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.07);
+  }
+  .board-frame .coord-ranks{
+    position:absolute;left:8px;top:14px;bottom:30px;width:20px;
+    display:flex;flex-direction:column;justify-content:space-around;align-items:center;
+    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--ivory);opacity:0.8;
+  }
+  .board-frame .coord-files{
+    position:absolute;left:32px;right:14px;bottom:8px;height:16px;
+    display:flex;justify-content:space-around;align-items:center;
+    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--ivory);opacity:0.8;
+  }
   #board{width:400px;}
+  #train-board{width:380px;}
+
+  /* ---- square highlight overlays (chessboard.js renders data-square on each square) ---- */
+  .highlight-from{box-shadow:inset 0 0 0 9999px rgba(201,162,39,0.30) !important;}
+  .highlight-to{box-shadow:inset 0 0 0 9999px rgba(201,162,39,0.48) !important;}
+  .flash-good{box-shadow:inset 0 0 0 9999px rgba(92,154,107,0.6) !important;}
+  .flash-bad{box-shadow:inset 0 0 0 9999px rgba(193,81,80,0.6) !important;}
+  .hint-square{box-shadow:inset 0 0 0 9999px rgba(76,140,163,0.5) !important;}
+
   .nav-controls{display:flex;gap:6px;}
   .nav-controls button{
     background:var(--bg-panel-2);color:var(--ivory);border:1px solid var(--line);
@@ -174,30 +203,51 @@
   /* ---- TRAIN PANEL ---- */
   .opening-groups{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px;}
   .opening-group h3{
-    font-family:'Lora',serif;font-size:0.95rem;color:var(--brass);margin:0 0 10px;
+    font-family:'Lora',serif;color:var(--brass);margin:0 0 10px;
     text-transform:uppercase;letter-spacing:0.05em;font-size:0.8rem;
   }
   .line-btn{
-    display:block;width:240px;text-align:left;background:var(--bg-panel-2);color:var(--text);
+    display:flex;justify-content:space-between;align-items:center;width:260px;text-align:left;
+    background:var(--bg-panel-2);color:var(--text);
     border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;
     cursor:pointer;font-family:'Inter',sans-serif;font-size:0.86rem;transition:border-color .15s ease;
   }
   .line-btn:hover{border-color:var(--brass);}
   .line-btn.active{border-color:var(--brass);background:rgba(201,162,39,0.1);}
+  .line-btn .n-moves{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--text-dim);}
 
-  .train-row{display:grid;grid-template-columns:400px 1fr;gap:26px;}
-  #train-board{width:400px;}
+  .train-row{display:grid;grid-template-columns:428px 1fr;gap:26px;align-items:start;}
   .train-info{display:flex;flex-direction:column;gap:14px;}
   .train-info h3{font-family:'Lora',serif;margin:0;color:var(--ivory);font-size:1.15rem;}
   .train-info .intro{font-size:0.88rem;color:var(--text-dim);line-height:1.5;}
+  .train-info .btn-row{display:flex;gap:10px;}
+
+  .progress-dots{display:flex;gap:5px;flex-wrap:wrap;}
+  .progress-dots .dot{width:9px;height:9px;border-radius:50%;background:var(--line);transition:all .15s ease;}
+  .progress-dots .dot.done{background:var(--brass);}
+  .progress-dots .dot.current{background:var(--good);box-shadow:0 0 0 3px rgba(92,154,107,0.28);}
+
   #train-feedback{
     background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);
-    padding:14px;font-size:0.9rem;min-height:70px;line-height:1.5;
+    padding:14px;font-size:0.9rem;min-height:60px;line-height:1.5;transition:border-color .15s ease;
   }
   #train-feedback.prompt{border-color:var(--brass);}
   #train-feedback.good{border-color:var(--good);}
   #train-feedback.bad{border-color:var(--blunder);}
   #train-feedback.done{border-color:var(--best);}
+
+  ol#train-move-list{
+    list-style:none;margin:0;padding:0;background:var(--ink);border:1px solid var(--line);
+    border-radius:var(--radius);max-height:180px;overflow-y:auto;
+    font-family:'IBM Plex Mono',monospace;font-size:0.84rem;
+  }
+  ol#train-move-list li{
+    display:grid;grid-template-columns:34px 1fr 1fr;gap:8px;padding:5px 12px;
+    border-bottom:1px solid var(--line);
+  }
+  ol#train-move-list li:last-child{border-bottom:none;}
+  ol#train-move-list .num{color:var(--text-dim);}
+  ol#train-move-list .empty{color:var(--text-dim);grid-column:1/-1;padding:10px 0;}
 
   .hidden{display:none !important;}
   ::-webkit-scrollbar{width:8px;}
@@ -207,7 +257,7 @@
     #analysis-results.show{grid-template-columns:1fr;}
     .board-col{margin:0 auto;}
     .train-row{grid-template-columns:1fr;}
-    #train-board, #board, #move-comment-box{width:100%;max-width:400px;}
+    .train-row .board-col{margin:0 auto;}
   }
 </style>
 </head>
@@ -249,7 +299,11 @@
 
     <div id="analysis-results">
       <div class="board-col">
-        <div id="board"></div>
+        <div class="board-frame">
+          <div class="coord-ranks" id="board-ranks"></div>
+          <div id="board"></div>
+          <div class="coord-files" id="board-files"></div>
+        </div>
         <div class="nav-controls">
           <button id="nav-start">«</button>
           <button id="nav-prev">‹</button>
@@ -271,25 +325,36 @@
     <div class="opening-groups">
       <div class="opening-group">
         <h3>Sicilienne (tu joues les Noirs)</h3>
-        <button class="line-btn" data-line="najdorf">Variante Najdorf</button>
-        <button class="line-btn" data-line="dragon">Variante Dragon</button>
-        <button class="line-btn" data-line="sveshnikov">Variante Sveshnikov</button>
+        <button class="line-btn" data-line="najdorf"><span>Variante Najdorf</span><span class="n-moves">7 coups</span></button>
+        <button class="line-btn" data-line="dragon"><span>Variante Dragon</span><span class="n-moves">7 coups</span></button>
+        <button class="line-btn" data-line="sveshnikov"><span>Variante Sveshnikov</span><span class="n-moves">8 coups</span></button>
       </div>
       <div class="opening-group">
         <h3>Gambit Dame (tu joues les Blancs)</h3>
-        <button class="line-btn" data-line="qgd">Refusé (Orthodoxe)</button>
-        <button class="line-btn" data-line="qga">Accepté</button>
-        <button class="line-btn" data-line="slav">Défense Slave (côté Blanc)</button>
+        <button class="line-btn" data-line="qgd"><span>Refusé (Orthodoxe)</span><span class="n-moves">6 coups</span></button>
+        <button class="line-btn" data-line="qga"><span>Accepté</span><span class="n-moves">5 coups</span></button>
+        <button class="line-btn" data-line="slav"><span>Défense Slave</span><span class="n-moves">5 coups</span></button>
       </div>
     </div>
 
     <div class="train-row">
-      <div id="train-board"></div>
+      <div class="board-col">
+        <div class="board-frame">
+          <div class="coord-ranks" id="train-ranks"></div>
+          <div id="train-board"></div>
+          <div class="coord-files" id="train-files"></div>
+        </div>
+        <div class="progress-dots" id="train-dots"></div>
+      </div>
       <div class="train-info">
         <h3 id="line-name">Choisis une ligne à gauche pour commencer</h3>
-        <div class="intro" id="line-intro"></div>
-        <div id="train-feedback">Les coups de l'adversaire sont joués automatiquement. À toi de trouver les coups théoriques quand c'est ton tour — glisse la pièce sur l'échiquier.</div>
-        <button class="btn secondary" id="train-reset">Recommencer la ligne</button>
+        <div class="intro" id="line-intro">Les coups de l'adversaire sont joués automatiquement. À toi de trouver les coups théoriques quand c'est ton tour — glisse la pièce sur l'échiquier.</div>
+        <div id="train-feedback">Sélectionne une ouverture pour démarrer.</div>
+        <ol id="train-move-list"><li class="empty">Aucun coup joué</li></ol>
+        <div class="btn-row">
+          <button class="btn secondary" id="train-hint">Indice</button>
+          <button class="btn secondary" id="train-reset">Recommencer la ligne</button>
+        </div>
       </div>
     </div>
   </section>
@@ -512,6 +577,32 @@ async function engineAnalyzeFEN(fen){
   return homemadeAnalyzeFEN(fen);
 }
 
+/* ============ shared board helpers: coordinates + square highlighting ============ */
+function renderCoords(ranksElId, filesElId, orientation){
+  const ranksEl = document.getElementById(ranksElId);
+  const filesEl = document.getElementById(filesElId);
+  if(!ranksEl || !filesEl) return;
+  let files = ['a','b','c','d','e','f','g','h'];
+  let ranks = ['8','7','6','5','4','3','2','1'];
+  if(orientation === 'black'){ files = files.slice().reverse(); ranks = ranks.slice().reverse(); }
+  ranksEl.innerHTML = ranks.map(r=>`<span>${r}</span>`).join('');
+  filesEl.innerHTML = files.map(f=>`<span>${f}</span>`).join('');
+}
+function clearHighlights(containerSel){
+  $(containerSel + ' [data-square]').removeClass('highlight-from highlight-to hint-square');
+}
+function highlightMove(containerSel, from, to){
+  clearHighlights(containerSel);
+  if(!from || !to) return;
+  $(containerSel + ` [data-square="${from}"]`).addClass('highlight-from');
+  $(containerSel + ` [data-square="${to}"]`).addClass('highlight-to');
+}
+function flashSquares(containerSel, squares, cls, duration){
+  const $sqs = squares.map(sq => $(containerSel + ` [data-square="${sq}"]`));
+  $sqs.forEach($sq => $sq.addClass(cls));
+  setTimeout(()=>{ $sqs.forEach($sq => $sq.removeClass(cls)); }, duration || 500);
+}
+
 /* ============ ANALYSIS ============ */
 let analysisBoard = null;
 let analysisResults = [];
@@ -520,6 +611,7 @@ let analysisIndex = -1; // -1 = starting position
 analysisBoard = Chessboard('board', {
   position:'start', draggable:false, pieceTheme: PIECE_THEME
 });
+renderCoords('board-ranks', 'board-files', 'white');
 
 document.getElementById('analyze-btn').onclick = () => {
   const pgn = document.getElementById('pgn-input').value.trim();
@@ -604,7 +696,7 @@ async function runAnalysis(pgn){
     const info = classify(drop, isBest);
 
     results.push({
-      ply:i, color:mv.color, san:mv.san, fen: work.fen(),
+      ply:i, color:mv.color, san:mv.san, fen: work.fen(), from: mv.from, to: mv.to,
       bestSan, drop: Math.round(drop), info,
       mateMissed: evalBefore.mate !== null && evalBefore.mate > 0 && !isBest,
       mateAllowed: evalAfter.mate !== null && evalAfter.mate > 0,
@@ -679,6 +771,7 @@ function goToPly(idx){
   analysisIndex = idx;
   const r = analysisResults[idx];
   analysisBoard.position(r.fen);
+  highlightMove('#board', r.from, r.to);
   document.querySelectorAll('.move-chip').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.idx,10)===idx));
   const box = document.getElementById('move-comment-box');
   box.innerHTML = `<span class="tag tag-${r.info.cls}">${r.info.glyph} ${r.info.label}</span>${escapeHtml(r.advice)}`;
@@ -813,6 +906,7 @@ trainBoard = Chessboard('train-board', {
   onDrop: onDropTrain,
   onSnapEnd: () => trainBoard.position(trainGame.fen())
 });
+renderCoords('train-ranks', 'train-files', 'white');
 
 document.querySelectorAll('.line-btn').forEach(btn=>{
   btn.onclick = () => {
@@ -822,6 +916,36 @@ document.querySelectorAll('.line-btn').forEach(btn=>{
   };
 });
 document.getElementById('train-reset').onclick = () => { if(currentLine) loadLine(currentLine); };
+document.getElementById('train-hint').onclick = () => {
+  if(!currentLine) return;
+  const expected = currentLine.moves[trainPly];
+  const expectedColor = (trainPly % 2 === 0) ? 'w' : 'b';
+  if(!expected || expectedColor !== currentLine.forColor) return;
+  const g = new Chess(trainGame.fen());
+  const legal = g.moves({verbose:true});
+  const match = legal.find(m => m.san === expected.san);
+  if(match) flashSquares('#train-board', [match.from, match.to], 'hint-square', 900);
+};
+
+function renderDots(){
+  const el = document.getElementById('train-dots');
+  if(!currentLine){ el.innerHTML = ''; return; }
+  el.innerHTML = currentLine.moves.map((_,i)=>
+    `<span class="dot ${i < trainPly ? 'done' : ''} ${i === trainPly ? 'current' : ''}"></span>`
+  ).join('');
+}
+
+function renderTrainMoveList(){
+  const hist = trainGame.history();
+  const el = document.getElementById('train-move-list');
+  if(hist.length === 0){ el.innerHTML = '<li class="empty">Aucun coup joué</li>'; return; }
+  let html = '';
+  for(let i=0;i<hist.length;i+=2){
+    html += `<li><span class="num">${Math.floor(i/2)+1}.</span><span>${hist[i]||''}</span><span>${hist[i+1]||''}</span></li>`;
+  }
+  el.innerHTML = html;
+  el.scrollTop = el.scrollHeight;
+}
 
 function loadLine(line){
   currentLine = line;
@@ -829,14 +953,19 @@ function loadLine(line){
   trainPly = 0;
   trainBoard.orientation(line.forColor==='b' ? 'black' : 'white');
   trainBoard.start();
+  renderCoords('train-ranks', 'train-files', line.forColor==='b' ? 'black' : 'white');
+  clearHighlights('#train-board');
   document.getElementById('line-name').textContent = line.name;
   document.getElementById('line-intro').textContent = line.intro;
-  setFeedback('Un instant, l\\'adversaire joue son premier coup si nécessaire…', 'info');
+  renderDots();
+  renderTrainMoveList();
+  setFeedback("Un instant, l'adversaire joue si nécessaire…", 'info');
   continueTrainLine();
 }
 
 function continueTrainLine(){
   if(!currentLine) return;
+  renderDots();
   if(trainPly >= currentLine.moves.length){
     setFeedback('Ligne terminée — bravo, tu connais cette variante ! Recommence pour la mémoriser, ou choisis-en une autre.', 'done');
     return;
@@ -845,10 +974,12 @@ function continueTrainLine(){
   const next = currentLine.moves[trainPly];
   if(nextColor !== currentLine.forColor){
     setTimeout(()=>{
-      trainGame.move(next.san);
+      const mv = trainGame.move(next.san);
       trainBoard.position(trainGame.fen());
+      if(mv) highlightMove('#train-board', mv.from, mv.to);
       setFeedback(`Adversaire : ${next.san} — ${next.c}`, 'info');
       trainPly++;
+      renderTrainMoveList();
       continueTrainLine();
     }, 550);
   } else {
@@ -868,12 +999,16 @@ function onDropTrain(source, target){
 
   if(moveObj.san !== expected.san){
     trainGame.undo();
-    setFeedback(`Pas ce coup-ci. Indice : ce n'est pas ${moveObj.san}. Réessaie !`, 'bad');
+    flashSquares('#train-board', [target], 'flash-bad', 450);
+    setFeedback(`Pas ce coup-ci. Réessaie — pense au plan de la ligne "${currentLine.name}".`, 'bad');
     return 'snapback';
   }
 
+  highlightMove('#train-board', moveObj.from, moveObj.to);
+  flashSquares('#train-board', [moveObj.to], 'flash-good', 450);
   setFeedback(`Exact : ${expected.san} — ${expected.c}`, 'good');
   trainPly++;
+  renderTrainMoveList();
   setTimeout(()=>{ trainBoard.position(trainGame.fen()); continueTrainLine(); }, 400);
 }
 
