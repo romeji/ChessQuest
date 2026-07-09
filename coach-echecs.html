@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coach d'Échecs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+<style>
+  :root{
+    --bg:#12201A;
+    --bg-panel:#182922;
+    --bg-panel-2:#1E332A;
+    --line:#2E4738;
+    --wood:#8B5E3C;
+    --brass:#C9A227;
+    --ivory:#EDE6D6;
+    --ink:#0B120E;
+    --text:#E7EDE7;
+    --text-dim:#9FB3A6;
+    --best:#4C8CA3;
+    --good:#5C9A6B;
+    --inaccuracy:#C9A227;
+    --mistake:#D08A3E;
+    --blunder:#C15150;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at top left, #1A2E24 0%, var(--bg) 55%);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
+  .app{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
+  header.top{display:flex;flex-direction:column;gap:6px;margin-bottom:22px;border-bottom:1px solid var(--line);padding-bottom:18px;}
+  header.top h1{
+    font-family:'Lora',serif;
+    font-weight:700;
+    font-size:2rem;
+    margin:0;
+    letter-spacing:0.2px;
+    color:var(--ivory);
+  }
+  header.top h1 .accent{color:var(--brass);}
+  header.top p.tagline{margin:0;color:var(--text-dim);font-size:0.95rem;}
+
+  nav.tabs{display:flex;gap:8px;margin-top:16px;}
+  nav.tabs button{
+    font-family:'Lora',serif;
+    font-weight:600;
+    font-size:0.95rem;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--text-dim);
+    padding:10px 18px;
+    border-radius:8px 8px 0 0;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  nav.tabs button.active{
+    background:var(--bg-panel);
+    color:var(--ivory);
+    border-color:var(--brass);
+    border-bottom-color:var(--bg-panel);
+  }
+  nav.tabs button:hover:not(.active){color:var(--ivory);}
+
+  section.panel{display:none;background:var(--bg-panel);border:1px solid var(--line);border-radius:0 10px 10px 10px;padding:26px;}
+  section.panel.active{display:block;}
+
+  /* ---- ANALYSIS PANEL ---- */
+  .input-block{display:flex;flex-direction:column;gap:14px;max-width:760px;}
+  label.field-label{font-size:0.82rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--brass);font-weight:600;}
+  textarea#pgn-input{
+    width:100%;min-height:110px;background:var(--ink);color:var(--text);
+    border:1px solid var(--line);border-radius:var(--radius);padding:12px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.85rem;resize:vertical;
+  }
+  textarea#pgn-input:focus{outline:none;border-color:var(--brass);}
+  .divider-row{display:flex;align-items:center;gap:12px;color:var(--text-dim);font-size:0.8rem;}
+  .divider-row .rule{flex:1;height:1px;background:var(--line);}
+  .fetch-row{display:flex;gap:10px;flex-wrap:wrap;}
+  input#username-input{
+    flex:1;min-width:180px;background:var(--ink);color:var(--text);
+    border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;font-size:0.9rem;
+  }
+  input#username-input:focus{outline:none;border-color:var(--brass);}
+  button.btn{
+    font-family:'Inter',sans-serif;font-weight:600;font-size:0.88rem;
+    background:var(--brass);color:var(--ink);border:none;border-radius:var(--radius);
+    padding:10px 18px;cursor:pointer;transition:filter .15s ease;
+  }
+  button.btn:hover{filter:brightness(1.1);}
+  button.btn.secondary{background:transparent;color:var(--ivory);border:1px solid var(--line);}
+  button.btn.secondary:hover{border-color:var(--brass);}
+  button.btn:disabled{opacity:0.5;cursor:not-allowed;}
+  #fetch-status{font-size:0.82rem;color:var(--text-dim);min-height:1.2em;}
+  #analyze-btn{align-self:flex-start;margin-top:4px;}
+
+  #analysis-progress{margin-top:18px;font-size:0.88rem;color:var(--text-dim);}
+  #analysis-progress .bar-track{height:6px;background:var(--ink);border-radius:4px;overflow:hidden;margin-top:8px;}
+  #analysis-progress .bar-fill{height:100%;width:0%;background:var(--brass);transition:width .2s ease;}
+  .engine-badge{
+    display:inline-flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:600;
+    padding:4px 10px;border-radius:20px;border:1px solid var(--line);margin-bottom:10px;
+  }
+  .engine-badge.loading{color:var(--text-dim);}
+  .engine-badge.ready{color:var(--good);border-color:var(--good);}
+  .engine-badge.fallback{color:var(--mistake);border-color:var(--mistake);}
+
+  #analysis-results{display:none;margin-top:26px;gap:26px;}
+  #analysis-results.show{display:grid;grid-template-columns:420px 1fr;}
+  .board-col{display:flex;flex-direction:column;gap:12px;align-items:center;}
+  #board{width:400px;}
+  .nav-controls{display:flex;gap:6px;}
+  .nav-controls button{
+    background:var(--bg-panel-2);color:var(--ivory);border:1px solid var(--line);
+    border-radius:6px;width:38px;height:34px;cursor:pointer;font-size:0.95rem;
+  }
+  .nav-controls button:hover{border-color:var(--brass);}
+  #move-comment-box{
+    width:400px;min-height:64px;background:var(--bg-panel-2);border:1px solid var(--line);
+    border-radius:var(--radius);padding:12px 14px;font-size:0.88rem;line-height:1.45;
+  }
+  #move-comment-box .tag{
+    display:inline-block;font-family:'IBM Plex Mono',monospace;font-weight:600;
+    padding:1px 7px;border-radius:4px;margin-right:6px;font-size:0.78rem;
+  }
+  .tag-best{background:rgba(76,140,163,0.25);color:var(--best);}
+  .tag-good{background:rgba(92,154,107,0.2);color:var(--good);}
+  .tag-inaccuracy{background:rgba(201,162,39,0.2);color:var(--inaccuracy);}
+  .tag-mistake{background:rgba(208,138,62,0.22);color:var(--mistake);}
+  .tag-blunder{background:rgba(193,81,80,0.25);color:var(--blunder);}
+
+  .moves-col{display:flex;flex-direction:column;gap:16px;}
+  .summary-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .summary-card{
+    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);
+    padding:12px 16px;flex:1;min-width:150px;
+  }
+  .summary-card h4{margin:0 0 8px;font-family:'Lora',serif;font-size:0.88rem;color:var(--ivory);}
+  .summary-card .stat-line{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-dim);padding:2px 0;}
+  .summary-card .stat-line span.n{color:var(--text);font-family:'IBM Plex Mono',monospace;}
+
+  ol#move-list{
+    list-style:none;margin:0;padding:0;background:var(--ink);border:1px solid var(--line);
+    border-radius:var(--radius);max-height:420px;overflow-y:auto;font-family:'IBM Plex Mono',monospace;font-size:0.86rem;
+  }
+  ol#move-list li{
+    display:grid;grid-template-columns:44px 1fr 1fr;gap:8px;padding:6px 12px;
+    border-bottom:1px solid var(--line);align-items:center;
+  }
+  ol#move-list li:last-child{border-bottom:none;}
+  ol#move-list .num{color:var(--text-dim);}
+  .move-chip{
+    cursor:pointer;padding:3px 8px;border-radius:5px;display:inline-flex;align-items:center;gap:5px;
+    transition:background .12s ease;
+  }
+  .move-chip:hover{background:var(--bg-panel-2);}
+  .move-chip.selected{background:var(--bg-panel-2);outline:1px solid var(--brass);}
+  .glyph{font-size:0.72rem;font-weight:700;}
+  .glyph-best{color:var(--best);}
+  .glyph-good{color:var(--good);}
+  .glyph-inaccuracy{color:var(--inaccuracy);}
+  .glyph-mistake{color:var(--mistake);}
+  .glyph-blunder{color:var(--blunder);}
+
+  .engine-note{font-size:0.78rem;color:var(--text-dim);border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  /* ---- TRAIN PANEL ---- */
+  .opening-groups{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px;}
+  .opening-group h3{
+    font-family:'Lora',serif;font-size:0.95rem;color:var(--brass);margin:0 0 10px;
+    text-transform:uppercase;letter-spacing:0.05em;font-size:0.8rem;
+  }
+  .line-btn{
+    display:block;width:240px;text-align:left;background:var(--bg-panel-2);color:var(--text);
+    border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;
+    cursor:pointer;font-family:'Inter',sans-serif;font-size:0.86rem;transition:border-color .15s ease;
+  }
+  .line-btn:hover{border-color:var(--brass);}
+  .line-btn.active{border-color:var(--brass);background:rgba(201,162,39,0.1);}
+
+  .train-row{display:grid;grid-template-columns:400px 1fr;gap:26px;}
+  #train-board{width:400px;}
+  .train-info{display:flex;flex-direction:column;gap:14px;}
+  .train-info h3{font-family:'Lora',serif;margin:0;color:var(--ivory);font-size:1.15rem;}
+  .train-info .intro{font-size:0.88rem;color:var(--text-dim);line-height:1.5;}
+  #train-feedback{
+    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px;font-size:0.9rem;min-height:70px;line-height:1.5;
+  }
+  #train-feedback.prompt{border-color:var(--brass);}
+  #train-feedback.good{border-color:var(--good);}
+  #train-feedback.bad{border-color:var(--blunder);}
+  #train-feedback.done{border-color:var(--best);}
+
+  .hidden{display:none !important;}
+  ::-webkit-scrollbar{width:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
+
+  @media (max-width:880px){
+    #analysis-results.show{grid-template-columns:1fr;}
+    .board-col{margin:0 auto;}
+    .train-row{grid-template-columns:1fr;}
+    #train-board, #board, #move-comment-box{width:100%;max-width:400px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1>Coach d'<span class="accent">Échecs</span></h1>
+    <p class="tagline">Analyse tes parties chess.com et entraîne-toi sur la Sicilienne et le Gambit Dame.</p>
+    <nav class="tabs">
+      <button id="tab-analyze" class="active">Analyse de partie</button>
+      <button id="tab-train">Entraînement d'ouvertures</button>
+    </nav>
+  </header>
+
+  <!-- ================= ANALYSIS PANEL ================= -->
+  <section id="panel-analyze" class="panel active">
+    <div class="input-block">
+      <div>
+        <label class="field-label">Coller le PGN</label>
+        <textarea id="pgn-input" placeholder="Sur chess.com : ouvre ta partie → bouton ⋯ → Télécharger le PGN (ou copie-le depuis l'écran d'analyse), puis colle-le ici."></textarea>
+      </div>
+      <div class="divider-row"><div class="rule"></div>ou<div class="rule"></div></div>
+      <div>
+        <label class="field-label">Récupération automatique (expérimentale)</label>
+        <div class="fetch-row" style="margin-top:8px;">
+          <input id="username-input" placeholder="ton pseudo chess.com">
+          <button class="btn secondary" id="fetch-btn">Récupérer la dernière partie</button>
+        </div>
+        <div id="fetch-status"></div>
+      </div>
+      <div><span class="engine-badge loading" id="engine-badge">Chargement du moteur Stockfish…</span></div>
+      <button class="btn" id="analyze-btn">Analyser la partie</button>
+    </div>
+
+    <div id="analysis-progress" class="hidden">
+      <span id="progress-label">Calcul en cours…</span>
+      <div class="bar-track"><div class="bar-fill" id="bar-fill"></div></div>
+    </div>
+
+    <div id="analysis-results">
+      <div class="board-col">
+        <div id="board"></div>
+        <div class="nav-controls">
+          <button id="nav-start">«</button>
+          <button id="nav-prev">‹</button>
+          <button id="nav-next">›</button>
+          <button id="nav-end">»</button>
+        </div>
+        <div id="move-comment-box">Sélectionne un coup dans la liste pour voir le commentaire.</div>
+      </div>
+      <div class="moves-col">
+        <div class="summary-row" id="summary-row"></div>
+        <ol id="move-list"></ol>
+        <div class="engine-note">Analyse par Stockfish (WASM), chargé directement dans ton navigateur (~0,45 s de réflexion par position) : il voit les tactiques profondes, pas seulement les pièces en prise. Si Stockfish ne parvient pas à se charger sur ton navigateur/appareil, l'appli bascule automatiquement sur un moteur de secours plus simple (visible dans le badge ci-dessus).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TRAIN PANEL ================= -->
+  <section id="panel-train" class="panel">
+    <div class="opening-groups">
+      <div class="opening-group">
+        <h3>Sicilienne (tu joues les Noirs)</h3>
+        <button class="line-btn" data-line="najdorf">Variante Najdorf</button>
+        <button class="line-btn" data-line="dragon">Variante Dragon</button>
+        <button class="line-btn" data-line="sveshnikov">Variante Sveshnikov</button>
+      </div>
+      <div class="opening-group">
+        <h3>Gambit Dame (tu joues les Blancs)</h3>
+        <button class="line-btn" data-line="qgd">Refusé (Orthodoxe)</button>
+        <button class="line-btn" data-line="qga">Accepté</button>
+        <button class="line-btn" data-line="slav">Défense Slave (côté Blanc)</button>
+      </div>
+    </div>
+
+    <div class="train-row">
+      <div id="train-board"></div>
+      <div class="train-info">
+        <h3 id="line-name">Choisis une ligne à gauche pour commencer</h3>
+        <div class="intro" id="line-intro"></div>
+        <div id="train-feedback">Les coups de l'adversaire sont joués automatiquement. À toi de trouver les coups théoriques quand c'est ton tour — glisse la pièce sur l'échiquier.</div>
+        <button class="btn secondary" id="train-reset">Recommencer la ligne</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+<script>
+const PIECE_THEME = 'https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/img/chesspieces/wikipedia/{piece}.png';
+
+/* ============ TABS ============ */
+document.getElementById('tab-analyze').onclick = () => switchTab('analyze');
+document.getElementById('tab-train').onclick = () => switchTab('train');
+function switchTab(name){
+  document.getElementById('tab-analyze').classList.toggle('active', name==='analyze');
+  document.getElementById('tab-train').classList.toggle('active', name==='train');
+  document.getElementById('panel-analyze').classList.toggle('active', name==='analyze');
+  document.getElementById('panel-train').classList.toggle('active', name==='train');
+  if(name==='train' && trainBoard) setTimeout(()=>trainBoard.resize(), 50);
+  if(name==='analyze' && analysisBoard) setTimeout(()=>analysisBoard.resize(), 50);
+}
+
+/* ============ ENGINE : Stockfish (WASM) avec repli maison ============ */
+const STOCKFISH_URL = 'https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js';
+const SF_MOVETIME_MS = 450;
+const SF_START_TIMEOUT_MS = 5000;
+
+let sfWorker = null;
+let sfState = 'loading';
+let sfReadyResolvers = [];
+
+function setEngineBadge(text, cls){
+  const el = document.getElementById('engine-badge');
+  if(!el) return;
+  el.textContent = text;
+  el.className = 'engine-badge ' + (cls||'');
+}
+
+function initStockfish(){
+  setEngineBadge('Chargement du moteur Stockfish…', 'loading');
+  try{
+    sfWorker = new Worker(STOCKFISH_URL);
+  }catch(e){
+    sfState = 'unavailable';
+    setEngineBadge('Stockfish indisponible — moteur de secours actif', 'fallback');
+    return;
+  }
+  const timeout = setTimeout(()=>{
+    if(sfState === 'loading'){
+      sfState = 'unavailable';
+      setEngineBadge('Stockfish indisponible — moteur de secours actif', 'fallback');
+      sfReadyResolvers.forEach(fn=>fn());
+      sfReadyResolvers = [];
+    }
+  }, SF_START_TIMEOUT_MS);
+
+  sfWorker.onerror = () => {
+    if(sfState === 'loading'){
+      clearTimeout(timeout);
+      sfState = 'unavailable';
+      setEngineBadge('Stockfish indisponible — moteur de secours actif', 'fallback');
+      sfReadyResolvers.forEach(fn=>fn());
+      sfReadyResolvers = [];
+    }
+  };
+
+  sfWorker.onmessage = (e) => {
+    const line = e.data;
+    if(typeof line !== 'string') return;
+    if(line === 'uciok'){
+      sfWorker.postMessage('isready');
+    } else if(line === 'readyok' && sfState === 'loading'){
+      clearTimeout(timeout);
+      sfState = 'ready';
+      setEngineBadge('Moteur : Stockfish (WASM)', 'ready');
+      sfWorker.postMessage('ucinewgame');
+      sfReadyResolvers.forEach(fn=>fn());
+      sfReadyResolvers = [];
+    }
+  };
+  sfWorker.postMessage('uci');
+}
+function waitForEngineReady(){
+  if(sfState !== 'loading') return Promise.resolve();
+  return new Promise(resolve => sfReadyResolvers.push(resolve));
+}
+initStockfish();
+
+function parseUciMoveToSan(fen, uciMove){
+  if(!uciMove || uciMove.length < 4) return null;
+  const g = new Chess(fen);
+  const from = uciMove.slice(0,2), to = uciMove.slice(2,4);
+  const promo = uciMove.length > 4 ? uciMove[4] : undefined;
+  const mv = g.move({from, to, promotion: promo || 'q'});
+  return mv ? mv.san : null;
+}
+
+function sfAnalyzeFEN(fen){
+  return new Promise((resolve)=>{
+    let lastInfo = null;
+    let stopped = false;
+    const safety = setTimeout(()=>{
+      if(!stopped){ stopped = true; sfWorker.postMessage('stop'); }
+    }, SF_MOVETIME_MS + 4000);
+
+    const handler = (e) => {
+      const line = e.data;
+      if(typeof line !== 'string') return;
+      if(line.startsWith('info') && line.indexOf(' pv ') !== -1){
+        const cpMatch = line.match(/score cp (-?\d+)/);
+        const mateMatch = line.match(/score mate (-?\d+)/);
+        const pvMatch = line.match(/ pv (.+)/);
+        if(pvMatch){
+          lastInfo = {
+            cp: cpMatch ? parseInt(cpMatch[1],10) : null,
+            mate: mateMatch ? parseInt(mateMatch[1],10) : null,
+            firstMove: pvMatch[1].trim().split(' ')[0]
+          };
+        }
+      } else if(line.startsWith('bestmove')){
+        clearTimeout(safety);
+        sfWorker.removeEventListener('message', handler);
+        const parts = line.split(' ');
+        const bestUci = parts[1] && parts[1] !== '(none)' ? parts[1] : (lastInfo ? lastInfo.firstMove : null);
+        let scoreForMover;
+        let mate = null;
+        if(lastInfo && lastInfo.mate !== null){
+          mate = lastInfo.mate;
+          scoreForMover = mate > 0 ? (100000 - mate*100) : -(100000 + mate*100);
+        } else if(lastInfo && lastInfo.cp !== null){
+          scoreForMover = lastInfo.cp;
+        } else {
+          scoreForMover = 0;
+        }
+        resolve({
+          scoreForMover,
+          bestMoveSan: bestUci ? parseUciMoveToSan(fen, bestUci) : null,
+          mate
+        });
+      }
+    };
+    sfWorker.addEventListener('message', handler);
+    sfWorker.postMessage('position fen ' + fen);
+    sfWorker.postMessage('go movetime ' + SF_MOVETIME_MS);
+  });
+}
+
+/* ---- Moteur de secours maison (alpha-bêta + quiescence), utilisé seulement si Stockfish échoue ---- */
+const VALUES = {p:100, n:320, b:330, r:500, q:900, k:0};
+function evalAbsolute(game){
+  const board = game.board();
+  let score = 0;
+  for(let r=0;r<8;r++){
+    for(let c=0;c<8;c++){
+      const sq = board[r][c];
+      if(!sq) continue;
+      let val = VALUES[sq.type];
+      const centerBonus = (3.5-Math.abs(3.5-r)) * (3.5-Math.abs(3.5-c)) * 1.4;
+      val += centerBonus;
+      score += (sq.color === 'w') ? val : -val;
+    }
+  }
+  return score;
+}
+function evalRelative(game){
+  const abs = evalAbsolute(game);
+  return game.turn()==='w' ? abs : -abs;
+}
+function quiescence(game, alpha, beta, qdepth){
+  const stand = evalRelative(game);
+  if(stand >= beta) return beta;
+  if(stand > alpha) alpha = stand;
+  if(qdepth <= 0) return alpha;
+  const moves = game.moves({verbose:true}).filter(m => m.captured);
+  moves.sort((a,b)=> (VALUES[b.captured]||0) - (VALUES[a.captured]||0));
+  for(const mv of moves){
+    game.move(mv.san);
+    const score = -quiescence(game, -beta, -alpha, qdepth-1);
+    game.undo();
+    if(score >= beta) return beta;
+    if(score > alpha) alpha = score;
+  }
+  return alpha;
+}
+function homemadeSearch(game, depth, alpha, beta){
+  if(depth === 0){
+    return {score: quiescence(game, alpha, beta, 4), move:null};
+  }
+  const moves = game.moves({verbose:true});
+  if(moves.length === 0){
+    if(game.in_check()) return {score:-99000, move:null};
+    return {score:0, move:null};
+  }
+  moves.sort((a,b)=> (b.captured?1:0) - (a.captured?1:0));
+  let bestMove = moves[0];
+  for(const mv of moves){
+    game.move(mv.san);
+    const res = homemadeSearch(game, depth-1, -beta, -alpha);
+    const score = -res.score;
+    game.undo();
+    if(score > alpha){ alpha = score; bestMove = mv; }
+    if(alpha >= beta) break;
+  }
+  return {score: alpha, move: bestMove};
+}
+function homemadeAnalyzeFEN(fen){
+  const g = new Chess(fen);
+  const res = homemadeSearch(g, 3, -Infinity, Infinity);
+  return Promise.resolve({
+    scoreForMover: res.score,
+    bestMoveSan: res.move ? res.move.san : null,
+    mate: null
+  });
+}
+
+async function engineAnalyzeFEN(fen){
+  await waitForEngineReady();
+  if(sfState === 'ready') return sfAnalyzeFEN(fen);
+  return homemadeAnalyzeFEN(fen);
+}
+
+/* ============ ANALYSIS ============ */
+let analysisBoard = null;
+let analysisResults = [];
+let analysisIndex = -1; // -1 = starting position
+
+analysisBoard = Chessboard('board', {
+  position:'start', draggable:false, pieceTheme: PIECE_THEME
+});
+
+document.getElementById('analyze-btn').onclick = () => {
+  const pgn = document.getElementById('pgn-input').value.trim();
+  if(!pgn){ alert("Colle d'abord un PGN, ou récupère une partie via ton pseudo."); return; }
+  runAnalysis(pgn);
+};
+
+document.getElementById('fetch-btn').onclick = async () => {
+  const user = document.getElementById('username-input').value.trim();
+  const statusEl = document.getElementById('fetch-status');
+  if(!user){ statusEl.textContent = 'Entre un pseudo.'; return; }
+  statusEl.textContent = 'Récupération en cours…';
+  try{
+    const archRes = await fetch(`https://api.chess.com/pub/player/${encodeURIComponent(user)}/games/archives`);
+    if(!archRes.ok) throw new Error('archives');
+    const archJson = await archRes.json();
+    if(!archJson.archives || archJson.archives.length===0) throw new Error('empty');
+    const lastUrl = archJson.archives[archJson.archives.length-1];
+    const gamesRes = await fetch(lastUrl);
+    if(!gamesRes.ok) throw new Error('games');
+    const gamesJson = await gamesRes.json();
+    if(!gamesJson.games || gamesJson.games.length===0) throw new Error('nogames');
+    const last = gamesJson.games[gamesJson.games.length-1];
+    document.getElementById('pgn-input').value = last.pgn;
+    statusEl.textContent = 'Dernière partie récupérée — clique sur "Analyser la partie".';
+  }catch(e){
+    statusEl.textContent = "Échec de la récupération automatique (souvent bloqué par le navigateur). Copie le PGN depuis chess.com (bouton ⋯ → Télécharger le PGN) et colle-le ci-dessus.";
+  }
+};
+
+function classify(drop, isBest){
+  if(drop <= 10) return isBest
+    ? {label:'Meilleur coup', cls:'best', glyph:'★'}
+    : {label:'Bon coup', cls:'good', glyph:'✓'};
+  if(drop <= 50) return {label:'Imprécision', cls:'inaccuracy', glyph:'?!'};
+  if(drop <= 150) return {label:'Erreur', cls:'mistake', glyph:'?'};
+  return {label:'Gaffe', cls:'blunder', glyph:'??'};
+}
+
+function adviceFor(r){
+  if(r.info.cls==='best') return `${r.san} était bien le meilleur coup ici.`;
+  if(r.info.cls==='good') return `${r.san} est un bon coup, proche de l'optimal (${r.bestSan}).`;
+  let txt = `${r.bestSan} était plus fort. `;
+  if(r.mateMissed) txt += `Ce coup menait à un mat forcé et l'a laissé passer.`;
+  else if(r.mateAllowed) txt += `Ce coup permet à l'adversaire de forcer le mat.`;
+  else if(r.info.cls==='blunder') txt += "Ce coup laisse probablement une pièce en prise ou permet une attaque décisive.";
+  else if(r.info.cls==='mistake') txt += "Ce coup cède un avantage matériel ou positionnel net à l'adversaire.";
+  else txt += "Léger manque de précision, la position reste globalement tenable.";
+  return txt;
+}
+
+async function runAnalysis(pgn){
+  const master = new Chess();
+  const loaded = master.load_pgn(pgn, {sloppy:true});
+  if(!loaded){ alert("Ce PGN n'a pas pu être lu. Vérifie qu'il est complet (coller tout le texte, en-têtes compris)."); return; }
+  const history = master.history({verbose:true});
+  if(history.length===0){ alert("Aucun coup trouvé dans ce PGN."); return; }
+
+  document.getElementById('analysis-progress').classList.remove('hidden');
+  document.getElementById('analysis-results').classList.remove('show');
+  const barFill = document.getElementById('bar-fill');
+  const progressLabel = document.getElementById('progress-label');
+
+  await waitForEngineReady();
+
+  const work = new Chess();
+  const results = [];
+  // On évalue chaque position une seule fois, et on réutilise le résultat comme "après" du coup précédent
+  let evalBefore = await engineAnalyzeFEN(work.fen());
+
+  for(let i=0;i<history.length;i++){
+    const mv = history[i];
+    const bestSan = evalBefore.bestMoveSan || mv.san;
+    const bestScoreForMover = evalBefore.scoreForMover;
+
+    work.move(mv.san);
+    const evalAfter = await engineAnalyzeFEN(work.fen()); // du point de vue de l'adversaire, qui est maintenant au trait
+    const actualScoreForMover = -evalAfter.scoreForMover;
+
+    const drop = Math.max(0, bestScoreForMover - actualScoreForMover);
+    const isBest = (bestSan === mv.san);
+    const info = classify(drop, isBest);
+
+    results.push({
+      ply:i, color:mv.color, san:mv.san, fen: work.fen(),
+      bestSan, drop: Math.round(drop), info,
+      mateMissed: evalBefore.mate !== null && evalBefore.mate > 0 && !isBest,
+      mateAllowed: evalAfter.mate !== null && evalAfter.mate > 0,
+      moveNumber: Math.floor(i/2)+1
+    });
+
+    evalBefore = evalAfter; // la position "après" devient le "avant" du coup suivant
+
+    progressLabel.textContent = `Analyse du coup ${i+1} / ${history.length}…`;
+    barFill.style.width = Math.round(((i+1)/history.length)*100) + '%';
+    await new Promise(r=>setTimeout(r,0)); // yield to keep UI responsive
+  }
+
+  results.forEach(r => r.advice = adviceFor(r));
+
+  analysisResults = results;
+  document.getElementById('analysis-progress').classList.add('hidden');
+  renderAnalysis(master.header());
+}
+
+function renderAnalysis(headers){
+  document.getElementById('analysis-results').classList.add('show');
+
+  // summary per color
+  const sums = {w:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}, b:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}};
+  analysisResults.forEach(r => sums[r.color][r.info.cls]++);
+  const white = headers.White || 'Blancs';
+  const black = headers.Black || 'Noirs';
+  document.getElementById('summary-row').innerHTML = `
+    <div class="summary-card"><h4>${escapeHtml(white)} (Blancs)</h4>
+      ${summaryLines(sums.w)}</div>
+    <div class="summary-card"><h4>${escapeHtml(black)} (Noirs)</h4>
+      ${summaryLines(sums.b)}</div>
+  `;
+
+  const list = document.getElementById('move-list');
+  list.innerHTML = '';
+  for(let i=0;i<analysisResults.length;i+=2){
+    const w = analysisResults[i];
+    const b = analysisResults[i+1];
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span class="num">${w.moveNumber}.</span>
+      <span class="move-chip" data-idx="${w.ply}"><span class="glyph glyph-${w.info.cls}">${w.info.glyph}</span>${escapeHtml(w.san)}</span>
+      ${b ? `<span class="move-chip" data-idx="${b.ply}"><span class="glyph glyph-${b.info.cls}">${b.info.glyph}</span>${escapeHtml(b.san)}</span>` : '<span></span>'}
+    `;
+    list.appendChild(li);
+  }
+  list.querySelectorAll('.move-chip').forEach(chip=>{
+    chip.onclick = () => goToPly(parseInt(chip.dataset.idx,10));
+  });
+
+  goToPly(analysisResults.length-1);
+}
+
+function summaryLines(s){
+  return `
+    <div class="stat-line"><span>Meilleurs coups</span><span class="n">${s.best}</span></div>
+    <div class="stat-line"><span>Bons coups</span><span class="n">${s.good}</span></div>
+    <div class="stat-line"><span>Imprécisions</span><span class="n">${s.inaccuracy}</span></div>
+    <div class="stat-line"><span>Erreurs</span><span class="n">${s.mistake}</span></div>
+    <div class="stat-line"><span>Gaffes</span><span class="n">${s.blunder}</span></div>
+  `;
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function goToPly(idx){
+  if(idx < 0 || idx >= analysisResults.length) return;
+  analysisIndex = idx;
+  const r = analysisResults[idx];
+  analysisBoard.position(r.fen);
+  document.querySelectorAll('.move-chip').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.idx,10)===idx));
+  const box = document.getElementById('move-comment-box');
+  box.innerHTML = `<span class="tag tag-${r.info.cls}">${r.info.glyph} ${r.info.label}</span>${escapeHtml(r.advice)}`;
+}
+
+document.getElementById('nav-start').onclick = () => goToPly(0);
+document.getElementById('nav-prev').onclick = () => goToPly(analysisIndex-1);
+document.getElementById('nav-next').onclick = () => goToPly(analysisIndex+1);
+document.getElementById('nav-end').onclick = () => goToPly(analysisResults.length-1);
+
+/* ============ OPENING TRAINER ============ */
+const OPENINGS = {
+  najdorf:{
+    name:'Sicilienne — Najdorf', forColor:'b',
+    intro:"La Najdorf est l'une des ouvertures les plus jouées au monde : très flexible, elle laisse à Noir plusieurs plans possibles (...e5 ou ...e6).",
+    moves:[
+      {san:'e4', c:"Le coup le plus populaire au 1er coup : Blanc ouvre le centre et libère fou et dame."},
+      {san:'c5', c:"La Sicilienne : plutôt que de disputer le centre symétriquement, Noir contre-attaque sur l'aile dame."},
+      {san:'Nf3', c:"Développement naturel qui prépare d4."},
+      {san:'d6', c:"Coup flexible : soutient un futur ...e5 et retarde l'engagement du cavalier g8."},
+      {san:'d4', c:"Blanc ouvre le centre en force."},
+      {san:'cxd4', c:"Noir capture, ce qui lui donnera une majorité de pions à l'aile dame en finale."},
+      {san:'Nxd4', c:"Blanc récupère le pion avec un cavalier bien centralisé."},
+      {san:'Nf6', c:"Attaque immédiatement le pion e4."},
+      {san:'Nc3', c:"Défend e4 tout en développant."},
+      {san:'a6', c:"Le coup signature du Najdorf : empêche Nb5 et Bb5+, prépare ...e5 ou ...b5 selon les besoins."},
+      {san:'Be2', c:"Ligne classique : développement solide avant de roquer."},
+      {san:'e5', c:"Noir prend de l'espace au centre et chasse le cavalier de d4."},
+      {san:'Nb3', c:"Le cavalier recule en sécurité ; e5 est bien défendu par le pion."},
+      {san:'Be7', c:"Développement, prépare le petit roque."}
+    ]
+  },
+  dragon:{
+    name:'Sicilienne — Dragon', forColor:'b',
+    intro:"Le Dragon fianchette le fou en g7 sur la grande diagonale. Les parties sont souvent tranchantes, avec des roques opposés.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale classique."},
+      {san:'c5', c:"La Sicilienne : contre-attaque sur l'aile dame."},
+      {san:'Nf3', c:"Développement, prépare d4."},
+      {san:'d6', c:"Coup flexible typique des Siciliennes."},
+      {san:'d4', c:"Blanc ouvre le centre."},
+      {san:'cxd4', c:"Capture standard."},
+      {san:'Nxd4', c:"Récupération du pion, cavalier centralisé."},
+      {san:'Nf6', c:"Attaque e4."},
+      {san:'Nc3', c:"Défend e4 et développe."},
+      {san:'g6', c:"Le Dragon : le fou ira en g7 contrôler toute la grande diagonale a1-h8."},
+      {san:'Be3', c:"Blanc prépare Qd2 et souvent le grand roque, pour lancer une attaque à l'aile roi (Attaque Yougoslave)."},
+      {san:'Bg7', c:"Le fou dragon prend position, redoutable une fois la diagonale ouverte."},
+      {san:'f3', c:"Soutient e4 et prépare g4-h4 dans l'Attaque Yougoslave."},
+      {san:'O-O', c:"Noir roque ; la partie devient souvent une course entre les deux ailes."}
+    ]
+  },
+  sveshnikov:{
+    name:'Sicilienne — Sveshnikov', forColor:'b',
+    intro:"Le Sveshnikov est une ligne très dynamique où Noir accepte une case faible en d5 pour gagner de l'espace et du temps.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale classique."},
+      {san:'c5', c:"La Sicilienne."},
+      {san:'Nf3', c:"Développement, prépare d4."},
+      {san:'Nc6', c:"Développement naturel, garde plusieurs transpositions possibles."},
+      {san:'d4', c:"Blanc ouvre le centre."},
+      {san:'cxd4', c:"Capture standard."},
+      {san:'Nxd4', c:"Récupération du pion."},
+      {san:'Nf6', c:"Attaque e4."},
+      {san:'Nc3', c:"Défend e4."},
+      {san:'e5', c:"Le coup thématique du Sveshnikov : Noir gagne temps et espace, au prix d'une case faible en d5."},
+      {san:'Ndb5', c:"Le cavalier vise la case d6, profitant temporairement de l'affaiblissement du centre noir."},
+      {san:'d6', c:"Noir consolide et prépare de chasser le cavalier."},
+      {san:'Bg5', c:"Blanc maintient la pression sur f6."},
+      {san:'a6', c:"Chasse le cavalier de b5."},
+      {san:'Na3', c:"Recul vers une case toujours utile (surveille b5 et c4)."},
+      {san:'b5', c:"Noir gagne de l'espace à l'aile dame et prépare ...Bb7, un plan typique et moderne du Sveshnikov."}
+    ]
+  },
+  qgd:{
+    name:'Gambit Dame — Refusé (Orthodoxe)', forColor:'w',
+    intro:"La ligne la plus classique du Gambit Dame : Noir garde fermement le pion d5 en jouant ...e6, quitte à enfermer un peu son fou c8.",
+    moves:[
+      {san:'d4', c:"Contrôle le centre et ouvre la diagonale du fou c1."},
+      {san:'d5', c:"Noir répond symétriquement au centre."},
+      {san:'c4', c:"Le Gambit Dame : Blanc propose un pion pour attirer le pion d5 loin du centre."},
+      {san:'e6', c:"La Défense refusée : Noir garde fermement d5."},
+      {san:'Nc3', c:"Développement, ajoute la pression sur d5."},
+      {san:'Nf6', c:"Développement symétrique, défend d5 une fois de plus."},
+      {san:'Bg5', c:"Épingle le cavalier f6 contre la dame, pression thématique de l'Orthodoxe."},
+      {san:'Be7', c:"Casse l'épingle en préparant le roque."},
+      {san:'e3', c:"Libère le fou f1 et soutient un futur Bd3 ou Bxc4."},
+      {san:'O-O', c:"Noir met son roi en sécurité."},
+      {san:'Nf3', c:"Blanc termine son développement mineur avant de choisir entre Rc1, Qc2 ou cxd5."}
+    ]
+  },
+  qga:{
+    name:'Gambit Dame — Accepté', forColor:'w',
+    intro:"Noir prend le pion c4 mais ne peut pas le garder : Blanc le récupère avec un temps d'avance en développement.",
+    moves:[
+      {san:'d4', c:"Contrôle le centre."},
+      {san:'d5', c:"Réponse symétrique."},
+      {san:'c4', c:"Le Gambit Dame."},
+      {san:'dxc4', c:"La Défense Acceptée : Noir prend le pion, mais devra le rendre."},
+      {san:'Nf3', c:"Empêche ...b5 (qui protégerait durablement c4) et développe."},
+      {san:'Nf6', c:"Développement symétrique."},
+      {san:'e3', c:"Libère le fou f1 pour aller reprendre le pion en c4."},
+      {san:'e6', c:"Développement solide, prépare ...c5."},
+      {san:'Bxc4', c:"Blanc récupère le pion avec un développement rapide et un fou actif."}
+    ]
+  },
+  slav:{
+    name:'Gambit Dame — Défense Slave (côté Blanc)', forColor:'w',
+    intro:"Face à la Slave, Noir soutient d5 avec ...c6, gardant son fou c8 libre. Voici la ligne principale de l'Acceptée.",
+    moves:[
+      {san:'d4', c:"Contrôle le centre."},
+      {san:'d5', c:"Réponse symétrique."},
+      {san:'c4', c:"Le Gambit Dame."},
+      {san:'c6', c:"La Défense Slave : Noir soutient d5 avec le pion c, en gardant la voie libre pour le fou c8."},
+      {san:'Nf3', c:"Développement."},
+      {san:'Nf6', c:"Développement symétrique."},
+      {san:'Nc3', c:"Développement, ajoute la pression sur d5."},
+      {san:'dxc4', c:"La Slave acceptée : Noir prend le pion, gardé un temps grâce au soutien de ...c6."},
+      {san:'a4', c:"Empêche ...b5, qui aurait protégé durablement le pion c4 — ligne principale."},
+      {san:'Bf5', c:"Noir développe son fou avant ...e6, profitant d'avoir gardé cette case libre."}
+    ]
+  }
+};
+
+let trainBoard = null;
+let trainGame = null;
+let currentLine = null;
+let trainPly = 0;
+
+trainBoard = Chessboard('train-board', {
+  position:'start', draggable:true, pieceTheme: PIECE_THEME,
+  onDrop: onDropTrain,
+  onSnapEnd: () => trainBoard.position(trainGame.fen())
+});
+
+document.querySelectorAll('.line-btn').forEach(btn=>{
+  btn.onclick = () => {
+    document.querySelectorAll('.line-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    loadLine(OPENINGS[btn.dataset.line]);
+  };
+});
+document.getElementById('train-reset').onclick = () => { if(currentLine) loadLine(currentLine); };
+
+function loadLine(line){
+  currentLine = line;
+  trainGame = new Chess();
+  trainPly = 0;
+  trainBoard.orientation(line.forColor==='b' ? 'black' : 'white');
+  trainBoard.start();
+  document.getElementById('line-name').textContent = line.name;
+  document.getElementById('line-intro').textContent = line.intro;
+  setFeedback('Un instant, l\\'adversaire joue son premier coup si nécessaire…', 'info');
+  continueTrainLine();
+}
+
+function continueTrainLine(){
+  if(!currentLine) return;
+  if(trainPly >= currentLine.moves.length){
+    setFeedback('Ligne terminée — bravo, tu connais cette variante ! Recommence pour la mémoriser, ou choisis-en une autre.', 'done');
+    return;
+  }
+  const nextColor = (trainPly % 2 === 0) ? 'w' : 'b';
+  const next = currentLine.moves[trainPly];
+  if(nextColor !== currentLine.forColor){
+    setTimeout(()=>{
+      trainGame.move(next.san);
+      trainBoard.position(trainGame.fen());
+      setFeedback(`Adversaire : ${next.san} — ${next.c}`, 'info');
+      trainPly++;
+      continueTrainLine();
+    }, 550);
+  } else {
+    setFeedback(`À toi de jouer (${currentLine.name}). Trouve le coup théorique.`, 'prompt');
+  }
+}
+
+function onDropTrain(source, target){
+  if(!currentLine) return 'snapback';
+  const expected = currentLine.moves[trainPly];
+  if(!expected) return 'snapback';
+  const expectedColor = (trainPly % 2 === 0) ? 'w' : 'b';
+  if(expectedColor !== currentLine.forColor) return 'snapback';
+
+  const moveObj = trainGame.move({from:source, to:target, promotion:'q'});
+  if(moveObj === null) return 'snapback';
+
+  if(moveObj.san !== expected.san){
+    trainGame.undo();
+    setFeedback(`Pas ce coup-ci. Indice : ce n'est pas ${moveObj.san}. Réessaie !`, 'bad');
+    return 'snapback';
+  }
+
+  setFeedback(`Exact : ${expected.san} — ${expected.c}`, 'good');
+  trainPly++;
+  setTimeout(()=>{ trainBoard.position(trainGame.fen()); continueTrainLine(); }, 400);
+}
+
+function setFeedback(text, kind){
+  const el = document.getElementById('train-feedback');
+  el.textContent = text;
+  el.className = kind || '';
+}
+</script>
+</body>
+</html>
