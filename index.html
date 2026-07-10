@@ -2,201 +2,183 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Coach d'Échecs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
 <style>
   :root{
-    --bg:#12201A;
-    --bg-panel:#182922;
-    --bg-panel-2:#1E332A;
-    --line:#2E4738;
+    --bg:#101C17;
+    --bg-panel:#16261F;
+    --bg-panel-2:#1C2F27;
+    --line:#2C4437;
     --wood:#8B5E3C;
     --brass:#C9A227;
     --ivory:#EDE6D6;
-    --ink:#0B120E;
+    --ink:#0A100C;
     --text:#E7EDE7;
-    --text-dim:#9FB3A6;
+    --text-dim:#96AB9E;
     --best:#4C8CA3;
     --good:#5C9A6B;
     --inaccuracy:#C9A227;
     --mistake:#D08A3E;
     --blunder:#C15150;
     --radius:10px;
+    --shadow:0 10px 28px rgba(0,0,0,0.35);
   }
   *{box-sizing:border-box;}
   html{overflow-x:hidden;}
   body{
     margin:0;
     overflow-x:hidden;
-    background:
-      radial-gradient(ellipse at top left, #1A2E24 0%, var(--bg) 55%);
+    background: radial-gradient(ellipse at top left, #1A2E24 0%, var(--bg) 55%);
     color:var(--text);
     font-family:'Inter',sans-serif;
     min-height:100vh;
   }
-  .app{max-width:1180px;margin:0 auto;padding:28px 20px 60px;}
-  header.top{display:flex;flex-direction:column;gap:6px;margin-bottom:22px;border-bottom:1px solid var(--line);padding-bottom:18px;}
+  .app{max-width:1180px;margin:0 auto;padding:0 18px 60px;}
+
+  header.top{
+    position:sticky;top:0;z-index:20;
+    display:flex;flex-direction:column;gap:2px;
+    padding:18px 0 0;margin-bottom:20px;
+    background:linear-gradient(var(--bg) 78%, transparent);
+    backdrop-filter:blur(6px);
+  }
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand .knight-mark{
+    width:34px;height:34px;border-radius:8px;flex:0 0 auto;
+    background:linear-gradient(160deg,#4A2E1B,#8B5E3C 55%,#5E3A20);
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.25rem;box-shadow:0 4px 10px rgba(0,0,0,0.4);
+  }
   header.top h1{
-    font-family:'Lora',serif;
-    font-weight:700;
-    font-size:2rem;
-    margin:0;
-    letter-spacing:0.2px;
-    color:var(--ivory);
+    font-family:'Lora',serif;font-weight:700;font-size:1.7rem;margin:0;
+    letter-spacing:0.2px;color:var(--ivory);
   }
   header.top h1 .accent{color:var(--brass);}
-  header.top p.tagline{margin:0;color:var(--text-dim);font-size:0.95rem;}
+  header.top p.tagline{margin:2px 0 0 44px;color:var(--text-dim);font-size:0.9rem;}
 
-  nav.tabs{display:flex;gap:8px;margin-top:16px;}
+  nav.tabs{display:flex;gap:6px;margin-top:16px;overflow-x:auto;scrollbar-width:none;}
+  nav.tabs::-webkit-scrollbar{display:none;}
   nav.tabs button{
-    font-family:'Lora',serif;
-    font-weight:600;
-    font-size:0.95rem;
-    background:transparent;
-    border:1px solid var(--line);
-    color:var(--text-dim);
-    padding:10px 18px;
-    border-radius:8px 8px 0 0;
-    cursor:pointer;
-    transition:all .15s ease;
+    font-family:'Lora',serif;font-weight:600;font-size:0.88rem;white-space:nowrap;
+    background:transparent;border:1px solid var(--line);color:var(--text-dim);
+    padding:9px 16px;border-radius:8px 8px 0 0;cursor:pointer;transition:all .15s ease;
   }
-  nav.tabs button.active{
-    background:var(--bg-panel);
-    color:var(--ivory);
-    border-color:var(--brass);
-    border-bottom-color:var(--bg-panel);
-  }
+  nav.tabs button.active{background:var(--bg-panel);color:var(--ivory);border-color:var(--brass);border-bottom-color:var(--bg-panel);}
   nav.tabs button:hover:not(.active){color:var(--ivory);}
 
-  section.panel{display:none;background:var(--bg-panel);border:1px solid var(--line);border-radius:0 10px 10px 10px;padding:26px;}
+  section.panel{display:none;background:var(--bg-panel);border:1px solid var(--line);border-radius:0 12px 12px 12px;padding:22px;box-shadow:var(--shadow);}
   section.panel.active{display:block;}
 
   /* ---- ANALYSIS PANEL ---- */
   .input-block{display:flex;flex-direction:column;gap:14px;max-width:760px;}
-  label.field-label{font-size:0.82rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--brass);font-weight:600;}
+  label.field-label{font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--brass);font-weight:600;}
   textarea#pgn-input{
-    width:100%;min-height:110px;background:var(--ink);color:var(--text);
+    width:100%;min-height:100px;background:var(--ink);color:var(--text);
     border:1px solid var(--line);border-radius:var(--radius);padding:12px;
-    font-family:'IBM Plex Mono',monospace;font-size:0.85rem;resize:vertical;
+    font-family:'IBM Plex Mono',monospace;font-size:0.82rem;resize:vertical;
   }
   textarea#pgn-input:focus{outline:none;border-color:var(--brass);}
   .divider-row{display:flex;align-items:center;gap:12px;color:var(--text-dim);font-size:0.8rem;}
   .divider-row .rule{flex:1;height:1px;background:var(--line);}
   .fetch-row{display:flex;gap:10px;flex-wrap:wrap;}
   input#username-input{
-    flex:1;min-width:180px;background:var(--ink);color:var(--text);
+    flex:1;min-width:160px;background:var(--ink);color:var(--text);
     border:1px solid var(--line);border-radius:var(--radius);padding:10px 12px;font-size:0.9rem;
   }
   input#username-input:focus{outline:none;border-color:var(--brass);}
   button.btn{
-    font-family:'Inter',sans-serif;font-weight:600;font-size:0.88rem;
+    font-family:'Inter',sans-serif;font-weight:600;font-size:0.86rem;
     background:var(--brass);color:var(--ink);border:none;border-radius:var(--radius);
-    padding:10px 18px;cursor:pointer;transition:filter .15s ease;
+    padding:10px 16px;cursor:pointer;transition:filter .15s ease, transform .1s ease;
   }
   button.btn:hover{filter:brightness(1.1);}
+  button.btn:active{transform:scale(0.97);}
   button.btn.secondary{background:transparent;color:var(--ivory);border:1px solid var(--line);}
   button.btn.secondary:hover{border-color:var(--brass);}
+  button.btn.secondary.active{border-color:var(--good);color:var(--good);}
   button.btn:disabled{opacity:0.5;cursor:not-allowed;}
-  #fetch-status{font-size:0.82rem;color:var(--text-dim);min-height:1.2em;line-height:1.5;}
-  #analyze-btn{align-self:flex-start;margin-top:4px;}
+  #fetch-status{font-size:0.8rem;color:var(--text-dim);min-height:1.2em;line-height:1.5;}
+  #analyze-btn{align-self:flex-start;margin-top:2px;}
 
   .games-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
   .game-row{
-    display:grid;grid-template-columns:90px 1fr 70px 90px auto;gap:10px;align-items:center;
-    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:0.82rem;
+    display:grid;grid-template-columns:80px 1fr 60px 76px auto;gap:8px;align-items:center;
+    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:0.78rem;
   }
-  .game-row .g-date{color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:0.76rem;}
+  .game-row .g-date{color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:0.72rem;}
   .game-row .g-opponent{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .game-row .g-color{color:var(--text-dim);}
-  .game-row .g-result{font-weight:600;font-size:0.78rem;}
+  .game-row .g-result{font-weight:600;font-size:0.76rem;}
   .game-row .g-result.win{color:var(--good);}
   .game-row .g-result.loss{color:var(--blunder);}
   .game-row .g-result.draw{color:var(--inaccuracy);}
-  .game-row button{padding:6px 12px;font-size:0.78rem;}
+  .game-row button{padding:6px 10px;font-size:0.76rem;}
 
-  /* ---- THEORY PANEL ---- */
-  .level-picker{display:flex;gap:10px;margin-bottom:22px;flex-wrap:wrap;}
-  .level-btn{
-    font-family:'Lora',serif;font-weight:600;font-size:0.9rem;
-    background:var(--bg-panel-2);color:var(--text);border:1px solid var(--line);
-    border-radius:var(--radius);padding:10px 18px;cursor:pointer;transition:border-color .15s ease;
-  }
-  .level-btn:hover{border-color:var(--brass);}
-  .level-btn.active{border-color:var(--brass);background:rgba(201,162,39,0.12);color:var(--ivory);}
-  .theory-intro{font-size:0.9rem;color:var(--text-dim);line-height:1.55;margin-bottom:22px;max-width:760px;}
-  .theory-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-  .theory-card{
-    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);
-    padding:16px 18px;
-  }
-  .theory-card h4{
-    font-family:'Lora',serif;color:var(--brass);margin:0 0 8px;font-size:1rem;
-  }
-  .theory-card p{margin:0;font-size:0.87rem;line-height:1.6;color:var(--text);}
-  @media (max-width:760px){ .theory-grid{grid-template-columns:1fr;} }
-
-  #analysis-progress{margin-top:18px;font-size:0.88rem;color:var(--text-dim);}
+  #analysis-progress{margin-top:18px;font-size:0.86rem;color:var(--text-dim);}
   #analysis-progress .bar-track{height:6px;background:var(--ink);border-radius:4px;overflow:hidden;margin-top:8px;}
   #analysis-progress .bar-fill{height:100%;width:0%;background:var(--brass);transition:width .2s ease;}
   .engine-badge{
-    display:inline-flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:600;
-    padding:4px 10px;border-radius:20px;border:1px solid var(--line);margin-bottom:10px;
+    display:inline-flex;align-items:center;gap:6px;font-size:0.76rem;font-weight:600;
+    padding:4px 10px;border-radius:20px;border:1px solid var(--line);margin-bottom:8px;
   }
   .engine-badge.loading{color:var(--text-dim);}
   .engine-badge.ready{color:var(--good);border-color:var(--good);}
   .engine-badge.fallback{color:var(--mistake);border-color:var(--mistake);}
 
-  #analysis-results{display:none;margin-top:26px;gap:26px;}
-  #analysis-results.show{display:grid;grid-template-columns:460px 1fr;}
-  .board-col{display:flex;flex-direction:column;gap:14px;align-items:center;}
+  #analysis-results{display:none;margin-top:24px;}
+  #analysis-results.show{display:flex;flex-wrap:wrap;gap:24px;}
+  .board-col{flex:0 0 auto;display:flex;flex-direction:column;gap:12px;align-items:center;margin:0 auto;}
+  .moves-col{flex:1 1 320px;min-width:280px;display:flex;flex-direction:column;gap:14px;}
 
-  /* ---- Wooden board frame + coordinates (shared by both boards) ---- */
+  /* ---- Wooden board frame + coordinates (shared by both boards; size set via JS) ---- */
   .board-frame{
-    position:relative;
-    display:inline-block;
-    max-width:100%;
-    box-sizing:border-box;
-    padding:14px 14px 30px 32px;
+    position:relative;display:inline-block;max-width:100%;box-sizing:border-box;
+    padding:12px 12px 26px 26px;
     background:linear-gradient(160deg,#4A2E1B 0%, #8B5E3C 45%, #5E3A20 100%);
-    border-radius:14px;
-    box-shadow:0 22px 45px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.07);
+    border-radius:12px;box-shadow:0 18px 38px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.07);
   }
   .board-frame .coord-ranks{
-    position:absolute;left:8px;top:14px;bottom:30px;width:20px;
+    position:absolute;left:6px;top:12px;bottom:26px;width:18px;
     display:flex;flex-direction:column;justify-content:space-around;align-items:center;
-    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--ivory);opacity:0.8;
+    font-family:'IBM Plex Mono',monospace;font-size:0.66rem;color:var(--ivory);opacity:0.8;
   }
   .board-frame .coord-files{
-    position:absolute;left:32px;right:14px;bottom:8px;height:16px;
+    position:absolute;left:26px;right:12px;bottom:6px;height:14px;
     display:flex;justify-content:space-around;align-items:center;
-    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--ivory);opacity:0.8;
+    font-family:'IBM Plex Mono',monospace;font-size:0.66rem;color:var(--ivory);opacity:0.8;
   }
-  #board{width:400px;max-width:calc(92vw - 46px);}
-  #train-board{width:380px;max-width:calc(92vw - 46px);}
+  #board, #train-board{ touch-action:manipulation; }
 
-  /* ---- square highlight overlays (chessboard.js renders data-square on each square) ---- */
+  /* ---- square overlays (chessboard.js renders data-square on each square) ---- */
+  [data-square]{position:relative;}
   .highlight-from{box-shadow:inset 0 0 0 9999px rgba(201,162,39,0.30) !important;}
   .highlight-to{box-shadow:inset 0 0 0 9999px rgba(201,162,39,0.48) !important;}
   .flash-good{box-shadow:inset 0 0 0 9999px rgba(92,154,107,0.6) !important;}
   .flash-bad{box-shadow:inset 0 0 0 9999px rgba(193,81,80,0.6) !important;}
   .hint-square{box-shadow:inset 0 0 0 9999px rgba(76,140,163,0.5) !important;}
+  .selected-square{box-shadow:inset 0 0 0 9999px rgba(76,140,163,0.38) !important;}
+  .move-dot{
+    position:absolute;top:50%;left:50%;width:26%;height:26%;border-radius:50%;
+    background:rgba(201,162,39,0.65);transform:translate(-50%,-50%);pointer-events:none;
+  }
 
   .nav-controls{display:flex;gap:6px;}
   .nav-controls button{
     background:var(--bg-panel-2);color:var(--ivory);border:1px solid var(--line);
-    border-radius:6px;width:38px;height:34px;cursor:pointer;font-size:0.95rem;
+    border-radius:6px;width:36px;height:32px;cursor:pointer;font-size:0.92rem;
   }
   .nav-controls button:hover{border-color:var(--brass);}
   #move-comment-box{
-    width:400px;min-height:64px;background:var(--bg-panel-2);border:1px solid var(--line);
-    border-radius:var(--radius);padding:12px 14px;font-size:0.88rem;line-height:1.45;
+    width:100%;min-height:60px;background:var(--bg-panel-2);border:1px solid var(--line);
+    border-radius:var(--radius);padding:11px 13px;font-size:0.86rem;line-height:1.45;
   }
   #move-comment-box .tag{
     display:inline-block;font-family:'IBM Plex Mono',monospace;font-weight:600;
-    padding:1px 7px;border-radius:4px;margin-right:6px;font-size:0.78rem;
+    padding:1px 7px;border-radius:4px;margin-right:6px;font-size:0.76rem;
   }
   .tag-best{background:rgba(76,140,163,0.25);color:var(--best);}
   .tag-good{background:rgba(92,154,107,0.2);color:var(--good);}
@@ -204,72 +186,70 @@
   .tag-mistake{background:rgba(208,138,62,0.22);color:var(--mistake);}
   .tag-blunder{background:rgba(193,81,80,0.25);color:var(--blunder);}
 
-  .moves-col{display:flex;flex-direction:column;gap:16px;}
-  .summary-row{display:flex;gap:14px;flex-wrap:wrap;}
-  .summary-card{
-    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);
-    padding:12px 16px;flex:1;min-width:150px;
-  }
-  .summary-card h4{margin:0 0 8px;font-family:'Lora',serif;font-size:0.88rem;color:var(--ivory);}
-  .summary-card .stat-line{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-dim);padding:2px 0;}
+  .summary-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .summary-card{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;flex:1;min-width:150px;}
+  .summary-card h4{margin:0 0 8px;font-family:'Lora',serif;font-size:0.86rem;color:var(--ivory);}
+  .summary-card .stat-line{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text-dim);padding:2px 0;}
   .summary-card .stat-line span.n{color:var(--text);font-family:'IBM Plex Mono',monospace;}
 
   ol#move-list{
     list-style:none;margin:0;padding:0;background:var(--ink);border:1px solid var(--line);
-    border-radius:var(--radius);max-height:420px;overflow-y:auto;font-family:'IBM Plex Mono',monospace;font-size:0.86rem;
+    border-radius:var(--radius);max-height:380px;overflow-y:auto;font-family:'IBM Plex Mono',monospace;font-size:0.84rem;
   }
-  ol#move-list li{
-    display:grid;grid-template-columns:44px 1fr 1fr;gap:8px;padding:6px 12px;
-    border-bottom:1px solid var(--line);align-items:center;
-  }
+  ol#move-list li{display:grid;grid-template-columns:40px 1fr 1fr;gap:6px;padding:6px 10px;border-bottom:1px solid var(--line);align-items:center;}
   ol#move-list li:last-child{border-bottom:none;}
   ol#move-list .num{color:var(--text-dim);}
-  .move-chip{
-    cursor:pointer;padding:3px 8px;border-radius:5px;display:inline-flex;align-items:center;gap:5px;
-    transition:background .12s ease;
-  }
+  .move-chip{cursor:pointer;padding:3px 7px;border-radius:5px;display:inline-flex;align-items:center;gap:5px;transition:background .12s ease;}
   .move-chip:hover{background:var(--bg-panel-2);}
   .move-chip.selected{background:var(--bg-panel-2);outline:1px solid var(--brass);}
-  .glyph{font-size:0.72rem;font-weight:700;}
-  .glyph-best{color:var(--best);}
-  .glyph-good{color:var(--good);}
-  .glyph-inaccuracy{color:var(--inaccuracy);}
-  .glyph-mistake{color:var(--mistake);}
-  .glyph-blunder{color:var(--blunder);}
+  .glyph{font-size:0.7rem;font-weight:700;}
+  .glyph-best{color:var(--best);} .glyph-good{color:var(--good);} .glyph-inaccuracy{color:var(--inaccuracy);}
+  .glyph-mistake{color:var(--mistake);} .glyph-blunder{color:var(--blunder);}
 
-  .engine-note{font-size:0.78rem;color:var(--text-dim);border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+  .engine-note{font-size:0.76rem;color:var(--text-dim);border-top:1px dashed var(--line);padding-top:10px;}
 
   /* ---- TRAIN PANEL ---- */
-  .opening-groups{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:24px;}
-  .opening-group h3{
-    font-family:'Lora',serif;color:var(--brass);margin:0 0 10px;
-    text-transform:uppercase;letter-spacing:0.05em;font-size:0.8rem;
+  details.opening-category{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;background:var(--bg-panel-2);overflow:hidden;}
+  details.opening-category summary{
+    cursor:pointer;padding:12px 16px;font-family:'Lora',serif;color:var(--brass);font-weight:600;font-size:0.88rem;
+    list-style:none;display:flex;justify-content:space-between;align-items:center;
   }
+  details.opening-category summary::-webkit-details-marker{display:none;}
+  details.opening-category summary::after{content:'+';font-size:1.1rem;color:var(--text-dim);}
+  details.opening-category[open] summary::after{content:'–';}
+  .opening-buttons{padding:0 12px 12px;display:flex;flex-wrap:wrap;gap:8px;}
   .line-btn{
-    display:flex;justify-content:space-between;align-items:center;width:260px;text-align:left;
-    background:var(--bg-panel-2);color:var(--text);
-    border:1px solid var(--line);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;
-    cursor:pointer;font-family:'Inter',sans-serif;font-size:0.86rem;transition:border-color .15s ease;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;flex:1 1 230px;text-align:left;
+    background:var(--bg-panel);color:var(--text);border:1px solid var(--line);border-radius:8px;
+    padding:9px 12px;cursor:pointer;font-family:'Inter',sans-serif;font-size:0.83rem;transition:border-color .15s ease;
   }
   .line-btn:hover{border-color:var(--brass);}
   .line-btn.active{border-color:var(--brass);background:rgba(201,162,39,0.1);}
-  .line-btn .n-moves{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--text-dim);}
+  .line-btn .n-moves{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--text-dim);white-space:nowrap;}
 
-  .train-row{display:grid;grid-template-columns:428px 1fr;gap:26px;align-items:start;}
-  .train-info{display:flex;flex-direction:column;gap:14px;}
-  .train-info h3{font-family:'Lora',serif;margin:0;color:var(--ivory);font-size:1.15rem;}
-  .train-info .intro{font-size:0.88rem;color:var(--text-dim);line-height:1.5;}
-  .train-info .btn-row{display:flex;gap:10px;}
+  .train-row{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;margin-top:18px;}
+  .train-info{flex:1 1 320px;min-width:280px;display:flex;flex-direction:column;gap:12px;}
+  .train-info-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .train-info-header h3{font-family:'Lora',serif;margin:0;color:var(--ivory);font-size:1.08rem;}
+  .tts-btn{
+    flex:0 0 auto;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--text-dim);
+    border-radius:20px;padding:6px 12px;font-size:0.78rem;cursor:pointer;white-space:nowrap;
+  }
+  .tts-btn.active{color:var(--good);border-color:var(--good);}
+  .objective-box{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);padding:10px 13px;}
+  .objective-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--brass);font-weight:700;}
+  .objective-box .intro{font-size:0.85rem;color:var(--text-dim);line-height:1.5;margin-top:4px;}
 
   .progress-dots{display:flex;gap:5px;flex-wrap:wrap;}
-  .progress-dots .dot{width:9px;height:9px;border-radius:50%;background:var(--line);transition:all .15s ease;}
+  .progress-dots .dot{width:8px;height:8px;border-radius:50%;background:var(--line);transition:all .15s ease;}
   .progress-dots .dot.done{background:var(--brass);}
   .progress-dots .dot.current{background:var(--good);box-shadow:0 0 0 3px rgba(92,154,107,0.28);}
 
   #train-feedback{
     background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);
-    padding:14px;font-size:0.9rem;min-height:60px;line-height:1.5;transition:border-color .15s ease;
+    padding:13px;font-size:0.88rem;line-height:1.5;transition:border-color .15s ease;
   }
+  #train-feedback::before{content:"🎓 Conseil du coach";display:block;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-dim);margin-bottom:5px;}
   #train-feedback.prompt{border-color:var(--brass);}
   #train-feedback.good{border-color:var(--good);}
   #train-feedback.bad{border-color:var(--blunder);}
@@ -277,34 +257,51 @@
 
   ol#train-move-list{
     list-style:none;margin:0;padding:0;background:var(--ink);border:1px solid var(--line);
-    border-radius:var(--radius);max-height:180px;overflow-y:auto;
-    font-family:'IBM Plex Mono',monospace;font-size:0.84rem;
+    border-radius:var(--radius);max-height:150px;overflow-y:auto;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;
   }
-  ol#train-move-list li{
-    display:grid;grid-template-columns:34px 1fr 1fr;gap:8px;padding:5px 12px;
-    border-bottom:1px solid var(--line);
-  }
+  ol#train-move-list li{display:grid;grid-template-columns:32px 1fr 1fr;gap:8px;padding:5px 12px;border-bottom:1px solid var(--line);}
   ol#train-move-list li:last-child{border-bottom:none;}
   ol#train-move-list .num{color:var(--text-dim);}
-  ol#train-move-list .empty{color:var(--text-dim);grid-column:1/-1;padding:10px 0;}
+  ol#train-move-list .empty{color:var(--text-dim);grid-column:1/-1;padding:8px 0;}
+  .train-info .btn-row{display:flex;gap:10px;flex-wrap:wrap;}
+
+  /* ---- THEORY PANEL ---- */
+  .level-picker{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+  .level-btn{
+    font-family:'Lora',serif;font-weight:600;font-size:0.88rem;background:var(--bg-panel-2);color:var(--text);
+    border:1px solid var(--line);border-radius:var(--radius);padding:9px 16px;cursor:pointer;transition:border-color .15s ease;
+  }
+  .level-btn:hover{border-color:var(--brass);}
+  .level-btn.active{border-color:var(--brass);background:rgba(201,162,39,0.12);color:var(--ivory);}
+  .theory-intro{font-size:0.88rem;color:var(--text-dim);line-height:1.55;margin-bottom:20px;max-width:760px;}
+  .theory-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:30px;}
+  .theory-card{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);padding:15px 17px;}
+  .theory-card h4{font-family:'Lora',serif;color:var(--brass);margin:0 0 8px;font-size:0.96rem;}
+  .theory-card p{margin:0;font-size:0.85rem;line-height:1.6;color:var(--text);}
+  .theory-card.demo-card{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  @media (max-width:760px){ .theory-grid{grid-template-columns:1fr;} }
+
+  .section-title{font-family:'Lora',serif;color:var(--ivory);font-size:1.05rem;margin:0 0 6px;border-top:1px solid var(--line);padding-top:22px;}
+  .section-sub{font-size:0.85rem;color:var(--text-dim);margin-bottom:16px;}
+  .lib-cat{margin-bottom:16px;}
+  .lib-cat h4{font-family:'Lora',serif;color:var(--brass);font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;margin:0 0 8px;}
+  .lib-chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .lib-chip{background:var(--bg-panel-2);border:1px solid var(--line);color:var(--text);border-radius:20px;padding:7px 14px;font-size:0.78rem;cursor:pointer;transition:border-color .15s ease;}
+  .lib-chip:hover{border-color:var(--brass);}
 
   .hidden{display:none !important;}
   ::-webkit-scrollbar{width:8px;}
   ::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
-
-  @media (max-width:880px){
-    #analysis-results.show{grid-template-columns:1fr;}
-    .board-col{margin:0 auto;}
-    .train-row{grid-template-columns:1fr;}
-    .train-row .board-col{margin:0 auto;}
-  }
 </style>
 </head>
 <body>
 <div class="app">
   <header class="top">
-    <h1>Coach d'<span class="accent">Échecs</span></h1>
-    <p class="tagline">Analyse tes parties chess.com et entraîne-toi sur la Sicilienne et le Gambit Dame.</p>
+    <div class="brand">
+      <div class="knight-mark">♞</div>
+      <h1>Coach d'<span class="accent">Échecs</span></h1>
+    </div>
+    <p class="tagline">Analyse tes parties chess.com, entraîne-toi sur 20+ ouvertures, progresse à ton niveau.</p>
     <nav class="tabs">
       <button id="tab-analyze" class="active">Analyse de partie</button>
       <button id="tab-train">Entraînement d'ouvertures</button>
@@ -317,14 +314,14 @@
     <div class="input-block">
       <div>
         <label class="field-label">Coller le PGN</label>
-        <textarea id="pgn-input" placeholder="Sur chess.com : ouvre ta partie → bouton ⋯ → Télécharger le PGN (ou copie-le depuis l'écran d'analyse), puis colle-le ici."></textarea>
+        <textarea id="pgn-input" placeholder="Sur chess.com : ouvre ta partie → bouton ⋯ → Télécharger le PGN, puis colle-le ici."></textarea>
       </div>
       <div class="divider-row"><div class="rule"></div>ou<div class="rule"></div></div>
       <div>
-        <label class="field-label">Récupération automatique (expérimentale)</label>
+        <label class="field-label">Récupération automatique</label>
         <div class="fetch-row" style="margin-top:8px;">
           <input id="username-input" placeholder="ton pseudo chess.com">
-          <button class="btn secondary" id="fetch-btn">Récupérer la dernière partie</button>
+          <button class="btn secondary" id="fetch-btn">Chercher mes parties</button>
         </div>
         <div id="fetch-status"></div>
         <div class="games-list" id="games-list"></div>
@@ -356,27 +353,14 @@
       <div class="moves-col">
         <div class="summary-row" id="summary-row"></div>
         <ol id="move-list"></ol>
-        <div class="engine-note">Analyse par Stockfish (WASM), chargé directement dans ton navigateur (~0,45 s de réflexion par position) : il voit les tactiques profondes, pas seulement les pièces en prise. Si Stockfish ne parvient pas à se charger sur ton navigateur/appareil, l'appli bascule automatiquement sur un moteur de secours plus simple (visible dans le badge ci-dessus).</div>
+        <div class="engine-note">Analyse par Stockfish (WASM) chargé dans ton navigateur (~0,45 s par position) : il voit les tactiques profondes. Repli automatique sur un moteur maison si Stockfish ne charge pas.</div>
       </div>
     </div>
   </section>
 
   <!-- ================= TRAIN PANEL ================= -->
   <section id="panel-train" class="panel">
-    <div class="opening-groups">
-      <div class="opening-group">
-        <h3>Sicilienne (tu joues les Noirs)</h3>
-        <button class="line-btn" data-line="najdorf"><span>Variante Najdorf</span><span class="n-moves">7 coups</span></button>
-        <button class="line-btn" data-line="dragon"><span>Variante Dragon</span><span class="n-moves">7 coups</span></button>
-        <button class="line-btn" data-line="sveshnikov"><span>Variante Sveshnikov</span><span class="n-moves">8 coups</span></button>
-      </div>
-      <div class="opening-group">
-        <h3>Gambit Dame (tu joues les Blancs)</h3>
-        <button class="line-btn" data-line="qgd"><span>Refusé (Orthodoxe)</span><span class="n-moves">6 coups</span></button>
-        <button class="line-btn" data-line="qga"><span>Accepté</span><span class="n-moves">5 coups</span></button>
-        <button class="line-btn" data-line="slav"><span>Défense Slave</span><span class="n-moves">5 coups</span></button>
-      </div>
-    </div>
+    <div class="opening-groups" id="opening-groups"></div>
 
     <div class="train-row">
       <div class="board-col">
@@ -388,13 +372,19 @@
         <div class="progress-dots" id="train-dots"></div>
       </div>
       <div class="train-info">
-        <h3 id="line-name">Choisis une ligne à gauche pour commencer</h3>
-        <div class="intro" id="line-intro">Les coups de l'adversaire sont joués automatiquement. À toi de trouver les coups théoriques quand c'est ton tour — glisse la pièce sur l'échiquier.</div>
+        <div class="train-info-header">
+          <h3 id="line-name">Choisis une ouverture ci-dessus</h3>
+          <button class="tts-btn active" id="tts-toggle">🔊 Voix</button>
+        </div>
+        <div class="objective-box">
+          <span class="objective-label">🎯 Objectif de la ligne</span>
+          <div class="intro" id="line-intro">Sélectionne une ouverture : les coups de l'adversaire sont joués automatiquement, à toi de trouver les tiens. Glisse une pièce ou touche-la puis touche la case d'arrivée.</div>
+        </div>
         <div id="train-feedback">Sélectionne une ouverture pour démarrer.</div>
         <ol id="train-move-list"><li class="empty">Aucun coup joué</li></ol>
         <div class="btn-row">
-          <button class="btn secondary" id="train-hint">Indice</button>
-          <button class="btn secondary" id="train-reset">Recommencer la ligne</button>
+          <button class="btn secondary" id="train-hint">💡 Indice</button>
+          <button class="btn secondary" id="train-reset">↺ Recommencer</button>
         </div>
       </div>
     </div>
@@ -409,12 +399,16 @@
     </div>
     <div class="theory-intro" id="theory-intro"></div>
     <div class="theory-grid" id="theory-grid"></div>
+
+    <h2 class="section-title">Bibliothèque de démonstrations interactives</h2>
+    <p class="section-sub">Touche une ouverture : elle se lance directement sur l'échiquier d'entraînement, coup par coup, avec les explications.</p>
+    <div id="theory-library"></div>
   </section>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
 <script>
 const PIECE_THEME = 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png';
 
@@ -429,9 +423,20 @@ function switchTab(name){
   document.getElementById('panel-analyze').classList.toggle('active', name==='analyze');
   document.getElementById('panel-train').classList.toggle('active', name==='train');
   document.getElementById('panel-theory').classList.toggle('active', name==='theory');
-  if(name==='train' && trainBoard) setTimeout(()=>trainBoard.resize(), 50);
-  if(name==='analyze' && analysisBoard) setTimeout(()=>analysisBoard.resize(), 50);
+  setTimeout(fitBoards, 30);
 }
+
+/* ============ Responsive board sizing (JS-driven, robust on mobile) ============ */
+function fitBoards(){
+  const px = Math.max(220, Math.min(460, window.innerWidth - 64));
+  const boardEl = document.getElementById('board');
+  const trainEl = document.getElementById('train-board');
+  if(boardEl){ boardEl.style.width = px + 'px'; if(window.analysisBoard) window.analysisBoard.resize(); }
+  if(trainEl){ trainEl.style.width = px + 'px'; if(window.trainBoard) window.trainBoard.resize(); }
+}
+let fitTimer = null;
+window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitBoards, 120); });
+window.addEventListener('orientationchange', () => setTimeout(fitBoards, 250));
 
 /* ============ ENGINE : Stockfish (WASM) avec repli maison ============ */
 const STOCKFISH_URL = 'https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js';
@@ -558,7 +563,7 @@ function sfAnalyzeFEN(fen){
   });
 }
 
-/* ---- Moteur de secours maison (alpha-bêta + quiescence), utilisé seulement si Stockfish échoue ---- */
+/* ---- Moteur de secours maison (alpha-bêta + quiescence) ---- */
 const VALUES = {p:100, n:320, b:330, r:500, q:900, k:0};
 function evalAbsolute(game){
   const board = game.board();
@@ -632,7 +637,7 @@ async function engineAnalyzeFEN(fen){
   return homemadeAnalyzeFEN(fen);
 }
 
-/* ============ shared board helpers: coordinates + square highlighting ============ */
+/* ============ shared board helpers ============ */
 function renderCoords(ranksElId, filesElId, orientation){
   const ranksEl = document.getElementById(ranksElId);
   const filesEl = document.getElementById(filesElId);
@@ -644,10 +649,11 @@ function renderCoords(ranksElId, filesElId, orientation){
   filesEl.innerHTML = files.map(f=>`<span>${f}</span>`).join('');
 }
 function clearHighlights(containerSel){
-  $(containerSel + ' [data-square]').removeClass('highlight-from highlight-to hint-square');
+  $(containerSel + ' [data-square]').removeClass('highlight-from highlight-to hint-square selected-square');
+  $(containerSel + ' .move-dot').remove();
 }
 function highlightMove(containerSel, from, to){
-  clearHighlights(containerSel);
+  $(containerSel + ' [data-square]').removeClass('highlight-from highlight-to');
   if(!from || !to) return;
   $(containerSel + ` [data-square="${from}"]`).addClass('highlight-from');
   $(containerSel + ` [data-square="${to}"]`).addClass('highlight-to');
@@ -657,15 +663,38 @@ function flashSquares(containerSel, squares, cls, duration){
   $sqs.forEach($sq => $sq.addClass(cls));
   setTimeout(()=>{ $sqs.forEach($sq => $sq.removeClass(cls)); }, duration || 500);
 }
+function pieceNameFromSan(san){
+  const map = {N:'cavalier', B:'fou', R:'tour', Q:'dame', K:'roi'};
+  if(san.startsWith('O-O')) return 'roi (roque)';
+  return map[san[0]] || 'pion';
+}
+
+/* ============ Lecture vocale (français) ============ */
+let ttsEnabled = true;
+function speak(text){
+  if(!ttsEnabled || !('speechSynthesis' in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'fr-FR';
+    u.rate = 1.02;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+document.getElementById('tts-toggle').onclick = function(){
+  ttsEnabled = !ttsEnabled;
+  this.textContent = ttsEnabled ? '🔊 Voix' : '🔇 Muet';
+  this.classList.toggle('active', ttsEnabled);
+  if(!ttsEnabled && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+};
 
 /* ============ ANALYSIS ============ */
 let analysisBoard = null;
 let analysisResults = [];
-let analysisIndex = -1; // -1 = starting position
+let analysisIndex = -1;
 
-analysisBoard = Chessboard('board', {
-  position:'start', draggable:false, pieceTheme: PIECE_THEME, showNotation:false
-});
+analysisBoard = Chessboard('board', { position:'start', draggable:false, pieceTheme: PIECE_THEME, showNotation:false });
+window.analysisBoard = analysisBoard;
 renderCoords('board-ranks', 'board-files', 'white');
 
 document.getElementById('analyze-btn').onclick = () => {
@@ -688,9 +717,7 @@ async function fetchJsonWithFallback(url){
       const res = await fetch(attemptUrl);
       if(!res.ok){ lastError = new Error('HTTP ' + res.status); continue; }
       return await res.json();
-    }catch(e){
-      lastError = e;
-    }
+    }catch(e){ lastError = e; }
   }
   throw lastError || new Error('Échec réseau');
 }
@@ -759,9 +786,7 @@ document.getElementById('fetch-btn').onclick = async () => {
 };
 
 function classify(drop, isBest){
-  if(drop <= 10) return isBest
-    ? {label:'Meilleur coup', cls:'best', glyph:'★'}
-    : {label:'Bon coup', cls:'good', glyph:'✓'};
+  if(drop <= 10) return isBest ? {label:'Meilleur coup', cls:'best', glyph:'★'} : {label:'Bon coup', cls:'good', glyph:'✓'};
   if(drop <= 50) return {label:'Imprécision', cls:'inaccuracy', glyph:'?!'};
   if(drop <= 150) return {label:'Erreur', cls:'mistake', glyph:'?'};
   return {label:'Gaffe', cls:'blunder', glyph:'??'};
@@ -795,7 +820,6 @@ async function runAnalysis(pgn){
 
   const work = new Chess();
   const results = [];
-  // On évalue chaque position une seule fois, et on réutilise le résultat comme "après" du coup précédent
   let evalBefore = await engineAnalyzeFEN(work.fen());
 
   for(let i=0;i<history.length;i++){
@@ -804,7 +828,7 @@ async function runAnalysis(pgn){
     const bestScoreForMover = evalBefore.scoreForMover;
 
     work.move(mv.san);
-    const evalAfter = await engineAnalyzeFEN(work.fen()); // du point de vue de l'adversaire, qui est maintenant au trait
+    const evalAfter = await engineAnalyzeFEN(work.fen());
     const actualScoreForMover = -evalAfter.scoreForMover;
 
     const drop = Math.max(0, bestScoreForMover - actualScoreForMover);
@@ -819,35 +843,29 @@ async function runAnalysis(pgn){
       moveNumber: Math.floor(i/2)+1
     });
 
-    evalBefore = evalAfter; // la position "après" devient le "avant" du coup suivant
-
+    evalBefore = evalAfter;
     progressLabel.textContent = `Analyse du coup ${i+1} / ${history.length}…`;
     barFill.style.width = Math.round(((i+1)/history.length)*100) + '%';
-    await new Promise(r=>setTimeout(r,0)); // yield to keep UI responsive
+    await new Promise(r=>setTimeout(r,0));
   }
 
   results.forEach(r => r.advice = adviceFor(r));
-
   analysisResults = results;
   document.getElementById('analysis-progress').classList.add('hidden');
   renderAnalysis(master.header());
+  fitBoards();
 }
 
 function renderAnalysis(headers){
   document.getElementById('analysis-results').classList.add('show');
-
-  // summary per color
   const sums = {w:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}, b:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}};
   analysisResults.forEach(r => sums[r.color][r.info.cls]++);
   const white = headers.White || 'Blancs';
   const black = headers.Black || 'Noirs';
   document.getElementById('summary-row').innerHTML = `
-    <div class="summary-card"><h4>${escapeHtml(white)} (Blancs)</h4>
-      ${summaryLines(sums.w)}</div>
-    <div class="summary-card"><h4>${escapeHtml(black)} (Noirs)</h4>
-      ${summaryLines(sums.b)}</div>
+    <div class="summary-card"><h4>${escapeHtml(white)} (Blancs)</h4>${summaryLines(sums.w)}</div>
+    <div class="summary-card"><h4>${escapeHtml(black)} (Noirs)</h4>${summaryLines(sums.b)}</div>
   `;
-
   const list = document.getElementById('move-list');
   list.innerHTML = '';
   for(let i=0;i<analysisResults.length;i+=2){
@@ -864,7 +882,6 @@ function renderAnalysis(headers){
   list.querySelectorAll('.move-chip').forEach(chip=>{
     chip.onclick = () => goToPly(parseInt(chip.dataset.idx,10));
   });
-
   goToPly(analysisResults.length-1);
 }
 
@@ -892,16 +909,14 @@ function goToPly(idx){
   const box = document.getElementById('move-comment-box');
   box.innerHTML = `<span class="tag tag-${r.info.cls}">${r.info.glyph} ${r.info.label}</span>${escapeHtml(r.advice)}`;
 }
-
 document.getElementById('nav-start').onclick = () => goToPly(0);
 document.getElementById('nav-prev').onclick = () => goToPly(analysisIndex-1);
 document.getElementById('nav-next').onclick = () => goToPly(analysisIndex+1);
 document.getElementById('nav-end').onclick = () => goToPly(analysisResults.length-1);
 
-/* ============ OPENING TRAINER ============ */
+/* ============ BIBLIOTHÈQUE D'OUVERTURES (26 lignes) ============ */
 const OPENINGS = {
-  najdorf:{
-    name:'Sicilienne — Najdorf', forColor:'b',
+  najdorf:{ name:'Sicilienne — Najdorf', forColor:'b',
     intro:"La Najdorf est l'une des ouvertures les plus jouées au monde : très flexible, elle laisse à Noir plusieurs plans possibles (...e5 ou ...e6).",
     moves:[
       {san:'e4', c:"Le coup le plus populaire au 1er coup : Blanc ouvre le centre et libère fou et dame."},
@@ -918,10 +933,8 @@ const OPENINGS = {
       {san:'e5', c:"Noir prend de l'espace au centre et chasse le cavalier de d4."},
       {san:'Nb3', c:"Le cavalier recule en sécurité ; e5 est bien défendu par le pion."},
       {san:'Be7', c:"Développement, prépare le petit roque."}
-    ]
-  },
-  dragon:{
-    name:'Sicilienne — Dragon', forColor:'b',
+    ] },
+  dragon:{ name:'Sicilienne — Dragon', forColor:'b',
     intro:"Le Dragon fianchette le fou en g7 sur la grande diagonale. Les parties sont souvent tranchantes, avec des roques opposés.",
     moves:[
       {san:'e4', c:"Ouverture centrale classique."},
@@ -938,10 +951,8 @@ const OPENINGS = {
       {san:'Bg7', c:"Le fou dragon prend position, redoutable une fois la diagonale ouverte."},
       {san:'f3', c:"Soutient e4 et prépare g4-h4 dans l'Attaque Yougoslave."},
       {san:'O-O', c:"Noir roque ; la partie devient souvent une course entre les deux ailes."}
-    ]
-  },
-  sveshnikov:{
-    name:'Sicilienne — Sveshnikov', forColor:'b',
+    ] },
+  sveshnikov:{ name:'Sicilienne — Sveshnikov', forColor:'b',
     intro:"Le Sveshnikov est une ligne très dynamique où Noir accepte une case faible en d5 pour gagner de l'espace et du temps.",
     moves:[
       {san:'e4', c:"Ouverture centrale classique."},
@@ -960,10 +971,8 @@ const OPENINGS = {
       {san:'a6', c:"Chasse le cavalier de b5."},
       {san:'Na3', c:"Recul vers une case toujours utile (surveille b5 et c4)."},
       {san:'b5', c:"Noir gagne de l'espace à l'aile dame et prépare ...Bb7, un plan typique et moderne du Sveshnikov."}
-    ]
-  },
-  qgd:{
-    name:'Gambit Dame — Refusé (Orthodoxe)', forColor:'w',
+    ] },
+  qgd:{ name:'Gambit Dame — Refusé (Orthodoxe)', forColor:'w',
     intro:"La ligne la plus classique du Gambit Dame : Noir garde fermement le pion d5 en jouant ...e6, quitte à enfermer un peu son fou c8.",
     moves:[
       {san:'d4', c:"Contrôle le centre et ouvre la diagonale du fou c1."},
@@ -977,10 +986,8 @@ const OPENINGS = {
       {san:'e3', c:"Libère le fou f1 et soutient un futur Bd3 ou Bxc4."},
       {san:'O-O', c:"Noir met son roi en sécurité."},
       {san:'Nf3', c:"Blanc termine son développement mineur avant de choisir entre Rc1, Qc2 ou cxd5."}
-    ]
-  },
-  qga:{
-    name:'Gambit Dame — Accepté', forColor:'w',
+    ] },
+  qga:{ name:'Gambit Dame — Accepté', forColor:'w',
     intro:"Noir prend le pion c4 mais ne peut pas le garder : Blanc le récupère avec un temps d'avance en développement.",
     moves:[
       {san:'d4', c:"Contrôle le centre."},
@@ -992,10 +999,8 @@ const OPENINGS = {
       {san:'e3', c:"Libère le fou f1 pour aller reprendre le pion en c4."},
       {san:'e6', c:"Développement solide, prépare ...c5."},
       {san:'Bxc4', c:"Blanc récupère le pion avec un développement rapide et un fou actif."}
-    ]
-  },
-  slav:{
-    name:'Gambit Dame — Défense Slave (côté Blanc)', forColor:'w',
+    ] },
+  slav:{ name:'Gambit Dame — Défense Slave (côté Blanc)', forColor:'w',
     intro:"Face à la Slave, Noir soutient d5 avec ...c6, gardant son fou c8 libre. Voici la ligne principale de l'Acceptée.",
     moves:[
       {san:'d4', c:"Contrôle le centre."},
@@ -1008,29 +1013,307 @@ const OPENINGS = {
       {san:'dxc4', c:"La Slave acceptée : Noir prend le pion, gardé un temps grâce au soutien de ...c6."},
       {san:'a4', c:"Empêche ...b5, qui aurait protégé durablement le pion c4 — ligne principale."},
       {san:'Bf5', c:"Noir développe son fou avant ...e6, profitant d'avoir gardé cette case libre."}
-    ]
-  }
+    ] },
+  italienne:{ name:'Italienne (Giuoco Piano)', forColor:'w',
+    intro:"Une des plus anciennes ouvertures encore jouées au top niveau : développement rapide, pression immédiate sur f7.",
+    moves:[
+      {san:'e4', c:"Ouvre le centre et libère deux pièces."},
+      {san:'e5', c:"Noir répond symétriquement."},
+      {san:'Nf3', c:"Attaque e5 et développe."},
+      {san:'Nc6', c:"Défend e5."},
+      {san:'Bc4', c:"Vise f7, la case la plus fragile du camp noir."},
+      {san:'Bc5', c:"Développement symétrique : l'Italienne classique."},
+      {san:'c3', c:"Prépare d4 pour construire un grand centre de pions."},
+      {san:'Nf6', c:"Contre-attaque à son tour le pion e4."},
+      {san:'d3', c:"Coup solide et prudent (Giuoco Pianissimo), soutient e4 sans s'engager encore."}
+    ] },
+  espagnole:{ name:'Espagnole (Ruy Lopez)', forColor:'w',
+    intro:"Considérée comme l'ouverture la plus solide et la plus étudiée du jeu ouvert : pression durable et positions riches.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale classique."},
+      {san:'e5', c:"Symétrie."},
+      {san:'Nf3', c:"Attaque e5."},
+      {san:'Nc6', c:"Défend e5."},
+      {san:'Bb5', c:"L'Espagnole : le fou attaque le cavalier qui défend e5, pression indirecte sur le centre noir."},
+      {san:'a6', c:"Le coup de Morphy : chasse le fou et pose la question de son intention."},
+      {san:'Ba4', c:"Maintient la pression, c'est la ligne principale."},
+      {san:'Nf6', c:"Contre-attaque e4 à son tour."},
+      {san:'O-O', c:"Blanc roque avant de résoudre la tension au centre."}
+    ] },
+  ecossaise:{ name:'Écossaise (Scotch)', forColor:'w',
+    intro:"Blanc ouvre le centre dès le 3e coup plutôt que de développer un fou : jeu ouvert et dynamique.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'e5', c:"Symétrie."},
+      {san:'Nf3', c:"Attaque e5."},
+      {san:'Nc6', c:"Défend e5."},
+      {san:'d4', c:"L'Écossaise : Blanc ouvre le centre immédiatement plutôt que de jouer Bc4 ou Bb5."},
+      {san:'exd4', c:"Noir accepte l'échange central."},
+      {san:'Nxd4', c:"Cavalier centralisé, position ouverte et dynamique pour les deux camps."}
+    ] },
+  gambit_roi:{ name:'Gambit Roi', forColor:'w',
+    intro:"Une ouverture romantique et agressive : Blanc sacrifie un pion pour ouvrir des lignes d'attaque rapides.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'e5', c:"Symétrie."},
+      {san:'f4', c:"Le Gambit Roi : Blanc sacrifie un pion pour ouvrir la colonne f et attaquer rapidement."},
+      {san:'exf4', c:"Noir accepte le gambit."},
+      {san:'Nf3', c:"Empêche ...Qh4+ et prépare de récupérer le pion tout en développant."}
+    ] },
+  vienne:{ name:'Partie Vienne', forColor:'w',
+    intro:"Développement flexible qui garde l'option d'un Gambit Roi différé (f4) ou d'un jeu plus positionnel.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'e5', c:"Symétrie."},
+      {san:'Nc3', c:"La Vienne : développement flexible avant de décider du plan (f4 ou jeu calme)."},
+      {san:'Nf6', c:"Développement, attaque e4."},
+      {san:'f4', c:"Blanc opte pour une version différée du Gambit Roi."},
+      {san:'d5', c:"Noir contre-attaque immédiatement le centre, la réponse la plus testée."}
+    ] },
+  quatre_cavaliers:{ name:'Partie des Quatre Cavaliers', forColor:'w',
+    intro:"Développement symétrique et solide des deux côtés — une ouverture calme et saine, idéale pour apprendre les bases du jeu ouvert.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'e5', c:"Symétrie."},
+      {san:'Nf3', c:"Attaque e5."},
+      {san:'Nc6', c:"Défend e5."},
+      {san:'Nc3', c:"Les Quatre Cavaliers : développement naturel plutôt qu'un coup de fou immédiat."},
+      {san:'Nf6', c:"Symétrie complète — position équilibrée et instructive."}
+    ] },
+  francaise:{ name:'Défense Française', forColor:'b',
+    intro:"Noir accepte un fou c8 temporairement passif contre une structure de pions très solide.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'e6', c:"La Française : Noir prépare ...d5 en soutenant d'abord la case."},
+      {san:'d4', c:"Blanc prend un grand centre."},
+      {san:'d5', c:"Noir frappe immédiatement le centre."},
+      {san:'Nc3', c:"Blanc maintient la tension centrale."},
+      {san:'Nf6', c:"Attaque e4, forçant Blanc à décider (avancer, échanger ou défendre)."}
+    ] },
+  carokann:{ name:'Défense Caro-Kann', forColor:'b',
+    intro:"Comme la Française mais Noir garde son fou c8 actif, car il n'a pas encore joué ...e6.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'c6', c:"Le Caro-Kann : prépare ...d5 sans enfermer le fou c8."},
+      {san:'d4', c:"Blanc prend le centre."},
+      {san:'d5', c:"Noir frappe le centre."},
+      {san:'Nc3', c:"Développement, maintient la tension."},
+      {san:'dxe4', c:"Noir échange au bon moment."},
+      {san:'Nxe4', c:"Position saine et solide pour Noir, souvent recherchée par les joueurs positionnels."}
+    ] },
+  scandinave:{ name:'Défense Scandinave', forColor:'b',
+    intro:"Noir défie immédiatement le pion e4, au prix de sortir sa dame tôt.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'d5', c:"La Scandinave : Noir défie immédiatement le pion e4."},
+      {san:'exd5', c:"Blanc accepte l'échange."},
+      {san:'Qxd5', c:"Noir récupère le pion mais sort sa dame tôt."},
+      {san:'Nc3', c:"Blanc gagne un temps en attaquant la dame."},
+      {san:'Qa5', c:"Retraite active la plus jouée : garde la dame en sécurité tout en surveillant e5 et c3."}
+    ] },
+  pirc:{ name:'Défense Pirc / Moderne', forColor:'b',
+    intro:"Noir laisse Blanc occuper le centre pour le contre-attaquer ensuite avec les pièces.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'d6', c:"Le Pirc : Noir retarde l'occupation du centre, prépare ...Nf6 et ...g6."},
+      {san:'d4', c:"Blanc prend un grand centre."},
+      {san:'Nf6', c:"Développement, attaque e4."},
+      {san:'Nc3', c:"Défend e4 et développe."},
+      {san:'g6', c:"Fianchetto typique, prépare Bg7 pour contrôler la grande diagonale."}
+    ] },
+  alekhine:{ name:'Défense Alekhine', forColor:'b',
+    intro:"Provocation directe : Noir laisse Blanc avancer ses pions pour les attaquer ensuite et les transformer en cibles.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'Nf6', c:"La défense Alekhine : provoque l'avance des pions blancs."},
+      {san:'e5', c:"Blanc chasse le cavalier en gagnant de l'espace."},
+      {san:'Nd5', c:"Le cavalier recule en gardant son activité."},
+      {san:'d4', c:"Blanc construit un grand centre de pions."},
+      {san:'d6', c:"Noir commence déjà à le remettre en question."}
+    ] },
+  londres:{ name:'Système Londres', forColor:'w',
+    intro:"Un système facile à apprendre, jouable contre presque toutes les réponses noires : idéal pour les débutants qui veulent un plan clé en main.",
+    moves:[
+      {san:'d4', c:"Contrôle le centre."},
+      {san:'d5', c:"Réponse symétrique."},
+      {san:'Nf3', c:"Développement."},
+      {san:'Nf6', c:"Symétrie."},
+      {san:'Bf4', c:"Le Système Londres : le fou sort avant e3, système facile à mémoriser."},
+      {san:'e6', c:"Noir adopte une structure solide."},
+      {san:'e3', c:"Complète la structure en pyramide, prépare Bd3 et Nbd2."}
+    ] },
+  colle:{ name:'Système Colle', forColor:'w',
+    intro:"Une structure extrêmement solide, préparant souvent une attaque avec e3-e4 plus tard.",
+    moves:[
+      {san:'d4', c:"Contrôle le centre."},
+      {san:'d5', c:"Réponse symétrique."},
+      {san:'Nf3', c:"Développement."},
+      {san:'Nf6', c:"Symétrie."},
+      {san:'e3', c:"Le Système Colle : structure très solide, prépare Bd3."},
+      {san:'e6', c:"Noir adopte une structure prudente et symétrique."},
+      {san:'c3', c:"Soutient le centre avant de développer les pièces mineures et préparer un futur e4."}
+    ] },
+  indienne_roi:{ name:'Défense Est-Indienne (Indienne du Roi)', forColor:'b',
+    intro:"Noir laisse Blanc prendre un grand centre pour le contre-attaquer ensuite avec ...e5 ou ...c5 — l'une des défenses les plus combatives contre 1.d4.",
+    moves:[
+      {san:'d4', c:"Contrôle le centre."},
+      {san:'Nf6', c:"Réponse flexible, retarde ...d5."},
+      {san:'c4', c:"Blanc étend son emprise sur le centre."},
+      {san:'g6', c:"Noir prépare le fianchetto caractéristique."},
+      {san:'Nc3', c:"Développement."},
+      {san:'Bg7', c:"Le fou contrôle la grande diagonale, pièce maîtresse du plan noir."},
+      {san:'e4', c:"Blanc prend un centre de pions maximal."},
+      {san:'d6', c:"Noir prépare ...O-O puis ...e5 pour frapper ce centre."}
+    ] },
+  nimzo_indienne:{ name:'Défense Nimzo-Indienne', forColor:'b',
+    intro:"Le fou épingle le cavalier c3 et empêche Blanc de jouer e4 facilement : une des défenses les plus respectées contre 1.d4.",
+    moves:[
+      {san:'d4', c:"Contrôle le centre."},
+      {san:'Nf6', c:"Réponse flexible."},
+      {san:'c4', c:"Blanc étend son emprise."},
+      {san:'e6', c:"Prépare ...Bb4, empêche un grand centre blanc immédiat."},
+      {san:'Nc3', c:"Développement, cible potentielle de l'épingle noire."},
+      {san:'Bb4', c:"La Nimzo-Indienne : le fou épingle le cavalier et complique le développement blanc."}
+    ] },
+  grunfeld:{ name:'Défense Grünfeld', forColor:'b',
+    intro:"Dans l'esprit hypermoderne : Noir laisse Blanc prendre un centre de pions pour le frapper immédiatement avec les pièces.",
+    moves:[
+      {san:'d4', c:"Contrôle le centre."},
+      {san:'Nf6', c:"Réponse flexible."},
+      {san:'c4', c:"Blanc étend son emprise."},
+      {san:'g6', c:"Prépare le fianchetto."},
+      {san:'Nc3', c:"Développement."},
+      {san:'d5', c:"La Grünfeld : Noir frappe immédiatement le centre au lieu de jouer ...Bg7 d'abord."}
+    ] },
+  anglaise:{ name:'Ouverture Anglaise', forColor:'w',
+    intro:"Blanc contrôle d5 depuis le flanc : une ouverture flexible qui peut transposer vers de nombreuses autres structures.",
+    moves:[
+      {san:'c4', c:"L'Anglaise : contrôle d5 depuis le flanc sans occuper le centre tout de suite."},
+      {san:'e5', c:"Réponse symétrique la plus jouée (Anglaise inversée)."},
+      {san:'Nc3', c:"Développement naturel."},
+      {san:'Nf6', c:"Symétrie, développement."}
+    ] },
+  reti:{ name:'Ouverture Réti', forColor:'w',
+    intro:"Ouverture hypermoderne et flexible : Blanc garde toutes les options de structure de pions ouvertes le plus longtemps possible.",
+    moves:[
+      {san:'Nf3', c:"Le Réti : développement flexible avant tout engagement de pions."},
+      {san:'d5', c:"Noir occupe le centre classiquement."},
+      {san:'c4', c:"Attaque immédiatement d5 depuis le flanc, esprit hypermoderne."},
+      {san:'e6', c:"Noir défend solidement ; la partie peut transposer vers un Gambit Dame Refusé."}
+    ] },
+  mat_berger:{ name:'Le Mat du Berger (piège à connaître)', forColor:null,
+    intro:"Un piège classique que tout débutant doit connaître — pour le réussir contre un adversaire imprudent, et surtout pour l'éviter en jouant ...Nf6 tôt pour défendre f7.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'e5', c:"Symétrie."},
+      {san:'Bc4', c:"Le fou vise déjà la case f7, la plus fragile du camp noir."},
+      {san:'Nc6', c:"Développement naturel, mais Noir ignore encore le danger."},
+      {san:'Qh5', c:"La dame rejoint la diagonale et menace Qxf7#, tout en attaquant e5."},
+      {san:'Nf6??', c:"Erreur classique : ce coup défend e5 mais ignore complètement la menace de mat sur f7 !"},
+      {san:'Qxf7#', c:"Mat du berger : la dame, protégée par le fou, mate directement. Pour l'éviter, Noir devait jouer ...Qe7, ...g6 ou ...Nh6 dès le coup précédent."}
+    ] },
+  danse_cavaliers:{ name:'La Danse des Cavaliers (manœuvre)', forColor:null,
+    intro:"Le cavalier est la seule pièce qui doit parfois reculer pour mieux avancer. Voici la manœuvre classique Nb1-d2-f1-g3, fréquente dans l'Italienne et l'Espagnole fermées.",
+    moves:[
+      {san:'e4', c:"Ouverture centrale."},
+      {san:'e5', c:"Symétrie."},
+      {san:'Nf3', c:"Attaque e5."},
+      {san:'Nc6', c:"Défend e5."},
+      {san:'Bc4', c:"Vise f7."},
+      {san:'Bc5', c:"Développement symétrique (Giuoco Piano)."},
+      {san:'c3', c:"Prépare d4, structure typique du jeu tranquille (Giuoco Pianissimo)."},
+      {san:'Nf6', c:"Développement, attaque e4."},
+      {san:'d3', c:"Coup calme, soutient e4 sans ouvrir le centre."},
+      {san:'d6', c:"Symétrie, Noir consolide aussi son centre."},
+      {san:'Nbd2', c:"Premier temps de la manœuvre : le cavalier b1 rejoint la case flexible d2 (a3 et c3 sont indisponibles ou moins bonnes)."},
+      {san:'O-O', c:"Noir roque."},
+      {san:'O-O', c:"Blanc roque à son tour."},
+      {san:'Re8', c:"Noir centralise sa tour, coup utile et flexible."},
+      {san:'Nf1', c:"Deuxième temps : le cavalier continue sa route vers l'aile roi."},
+      {san:'h6', c:"Noir prend une case de retraite pour son fou, évite une future épingle Bg5."},
+      {san:'Ng3', c:"Troisième et dernier temps : le cavalier termine son voyage de b1 à g3 en trois coups. Il soutient maintenant une poussée f4 ou renforce la défense du roi — la fameuse 'danse des cavaliers'."}
+    ] }
 };
+
+const CATEGORIES = [
+  {key:'favorites', title:'Tes ouvertures — Sicilienne & Gambit Dame', lines:['najdorf','dragon','sveshnikov','qgd','qga','slav']},
+  {key:'ouvertes', title:'Ouvertures ouvertes — après 1.e4 e5', lines:['italienne','espagnole','ecossaise','gambit_roi','vienne','quatre_cavaliers']},
+  {key:'semiouvertes', title:'Défenses semi-ouvertes — face à 1.e4', lines:['francaise','carokann','scandinave','pirc','alekhine']},
+  {key:'fermees', title:'Ouvertures fermées — après 1.d4', lines:['londres','colle','indienne_roi','nimzo_indienne','grunfeld']},
+  {key:'flanc', title:'Ouvertures de flanc', lines:['anglaise','reti']},
+  {key:'techniques', title:'Pièges & techniques classiques', lines:['mat_berger','danse_cavaliers']}
+];
 
 let trainBoard = null;
 let trainGame = null;
 let currentLine = null;
 let trainPly = 0;
+let selectedSquare = null;
 
 trainBoard = Chessboard('train-board', {
   position:'start', draggable:true, pieceTheme: PIECE_THEME, showNotation:false,
   onDrop: onDropTrain,
   onSnapEnd: () => trainBoard.position(trainGame.fen())
 });
+window.trainBoard = trainBoard;
 renderCoords('train-ranks', 'train-files', 'white');
 
-document.querySelectorAll('.line-btn').forEach(btn=>{
-  btn.onclick = () => {
-    document.querySelectorAll('.line-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    loadLine(OPENINGS[btn.dataset.line]);
-  };
+/* Click-to-move (fiable sur mobile, en plus du glisser-déposer) */
+$('#train-board').on('click', '[data-square]', function(){
+  trainSquareClick(this.getAttribute('data-square'));
 });
+
+function clearSelection(){
+  $('#train-board [data-square]').removeClass('selected-square');
+  $('#train-board .move-dot').remove();
+  selectedSquare = null;
+}
+function showLegalDots(square){
+  const dests = trainGame.moves({square:square, verbose:true}).map(m=>m.to);
+  dests.forEach(sq => $(`#train-board [data-square="${sq}"]`).append('<div class="move-dot"></div>'));
+}
+function trainSquareClick(square){
+  if(!currentLine) return;
+  const expectedColor = (trainPly % 2 === 0) ? 'w' : 'b';
+  if(expectedColor !== currentLine.forColor) return;
+  if(selectedSquare === square){ clearSelection(); return; }
+  if(selectedSquare === null){
+    const piece = trainGame.get(square);
+    if(piece && piece.color === expectedColor){
+      selectedSquare = square;
+      $(`#train-board [data-square="${square}"]`).addClass('selected-square');
+      showLegalDots(square);
+    }
+    return;
+  }
+  const from = selectedSquare;
+  clearSelection();
+  attemptTrainMove(from, square);
+}
+
+function renderOpeningGroups(){
+  const container = document.getElementById('opening-groups');
+  container.innerHTML = CATEGORIES.map(cat => `
+    <details class="opening-category" ${cat.key==='favorites' ? 'open' : ''}>
+      <summary>${escapeHtml(cat.title)}</summary>
+      <div class="opening-buttons">
+        ${cat.lines.map(key => {
+          const o = OPENINGS[key];
+          return `<button class="line-btn" data-line="${key}"><span>${escapeHtml(o.name)}</span><span class="n-moves">${o.moves.length} demi-coups</span></button>`;
+        }).join('')}
+      </div>
+    </details>
+  `).join('');
+  container.querySelectorAll('.line-btn').forEach(btn=>{
+    btn.onclick = () => {
+      container.querySelectorAll('.line-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      loadLine(OPENINGS[btn.dataset.line]);
+    };
+  });
+}
+renderOpeningGroups();
+
 document.getElementById('train-reset').onclick = () => { if(currentLine) loadLine(currentLine); };
 document.getElementById('train-hint').onclick = () => {
   if(!currentLine) return;
@@ -1067,6 +1350,7 @@ function loadLine(line){
   currentLine = line;
   trainGame = new Chess();
   trainPly = 0;
+  clearSelection();
   trainBoard.orientation(line.forColor==='b' ? 'black' : 'white');
   trainBoard.start();
   renderCoords('train-ranks', 'train-files', line.forColor==='b' ? 'black' : 'white');
@@ -1075,7 +1359,11 @@ function loadLine(line){
   document.getElementById('line-intro').textContent = line.intro;
   renderDots();
   renderTrainMoveList();
-  setFeedback("Un instant, l'adversaire joue si nécessaire…", 'info');
+  const startMsg = line.forColor === null
+    ? "Démonstration : regarde la séquence se jouer automatiquement."
+    : "C'est parti ! Les coups de l'adversaire sont joués automatiquement.";
+  setFeedback(startMsg, 'info');
+  fitBoards();
   continueTrainLine();
 }
 
@@ -1083,55 +1371,67 @@ function continueTrainLine(){
   if(!currentLine) return;
   renderDots();
   if(trainPly >= currentLine.moves.length){
-    setFeedback('Ligne terminée — bravo, tu connais cette variante ! Recommence pour la mémoriser, ou choisis-en une autre.', 'done');
+    setFeedback('Ligne terminée — bravo ! Recommence pour la mémoriser, ou choisis-en une autre.', 'done');
     return;
   }
   const nextColor = (trainPly % 2 === 0) ? 'w' : 'b';
   const next = currentLine.moves[trainPly];
   if(nextColor !== currentLine.forColor){
     setTimeout(()=>{
-      const mv = trainGame.move(next.san);
+      const mv = trainGame.move(next.san.replace(/[!?]+$/, ''));
       trainBoard.position(trainGame.fen());
       if(mv) highlightMove('#train-board', mv.from, mv.to);
-      setFeedback(`Adversaire : ${next.san} — ${next.c}`, 'info');
+      const who = currentLine.forColor === null ? (nextColor === 'w' ? 'Blancs' : 'Noirs') : 'Adversaire';
+      setFeedback(`${who} : ${next.san} — ${next.c}`, 'info');
       trainPly++;
       renderTrainMoveList();
       continueTrainLine();
-    }, 550);
+    }, 700);
   } else {
-    setFeedback(`À toi de jouer (${currentLine.name}). Trouve le coup théorique.`, 'prompt');
+    setFeedback(`À toi de jouer. Objectif : "${currentLine.name}". Touche ta pièce puis la case d'arrivée (ou glisse-la).`, 'prompt');
   }
 }
 
-function onDropTrain(source, target){
-  if(!currentLine) return 'snapback';
+function attemptTrainMove(source, target){
+  if(!currentLine) return false;
   const expected = currentLine.moves[trainPly];
-  if(!expected) return 'snapback';
+  if(!expected) return false;
   const expectedColor = (trainPly % 2 === 0) ? 'w' : 'b';
-  if(expectedColor !== currentLine.forColor) return 'snapback';
+  if(expectedColor !== currentLine.forColor) return false;
 
   const moveObj = trainGame.move({from:source, to:target, promotion:'q'});
-  if(moveObj === null) return 'snapback';
+  if(moveObj === null) return false;
 
   if(moveObj.san !== expected.san){
     trainGame.undo();
     flashSquares('#train-board', [target], 'flash-bad', 450);
-    setFeedback(`Pas ce coup-ci. Réessaie — pense au plan de la ligne "${currentLine.name}".`, 'bad');
-    return 'snapback';
+    setFeedback(`Pas ce coup-ci. Indice : le coup attendu déplace un ${pieceNameFromSan(expected.san)}. Réessaie, ou utilise le bouton Indice.`, 'bad');
+    return false;
   }
 
   highlightMove('#train-board', moveObj.from, moveObj.to);
   flashSquares('#train-board', [moveObj.to], 'flash-good', 450);
-  setFeedback(`Exact : ${expected.san} — ${expected.c}`, 'good');
+  setFeedback(`Bien joué : ${expected.san} — ${expected.c}`, 'good');
   trainPly++;
   renderTrainMoveList();
-  setTimeout(()=>{ trainBoard.position(trainGame.fen()); continueTrainLine(); }, 400);
+  trainBoard.position(trainGame.fen());
+  setTimeout(()=>{ continueTrainLine(); }, 500);
+  return true;
+}
+
+function onDropTrain(source, target){
+  const ok = attemptTrainMove(source, target);
+  return ok ? undefined : 'snapback';
 }
 
 function setFeedback(text, kind){
   const el = document.getElementById('train-feedback');
-  el.textContent = text;
+  el.textContent = '';
+  const inner = document.createElement('span');
+  inner.textContent = text;
+  el.appendChild(inner);
   el.className = kind || '';
+  speak(text);
 }
 
 /* ============ THEORY BY ELO ============ */
@@ -1140,32 +1440,32 @@ const THEORY = {
     intro: "À ce niveau, la partie se joue à 90% sur les erreurs de développement et les pièces laissées en prise. Pas besoin de mémoriser de longues lignes : applique des principes simples et solides, encore et encore.",
     cards: [
       {title:"Les principes des 10 premiers coups", body:"Occupe le centre avec un pion (e4 ou d4), développe tes cavaliers avant tes fous, roque tôt pour mettre ton roi en sécurité, ne bouge pas deux fois la même pièce sans raison, et ne sors pas ta dame trop tôt — elle serait chassée en te faisant perdre du temps."},
-      {title:"Face à 1.e4 (tu joues les Noirs)", body:"La Sicilienne (1...c5) est un excellent choix : elle déséquilibre la partie et donne de bonnes chances de victoire même contre un joueur plus fort, car elle évite les positions symétriques ennuyeuses. Ne mémorise pas de lignes profondes : joue simplement ...Nc6, ...d6, ...Nf6 et développe normalement."},
-      {title:"Face à 1.d4 (tu joues les Blancs)", body:"1.d4 suivi de 2.c4 (le Gambit Dame) est une excellente arme : tu ne perds jamais réellement le pion c4, et la partie reste stratégiquement claire. Développe tes pièces mineures, roque, et vise à contrôler le centre."},
-      {title:"L'idée de la Sicilienne en une phrase", body:"Au lieu d'imiter Blanc au centre, Noir contre-attaque sur l'aile dame pendant que Blanc attaque souvent à l'aile roi. Retiens juste : ...d6, ...Nc6, ...Nf6, roquer, puis chercher ...b5 ou ...d5 selon la position."},
-      {title:"L'idée du Gambit Dame en une phrase", body:"Blanc propose un pion (c4), mais Noir ne peut pas le garder facilement. Que Noir le prenne (Accepté) ou le refuse (Refusé), retiens : développe cavaliers puis fous, joue e3, et roque."},
-      {title:"Pièges fréquents à ce niveau", body:"Méfie-toi du mat du berger (Qh5/Qf3 + Bc4 visant f7) — développe ton cavalier f6 tôt pour t'en protéger. Avant de jouer un coup, vérifie systématiquement si une de tes pièces est attaquée."}
+      {title:"Face à 1.e4 (tu joues les Noirs)", body:"La Sicilienne (1...c5) est un excellent choix : elle déséquilibre la partie et donne de bonnes chances de victoire même contre un joueur plus fort. Ne mémorise pas de lignes profondes : joue simplement ...Nc6, ...d6, ...Nf6 et développe normalement."},
+      {title:"Face à 1.d4 (tu joues les Blancs)", body:"1.d4 suivi de 2.c4 (le Gambit Dame) est une excellente arme : tu ne perds jamais réellement le pion c4, et la partie reste stratégiquement claire. Développe tes pièces mineures, roque, et vise le centre."},
+      {title:"Démonstration : le Mat du Berger", body:"Un piège que tout débutant croise un jour : Qh5 puis Qxf7# si l'adversaire ne défend pas f7 à temps. Regarde la démonstration interactive plus bas pour l'apprendre à l'attaque comme à la défense."},
+      {title:"Démonstration : la manœuvre de cavalier", body:"Le cavalier a souvent besoin de plusieurs coups pour rejoindre une bonne case. La 'danse des cavaliers' (Nb1-d2-f1-g3) est un classique à observer plus bas."},
+      {title:"Pièges fréquents à ce niveau", body:"Avant de jouer un coup, vérifie systématiquement si une de tes pièces est attaquée, et si ton adversaire menace un mat rapide. C'est la cause n°1 des parties perdues à ce niveau."}
     ]
   },
   intermediate: {
     intro: "Tu connais les bases ; il est temps de comprendre pourquoi certains coups sont joués, pas seulement lesquels. On commence à parler de structures de pions et de plans à moyen terme.",
     cards: [
-      {title:"Structures de pions à connaître", body:"Une structure de pions détermine le plan à suivre : pions doublés, isolés (pion isolé de dame), majorité de pions à l'aile dame (typique de la Sicilienne après ...cxd4), chaîne de pions fermée (typique du Gambit Dame Refusé). Apprendre à lire la structure indique où jouer, même sans connaître le coup exact."},
-      {title:"Sicilienne — choisir sa variante", body:"Najdorf (...d6 puis ...a6) : la plus flexible, permet ...e5 ou ...e6 selon l'humeur, mais demande un peu de théorie contre l'Attaque Anglaise (Be3/f3/Qd2). Dragon (...g6) : fou puissant en g7, parties tactiques souvent décidées avant le 20e coup. Sveshnikov (...Nc6 puis ...e5) : très solide statistiquement, accepte une case faible en d5 contre de l'espace et du temps."},
-      {title:"Gambit Dame — refusé, accepté, slave", body:"Refusé (2...e6) : Noir reste solide mais son fou c8 reste passif — Blanc joue souvent Bg5 pour épingler le cavalier f6. Accepté (2...dxc4) : Blanc récupère toujours le pion via Nf3/e3/Bxc4, en échange d'un temps de développement. Slave (2...c6) : Noir garde son fou c8 actif avant ...e6, jugée plus solide que le Refusé classique."},
-      {title:"Plans typiques à retenir", body:"Dans les Siciliennes ouvertes, Blanc vise souvent une attaque à l'aile roi (g4-h4 dans le Dragon) pendant que Noir contre-attaque à l'aile dame (...b5-b4). Dans le Gambit Dame Refusé, Blanc peut lancer une 'minorité d'attaque' (b4-b5) pour créer une faiblesse dans le camp noir malgré son infériorité de pions à l'aile dame."},
-      {title:"Erreur typique à ce niveau", body:"Jouer les coups d'ouverture par cœur sans comprendre leur but devient dangereux dès que l'adversaire dévie de la ligne connue. Apprends l'idée derrière chaque coup, pas seulement la séquence — c'est justement l'objectif du mode Entraînement de cette appli."},
-      {title:"Utiliser l'analyse à bon escient", body:"Après une partie perdue en ouverture, regarde à quel coup l'évaluation a basculé (onglet Analyse). Si l'erreur est récurrente sur les mêmes premiers coups, c'est le signe qu'il faut retravailler cette ligne précise en mode Entraînement."}
+      {title:"Structures de pions à connaître", body:"Une structure de pions détermine le plan à suivre : pions doublés, isolés, majorité de pions à l'aile dame (typique de la Sicilienne après ...cxd4), chaîne de pions fermée (typique du Gambit Dame Refusé). Apprendre à lire la structure indique où jouer, même sans connaître le coup exact."},
+      {title:"Sicilienne — choisir sa variante", body:"Najdorf (...d6 puis ...a6) : la plus flexible. Dragon (...g6) : fou puissant en g7, parties tactiques. Sveshnikov (...Nc6 puis ...e5) : très solide statistiquement, accepte une case faible en d5 contre de l'espace."},
+      {title:"Gambit Dame — refusé, accepté, slave", body:"Refusé (2...e6) : solide mais fou c8 passif. Accepté (2...dxc4) : Blanc récupère toujours le pion avec un temps d'avance. Slave (2...c6) : garde le fou c8 actif, jugée plus solide que le Refusé classique."},
+      {title:"Élargis ton répertoire", body:"Au-delà de la Sicilienne et du Gambit Dame, familiarise-toi avec 2-3 autres systèmes : la Française ou le Caro-Kann comme alternative en Noir, le Système Londres comme arme simple en Blanc. La bibliothèque plus bas en propose plus de 20."},
+      {title:"Plans typiques à retenir", body:"Dans les Siciliennes ouvertes, Blanc vise souvent une attaque à l'aile roi pendant que Noir contre-attaque à l'aile dame. Dans le Gambit Dame Refusé, Blanc peut lancer une 'minorité d'attaque' (b4-b5) pour créer une faiblesse."},
+      {title:"Utiliser l'analyse à bon escient", body:"Après une partie perdue en ouverture, regarde à quel coup l'évaluation a basculé (onglet Analyse). Si l'erreur est récurrente, retravaille cette ligne précise en mode Entraînement."}
     ]
   },
   advanced: {
-    intro: "À ce niveau, la préparation d'ouverture devient un vrai outil compétitif : ordres de coups, transpositions et pièges théoriques bien identifiés font la différence face à des adversaires de force comparable.",
+    intro: "À ce niveau, la préparation d'ouverture devient un vrai outil compétitif : ordres de coups, transpositions et pièges théoriques bien identifiés font la différence.",
     cards: [
-      {title:"Sicilienne — ordres de coups et transpositions", body:"L'ordre 2...Nc6 avant ...d6 évite certaines lignes anti-Siciliennes (comme la Rossolimo 3.Bb5), mais autorise 3.Bb5 directement. À l'inverse, 2...d6 permet de transposer vers le Najdorf, le Dragon ou le Scheveningen selon la suite, en gardant l'adversaire dans l'incertitude le plus longtemps possible."},
-      {title:"Gambit Dame — nuances de haut niveau", body:"Dans la Slave, jouer ...dxc4 avant ...Bf5 évite certaines lignes tranchantes de la Slave Contre-Attaquée. Dans le Refusé, la Variante d'Échange (3.cxd5 exd5) donne à Blanc un plan de minorité d'attaque clair, tandis que la Variante Cambridge Springs (avec ...Qa5) offre à Noir une contre-attaque active."},
-      {title:"Anti-Siciliennes à préparer (côté Noir)", body:"Beaucoup d'adversaires évitent la Sicilienne ouverte avec 2.c3 (Alapin), 2.Nc3 (Fermée) ou 3.Bb5(+) (Rossolimo/Moscou). Prépare une réponse à chacune : contre l'Alapin, ...Nf6 puis ...Nd5 reste solide ; contre la Fermée, ...Nc6 avec ...g6 fonctionne bien ; contre la Rossolimo, ...g6 ou ...Nge7 selon les goûts."},
-      {title:"Comprendre au lieu de mémoriser", body:"La vraie force à ce niveau vient de comprendre pourquoi une ligne fonctionne (structure, pièces actives, faiblesses) plutôt que de réciter des coups. Utilise le moteur pour vérifier tes idées, mais formule toujours l'explication humaine derrière chaque coup avant de le rejouer en partie."},
-      {title:"Préparation ciblée", body:"Avant une partie importante, regarde les dernières parties de ton adversaire s'il en a un profil connu, identifie ses ouvertures favorites, et prépare une réponse précise dans la ligne que tu maîtrises déjà via le mode Entraînement plutôt que d'en apprendre une nouvelle à la dernière minute."}
+      {title:"Sicilienne — ordres de coups et transpositions", body:"L'ordre 2...Nc6 avant ...d6 évite certaines lignes anti-Siciliennes (Rossolimo 3.Bb5), mais autorise 3.Bb5 directement. 2...d6 permet de transposer vers le Najdorf, le Dragon ou le Scheveningen en gardant l'adversaire dans l'incertitude."},
+      {title:"Gambit Dame — nuances de haut niveau", body:"Dans la Slave, jouer ...dxc4 avant ...Bf5 évite certaines lignes tranchantes. Dans le Refusé, la Variante d'Échange (3.cxd5 exd5) donne un plan de minorité d'attaque clair ; la Cambridge Springs (...Qa5) offre à Noir une contre-attaque active."},
+      {title:"Anti-Siciliennes à préparer (côté Noir)", body:"2.c3 (Alapin), 2.Nc3 (Fermée) ou 3.Bb5(+) (Rossolimo/Moscou) sont fréquents. Prépare une réponse à chacune plutôt que de les découvrir en partie."},
+      {title:"Diversifie ton répertoire", body:"À ce niveau, connaître aussi la Nimzo-Indienne, la Grünfeld ou l'Anglaise (présentes dans la bibliothèque plus bas) te permet de t'adapter à n'importe quel adversaire et de choisir la structure qui te convient."},
+      {title:"Comprendre au lieu de mémoriser", body:"La vraie force vient de comprendre pourquoi une ligne fonctionne plutôt que de réciter des coups. Utilise le moteur pour vérifier tes idées, mais formule toujours l'explication humaine derrière chaque coup."}
     ]
   }
 };
@@ -1183,16 +1483,35 @@ document.querySelectorAll('.level-btn').forEach(btn=>{
 });
 renderTheory('beginner');
 
-/* Recalculate board sizing on viewport changes (mobile rotation, resize) */
-let resizeTimer = null;
-window.addEventListener('resize', () => {
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(() => {
-    if(analysisBoard) analysisBoard.resize();
-    if(trainBoard) trainBoard.resize();
-  }, 120);
-});
+function renderLibrary(){
+  const el = document.getElementById('theory-library');
+  el.innerHTML = CATEGORIES.map(cat => `
+    <div class="lib-cat">
+      <h4>${escapeHtml(cat.title)}</h4>
+      <div class="lib-chips">
+        ${cat.lines.map(key => `<button class="lib-chip" data-line="${key}">${escapeHtml(OPENINGS[key].name)}</button>`).join('')}
+      </div>
+    </div>
+  `).join('');
+  el.querySelectorAll('.lib-chip').forEach(btn=>{
+    btn.onclick = () => {
+      const key = btn.dataset.line;
+      switchTab('train');
+      setTimeout(()=>{
+        document.querySelectorAll('#opening-groups .line-btn').forEach(b=>b.classList.toggle('active', b.dataset.line===key));
+        const target = document.querySelector(`#opening-groups .line-btn[data-line="${key}"]`);
+        const parentDetails = target ? target.closest('details') : null;
+        if(parentDetails) parentDetails.open = true;
+        loadLine(OPENINGS[key]);
+        window.scrollTo({top:0, behavior:'smooth'});
+      }, 60);
+    };
+  });
+}
+renderLibrary();
 
+/* Sizing initial */
+fitBoards();
 </script>
 </body>
 </html>
