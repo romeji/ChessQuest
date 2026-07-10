@@ -160,11 +160,20 @@
   .highlight-to{box-shadow:inset 0 0 0 9999px rgba(201,162,39,0.48) !important;}
   .flash-good{box-shadow:inset 0 0 0 9999px rgba(92,154,107,0.6) !important;}
   .flash-bad{box-shadow:inset 0 0 0 9999px rgba(193,81,80,0.6) !important;}
-  .hint-square{box-shadow:inset 0 0 0 9999px rgba(76,140,163,0.5) !important;}
+  .hint-square{box-shadow:inset 0 0 0 9999px rgba(92,154,107,0.68) !important;}
   .selected-square{box-shadow:inset 0 0 0 9999px rgba(76,140,163,0.38) !important;}
   .move-dot{
     position:absolute;top:50%;left:50%;width:26%;height:26%;border-radius:50%;
-    background:rgba(201,162,39,0.65);transform:translate(-50%,-50%);pointer-events:none;
+    background:rgba(92,154,107,0.75);transform:translate(-50%,-50%);pointer-events:none;
+  }
+  @keyframes suggestPulse{ 0%,100%{opacity:1;} 50%{opacity:0.45;} }
+  .suggest-from{
+    box-shadow:inset 0 0 0 9999px rgba(92,154,107,0.30) !important;
+    animation:suggestPulse 1.3s ease-in-out infinite;
+  }
+  .suggest-to{
+    box-shadow:inset 0 0 0 9999px rgba(92,154,107,0.5) !important;
+    animation:suggestPulse 1.3s ease-in-out infinite;
   }
 
   .nav-controls{display:flex;gap:6px;}
@@ -230,16 +239,24 @@
 
   .train-row{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;margin-top:18px;}
   .train-info{flex:1 1 320px;min-width:280px;display:flex;flex-direction:column;gap:12px;}
-  .train-info-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .train-info-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
   .train-info-header h3{font-family:'Lora',serif;margin:0;color:var(--ivory);font-size:1.08rem;}
+  .header-toggles{display:flex;gap:6px;flex-wrap:wrap;}
   .tts-btn{
     flex:0 0 auto;background:var(--bg-panel-2);border:1px solid var(--line);color:var(--text-dim);
-    border-radius:20px;padding:6px 12px;font-size:0.78rem;cursor:pointer;white-space:nowrap;
+    border-radius:20px;padding:6px 12px;font-size:0.76rem;cursor:pointer;white-space:nowrap;
   }
   .tts-btn.active{color:var(--good);border-color:var(--good);}
   .objective-box{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);padding:10px 13px;}
   .objective-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--brass);font-weight:700;}
   .objective-box .intro{font-size:0.85rem;color:var(--text-dim);line-height:1.5;margin-top:4px;}
+
+  .about-box{background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  .about-box summary{cursor:pointer;padding:10px 13px;font-size:0.85rem;color:var(--brass);font-weight:600;list-style:none;}
+  .about-box summary::-webkit-details-marker{display:none;}
+  .about-box summary::before{content:'▸ ';}
+  .about-box[open] summary::before{content:'▾ ';}
+  .about-text{padding:0 13px 12px;font-size:0.84rem;color:var(--text);line-height:1.6;}
 
   .progress-dots{display:flex;gap:5px;flex-wrap:wrap;}
   .progress-dots .dot{width:8px;height:8px;border-radius:50%;background:var(--line);transition:all .15s ease;}
@@ -375,16 +392,23 @@
       <div class="train-info">
         <div class="train-info-header">
           <h3 id="line-name">Choisis une ouverture ci-dessus</h3>
-          <button class="tts-btn active" id="tts-toggle">🔊 Voix</button>
+          <div class="header-toggles">
+            <button class="tts-btn active" id="autohint-toggle" title="Cases vertes automatiques">🟩 Indices</button>
+            <button class="tts-btn active" id="tts-toggle">🔊 Voix</button>
+          </div>
         </div>
         <div class="objective-box">
           <span class="objective-label">🎯 Objectif de la ligne</span>
-          <div class="intro" id="line-intro">Sélectionne une ouverture : les coups de l'adversaire sont joués automatiquement, à toi de trouver les tiens. Glisse une pièce ou touche-la puis touche la case d'arrivée.</div>
+          <div class="intro" id="line-intro">Sélectionne une ouverture : les coups de l'adversaire sont joués automatiquement, à toi de trouver les tiens. Glisse une pièce (ou touche-la puis touche la case d'arrivée) — les cases vertes te montrent quoi jouer.</div>
         </div>
+        <details class="about-box" id="about-box">
+          <summary>📖 Pourquoi jouer cette ouverture ?</summary>
+          <div class="about-text" id="line-about">Sélectionne une ouverture pour découvrir son histoire et ses idées stratégiques.</div>
+        </details>
         <div id="train-feedback">Sélectionne une ouverture pour démarrer.</div>
         <ol id="train-move-list"><li class="empty">Aucun coup joué</li></ol>
         <div class="btn-row">
-          <button class="btn secondary" id="train-hint">💡 Indice</button>
+          <button class="btn secondary" id="train-hint">💡 Refaire clignoter</button>
           <button class="btn secondary" id="train-reset">↺ Recommencer</button>
         </div>
       </div>
@@ -663,7 +687,7 @@ function renderCoords(ranksElId, filesElId, orientation){
   filesEl.innerHTML = files.map(f=>`<span>${f}</span>`).join('');
 }
 function clearHighlights(containerSel){
-  $(containerSel + ' [data-square]').removeClass('highlight-from highlight-to hint-square selected-square');
+  $(containerSel + ' [data-square]').removeClass('highlight-from highlight-to hint-square selected-square suggest-from suggest-to');
   $(containerSel + ' .move-dot').remove();
 }
 function highlightMove(containerSel, from, to){
@@ -707,9 +731,12 @@ let analysisBoard = null;
 let analysisResults = [];
 let analysisIndex = -1;
 
-analysisBoard = Chessboard('board', { position:'start', draggable:false, pieceTheme: PIECE_THEME, showNotation:false });
-window.analysisBoard = analysisBoard;
-renderCoords('board-ranks', 'board-files', 'white');
+function ensureAnalysisBoard(){
+  if(analysisBoard) return;
+  analysisBoard = Chessboard('board', { position:'start', draggable:false, pieceTheme: PIECE_THEME, showNotation:false });
+  window.analysisBoard = analysisBoard;
+  renderCoords('board-ranks', 'board-files', 'white');
+}
 
 document.getElementById('analyze-btn').onclick = () => {
   const pgn = document.getElementById('pgn-input').value.trim();
@@ -872,6 +899,7 @@ async function runAnalysis(pgn){
 
 function renderAnalysis(headers){
   document.getElementById('analysis-results').classList.add('show');
+  ensureAnalysisBoard();
   const sums = {w:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}, b:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}};
   analysisResults.forEach(r => sums[r.color][r.info.cls]++);
   const white = headers.White || 'Blancs';
@@ -932,6 +960,7 @@ document.getElementById('nav-end').onclick = () => goToPly(analysisResults.lengt
 const OPENINGS = {
   najdorf:{ name:'Sicilienne — Najdorf', forColor:'b',
     intro:"La Najdorf est l'une des ouvertures les plus jouées au monde : très flexible, elle laisse à Noir plusieurs plans possibles (...e5 ou ...e6).",
+    about:"La Najdorf porte le nom du grand maître Miguel Najdorf et reste depuis 70 ans l'arme préférée de nombreux champions du monde, dont Bobby Fischer, Garry Kasparov et Magnus Carlsen. Sa force vient de sa flexibilité totale : Noir peut choisir une expansion au centre (...e5) ou un jeu plus fermé (...e6) selon le style de l'adversaire. C'est une ouverture exigeante mais qui offre à Noir de réelles chances de jouer pour le gain, contrairement à beaucoup de défenses plus passives contre 1.e4.",
     moves:[
       {san:'e4', c:"Le coup le plus populaire au 1er coup : Blanc ouvre le centre et libère fou et dame."},
       {san:'c5', c:"La Sicilienne : plutôt que de disputer le centre symétriquement, Noir contre-attaque sur l'aile dame."},
@@ -950,6 +979,7 @@ const OPENINGS = {
     ] },
   dragon:{ name:'Sicilienne — Dragon', forColor:'b',
     intro:"Le Dragon fianchette le fou en g7 sur la grande diagonale. Les parties sont souvent tranchantes, avec des roques opposés.",
+    about:"Le Dragon doit son nom à la forme du pion noir en g6-f7-e5-d6, qui rappelle les écailles d'un dragon selon le maître Fedor Bogoljubov. C'est l'une des ouvertures les plus tranchantes du jeu d'échecs : les deux rois roquent généralement du côté opposé et la partie devient une course à l'attaque. Elle demande une bonne connaissance théorique (notamment contre l'Attaque Yougoslave) mais récompense les joueurs tacticiens et courageux.",
     moves:[
       {san:'e4', c:"Ouverture centrale classique."},
       {san:'c5', c:"La Sicilienne : contre-attaque sur l'aile dame."},
@@ -968,6 +998,7 @@ const OPENINGS = {
     ] },
   sveshnikov:{ name:'Sicilienne — Sveshnikov', forColor:'b',
     intro:"Le Sveshnikov est une ligne très dynamique où Noir accepte une case faible en d5 pour gagner de l'espace et du temps.",
+    about:"Popularisée par le grand maître soviétique Evgeny Sveshnikov dans les années 1970-80, cette variante était jugée douteuse avant de devenir un pilier du répertoire de nombreux champions du monde, dont Magnus Carlsen. Noir accepte volontairement une faiblesse structurelle (la case d5) en échange d'un jeu actif et d'espace immédiat — un excellent exemple de compensation dynamique contre un désavantage statique.",
     moves:[
       {san:'e4', c:"Ouverture centrale classique."},
       {san:'c5', c:"La Sicilienne."},
@@ -988,6 +1019,7 @@ const OPENINGS = {
     ] },
   qgd:{ name:'Gambit Dame — Refusé (Orthodoxe)', forColor:'w',
     intro:"La ligne la plus classique du Gambit Dame : Noir garde fermement le pion d5 en jouant ...e6, quitte à enfermer un peu son fou c8.",
+    about:"Le Gambit Dame Refusé est l'une des ouvertures les plus jouées de l'histoire, utilisée dans d'innombrables matchs de championnat du monde depuis plus d'un siècle. Sa force réside dans sa solidité : la structure de pions de Noir est difficile à attaquer directement, ce qui pousse Blanc à chercher des plans à long terme comme la minorité d'attaque plutôt que des tactiques rapides.",
     moves:[
       {san:'d4', c:"Contrôle le centre et ouvre la diagonale du fou c1."},
       {san:'d5', c:"Noir répond symétriquement au centre."},
@@ -1003,6 +1035,7 @@ const OPENINGS = {
     ] },
   qga:{ name:'Gambit Dame — Accepté', forColor:'w',
     intro:"Noir prend le pion c4 mais ne peut pas le garder : Blanc le récupère avec un temps d'avance en développement.",
+    about:"Le Gambit Dame Accepté peut sembler risqué pour Noir (il cède le centre), mais il est en réalité parfaitement sain : Noir échange un peu d'espace contre un développement rapide et facile de ses pièces. C'est une excellente option pour les joueurs qui préfèrent des positions claires et actives plutôt que la lutte stratégique plus fermée du Refusé.",
     moves:[
       {san:'d4', c:"Contrôle le centre."},
       {san:'d5', c:"Réponse symétrique."},
@@ -1016,6 +1049,7 @@ const OPENINGS = {
     ] },
   slav:{ name:'Gambit Dame — Défense Slave (côté Blanc)', forColor:'w',
     intro:"Face à la Slave, Noir soutient d5 avec ...c6, gardant son fou c8 libre. Voici la ligne principale de l'Acceptée.",
+    about:"La Défense Slave est considérée par beaucoup de théoriciens comme la réponse la plus solide et la plus fiable contre 1.d4 au plus haut niveau. En gardant son fou c8 actif dès le début (contrairement à la Refusée classique), Noir évite l'un des principaux inconvénients stratégiques du Gambit Dame Refusé tout en gardant une structure de pions très robuste.",
     moves:[
       {san:'d4', c:"Contrôle le centre."},
       {san:'d5', c:"Réponse symétrique."},
@@ -1030,6 +1064,7 @@ const OPENINGS = {
     ] },
   italienne:{ name:'Italienne (Giuoco Piano)', forColor:'w',
     intro:"Une des plus anciennes ouvertures encore jouées au top niveau : développement rapide, pression immédiate sur f7.",
+    about:"L'Italienne est connue depuis le 16e siècle et a connu un immense regain de popularité au 21e siècle grâce à des joueurs comme Magnus Carlsen, qui l'utilisent pour éviter la théorie ultra-dense de l'Espagnole. Sa force est sa simplicité : chaque coup a un but clair (développement rapide, pression sur f7), ce qui en fait une excellente ouverture pour apprendre les principes fondamentaux du jeu ouvert.",
     moves:[
       {san:'e4', c:"Ouvre le centre et libère deux pièces."},
       {san:'e5', c:"Noir répond symétriquement."},
@@ -1043,6 +1078,7 @@ const OPENINGS = {
     ] },
   espagnole:{ name:'Espagnole (Ruy Lopez)', forColor:'w',
     intro:"Considérée comme l'ouverture la plus solide et la plus étudiée du jeu ouvert : pression durable et positions riches.",
+    about:"Jouée depuis le 16e siècle et nommée d'après le prêtre espagnol Ruy López, c'est l'ouverture la plus étudiée du jeu ouvert — le choix de la quasi-totalité des champions du monde, de Capablanca à Carlsen. Sa force vient de la pression durable qu'elle exerce sur le centre noir via l'attaque indirecte du cavalier c6, sans jamais compromettre la structure blanche.",
     moves:[
       {san:'e4', c:"Ouverture centrale classique."},
       {san:'e5', c:"Symétrie."},
@@ -1056,6 +1092,7 @@ const OPENINGS = {
     ] },
   ecossaise:{ name:'Écossaise (Scotch)', forColor:'w',
     intro:"Blanc ouvre le centre dès le 3e coup plutôt que de développer un fou : jeu ouvert et dynamique.",
+    about:"Longtemps considérée comme moins ambitieuse que l'Espagnole, l'Écossaise a été relancée au plus haut niveau par Garry Kasparov dans les années 1990 pour surprendre ses adversaires préparés contre l'Espagnole. Elle ouvre le jeu très tôt, ce qui mène à des positions concrètes et tactiques plutôt qu'à de longues manœuvres stratégiques.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'e5', c:"Symétrie."},
@@ -1067,6 +1104,7 @@ const OPENINGS = {
     ] },
   gambit_roi:{ name:'Gambit Roi', forColor:'w',
     intro:"Une ouverture romantique et agressive : Blanc sacrifie un pion pour ouvrir des lignes d'attaque rapides.",
+    about:"Le Gambit Roi fut l'ouverture romantique par excellence du 19e siècle, jouée par des légendes comme Paul Morphy et Adolf Anderssen dans des parties d'attaque spectaculaires. Moins vu au plus haut niveau aujourd'hui car objectivement risqué, il reste redoutable en parties rapides et pour les joueurs qui aiment attaquer dès les premiers coups plutôt que manœuvrer.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'e5', c:"Symétrie."},
@@ -1076,6 +1114,7 @@ const OPENINGS = {
     ] },
   vienne:{ name:'Partie Vienne', forColor:'w',
     intro:"Développement flexible qui garde l'option d'un Gambit Roi différé (f4) ou d'un jeu plus positionnel.",
+    about:"La Vienne offre à Blanc une alternative flexible à l'Espagnole ou l'Italienne : elle peut rester calme et positionnelle, ou se transformer brutalement en Gambit Roi différé si Blanc joue f4. Cette double identité en fait une arme surprise efficace, car l'adversaire ne sait pas immédiatement à quel type de partie s'attendre.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'e5', c:"Symétrie."},
@@ -1086,6 +1125,7 @@ const OPENINGS = {
     ] },
   quatre_cavaliers:{ name:'Partie des Quatre Cavaliers', forColor:'w',
     intro:"Développement symétrique et solide des deux côtés — une ouverture calme et saine, idéale pour apprendre les bases du jeu ouvert.",
+    about:"Une des ouvertures les plus anciennes et les plus saines du jeu ouvert, souvent recommandée aux débutants car elle enseigne le développement naturel des pièces sans complications tactiques précoces. Elle a connu un regain d'intérêt via la variante écossaise des Quatre Cavaliers, plus tranchante, popularisée au 21e siècle.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'e5', c:"Symétrie."},
@@ -1096,6 +1136,7 @@ const OPENINGS = {
     ] },
   francaise:{ name:'Défense Française', forColor:'b',
     intro:"Noir accepte un fou c8 temporairement passif contre une structure de pions très solide.",
+    about:"La Française a la réputation d'une ouverture 'de combattant' : Noir accepte sciemment un léger désavantage positionnel (le fou c8) contre une structure de pions extrêmement résistante et des contre-jeux clairs (...c5, ...f6). Elle a été l'arme de prédilection de champions comme Mikhail Botvinnik et reste redoutée pour la solidité qu'elle procure face à des adversaires agressifs.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'e6', c:"La Française : Noir prépare ...d5 en soutenant d'abord la case."},
@@ -1106,6 +1147,7 @@ const OPENINGS = {
     ] },
   carokann:{ name:'Défense Caro-Kann', forColor:'b',
     intro:"Comme la Française mais Noir garde son fou c8 actif, car il n'a pas encore joué ...e6.",
+    about:"Le Caro-Kann a la réputation d'être l'une des défenses les plus fiables et les moins risquées contre 1.e4, ce qui en fait un choix privilégié des joueurs positionnels comme Anatoly Karpov ou plus récemment Fabiano Caruana. Contrairement à la Française, Noir libère son fou c8 avant de fermer sa structure, évitant ainsi le principal défaut de cette dernière.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'c6', c:"Le Caro-Kann : prépare ...d5 sans enfermer le fou c8."},
@@ -1117,6 +1159,7 @@ const OPENINGS = {
     ] },
   scandinave:{ name:'Défense Scandinave', forColor:'b',
     intro:"Noir défie immédiatement le pion e4, au prix de sortir sa dame tôt.",
+    about:"Longtemps sous-estimée car elle sort la dame tôt (généralement un défaut en ouverture), la Scandinave a gagné en respectabilité grâce à des joueurs comme Magnus Carlsen qui l'ont utilisée pour surprendre des adversaires en préparant peu de théorie. Sa simplicité stratégique en fait aussi un excellent choix pour les débutants qui veulent éviter la théorie dense des Siciliennes.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'d5', c:"La Scandinave : Noir défie immédiatement le pion e4."},
@@ -1127,6 +1170,7 @@ const OPENINGS = {
     ] },
   pirc:{ name:'Défense Pirc / Moderne', forColor:'b',
     intro:"Noir laisse Blanc occuper le centre pour le contre-attaquer ensuite avec les pièces.",
+    about:"Le Pirc (et sa cousine la Moderne) incarne la philosophie hypermoderne : au lieu de disputer le centre avec les pions, Noir laisse Blanc l'occuper pour mieux l'attaquer ensuite avec les pièces. C'est une ouverture flexible et peu théorique, appréciée des joueurs qui préfèrent comprendre des idées générales plutôt que mémoriser de longues lignes forcées.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'d6', c:"Le Pirc : Noir retarde l'occupation du centre, prépare ...Nf6 et ...g6."},
@@ -1137,6 +1181,7 @@ const OPENINGS = {
     ] },
   alekhine:{ name:'Défense Alekhine', forColor:'b',
     intro:"Provocation directe : Noir laisse Blanc avancer ses pions pour les attaquer ensuite et les transformer en cibles.",
+    about:"Nommée d'après le champion du monde Alexandre Alekhine qui l'a introduite dans les années 1920, cette défense provoque délibérément Blanc à avancer ses pions centraux, dans l'idée qu'un centre trop étendu peut devenir une cible plutôt qu'un atout. Une ouverture surprenante et à double tranchant, encore jouée aujourd'hui pour sortir l'adversaire de sa préparation.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'Nf6', c:"La défense Alekhine : provoque l'avance des pions blancs."},
@@ -1147,6 +1192,7 @@ const OPENINGS = {
     ] },
   londres:{ name:'Système Londres', forColor:'w',
     intro:"Un système facile à apprendre, jouable contre presque toutes les réponses noires : idéal pour les débutants qui veulent un plan clé en main.",
+    about:"Le Système Londres doit sa popularité explosive de la dernière décennie à sa simplicité : Blanc joue presque toujours les mêmes coups (d4, Nf3, Bf4, e3) quel que soit ce que fait Noir, ce qui le rend idéal pour les joueurs occupés qui n'ont pas le temps d'étudier de la théorie approfondie. Il a été popularisé au plus haut niveau par des joueurs comme Magnus Carlsen et Wesley So.",
     moves:[
       {san:'d4', c:"Contrôle le centre."},
       {san:'d5', c:"Réponse symétrique."},
@@ -1158,6 +1204,7 @@ const OPENINGS = {
     ] },
   colle:{ name:'Système Colle', forColor:'w',
     intro:"Une structure extrêmement solide, préparant souvent une attaque avec e3-e4 plus tard.",
+    about:"Le Système Colle, nommé d'après le maître belge Edgar Colle, est une structure ultra-solide qui prépare souvent une attaque directe contre le roi noir via e3-e4 après un développement rapide. Comme le Système Londres, il demande peu de mémorisation théorique tout en offrant de réelles chances offensives si l'adversaire ne réagit pas avec précision.",
     moves:[
       {san:'d4', c:"Contrôle le centre."},
       {san:'d5', c:"Réponse symétrique."},
@@ -1169,6 +1216,7 @@ const OPENINGS = {
     ] },
   indienne_roi:{ name:'Défense Est-Indienne (Indienne du Roi)', forColor:'b',
     intro:"Noir laisse Blanc prendre un grand centre pour le contre-attaquer ensuite avec ...e5 ou ...c5 — l'une des défenses les plus combatives contre 1.d4.",
+    about:"L'Indienne du Roi est l'une des défenses les plus combatives contre 1.d4 : Noir cède volontairement le centre à Blanc pour ensuite le faire exploser avec ...e5 ou ...c5, menant souvent à des attaques opposées sur les deux ailes. Elle fut l'arme de prédilection de Garry Kasparov et Bobby Fischer, réputés pour leur style offensif.",
     moves:[
       {san:'d4', c:"Contrôle le centre."},
       {san:'Nf6', c:"Réponse flexible, retarde ...d5."},
@@ -1181,6 +1229,7 @@ const OPENINGS = {
     ] },
   nimzo_indienne:{ name:'Défense Nimzo-Indienne', forColor:'b',
     intro:"Le fou épingle le cavalier c3 et empêche Blanc de jouer e4 facilement : une des défenses les plus respectées contre 1.d4.",
+    about:"La Nimzo-Indienne, développée par le théoricien Aron Nimzowitsch au début du 20e siècle, est considérée par de nombreux experts comme la défense la plus solide contre 1.d4. En épinglant immédiatement le cavalier c3, Noir empêche Blanc de construire facilement un grand centre de pions, ce qui en fait un test rigoureux du système blanc.",
     moves:[
       {san:'d4', c:"Contrôle le centre."},
       {san:'Nf6', c:"Réponse flexible."},
@@ -1191,6 +1240,7 @@ const OPENINGS = {
     ] },
   grunfeld:{ name:'Défense Grünfeld', forColor:'b',
     intro:"Dans l'esprit hypermoderne : Noir laisse Blanc prendre un centre de pions pour le frapper immédiatement avec les pièces.",
+    about:"La Grünfeld pousse la philosophie hypermoderne encore plus loin que l'Indienne du Roi : Noir laisse Blanc construire un centre de pions immense dès les premiers coups, avant de le bombarder immédiatement avec ...d5 et les pièces. C'est l'ouverture de prédilection de champions comme Garry Kasparov et Boris Spassky, reconnue pour son dynamisme et sa richesse tactique.",
     moves:[
       {san:'d4', c:"Contrôle le centre."},
       {san:'Nf6', c:"Réponse flexible."},
@@ -1201,6 +1251,7 @@ const OPENINGS = {
     ] },
   anglaise:{ name:'Ouverture Anglaise', forColor:'w',
     intro:"Blanc contrôle d5 depuis le flanc : une ouverture flexible qui peut transposer vers de nombreuses autres structures.",
+    about:"L'Anglaise est appréciée pour son immense flexibilité : elle peut transposer vers une Sicilienne inversée, un Gambit Dame, ou rester dans son propre univers stratégique selon les choix de Noir. C'était l'une des ouvertures de prédilection de Magnus Carlsen dans de nombreux matchs, justement pour sa capacité à éviter la préparation théorique de l'adversaire.",
     moves:[
       {san:'c4', c:"L'Anglaise : contrôle d5 depuis le flanc sans occuper le centre tout de suite."},
       {san:'e5', c:"Réponse symétrique la plus jouée (Anglaise inversée)."},
@@ -1209,6 +1260,7 @@ const OPENINGS = {
     ] },
   reti:{ name:'Ouverture Réti', forColor:'w',
     intro:"Ouverture hypermoderne et flexible : Blanc garde toutes les options de structure de pions ouvertes le plus longtemps possible.",
+    about:"Le Réti, nommé d'après le maître tchèque Richard Réti qui l'a popularisé dans les années 1920, fut l'une des ouvertures fondatrices du mouvement hypermoderne. Plutôt que d'occuper le centre avec des pions, Blanc le contrôle à distance avec ses pièces, gardant une flexibilité maximale sur la structure à adopter.",
     moves:[
       {san:'Nf3', c:"Le Réti : développement flexible avant tout engagement de pions."},
       {san:'d5', c:"Noir occupe le centre classiquement."},
@@ -1217,6 +1269,7 @@ const OPENINGS = {
     ] },
   mat_berger:{ name:'Le Mat du Berger (piège à connaître)', forColor:null,
     intro:"Un piège classique que tout débutant doit connaître — pour le réussir contre un adversaire imprudent, et surtout pour l'éviter en jouant ...Nf6 tôt pour défendre f7.",
+    about:"Ce piège fonctionne surtout contre des joueurs débutants qui n'ont pas encore l'habitude de vérifier les menaces avant de jouer. Bien qu'il soit facilement évité par n'importe quel joueur expérimenté, le connaître dans les deux sens (comment l'exécuter et comment s'en protéger) est une étape essentielle : il t'apprend à toujours vérifier les menaces sur f7/f2 avant de développer machinalement.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'e5', c:"Symétrie."},
@@ -1228,6 +1281,7 @@ const OPENINGS = {
     ] },
   danse_cavaliers:{ name:'La Danse des Cavaliers (manœuvre)', forColor:null,
     intro:"Le cavalier est la seule pièce qui doit parfois reculer pour mieux avancer. Voici la manœuvre classique Nb1-d2-f1-g3, fréquente dans l'Italienne et l'Espagnole fermées.",
+    about:"Cette manœuvre illustre une vérité fondamentale sur le cavalier : contrairement à la tour ou au fou qui peuvent rejoindre une case forte en un seul coup, le cavalier a souvent besoin de plusieurs temps pour se repositionner. Savoir reconnaître quand investir plusieurs coups dans une seule pièce, plutôt que de développer systématiquement une nouvelle pièce à chaque tour, est une compétence stratégique clé qui distingue les joueurs intermédiaires des joueurs avancés.",
     moves:[
       {san:'e4', c:"Ouverture centrale."},
       {san:'e5', c:"Symétrie."},
@@ -1362,6 +1416,54 @@ function renderTrainMoveList(){
   el.scrollTop = el.scrollHeight;
 }
 
+/* ---- Variété de dialogue du coach ---- */
+const WRONG_MOVE_PHRASES = [
+  "Pas tout à fait ! Indice : le coup attendu déplace un {piece}. Réessaie.",
+  "Presque ! Ce n'est pas ce coup-là — pense à un {piece}. Regarde les cases vertes si besoin.",
+  "Hmm, pas cette fois. Le bon coup implique un {piece}. À toi de le retrouver !",
+  "Ce n'est pas le coup théorique ici. Le {piece} a un meilleur coup à jouer.",
+  "Pas encore ! Concentre-toi sur l'objectif de la ligne : un {piece} doit bouger.",
+  "Attention, ce coup s'écarte de la théorie. Essaie encore avec un {piece}."
+];
+const CORRECT_MOVE_PREFIXES = [
+  "Bien joué !", "Exactement !", "Parfait, c'est le coup théorique !",
+  "Très bien !", "Impeccable !", "Beau coup, c'est exactement ça !"
+];
+let lastWrongIdx = -1, lastGoodIdx = -1;
+function pickPhrase(arr, lastIdxRef){
+  if(arr.length === 1) return arr[0];
+  let idx;
+  do { idx = Math.floor(Math.random()*arr.length); } while(idx === lastIdxRef.v);
+  lastIdxRef.v = idx;
+  return arr[idx];
+}
+const wrongRef = {v:-1}, goodRef = {v:-1};
+
+let autoHintEnabled = true;
+document.getElementById('autohint-toggle').onclick = function(){
+  autoHintEnabled = !autoHintEnabled;
+  this.classList.toggle('active', autoHintEnabled);
+  this.textContent = autoHintEnabled ? '🟩 Indices' : '🙈 Indices coupés';
+  if(!autoHintEnabled){ $('#train-board [data-square]').removeClass('suggest-from suggest-to'); }
+  else showExpectedMove();
+};
+
+function showExpectedMove(){
+  if(!currentLine) return;
+  const expectedColor = (trainPly % 2 === 0) ? 'w' : 'b';
+  if(expectedColor !== currentLine.forColor) return;
+  const expected = currentLine.moves[trainPly];
+  if(!expected) return;
+  const g = new Chess(trainGame.fen());
+  const legal = g.moves({verbose:true});
+  const match = legal.find(m => m.san === expected.san.replace(/[!?]+$/, ''));
+  if(match){
+    $('#train-board [data-square]').removeClass('suggest-from suggest-to');
+    $(`#train-board [data-square="${match.from}"]`).addClass('suggest-from');
+    $(`#train-board [data-square="${match.to}"]`).addClass('suggest-to');
+  }
+}
+
 function loadLine(line){
   currentLine = line;
   trainGame = new Chess();
@@ -1373,6 +1475,7 @@ function loadLine(line){
   clearHighlights('#train-board');
   document.getElementById('line-name').textContent = line.name;
   document.getElementById('line-intro').textContent = line.intro;
+  document.getElementById('line-about').textContent = line.about || '';
   renderDots();
   renderTrainMoveList();
   const startMsg = line.forColor === null
@@ -1386,6 +1489,7 @@ function loadLine(line){
 function continueTrainLine(){
   if(!currentLine) return;
   renderDots();
+  $('#train-board [data-square]').removeClass('suggest-from suggest-to');
   if(trainPly >= currentLine.moves.length){
     setFeedback('Ligne terminée — bravo ! Recommence pour la mémoriser, ou choisis-en une autre.', 'done');
     return;
@@ -1405,6 +1509,7 @@ function continueTrainLine(){
     }, 700);
   } else {
     setFeedback(`À toi de jouer. Objectif : "${currentLine.name}". Touche ta pièce puis la case d'arrivée (ou glisse-la).`, 'prompt');
+    if(autoHintEnabled) showExpectedMove();
   }
 }
 
@@ -1418,16 +1523,19 @@ function attemptTrainMove(source, target){
   const moveObj = trainGame.move({from:source, to:target, promotion:'q'});
   if(moveObj === null) return false;
 
-  if(moveObj.san !== expected.san){
+  if(moveObj.san !== expected.san.replace(/[!?]+$/, '')){
     trainGame.undo();
     flashSquares('#train-board', [target], 'flash-bad', 450);
-    setFeedback(`Pas ce coup-ci. Indice : le coup attendu déplace un ${pieceNameFromSan(expected.san)}. Réessaie, ou utilise le bouton Indice.`, 'bad');
+    const phrase = pickPhrase(WRONG_MOVE_PHRASES, wrongRef).replace('{piece}', pieceNameFromSan(expected.san));
+    setFeedback(phrase, 'bad');
     return false;
   }
 
+  $('#train-board [data-square]').removeClass('suggest-from suggest-to');
   highlightMove('#train-board', moveObj.from, moveObj.to);
   flashSquares('#train-board', [moveObj.to], 'flash-good', 450);
-  setFeedback(`Bien joué : ${expected.san} — ${expected.c}`, 'good');
+  const prefix = pickPhrase(CORRECT_MOVE_PREFIXES, goodRef);
+  setFeedback(`${prefix} ${expected.san} — ${expected.c}`, 'good');
   trainPly++;
   renderTrainMoveList();
   trainBoard.position(trainGame.fen());
