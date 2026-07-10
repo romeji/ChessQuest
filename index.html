@@ -307,6 +307,112 @@
   .lib-chip{background:var(--bg-panel-2);border:1px solid var(--line);color:var(--text);border-radius:20px;padding:7px 14px;font-size:0.78rem;cursor:pointer;transition:border-color .15s ease;}
   .lib-chip:hover{border-color:var(--brass);}
 
+  /* ---- PROGRESS / DASHBOARD ---- */
+  .stats-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:6px;}
+  .stat-card{
+    flex:1;min-width:150px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;text-align:center;
+  }
+  .stat-card .big{font-family:'Lora',serif;font-size:1.9rem;color:var(--brass);font-weight:700;line-height:1;}
+  .stat-card .label{font-size:0.76rem;color:var(--text-dim);margin-top:6px;}
+
+  .badges-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .badge-chip{
+    display:flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);
+    border-radius:20px;padding:8px 14px;font-size:0.8rem;opacity:0.4;filter:grayscale(1);
+  }
+  .badge-chip.unlocked{opacity:1;filter:none;border-color:var(--brass);}
+  .badge-chip .emoji{font-size:1.15rem;}
+  .badge-chip .badge-text{display:flex;flex-direction:column;}
+  .badge-chip .badge-text .name{font-weight:600;color:var(--ivory);}
+  .badge-chip .badge-text .desc{font-size:0.68rem;color:var(--text-dim);}
+
+  .mastery-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(190px,1fr));gap:8px;margin-bottom:6px;}
+  .mastery-chip{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;padding:9px 12px;
+    font-size:0.8rem;cursor:pointer;transition:border-color .15s ease;
+  }
+  .mastery-chip:hover{border-color:var(--brass);}
+  .mastery-chip.done{border-color:var(--good);}
+  .mastery-chip .check{color:var(--good);font-weight:700;}
+  .mastery-chip .check.empty{color:var(--line);}
+
+  #games-history{display:flex;flex-direction:column;gap:6px;margin-bottom:6px;}
+  .history-row{
+    display:grid;grid-template-columns:90px 1fr 60px 60px;gap:8px;align-items:center;
+    background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:0.78rem;
+  }
+  .history-row .h-date{color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:0.72rem;}
+  .history-row .h-acc{font-family:'IBM Plex Mono',monospace;font-weight:600;}
+  .history-empty{color:var(--text-dim);font-size:0.85rem;padding:10px 0;}
+
+  .settings-row{display:flex;flex-direction:column;gap:8px;max-width:420px;}
+  .settings-row select{
+    background:var(--ink);color:var(--text);border:1px solid var(--line);border-radius:var(--radius);
+    padding:10px 12px;font-size:0.85rem;
+  }
+
+  /* ---- PUZZLE MODULE ---- */
+  .puzzle-top-row{display:flex;flex-wrap:wrap;gap:16px;align-items:stretch;margin-bottom:16px;}
+  .puzzle-rating-badge{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    background:linear-gradient(160deg,#4A2E1B 0%, #8B5E3C 45%, #5E3A20 100%);
+    border-radius:var(--radius);padding:14px 26px;min-width:170px;box-shadow:var(--shadow);position:relative;
+  }
+  .puzzle-rating-badge .pr-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--ivory);opacity:0.85;}
+  .puzzle-rating-badge .pr-value{font-family:'Lora',serif;font-size:2.1rem;font-weight:700;color:var(--ivory);line-height:1.1;}
+  .puzzle-rating-badge .pr-delta{font-family:'IBM Plex Mono',monospace;font-size:0.82rem;font-weight:600;min-height:1.1em;}
+  .puzzle-rating-badge .pr-delta.up{color:#8fd39a;}
+  .puzzle-rating-badge .pr-delta.down{color:#e79a9a;}
+  .puzzle-top-row .stats-row{flex:1;margin-bottom:0;}
+  .puzzle-top-row .stat-card{min-width:110px;padding:12px 10px;}
+  .puzzle-top-row .stat-card .big{font-size:1.5rem;}
+
+  .puzzle-source-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  #mistakes-count-badge{
+    display:inline-block;background:var(--blunder);color:#fff;border-radius:10px;
+    padding:1px 7px;font-size:0.68rem;margin-left:4px;font-weight:700;
+  }
+
+  .theme-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+  .theme-chip{
+    background:var(--bg-panel-2);border:1px solid var(--line);color:var(--text-dim);
+    border-radius:16px;padding:5px 12px;font-size:0.74rem;cursor:pointer;transition:all .15s ease;
+  }
+  .theme-chip:hover{border-color:var(--brass);color:var(--text);}
+  .theme-chip.active{border-color:var(--brass);color:var(--brass);background:rgba(201,162,39,0.1);}
+
+  .difficulty-stars{font-size:0.85rem;color:var(--brass);letter-spacing:1px;white-space:nowrap;}
+  .difficulty-stars .dim{color:var(--line);}
+
+  .puzzle-feedback-box{
+    background:var(--bg-panel-2);border:2px solid var(--line);border-radius:var(--radius);
+    padding:14px;font-size:0.9rem;line-height:1.55;min-height:70px;transition:border-color .2s ease, background .2s ease;
+  }
+  .puzzle-feedback-box::before{content:"🧩 État du puzzle";display:block;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-dim);margin-bottom:5px;}
+  .puzzle-feedback-box.prompt{border-color:var(--brass);}
+  .puzzle-feedback-box.good{border-color:var(--good);background:rgba(92,154,107,0.08);animation:puzzlePop .3s ease;}
+  .puzzle-feedback-box.bad{border-color:var(--blunder);animation:puzzleShake .35s ease;}
+  .puzzle-feedback-box.done{border-color:var(--best);}
+  @keyframes puzzlePop{ 0%{transform:scale(0.98);} 50%{transform:scale(1.015);} 100%{transform:scale(1);} }
+  @keyframes puzzleShake{
+    0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);}
+    50%{transform:translateX(5px);} 75%{transform:translateX(-3px);}
+  }
+
+  @media (max-width:640px){
+    .puzzle-top-row{flex-direction:column;}
+  }
+
+  /* ---- opening search ---- */
+  #opening-search{
+    width:100%;background:var(--ink);color:var(--text);border:1px solid var(--line);border-radius:var(--radius);
+    padding:10px 14px;font-size:0.88rem;margin-bottom:14px;
+  }
+  #opening-search:focus{outline:none;border-color:var(--brass);}
+  .mastery-badge-inline{color:var(--good);font-weight:700;margin-left:4px;}
+
   .hidden{display:none !important;}
   ::-webkit-scrollbar{width:8px;}
   ::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px;}
@@ -323,7 +429,9 @@
     <nav class="tabs">
       <button id="tab-analyze" class="active">Analyse de partie</button>
       <button id="tab-train">Entraînement d'ouvertures</button>
+      <button id="tab-puzzles">Puzzles tactiques</button>
       <button id="tab-theory">Théorie par niveau</button>
+      <button id="tab-progress">Progression</button>
     </nav>
   </header>
 
@@ -378,6 +486,7 @@
 
   <!-- ================= TRAIN PANEL ================= -->
   <section id="panel-train" class="panel">
+    <input id="opening-search" type="text" placeholder="🔍 Rechercher une ouverture… (ex : Najdorf, Londres, Caro-Kann)">
     <div class="opening-groups" id="opening-groups"></div>
 
     <div class="train-row">
@@ -429,6 +538,77 @@
     <p class="section-sub">Touche une ouverture : elle se lance directement sur l'échiquier d'entraînement, coup par coup, avec les explications.</p>
     <div id="theory-library"></div>
   </section>
+
+  <!-- ================= PROGRESS PANEL ================= -->
+  <section id="panel-progress" class="panel">
+    <div class="stats-row" id="progress-stats"></div>
+
+    <h2 class="section-title">Badges</h2>
+    <div class="badges-row" id="badges-row"></div>
+
+    <h2 class="section-title">Ouvertures maîtrisées</h2>
+    <p class="section-sub">Une ouverture est "maîtrisée" quand tu termines la ligne sans aucune erreur. Touche une case pour t'entraîner directement dessus.</p>
+    <div class="mastery-grid" id="mastery-grid"></div>
+
+    <h2 class="section-title">Historique des analyses</h2>
+    <p class="section-sub">Précision approximative (heuristique interne) de tes dernières parties analysées, tous joueurs confondus.</p>
+    <div id="games-history"></div>
+
+    <h2 class="section-title">Réglages</h2>
+    <div class="settings-row">
+      <label class="field-label" for="engine-speed-select">Vitesse du moteur d'analyse</label>
+      <select id="engine-speed-select">
+        <option value="fast">Rapide (~0,25 s / coup — analyse plus rapide, un peu moins précise)</option>
+        <option value="normal">Normal (~0,45 s / coup — recommandé)</option>
+        <option value="deep">Approfondi (~0,9 s / coup — plus précis, plus lent)</option>
+      </select>
+    </div>
+    <button class="btn secondary" id="reset-progress-btn" style="margin-top:18px;">🗑 Réinitialiser ma progression</button>
+  </section>
+
+  <!-- ================= PUZZLES PANEL ================= -->
+  <section id="panel-puzzles" class="panel">
+    <div class="puzzle-top-row">
+      <div class="puzzle-rating-badge">
+        <span class="pr-label">Ton classement puzzles</span>
+        <span class="pr-value" id="puzzle-rating-value">1000</span>
+        <span class="pr-delta" id="puzzle-rating-delta"></span>
+      </div>
+      <div class="stats-row" id="puzzle-stats"></div>
+    </div>
+
+    <div class="puzzle-source-row">
+      <button class="level-btn active" id="puzzle-src-classic" data-src="classic">🧩 Puzzles classiques</button>
+      <button class="level-btn" id="puzzle-src-mistakes" data-src="mistakes">🔁 Mes erreurs à réviser <span id="mistakes-count-badge"></span></button>
+    </div>
+
+    <div class="theme-filter-row" id="theme-filter-row"></div>
+
+    <div class="train-row">
+      <div class="board-col">
+        <div class="board-frame">
+          <div class="coord-ranks" id="puzzle-ranks"></div>
+          <div id="puzzle-board"></div>
+          <div class="coord-files" id="puzzle-files"></div>
+        </div>
+        <div class="progress-dots" id="puzzle-dots"></div>
+      </div>
+      <div class="train-info">
+        <div class="train-info-header">
+          <h3 id="puzzle-title">Choisis une source de puzzles</h3>
+          <div class="header-toggles">
+            <span class="difficulty-stars" id="puzzle-stars"></span>
+          </div>
+        </div>
+        <div id="puzzle-feedback" class="puzzle-feedback-box">Sélectionne "Puzzles classiques" pour commencer une série.</div>
+        <div class="btn-row">
+          <button class="btn secondary" id="puzzle-hint-btn">💡 Indice</button>
+          <button class="btn secondary" id="puzzle-skip-btn">⏭ Passer</button>
+          <button class="btn secondary" id="puzzle-retry-btn">↺ Revoir ce puzzle</button>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -440,14 +620,25 @@ const PIECE_THEME = 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.
 /* ============ TABS ============ */
 document.getElementById('tab-analyze').onclick = () => switchTab('analyze');
 document.getElementById('tab-train').onclick = () => switchTab('train');
+document.getElementById('tab-puzzles').onclick = () => switchTab('puzzles');
 document.getElementById('tab-theory').onclick = () => switchTab('theory');
+document.getElementById('tab-progress').onclick = () => switchTab('progress');
 function switchTab(name){
   document.getElementById('tab-analyze').classList.toggle('active', name==='analyze');
   document.getElementById('tab-train').classList.toggle('active', name==='train');
+  document.getElementById('tab-puzzles').classList.toggle('active', name==='puzzles');
   document.getElementById('tab-theory').classList.toggle('active', name==='theory');
+  document.getElementById('tab-progress').classList.toggle('active', name==='progress');
   document.getElementById('panel-analyze').classList.toggle('active', name==='analyze');
   document.getElementById('panel-train').classList.toggle('active', name==='train');
+  document.getElementById('panel-puzzles').classList.toggle('active', name==='puzzles');
   document.getElementById('panel-theory').classList.toggle('active', name==='theory');
+  document.getElementById('panel-progress').classList.toggle('active', name==='progress');
+  if(name==='progress' && typeof renderProgressTab === 'function') renderProgressTab();
+  if(name==='puzzles' && typeof ensurePuzzleBoard === 'function'){
+    ensurePuzzleBoard();
+    if(typeof refreshPuzzleHeader === 'function') refreshPuzzleHeader();
+  }
   setTimeout(fitBoards, 30);
 }
 
@@ -469,8 +660,10 @@ function fitOneBoard(boardId, panelId){
 function fitBoards(){
   fitOneBoard('board', 'panel-analyze');
   fitOneBoard('train-board', 'panel-train');
+  fitOneBoard('puzzle-board', 'panel-puzzles');
   if(window.analysisBoard) window.analysisBoard.resize();
   if(window.trainBoard) window.trainBoard.resize();
+  if(window.puzzleBoard) window.puzzleBoard.resize();
 }
 let fitTimer = null;
 window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitBoards, 120); });
@@ -478,7 +671,7 @@ window.addEventListener('orientationchange', () => { setTimeout(fitBoards, 250);
 
 /* ============ ENGINE : Stockfish (WASM) avec repli maison ============ */
 const STOCKFISH_URL = 'https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js';
-const SF_MOVETIME_MS = 450;
+let SF_MOVETIME_MS = 450;
 const SF_START_TIMEOUT_MS = 5000;
 
 let sfWorker = null;
@@ -867,6 +1060,7 @@ async function runAnalysis(pgn){
     const mv = history[i];
     const bestSan = evalBefore.bestMoveSan || mv.san;
     const bestScoreForMover = evalBefore.scoreForMover;
+    const fenBeforeMove = work.fen();
 
     work.move(mv.san);
     const evalAfter = await engineAnalyzeFEN(work.fen());
@@ -877,7 +1071,7 @@ async function runAnalysis(pgn){
     const info = classify(drop, isBest);
 
     results.push({
-      ply:i, color:mv.color, san:mv.san, fen: work.fen(), from: mv.from, to: mv.to,
+      ply:i, color:mv.color, san:mv.san, fen: work.fen(), fenBefore: fenBeforeMove, from: mv.from, to: mv.to,
       bestSan, drop: Math.round(drop), info,
       mateMissed: evalBefore.mate !== null && evalBefore.mate > 0 && !isBest,
       mateAllowed: evalAfter.mate !== null && evalAfter.mate > 0,
@@ -902,6 +1096,8 @@ function renderAnalysis(headers){
   ensureAnalysisBoard();
   const sums = {w:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}, b:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}};
   analysisResults.forEach(r => sums[r.color][r.info.cls]++);
+  if(typeof recordAnalyzedGame === 'function') recordAnalyzedGame(headers, sums);
+  if(typeof recordMistakesFromAnalysis === 'function') recordMistakesFromAnalysis(headers);
   const white = headers.White || 'Blancs';
   const black = headers.Black || 'Noirs';
   document.getElementById('summary-row').innerHTML = `
@@ -955,6 +1151,184 @@ document.getElementById('nav-start').onclick = () => goToPly(0);
 document.getElementById('nav-prev').onclick = () => goToPly(analysisIndex-1);
 document.getElementById('nav-next').onclick = () => goToPly(analysisIndex+1);
 document.getElementById('nav-end').onclick = () => goToPly(analysisResults.length-1);
+
+document.addEventListener('keydown', (e) => {
+  const active = document.activeElement;
+  if(active && (active.tagName === 'TEXTAREA' || active.tagName === 'INPUT')) return;
+  if(!document.getElementById('panel-analyze').classList.contains('active')) return;
+  if(analysisResults.length === 0) return;
+  if(e.key === 'ArrowLeft'){ e.preventDefault(); goToPly(analysisIndex-1); }
+  else if(e.key === 'ArrowRight'){ e.preventDefault(); goToPly(analysisIndex+1); }
+});
+
+/* ============ PROGRESSION (localStorage) ============ */
+const PROGRESS_KEY = 'chessCoachProgress';
+function defaultProgress(){
+  return {
+    mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal'},
+    mistakes: [], puzzleRating: 1000, puzzlesSolved: 0, puzzlesFailed: 0,
+    puzzleStreak: 0, puzzleBestStreak: 0
+  };
+}
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    if(!raw) return defaultProgress();
+    const parsed = JSON.parse(raw);
+    return Object.assign(defaultProgress(), parsed);
+  }catch(e){ return defaultProgress(); }
+}
+function saveProgress(){ try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(PROGRESS)); }catch(e){} }
+let PROGRESS = loadProgress();
+
+const ENGINE_SPEEDS = { fast:250, normal:450, deep:900 };
+SF_MOVETIME_MS = ENGINE_SPEEDS[PROGRESS.settings.engineSpeed] || 450;
+
+function computeAccuracy(s){
+  const total = s.best + s.good + s.inaccuracy + s.mistake + s.blunder;
+  if(total === 0) return 100;
+  const penalty = s.inaccuracy*2 + s.mistake*6 + s.blunder*12;
+  return Math.max(0, Math.min(100, Math.round(100 - (penalty/total)*3.2)));
+}
+
+function recordAnalyzedGame(headers, sums){
+  const accW = computeAccuracy(sums.w);
+  const accB = computeAccuracy(sums.b);
+  PROGRESS.games.unshift({
+    date: new Date().toISOString(),
+    white: headers.White || 'Blancs',
+    black: headers.Black || 'Noirs',
+    whiteAcc: accW, blackAcc: accB,
+    totalBlunders: sums.w.blunder + sums.b.blunder
+  });
+  PROGRESS.games = PROGRESS.games.slice(0, 15);
+  saveProgress();
+}
+
+function recordMistakesFromAnalysis(headers){
+  const label = `${headers.White || 'Blancs'} vs ${headers.Black || 'Noirs'}`;
+  PROGRESS.mistakes = PROGRESS.mistakes || [];
+  analysisResults.forEach(r => {
+    if(r.info.cls === 'mistake' || r.info.cls === 'blunder'){
+      PROGRESS.mistakes.unshift({
+        fen: r.fenBefore,
+        solution: r.bestSan,
+        playedSan: r.san,
+        theme: r.info.cls === 'blunder' ? 'Gaffe à corriger' : 'Erreur à corriger',
+        gameLabel: label,
+        date: new Date().toISOString()
+      });
+    }
+  });
+  PROGRESS.mistakes = PROGRESS.mistakes.slice(0, 60);
+  saveProgress();
+  if(typeof refreshPuzzleHeader === 'function') refreshPuzzleHeader();
+}
+
+function recordLineCompletion(key, clean){
+  if(!key) return;
+  PROGRESS.attempts[key] = (PROGRESS.attempts[key] || 0) + 1;
+  if(clean){
+    const prevCount = PROGRESS.mastered[key] ? PROGRESS.mastered[key].cleanCount : 0;
+    PROGRESS.mastered[key] = { cleanCount: prevCount + 1, lastDate: new Date().toISOString() };
+  }
+  saveProgress();
+  if(typeof renderOpeningGroups === 'function') renderOpeningGroups();
+  if(document.getElementById('panel-progress').classList.contains('active')) renderProgressTab();
+}
+
+function trainableKeys(){
+  return CATEGORIES.filter(c => c.key !== 'techniques').flatMap(c => c.lines);
+}
+
+function computeBadges(){
+  const masteredCount = Object.keys(PROGRESS.mastered).length;
+  const gamesCount = PROGRESS.games.length;
+  const perfectGame = PROGRESS.games.some(g => g.totalBlunders === 0);
+  const totalTrainable = trainableKeys().length;
+  return [
+    {emoji:'🥉', name:'Premier pas', desc:'Maîtriser 1 ouverture sans erreur', unlocked: masteredCount >= 1},
+    {emoji:'🥈', name:'Étudiant assidu', desc:'Maîtriser 10 ouvertures sans erreur', unlocked: masteredCount >= 10},
+    {emoji:'🥇', name:'Maître des ouvertures', desc:`Maîtriser les ${totalTrainable} ouvertures`, unlocked: masteredCount >= totalTrainable},
+    {emoji:'📊', name:'Analyste', desc:'Analyser 5 parties', unlocked: gamesCount >= 5},
+    {emoji:'🎯', name:'Sans-faute', desc:'Analyser une partie sans aucune gaffe', unlocked: perfectGame}
+  ];
+}
+
+function renderProgressTab(){
+  const totalTrainable = trainableKeys().length;
+  const masteredCount = Object.keys(PROGRESS.mastered).length;
+  const avgAcc = PROGRESS.games.length
+    ? Math.round(PROGRESS.games.reduce((s,g)=>s+(g.whiteAcc+g.blackAcc)/2,0) / PROGRESS.games.length)
+    : null;
+
+  document.getElementById('progress-stats').innerHTML = `
+    <div class="stat-card"><div class="big">${masteredCount}/${totalTrainable}</div><div class="label">Ouvertures maîtrisées</div></div>
+    <div class="stat-card"><div class="big">${PROGRESS.games.length}</div><div class="label">Parties analysées</div></div>
+    <div class="stat-card"><div class="big">${avgAcc !== null ? avgAcc + '%' : '—'}</div><div class="label">Précision moyenne (approx.)</div></div>
+  `;
+
+  document.getElementById('badges-row').innerHTML = computeBadges().map(b => `
+    <div class="badge-chip ${b.unlocked ? 'unlocked' : ''}">
+      <span class="emoji">${b.emoji}</span>
+      <span class="badge-text"><span class="name">${escapeHtml(b.name)}</span><span class="desc">${escapeHtml(b.desc)}</span></span>
+    </div>
+  `).join('');
+
+  document.getElementById('mastery-grid').innerHTML = trainableKeys().map(key => {
+    const o = OPENINGS[key];
+    const done = !!PROGRESS.mastered[key];
+    return `<div class="mastery-chip ${done ? 'done' : ''}" data-line="${key}">
+      <span>${escapeHtml(o.name)}</span>
+      <span class="check ${done ? '' : 'empty'}">${done ? '✓' : '○'}</span>
+    </div>`;
+  }).join('');
+  document.querySelectorAll('.mastery-chip').forEach(chip=>{
+    chip.onclick = () => {
+      const key = chip.dataset.line;
+      switchTab('train');
+      setTimeout(()=>{
+        document.querySelectorAll('#opening-groups .line-btn').forEach(b=>b.classList.toggle('active', b.dataset.line===key));
+        const target = document.querySelector(`#opening-groups .line-btn[data-line="${key}"]`);
+        const parentDetails = target ? target.closest('details') : null;
+        if(parentDetails) parentDetails.open = true;
+        loadLine(OPENINGS[key], key);
+        window.scrollTo({top:0, behavior:'smooth'});
+      }, 60);
+    };
+  });
+
+  const histEl = document.getElementById('games-history');
+  if(PROGRESS.games.length === 0){
+    histEl.innerHTML = "<div class=\"history-empty\">Aucune partie analysée pour l'instant — utilise l'onglet Analyse.</div>";
+  } else {
+    histEl.innerHTML = PROGRESS.games.map(g => {
+      const d = new Date(g.date).toLocaleDateString('fr-FR');
+      return `<div class="history-row">
+        <span class="h-date">${d}</span>
+        <span>${escapeHtml(g.white)} vs ${escapeHtml(g.black)}</span>
+        <span class="h-acc">${g.whiteAcc}%</span>
+        <span class="h-acc">${g.blackAcc}%</span>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('engine-speed-select').value = PROGRESS.settings.engineSpeed;
+}
+
+document.getElementById('engine-speed-select').onchange = function(){
+  PROGRESS.settings.engineSpeed = this.value;
+  SF_MOVETIME_MS = ENGINE_SPEEDS[this.value] || 450;
+  saveProgress();
+};
+
+document.getElementById('reset-progress-btn').onclick = function(){
+  if(!confirm('Réinitialiser toute ta progression (ouvertures maîtrisées, historique des parties) ? Cette action est irréversible.')) return;
+  PROGRESS = defaultProgress();
+  saveProgress();
+  renderProgressTab();
+  renderOpeningGroups();
+};
 
 /* ============ BIBLIOTHÈQUE D'OUVERTURES (26 lignes) ============ */
 const OPENINGS = {
@@ -1315,7 +1689,9 @@ const CATEGORIES = [
 let trainBoard = null;
 let trainGame = null;
 let currentLine = null;
+let currentLineKey = null;
 let trainPly = 0;
+let lineMistakes = 0;
 let selectedSquare = null;
 
 trainBoard = Chessboard('train-board', {
@@ -1363,13 +1739,15 @@ function trainSquareClick(square){
 
 function renderOpeningGroups(){
   const container = document.getElementById('opening-groups');
+  const mastered = (typeof PROGRESS !== 'undefined') ? PROGRESS.mastered : {};
   container.innerHTML = CATEGORIES.map(cat => `
     <details class="opening-category" ${cat.key==='favorites' ? 'open' : ''}>
       <summary>${escapeHtml(cat.title)}</summary>
       <div class="opening-buttons">
         ${cat.lines.map(key => {
           const o = OPENINGS[key];
-          return `<button class="line-btn" data-line="${key}"><span>${escapeHtml(o.name)}</span><span class="n-moves">${o.moves.length} demi-coups</span></button>`;
+          const check = mastered[key] ? '<span class="mastery-badge-inline">✓</span>' : '';
+          return `<button class="line-btn" data-line="${key}"><span>${escapeHtml(o.name)}${check}</span><span class="n-moves">${o.moves.length} demi-coups</span></button>`;
         }).join('')}
       </div>
     </details>
@@ -1378,7 +1756,7 @@ function renderOpeningGroups(){
     btn.onclick = () => {
       container.querySelectorAll('.line-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      loadLine(OPENINGS[btn.dataset.line]);
+      loadLine(OPENINGS[btn.dataset.line], btn.dataset.line);
     };
   });
 }
@@ -1464,10 +1842,12 @@ function showExpectedMove(){
   }
 }
 
-function loadLine(line){
+function loadLine(line, key){
   currentLine = line;
+  currentLineKey = key || currentLineKey;
   trainGame = new Chess();
   trainPly = 0;
+  lineMistakes = 0;
   clearSelection();
   trainBoard.orientation(line.forColor==='b' ? 'black' : 'white');
   trainBoard.start();
@@ -1492,6 +1872,9 @@ function continueTrainLine(){
   $('#train-board [data-square]').removeClass('suggest-from suggest-to');
   if(trainPly >= currentLine.moves.length){
     setFeedback('Ligne terminée — bravo ! Recommence pour la mémoriser, ou choisis-en une autre.', 'done');
+    if(currentLine.forColor !== null && typeof recordLineCompletion === 'function'){
+      recordLineCompletion(currentLineKey, lineMistakes === 0);
+    }
     return;
   }
   const nextColor = (trainPly % 2 === 0) ? 'w' : 'b';
@@ -1525,6 +1908,7 @@ function attemptTrainMove(source, target){
 
   if(moveObj.san !== expected.san.replace(/[!?]+$/, '')){
     trainGame.undo();
+    lineMistakes++;
     flashSquares('#train-board', [target], 'flash-bad', 450);
     const phrase = pickPhrase(WRONG_MOVE_PHRASES, wrongRef).replace('{piece}', pieceNameFromSan(expected.san));
     setFeedback(phrase, 'bad');
@@ -1555,6 +1939,331 @@ function setFeedback(text, kind){
   inner.textContent = text;
   el.appendChild(inner);
   el.className = kind || '';
+  speak(text);
+}
+
+/* ============ MODULE PUZZLES TACTIQUES ============ */
+/* Toutes les positions ci-dessous sont construites et vérifiées manuellement (position par position,
+   case par case) plutôt qu'extraites de parties réelles, afin de garantir que la solution indiquée
+   est bien correcte et unique. */
+const CLASSIC_PUZZLES = [
+  {
+    id:'basic-qmate', setupMoves:null, fen:'k7/8/1K6/8/8/8/8/7Q w - - 0 1',
+    solution:'Qh8#', theme:'Mats de base', rating:350,
+    explanation:"Modèle de base : le roi blanc contrôle les cases a7 et b7, la dame arrive sur la 8ᵉ rangée et contrôle aussi b8. Le roi noir est totalement encerclé."
+  },
+  {
+    id:'basic-rmate', setupMoves:null, fen:'k7/8/1K6/8/8/8/8/7R w - - 0 1',
+    solution:'Rh8#', theme:'Mats de base', rating:400,
+    explanation:"Même principe qu'avec la dame : le roi blanc verrouille a7 et b7, la tour arrive sur la 8ᵉ rangée et couvre aussi b8."
+  },
+  {
+    id:'fool', setupMoves:['f3','e5','g4'], fen:null,
+    solution:'Qh4#', theme:'Mat en 1', rating:420,
+    explanation:"Le mat le plus rapide aux échecs : après 1.f3 e5 2.g4, la dame se glisse en h4. Le roi blanc, encore entouré de ses propres pièces, ne peut ni fuir ni bloquer."
+  },
+  {
+    id:'scholar', setupMoves:['e4','e5','Bc4','Nc6','Qh5','Nf6'], fen:null,
+    solution:'Qxf7#', theme:'Mat en 1', rating:480,
+    explanation:"Le mat du berger : la dame capture le pion f7, protégée par le fou c4. Le roi noir n'a aucune case de fuite (d8 est occupé par sa propre dame)."
+  },
+  {
+    id:'fork-queen', setupMoves:null, fen:'6k1/8/8/r3n3/8/8/8/2Q4K w - - 0 1',
+    solution:'Qc5', theme:'Fourchette', rating:600,
+    explanation:"La dame arrive sur c5 et attaque simultanément la tour a5 et le cavalier e5. Aucune des deux pièces ne peut être sauvée en même temps."
+  },
+  {
+    id:'fork-knight', setupMoves:null, fen:'2q1k3/8/8/1N6/8/8/8/K7 w - - 0 1',
+    solution:'Nd6+', theme:'Fourchette', rating:550,
+    explanation:"Le cavalier met le roi en échec tout en attaquant la dame en même temps : c'est une fourchette royale. Noir doit d'abord parer l'échec, puis Blanc capturera la dame."
+  },
+  {
+    id:'backrank', setupMoves:null, fen:'6k1/5ppp/8/3R4/8/8/8/6K1 w - - 0 1',
+    solution:'Rd8#', theme:'Mat du couloir', rating:620,
+    explanation:"Le roi noir est enfermé par ses propres pions f7, g7 et h7. La tour arrive sur la 8ᵉ rangée sans qu'aucune case ne soit disponible pour fuir."
+  },
+  {
+    id:'ladder', setupMoves:null, fen:'7k/R7/8/8/8/8/8/KR6 w - - 0 1',
+    solution:'Rb8#', theme:'Mat à l\u2019échelle', rating:650,
+    explanation:"La tour a7 verrouille toute la 7ᵉ rangée (le roi ne peut pas y monter), pendant que l'autre tour vient délivrer l'échec et mat sur la 8ᵉ rangée."
+  },
+  {
+    id:'skewer', setupMoves:null, fen:'4r3/8/8/8/4k3/8/8/R6K w - - 0 1',
+    solution:'Re1+', theme:'Enfilade', rating:680,
+    explanation:"L'échec force le roi à quitter la colonne e, ce qui expose la tour noire derrière lui : Blanc la capturera au coup suivant. L'enfilade attaque une pièce précieuse pour en gagner une autre juste derrière."
+  },
+  {
+    id:'smothered', setupMoves:null, fen:'3N2rk/6pp/8/8/8/8/8/1K6 w - - 0 1',
+    solution:'Nf7#', theme:'Mat étouffé', rating:780,
+    explanation:"Le roi noir, coincé dans le coin par sa propre tour et ses propres pions, ne peut fuir nulle part. Le cavalier délivre l'échec et mat depuis f7, hors de portée de toute pièce noire."
+  },
+  {
+    id:'discovery', setupMoves:null, fen:'7k/6q1/4n3/8/3N4/8/1B6/K7 w - - 0 1',
+    solution:'Nxe6', theme:'Attaque à la découverte', rating:760,
+    explanation:"Le cavalier capture le cavalier noir en e6 tout en dévoilant l'attaque du fou b2 sur la dame noire : un seul coup qui gagne du matériel deux fois de suite."
+  },
+  {
+    id:'pin', setupMoves:null, fen:'4k3/3n4/8/8/Q7/8/8/3R3K w - - 0 1',
+    solution:'Rxd7', theme:'Clouage', rating:700,
+    explanation:"Le cavalier est cloué contre le roi par la dame sur la diagonale a4-e8. La tour le capture gratuitement, et le roi ne peut pas reprendre sans se placer lui-même en échec."
+  }
+];
+
+const PUZZLE_THEMES = [...new Set(CLASSIC_PUZZLES.map(p => p.theme))];
+
+let puzzleBoard = null;
+let puzzleGame = null;
+let puzzleSource = 'classic';
+let puzzleQueue = [];
+let puzzleIndex = 0;
+let puzzleThemeFilter = 'all';
+let puzzleHasFailed = false;
+let puzzleSelectedSquare = null;
+
+function ratingStars(rating){
+  const level = Math.min(5, Math.max(1, Math.round((rating - 300) / 130)));
+  let s = '';
+  for(let i=1;i<=5;i++) s += (i <= level) ? '★' : '<span class="dim">★</span>';
+  return s;
+}
+
+function buildPuzzleQueue(){
+  if(puzzleSource === 'classic'){
+    let list = CLASSIC_PUZZLES.slice();
+    if(puzzleThemeFilter !== 'all') list = list.filter(p => p.theme === puzzleThemeFilter);
+    list.sort((a,b) => a.rating - b.rating);
+    puzzleQueue = list;
+  } else {
+    puzzleQueue = (PROGRESS.mistakes || []).slice();
+  }
+}
+
+function ensurePuzzleBoard(){
+  if(puzzleBoard) return;
+  puzzleBoard = Chessboard('puzzle-board', {
+    position:'start', draggable:true, pieceTheme: PIECE_THEME, showNotation:false,
+    onDrop: onDropPuzzle,
+    onSnapEnd: () => puzzleBoard.position(puzzleGame.fen())
+  });
+  window.puzzleBoard = puzzleBoard;
+  renderCoords('puzzle-ranks', 'puzzle-files', 'white');
+  $('#puzzle-board').on('click', '[data-square]', function(){
+    puzzleSquareClick(this.getAttribute('data-square'));
+  });
+  document.getElementById('puzzle-board').addEventListener('touchmove', function(e){ e.preventDefault(); }, {passive:false});
+  renderThemeFilters();
+  buildPuzzleQueue();
+  loadPuzzle(0);
+}
+
+function renderThemeFilters(){
+  const el = document.getElementById('theme-filter-row');
+  const chips = ['all', ...PUZZLE_THEMES];
+  el.innerHTML = chips.map(t => {
+    const label = t === 'all' ? 'Tous les thèmes' : t;
+    return `<button class="theme-chip ${t===puzzleThemeFilter ? 'active':''}" data-theme="${escapeHtml(t)}">${escapeHtml(label)}</button>`;
+  }).join('');
+  el.classList.toggle('hidden', puzzleSource !== 'classic');
+  el.querySelectorAll('.theme-chip').forEach(chip=>{
+    chip.onclick = () => {
+      puzzleThemeFilter = chip.dataset.theme;
+      renderThemeFilters();
+      buildPuzzleQueue();
+      loadPuzzle(0);
+    };
+  });
+}
+
+document.getElementById('puzzle-src-classic').onclick = () => {
+  puzzleSource = 'classic';
+  document.getElementById('puzzle-src-classic').classList.add('active');
+  document.getElementById('puzzle-src-mistakes').classList.remove('active');
+  renderThemeFilters();
+  buildPuzzleQueue();
+  loadPuzzle(0);
+};
+document.getElementById('puzzle-src-mistakes').onclick = () => {
+  puzzleSource = 'mistakes';
+  document.getElementById('puzzle-src-mistakes').classList.add('active');
+  document.getElementById('puzzle-src-classic').classList.remove('active');
+  renderThemeFilters();
+  buildPuzzleQueue();
+  loadPuzzle(0);
+};
+
+function refreshPuzzleHeader(){
+  document.getElementById('puzzle-rating-value').textContent = PROGRESS.puzzleRating;
+  const count = (PROGRESS.mistakes || []).length;
+  document.getElementById('mistakes-count-badge').textContent = count > 0 ? count : '';
+  document.getElementById('puzzle-stats').innerHTML = `
+    <div class="stat-card"><div class="big">${PROGRESS.puzzlesSolved}</div><div class="label">Puzzles résolus</div></div>
+    <div class="stat-card"><div class="big">${PROGRESS.puzzleStreak}</div><div class="label">Série en cours</div></div>
+    <div class="stat-card"><div class="big">${PROGRESS.puzzleBestStreak}</div><div class="label">Meilleure série</div></div>
+  `;
+}
+
+function loadPuzzle(idx){
+  if(!puzzleBoard) return;
+  if(puzzleQueue.length === 0){
+    puzzleGame = new Chess();
+    puzzleBoard.position('start');
+    document.getElementById('puzzle-title').textContent = puzzleSource === 'mistakes'
+      ? "Pas encore d'erreur enregistrée"
+      : "Aucun puzzle dans ce thème";
+    document.getElementById('puzzle-stars').innerHTML = '';
+    document.getElementById('puzzle-dots').innerHTML = '';
+    setPuzzleFeedback(puzzleSource === 'mistakes'
+      ? "Analyse une partie dans l'onglet Analyse : tes erreurs et gaffes y apparaîtront automatiquement pour être révisées ici."
+      : "Choisis un autre thème.", 'prompt');
+    return;
+  }
+  puzzleIndex = ((idx % puzzleQueue.length) + puzzleQueue.length) % puzzleQueue.length;
+  const p = puzzleQueue[puzzleIndex];
+  puzzleHasFailed = false;
+  puzzleSelectedSquare = null;
+
+  puzzleGame = p.fen ? new Chess(p.fen) : new Chess();
+  if(p.setupMoves) p.setupMoves.forEach(m => puzzleGame.move(m));
+
+  const orientation = puzzleGame.turn() === 'b' ? 'black' : 'white';
+  puzzleBoard.orientation(orientation);
+  puzzleBoard.position(puzzleGame.fen());
+  renderCoords('puzzle-ranks', 'puzzle-files', orientation);
+  clearHighlights('#puzzle-board');
+
+  const label = puzzleSource === 'mistakes' ? (p.gameLabel || 'Ta partie') : `Puzzle ${puzzleIndex+1}/${puzzleQueue.length}`;
+  document.getElementById('puzzle-title').textContent = `${p.theme} — ${label}`;
+  document.getElementById('puzzle-stars').innerHTML = p.rating ? ratingStars(p.rating) : '';
+  document.getElementById('puzzle-dots').innerHTML = puzzleQueue.map((_,i) =>
+    `<span class="dot ${i < puzzleIndex ? 'done' : ''} ${i === puzzleIndex ? 'current':''}"></span>`
+  ).join('');
+
+  const sideText = puzzleGame.turn() === 'w' ? 'Blancs' : 'Noirs';
+  setPuzzleFeedback(`Aux ${sideText} de jouer — trouve le meilleur coup.`, 'prompt');
+  fitBoards();
+}
+
+function pieceValueForCapture(pieceType){
+  return {p:1,n:3,b:3,r:5,q:9,k:0}[pieceType] || 0;
+}
+
+function applyPuzzleRatingChange(success){
+  const p = puzzleQueue[puzzleIndex];
+  const puzzleRating = p.rating || 1000;
+  const userRating = PROGRESS.puzzleRating;
+  const expected = 1 / (1 + Math.pow(10, (puzzleRating - userRating) / 400));
+  const K = 24;
+  const delta = Math.round(K * ((success ? 1 : 0) - expected));
+  PROGRESS.puzzleRating = Math.max(100, userRating + delta);
+  const deltaEl = document.getElementById('puzzle-rating-delta');
+  deltaEl.textContent = delta >= 0 ? `+${delta}` : `${delta}`;
+  deltaEl.className = 'pr-delta ' + (delta >= 0 ? 'up' : 'down');
+  document.getElementById('puzzle-rating-value').textContent = PROGRESS.puzzleRating;
+  setTimeout(() => { deltaEl.textContent = ''; }, 2500);
+}
+
+function clearPuzzleSelection(){
+  $('#puzzle-board [data-square]').removeClass('selected-square');
+  $('#puzzle-board .move-dot').remove();
+  puzzleSelectedSquare = null;
+}
+function showPuzzleLegalDots(square){
+  const dests = puzzleGame.moves({square:square, verbose:true}).map(m=>m.to);
+  dests.forEach(sq => $(`#puzzle-board [data-square="${sq}"]`).append('<div class="move-dot"></div>'));
+}
+function puzzleSquareClick(square){
+  if(!puzzleGame || puzzleQueue.length === 0) return;
+  if(puzzleSelectedSquare === square){ clearPuzzleSelection(); return; }
+  if(puzzleSelectedSquare === null){
+    const piece = puzzleGame.get(square);
+    if(piece && piece.color === puzzleGame.turn()){
+      puzzleSelectedSquare = square;
+      $(`#puzzle-board [data-square="${square}"]`).addClass('selected-square');
+      showPuzzleLegalDots(square);
+    }
+    return;
+  }
+  const from = puzzleSelectedSquare;
+  clearPuzzleSelection();
+  attemptPuzzleMove(from, square);
+}
+function onDropPuzzle(source, target){
+  const ok = attemptPuzzleMove(source, target);
+  return ok ? undefined : 'snapback';
+}
+
+function attemptPuzzleMove(source, target){
+  if(!puzzleGame || puzzleQueue.length === 0) return false;
+  const p = puzzleQueue[puzzleIndex];
+  const solutionClean = p.solution.replace(/[!?]+$/, '');
+
+  const moveObj = puzzleGame.move({from:source, to:target, promotion:'q'});
+  if(moveObj === null) return false;
+
+  if(moveObj.san !== solutionClean){
+    puzzleGame.undo();
+    puzzleHasFailed = true;
+    flashSquares('#puzzle-board', [target], 'flash-bad', 450);
+    setPuzzleFeedback("Pas le bon coup. Réessaie, ou utilise l'Indice si tu es bloqué.", 'bad');
+    return false;
+  }
+
+  highlightMove('#puzzle-board', moveObj.from, moveObj.to);
+  flashSquares('#puzzle-board', [moveObj.to], 'flash-good', 500);
+  puzzleBoard.position(puzzleGame.fen());
+
+  const success = !puzzleHasFailed;
+  if(success){
+    PROGRESS.puzzleStreak++;
+    PROGRESS.puzzleBestStreak = Math.max(PROGRESS.puzzleBestStreak, PROGRESS.puzzleStreak);
+  } else {
+    PROGRESS.puzzleStreak = 0;
+  }
+  PROGRESS.puzzlesSolved++;
+  applyPuzzleRatingChange(success);
+  saveProgress();
+  refreshPuzzleHeader();
+
+  setPuzzleFeedback(`${success ? 'Bravo, du premier coup !' : 'Résolu !'} ${p.explanation || (solutionClean + ' était le coup gagnant.')}`, 'good');
+
+  if(puzzleSource === 'mistakes'){
+    PROGRESS.mistakes.splice(puzzleQueue.indexOf(p), 1);
+    saveProgress();
+    buildPuzzleQueue();
+    setTimeout(() => loadPuzzle(puzzleIndex), 1400);
+  } else {
+    setTimeout(() => loadPuzzle(puzzleIndex+1), 1400);
+  }
+  return true;
+}
+
+document.getElementById('puzzle-hint-btn').onclick = () => {
+  if(!puzzleGame || puzzleQueue.length === 0) return;
+  const p = puzzleQueue[puzzleIndex];
+  const g = new Chess(puzzleGame.fen());
+  const legal = g.moves({verbose:true});
+  const match = legal.find(m => m.san === p.solution.replace(/[!?]+$/, ''));
+  if(match) flashSquares('#puzzle-board', [match.from, match.to], 'hint-square', 900);
+};
+document.getElementById('puzzle-skip-btn').onclick = () => {
+  if(!puzzleGame || puzzleQueue.length === 0) return;
+  const p = puzzleQueue[puzzleIndex];
+  PROGRESS.puzzleStreak = 0;
+  PROGRESS.puzzlesFailed++;
+  applyPuzzleRatingChange(false);
+  saveProgress();
+  refreshPuzzleHeader();
+  setPuzzleFeedback(`La solution était ${p.solution}. ${p.explanation || ''}`, 'done');
+  setTimeout(() => loadPuzzle(puzzleIndex+1), 1600);
+};
+document.getElementById('puzzle-retry-btn').onclick = () => { if(puzzleQueue.length > 0) loadPuzzle(puzzleIndex); };
+
+function setPuzzleFeedback(text, kind){
+  const el = document.getElementById('puzzle-feedback');
+  el.classList.remove('good','bad','prompt','done');
+  void el.offsetWidth;
+  el.textContent = text;
+  el.className = 'puzzle-feedback-box ' + (kind || '');
   speak(text);
 }
 
@@ -1626,13 +2335,29 @@ function renderLibrary(){
         const target = document.querySelector(`#opening-groups .line-btn[data-line="${key}"]`);
         const parentDetails = target ? target.closest('details') : null;
         if(parentDetails) parentDetails.open = true;
-        loadLine(OPENINGS[key]);
+        loadLine(OPENINGS[key], key);
         window.scrollTo({top:0, behavior:'smooth'});
       }, 60);
     };
   });
 }
 renderLibrary();
+
+/* ============ Recherche d'ouvertures ============ */
+document.getElementById('opening-search').addEventListener('input', function(){
+  const q = this.value.trim().toLowerCase();
+  document.querySelectorAll('#opening-groups details.opening-category').forEach(details => {
+    let visibleCount = 0;
+    details.querySelectorAll('.line-btn').forEach(btn => {
+      const name = btn.querySelector('span').textContent.toLowerCase();
+      const match = q === '' || name.includes(q);
+      btn.classList.toggle('hidden', !match);
+      if(match) visibleCount++;
+    });
+    details.classList.toggle('hidden', visibleCount === 0);
+    if(q !== '' && visibleCount > 0) details.open = true;
+  });
+});
 
 /* Sizing initial */
 fitBoards();
