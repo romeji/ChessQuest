@@ -359,6 +359,26 @@
   .lib-chip{background:var(--bg-panel-2);border:1px solid var(--line);color:var(--text);border-radius:20px;padding:7px 14px;font-size:0.78rem;cursor:pointer;transition:border-color .15s ease;}
   .lib-chip:hover{border-color:var(--coral);}
 
+  /* ---- ROADMAP D'OUVERTURES PAR NIVEAU ---- */
+  .roadmap-card{
+    background:var(--bg-panel-2);border-radius:var(--radius);padding:18px 20px;margin-bottom:22px;
+  }
+  .roadmap-card .roadmap-subtitle{font-family:'Lora',serif;color:var(--navy);font-size:1.05rem;margin:0 0 4px;}
+  .roadmap-block{margin-top:14px;}
+  .roadmap-block .rb-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--coral);font-weight:700;margin-bottom:6px;display:block;}
+  .roadmap-block p{margin:0 0 8px;font-size:0.86rem;line-height:1.55;color:var(--text);}
+  .roadmap-chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .roadmap-avoid{
+    background:var(--accent-pink-bg);border-radius:14px;padding:12px 16px;margin-top:14px;
+  }
+  .roadmap-avoid .rb-label{color:var(--accent-pink-text);}
+  .roadmap-avoid p{color:var(--accent-pink-text);}
+  .roadmap-next{
+    background:var(--accent-green-bg);border-radius:14px;padding:12px 16px;margin-top:10px;
+  }
+  .roadmap-next .rb-label{color:var(--accent-green-text);}
+  .roadmap-next p{color:var(--text);}
+
   /* ---- PROGRESS / DASHBOARD ---- */
   .streak-card{
     display:flex;align-items:center;gap:16px;flex-wrap:wrap;
@@ -684,6 +704,17 @@
     </div>
     <div class="theory-intro" id="theory-intro"></div>
     <div class="theory-grid" id="theory-grid"></div>
+
+    <h2 class="section-title">🧭 Quelle ouverture choisir selon ton niveau ?</h2>
+    <p class="section-sub">Ton répertoire doit évoluer avec toi : ce qui est malin à 700 Elo peut devenir un frein à 1600. Choisis ton palier pour voir quoi jouer, quoi éviter, et quand passer à la suite.</p>
+    <div class="level-picker" id="roadmap-picker">
+      <button class="level-btn" data-bracket="0">&lt; 800</button>
+      <button class="level-btn" data-bracket="1">800–1200</button>
+      <button class="level-btn" data-bracket="2">1200–1600</button>
+      <button class="level-btn" data-bracket="3">1600–2000</button>
+      <button class="level-btn" data-bracket="4">2000+</button>
+    </div>
+    <div id="roadmap-content"></div>
 
     <h2 class="section-title">Bibliothèque de démonstrations interactives</h2>
     <p class="section-sub">Touche une ouverture : elle se lance directement sur l'échiquier d'entraînement, coup par coup, avec les explications.</p>
@@ -2986,17 +3017,110 @@ const THEORY = {
 };
 
 function renderTheory(level){
-  document.querySelectorAll('.level-btn').forEach(b => b.classList.toggle('active', b.dataset.level === level));
+  document.querySelectorAll('#level-picker .level-btn').forEach(b => b.classList.toggle('active', b.dataset.level === level));
   const data = THEORY[level];
   document.getElementById('theory-intro').textContent = data.intro;
   document.getElementById('theory-grid').innerHTML = data.cards.map(c =>
     `<div class="theory-card"><h4>${escapeHtml(c.title)}</h4><p>${escapeHtml(c.body)}</p></div>`
   ).join('');
 }
-document.querySelectorAll('.level-btn').forEach(btn=>{
+document.querySelectorAll('#level-picker .level-btn').forEach(btn=>{
   btn.onclick = () => renderTheory(btn.dataset.level);
 });
 renderTheory('beginner');
+
+/* ============ QUELLE OUVERTURE CHOISIR SELON TON NIVEAU ============ */
+const OPENING_ROADMAP = [
+  {
+    label:'Grand débutant',
+    asWhite:{text:"Joue 1.e4 et développe simplement tes pièces. L'Italienne (Bc4) est idéale : chaque coup a un but évident (centre, développement, pression sur f7).", keys:['italienne']},
+    asBlackE4:{text:"Ne cherche pas à surprendre : réponds 1...e5 et développe normalement, ou essaie la Scandinave qui simplifie vite la position.", keys:['scandinave']},
+    asBlackD4:{text:"Réponds 1...d5 et développe tes pièces mineures avant de bouger deux fois la même pièce.", keys:['qgd']},
+    avoid:"Évite les gambits compliqués, la Sicilienne et tout ce qui demande de mémoriser une longue séquence sans en comprendre le but. À ce stade, 90% des parties se gagnent ou se perdent sur des pièces laissées en prise, pas sur la théorie d'ouverture.",
+    next:"Une fois que tu ne perds plus de pièces gratuitement et que tu roques systématiquement, passe au palier suivant."
+  },
+  {
+    label:'Débutant confirmé',
+    asWhite:{text:"Continue avec l'Italienne, ou adopte le Système Londres si tu préfères un plan qui marche contre presque tout (mêmes coups à chaque fois).", keys:['italienne','londres']},
+    asBlackE4:{text:"Le Caro-Kann ou la Défense Française t'apprendront à jouer des structures fermées solides. Si tu es à l'aise en calcul, commence à essayer la Sicilienne.", keys:['carokann','francaise','najdorf']},
+    asBlackD4:{text:"Le Gambit Dame Refusé classique reste un excellent choix : structure claire, peu de pièges.", keys:['qgd']},
+    avoid:"Ne saute pas encore sur les lignes très théoriques (Dragon, Najdorf profond) : tu n'as pas encore besoin de cette précision, et tu risques de mémoriser sans comprendre.",
+    next:"Commence à te demander POURQUOI chaque coup est joué, pas seulement lequel. Utilise le mode Entraînement pour mémoriser 6 à 8 coups d'une ligne, avec ses idées."
+  },
+  {
+    label:'Intermédiaire',
+    asWhite:{text:"Ajoute l'Espagnole à ton répertoire si tu joues 1.e4 : plus de pression durable que l'Italienne. En 1.d4, approfondis le Gambit Dame (Refusé et Accepté).", keys:['espagnole','qgd','qga']},
+    asBlackE4:{text:"La Sicilienne devient un excellent choix si tu aimes te battre pour l'initiative — commence par le Najdorf ou le Sveshnikov.", keys:['najdorf','sveshnikov']},
+    asBlackD4:{text:"Explore la Défense Slave, plus solide que le Refusé classique, ou tente l'Indienne du Roi si tu aimes attaquer.", keys:['slav','indienne_roi']},
+    avoid:"Ne multiplie pas les ouvertures différentes en même temps : mieux vaut bien connaître 2 systèmes (un en Blanc, un en Noir) que d'en survoler 6.",
+    next:"Prépare des réponses aux anti-Siciliennes (2.c3, 2.Nc3, 3.Bb5) si tu joues la Sicilienne : sinon tu perds tout ton avantage théorique dès que l'adversaire évite la ligne principale."
+  },
+  {
+    label:'Avancé',
+    asWhite:{text:"Précise tes ordres de coups pour éviter les anti-Siciliennes gênantes côté adverse, et approfondis les plans de milieu de partie (minorité d'attaque, structures à pion isolé).", keys:['espagnole','ecossaise']},
+    asBlackE4:{text:"Diversifie avec une deuxième défense (Caro-Kann ou Française) pour varier selon l'adversaire et éviter d'être trop prévisible en compétition.", keys:['carokann','francaise']},
+    asBlackD4:{text:"La Nimzo-Indienne ou la Grünfeld demandent plus de maîtrise stratégique mais offrent un jeu très riche.", keys:['nimzo_indienne','grunfeld']},
+    avoid:"Ne néglige plus les finales typiques de tes ouvertures : à ce niveau, beaucoup de parties se jouent sur la transition milieu de partie → finale, pas sur l'ouverture elle-même.",
+    next:"Étudie 2-3 parties de haut niveau dans chacune de tes ouvertures principales pour comprendre les plans typiques, pas seulement les coups."
+  },
+  {
+    label:'Expert',
+    asWhite:{text:"Prépare un répertoire complet avec plusieurs options par position, pour surprendre des adversaires qui te préparent spécifiquement.", keys:['espagnole','anglaise','reti']},
+    asBlackE4:{text:"Maîtrise les subtilités d'ordre de coups de ta Sicilienne pour éviter les transpositions défavorables.", keys:['dragon','sveshnikov']},
+    asBlackD4:{text:"À ce niveau, la préparation ciblée par adversaire compte plus que le choix de l'ouverture elle-même.", keys:['grunfeld','nimzo_indienne']},
+    avoid:"Ne te repose plus sur la mémorisation seule : à ce niveau, tes adversaires connaissent la théorie aussi bien que toi. La compréhension profonde des plans fait la différence.",
+    next:"Analyse systématiquement tes propres parties (onglet Analyse) pour repérer les erreurs récurrentes dans tes ouvertures, et corrige-les en mode Entraînement."
+  }
+];
+
+function openingChipsHtml(keys){
+  return keys.map(k => OPENINGS[k] ? `<button class="lib-chip roadmap-chip" data-line="${k}">${escapeHtml(OPENINGS[k].name)}</button>` : '').join('');
+}
+function renderRoadmap(bracket){
+  document.querySelectorAll('#roadmap-picker .level-btn').forEach(b => b.classList.toggle('active', b.dataset.bracket === String(bracket)));
+  const r = OPENING_ROADMAP[bracket];
+  const el = document.getElementById('roadmap-content');
+  el.innerHTML = `
+    <div class="roadmap-card">
+      <h3 class="roadmap-subtitle">${escapeHtml(r.label)}</h3>
+      <div class="roadmap-block">
+        <span class="rb-label">♔ Aux Blancs</span>
+        <p>${escapeHtml(r.asWhite.text)}</p>
+        <div class="roadmap-chips">${openingChipsHtml(r.asWhite.keys)}</div>
+      </div>
+      <div class="roadmap-block">
+        <span class="rb-label">♚ Aux Noirs, face à 1.e4</span>
+        <p>${escapeHtml(r.asBlackE4.text)}</p>
+        <div class="roadmap-chips">${openingChipsHtml(r.asBlackE4.keys)}</div>
+      </div>
+      <div class="roadmap-block">
+        <span class="rb-label">♚ Aux Noirs, face à 1.d4</span>
+        <p>${escapeHtml(r.asBlackD4.text)}</p>
+        <div class="roadmap-chips">${openingChipsHtml(r.asBlackD4.keys)}</div>
+      </div>
+      <div class="roadmap-avoid"><span class="rb-label">⚠️ À éviter à ce niveau</span><p>${escapeHtml(r.avoid)}</p></div>
+      <div class="roadmap-next"><span class="rb-label">🚀 Prochaine évolution</span><p>${escapeHtml(r.next)}</p></div>
+    </div>
+  `;
+  el.querySelectorAll('.roadmap-chip').forEach(btn=>{
+    btn.onclick = () => {
+      const key = btn.dataset.line;
+      switchTab('train');
+      setTimeout(()=>{
+        document.querySelectorAll('#opening-groups .line-btn').forEach(b=>b.classList.toggle('active', b.dataset.line===key));
+        const target = document.querySelector(`#opening-groups .line-btn[data-line="${key}"]`);
+        const parentDetails = target ? target.closest('details') : null;
+        if(parentDetails) parentDetails.open = true;
+        loadLine(OPENINGS[key], key);
+        window.scrollTo({top:0, behavior:'smooth'});
+      }, 60);
+    };
+  });
+}
+document.querySelectorAll('#roadmap-picker .level-btn').forEach(btn=>{
+  btn.onclick = () => renderRoadmap(parseInt(btn.dataset.bracket, 10));
+});
+renderRoadmap(0);
 
 function renderLibrary(){
   const el = document.getElementById('theory-library');
