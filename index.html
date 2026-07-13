@@ -379,7 +379,45 @@
   .roadmap-next .rb-label{color:var(--accent-green-text);}
   .roadmap-next p{color:var(--text);}
 
+  .trivia-card{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--accent-blue-bg);
+    border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;
+  }
+  .trivia-icon{font-size:1.6rem;flex:0 0 auto;}
+  .trivia-text{flex:1;min-width:200px;font-size:0.88rem;color:var(--navy);line-height:1.5;}
+
   /* ---- PROGRESS / DASHBOARD ---- */
+  .level-card{
+    display:flex;align-items:center;gap:16px;background:var(--bg-panel-2);
+    border-radius:22px;padding:16px 20px;margin-bottom:14px;
+  }
+  .level-badge{
+    width:52px;height:52px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(160deg, var(--coral), var(--coral-dark));color:#fff;
+    font-family:'Lora',serif;font-weight:700;font-size:1.4rem;box-shadow:0 6px 16px rgba(242,129,99,0.4);
+  }
+  .level-info{flex:1;min-width:0;}
+  .level-title{font-family:'Lora',serif;font-weight:700;color:var(--navy);font-size:1.02rem;margin-bottom:6px;}
+  .level-xp-track{height:8px;background:var(--line);border-radius:4px;overflow:hidden;}
+  .level-xp-fill{height:100%;width:0%;background:linear-gradient(90deg, var(--coral), var(--coral-dark));border-radius:4px;transition:width .5s cubic-bezier(.34,1.2,.64,1);}
+  .level-xp-label{font-size:0.72rem;color:var(--text-dim);margin-top:4px;font-family:'IBM Plex Mono',monospace;}
+
+  .daily-card{
+    display:flex;align-items:center;gap:14px;background:var(--accent-yellow-bg);
+    border-radius:22px;padding:16px 20px;margin-bottom:22px;
+  }
+  .daily-icon{font-size:1.8rem;flex:0 0 auto;}
+  .daily-info{flex:1;min-width:0;}
+  .daily-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--accent-yellow-text);font-weight:700;}
+  .daily-text{font-size:0.86rem;color:var(--navy);font-weight:600;margin:2px 0 6px;}
+  .daily-track{height:7px;background:rgba(183,134,26,0.18);border-radius:4px;overflow:hidden;}
+  .daily-fill{height:100%;width:0%;background:var(--accent-yellow-text);border-radius:4px;transition:width .4s ease;}
+  .daily-check{
+    width:30px;height:30px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+    background:var(--line);color:transparent;font-weight:700;transition:all .2s cubic-bezier(.34,1.56,.64,1);
+  }
+  .daily-check.done{background:var(--good);color:#fff;transform:scale(1.1);}
+
   .streak-card{
     display:flex;align-items:center;gap:16px;flex-wrap:wrap;
     background:linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
@@ -548,6 +586,23 @@
   @keyframes toastIn{ from{transform:translateX(120%); opacity:0;} to{transform:translateX(0); opacity:1;} }
   @keyframes toastOut{ from{transform:translateX(0); opacity:1;} to{transform:translateX(120%); opacity:0;} }
 
+  .onboarding-overlay{
+    position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;
+    background:rgba(43,47,76,0.55);backdrop-filter:blur(4px);padding:20px;
+  }
+  .onboarding-card{
+    background:var(--bg-panel);border-radius:26px;padding:30px 26px;max-width:420px;width:100%;
+    box-shadow:0 24px 60px rgba(43,47,76,0.4);text-align:center;
+    animation:onboardPop .4s cubic-bezier(.34,1.4,.64,1);
+  }
+  @keyframes onboardPop{ from{transform:scale(0.9); opacity:0;} to{transform:scale(1); opacity:1;} }
+  .onboarding-card h2{font-family:'Lora',serif;color:var(--navy);font-size:1.3rem;margin:0 0 6px;}
+  .onboarding-sub{color:var(--text-dim);font-size:0.88rem;margin:0 0 18px;}
+  .onboarding-list{display:flex;flex-direction:column;gap:12px;text-align:left;margin-bottom:22px;}
+  .onboarding-item{display:flex;align-items:flex-start;gap:12px;font-size:0.85rem;color:var(--text);line-height:1.4;}
+  .onboarding-item .oi-emoji{font-size:1.3rem;flex:0 0 auto;}
+  #onboarding-close-btn{width:100%;}
+
   section.panel.active{animation:panelFadeIn .32s ease;}
   @keyframes panelFadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
 
@@ -572,6 +627,23 @@
 <body>
 <div class="app">
   <div id="toast-container"></div>
+
+  <div id="onboarding-overlay" class="onboarding-overlay hidden">
+    <div class="onboarding-card">
+      <div class="knight-mark" style="width:52px;height:52px;font-size:1.8rem;margin:0 auto 14px;">♞</div>
+      <h2>Bienvenue dans ton Coach d'Échecs !</h2>
+      <p class="onboarding-sub">Cinq espaces pour progresser à ton rythme :</p>
+      <div class="onboarding-list">
+        <div class="onboarding-item"><span class="oi-emoji">🔍</span><span><b>Analyse</b> — colle une partie, un moteur Stockfish te montre tes erreurs.</span></div>
+        <div class="onboarding-item"><span class="oi-emoji">📖</span><span><b>Entraîner</b> — apprends 26 ouvertures coup par coup, avec indices.</span></div>
+        <div class="onboarding-item"><span class="oi-emoji">🧩</span><span><b>Puzzles</b> — résous des tactiques, classement façon lichess.</span></div>
+        <div class="onboarding-item"><span class="oi-emoji">📚</span><span><b>Théorie</b> — notation, lexique, et quoi jouer selon ton niveau.</span></div>
+        <div class="onboarding-item"><span class="oi-emoji">🏆</span><span><b>Progrès</b> — série quotidienne, niveau, badges, défi du jour.</span></div>
+      </div>
+      <button class="btn" id="onboarding-close-btn">C'est parti ! →</button>
+    </div>
+  </div>
+
   <header class="top">
     <div class="brand">
       <div class="knight-mark">♞</div>
@@ -716,6 +788,12 @@
     </div>
     <div id="roadmap-content"></div>
 
+    <div class="trivia-card" id="trivia-card">
+      <div class="trivia-icon">💡</div>
+      <div class="trivia-text" id="trivia-text">Chargement d'une anecdote…</div>
+      <button class="btn secondary" id="trivia-next-btn">Suivante →</button>
+    </div>
+
     <h2 class="section-title">Bibliothèque de démonstrations interactives</h2>
     <p class="section-sub">Touche une ouverture : elle se lance directement sur l'échiquier d'entraînement, coup par coup, avec les explications.</p>
     <div id="theory-library"></div>
@@ -732,6 +810,25 @@
 
   <!-- ================= PROGRESS PANEL ================= -->
   <section id="panel-progress" class="panel">
+    <div class="level-card" id="level-card">
+      <div class="level-badge" id="level-badge">1</div>
+      <div class="level-info">
+        <div class="level-title" id="level-title">Novice</div>
+        <div class="level-xp-track"><div class="level-xp-fill" id="level-xp-fill"></div></div>
+        <div class="level-xp-label" id="level-xp-label">0 / 150 XP</div>
+      </div>
+    </div>
+
+    <div class="daily-card" id="daily-card">
+      <div class="daily-icon">🎯</div>
+      <div class="daily-info">
+        <div class="daily-label">Défi du jour</div>
+        <div class="daily-text" id="daily-text">Chargement…</div>
+        <div class="daily-track"><div class="daily-fill" id="daily-fill"></div></div>
+      </div>
+      <div class="daily-check" id="daily-check">✓</div>
+    </div>
+
     <div class="streak-card" id="streak-card">
       <div class="streak-flame" id="streak-flame">🔥</div>
       <div class="streak-info">
@@ -1566,7 +1663,10 @@ function defaultProgress(){
     mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal', voiceName:null},
     mistakes: [], puzzleRating: 1000, puzzlesSolved: 0, puzzlesFailed: 0,
     puzzleStreak: 0, puzzleBestStreak: 0,
-    activityDates: [], viewedNotationGuide: false, viewedGlossary: false
+    activityDates: [], viewedNotationGuide: false, viewedGlossary: false,
+    xp: 0, lastKnownLevel: 1,
+    dailyProgress: { date:null, puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false },
+    onboarded: false
   };
 }
 function loadProgress(){
@@ -1631,6 +1731,72 @@ function computeBestStreak(){
   return best;
 }
 
+/* ============ NIVEAU DE JOUEUR (XP) ============ */
+const XP_PER_LEVEL = 150;
+const LEVEL_TITLES = [
+  {min:1, max:2, title:'Novice'},
+  {min:3, max:5, title:'Apprenti'},
+  {min:6, max:9, title:'Joueur confirmé'},
+  {min:10, max:14, title:'Stratège'},
+  {min:15, max:20, title:'Maître en devenir'},
+  {min:21, max:9999, title:'Grand Maître du Coach'}
+];
+function levelFromXp(xp){ return Math.floor(Math.max(0, xp) / XP_PER_LEVEL) + 1; }
+function levelTitle(level){
+  const t = LEVEL_TITLES.find(t => level >= t.min && level <= t.max);
+  return t ? t.title : 'Joueur';
+}
+function addXP(amount, reason){
+  PROGRESS.xp = (PROGRESS.xp || 0) + amount;
+  const newLevel = levelFromXp(PROGRESS.xp);
+  if(newLevel > (PROGRESS.lastKnownLevel || 1)){
+    PROGRESS.lastKnownLevel = newLevel;
+    saveProgress();
+    fireConfetti('mastery');
+    showToast(`🎉 Niveau ${newLevel} atteint !`, levelTitle(newLevel));
+    if(typeof checkNewBadges === 'function') checkNewBadges();
+  } else {
+    saveProgress();
+  }
+  if(typeof refreshLevelDisplay === 'function') refreshLevelDisplay();
+}
+
+/* ============ DÉFI DU JOUR ============ */
+const DAILY_CHALLENGES = [
+  {id:'puzzles3', text:'Résous 3 puzzles aujourd\u2019hui', target:3, type:'puzzlesSolvedToday', xp:40},
+  {id:'train1', text:'Termine une ligne d\u2019ouverture aujourd\u2019hui', target:1, type:'linesCompletedToday', xp:30},
+  {id:'analyze1', text:'Analyse une partie aujourd\u2019hui', target:1, type:'gamesAnalyzedToday', xp:35},
+  {id:'play1', text:'Termine une partie contre l\u2019ordinateur', target:1, type:'gamesPlayedToday', xp:30},
+  {id:'puzzles5', text:'Résous 5 puzzles aujourd\u2019hui', target:5, type:'puzzlesSolvedToday', xp:60}
+];
+function dayOfYear(){
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  return Math.floor((now - start) / 86400000);
+}
+function todayChallenge(){
+  return DAILY_CHALLENGES[dayOfYear() % DAILY_CHALLENGES.length];
+}
+function ensureDailyProgressFresh(){
+  PROGRESS.dailyProgress = PROGRESS.dailyProgress || {};
+  if(PROGRESS.dailyProgress.date !== todayKey()){
+    PROGRESS.dailyProgress = { date: todayKey(), puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false };
+  }
+}
+function bumpDailyCounter(type){
+  ensureDailyProgressFresh();
+  PROGRESS.dailyProgress[type] = (PROGRESS.dailyProgress[type] || 0) + 1;
+  const challenge = todayChallenge();
+  if(challenge.type === type && !PROGRESS.dailyProgress.rewardClaimed && PROGRESS.dailyProgress[type] >= challenge.target){
+    PROGRESS.dailyProgress.rewardClaimed = true;
+    addXP(challenge.xp, 'daily-challenge');
+    fireConfetti('badge');
+    showToast('✅ Défi du jour terminé !', `+${challenge.xp} XP`);
+  }
+  saveProgress();
+  if(typeof renderDailyChallenge === 'function') renderDailyChallenge();
+}
+
 function computeAccuracy(s){
   const total = s.best + s.good + s.inaccuracy + s.mistake + s.blunder;
   if(total === 0) return 100;
@@ -1651,6 +1817,8 @@ function recordAnalyzedGame(headers, sums){
   PROGRESS.games = PROGRESS.games.slice(0, 15);
   saveProgress();
   recordActivity();
+  addXP(15, 'analyze');
+  bumpDailyCounter('gamesAnalyzedToday');
   if(typeof checkNewBadges === 'function') checkNewBadges();
 }
 
@@ -1688,6 +1856,8 @@ function recordLineCompletion(key, clean){
   }
   saveProgress();
   recordActivity();
+  addXP(clean ? 30 : 10, 'training');
+  bumpDailyCounter('linesCompletedToday');
   if(typeof checkNewBadges === 'function') checkNewBadges();
   if(typeof renderOpeningGroups === 'function') renderOpeningGroups();
   if(document.getElementById('panel-progress').classList.contains('active')) renderProgressTab();
@@ -1702,6 +1872,7 @@ function computeBadges(){
   const gamesCount = PROGRESS.games.length;
   const perfectGame = PROGRESS.games.some(g => g.totalBlunders === 0);
   const totalTrainable = trainableKeys().length;
+  const level = levelFromXp(PROGRESS.xp || 0);
   return [
     {emoji:'🥉', name:'Premier pas', desc:'Maîtriser 1 ouverture sans erreur', unlocked: masteredCount >= 1},
     {emoji:'🥈', name:'Étudiant assidu', desc:'Maîtriser 10 ouvertures sans erreur', unlocked: masteredCount >= 10},
@@ -1709,7 +1880,9 @@ function computeBadges(){
     {emoji:'📊', name:'Analyste', desc:'Analyser 5 parties', unlocked: gamesCount >= 5},
     {emoji:'🎯', name:'Sans-faute', desc:'Analyser une partie sans aucune gaffe', unlocked: perfectGame},
     {emoji:'🧩', name:'Tacticien', desc:'Résoudre 10 puzzles', unlocked: PROGRESS.puzzlesSolved >= 10},
-    {emoji:'🔥', name:'En feu', desc:'Une série de 5 puzzles résolus d\u2019affilée', unlocked: PROGRESS.puzzleBestStreak >= 5}
+    {emoji:'🔥', name:'En feu', desc:'Une série de 5 puzzles résolus d\u2019affilée', unlocked: PROGRESS.puzzleBestStreak >= 5},
+    {emoji:'⭐', name:'Niveau 5', desc:'Atteindre le niveau 5 (Apprenti)', unlocked: level >= 5},
+    {emoji:'🏆', name:'Niveau 10', desc:'Atteindre le niveau 10 (Stratège)', unlocked: level >= 10}
   ];
 }
 
@@ -1794,6 +1967,31 @@ function renderPathList(){
   });
 }
 
+function refreshLevelDisplay(){
+  const xp = PROGRESS.xp || 0;
+  const level = levelFromXp(xp);
+  const xpIntoLevel = xp % XP_PER_LEVEL;
+  const badge = document.getElementById('level-badge');
+  const title = document.getElementById('level-title');
+  const fill = document.getElementById('level-xp-fill');
+  const label = document.getElementById('level-xp-label');
+  if(!badge) return;
+  badge.textContent = level;
+  title.textContent = levelTitle(level);
+  fill.style.width = Math.round((xpIntoLevel / XP_PER_LEVEL) * 100) + '%';
+  label.textContent = `${xpIntoLevel} / ${XP_PER_LEVEL} XP`;
+}
+
+function renderDailyChallenge(){
+  ensureDailyProgressFresh();
+  const challenge = todayChallenge();
+  const current = Math.min(challenge.target, PROGRESS.dailyProgress[challenge.type] || 0);
+  const done = PROGRESS.dailyProgress.rewardClaimed;
+  document.getElementById('daily-text').textContent = `${challenge.text} (${current}/${challenge.target}) — +${challenge.xp} XP`;
+  document.getElementById('daily-fill').style.width = Math.round((current / challenge.target) * 100) + '%';
+  document.getElementById('daily-check').classList.toggle('done', done);
+}
+
 function renderStreakCard(){
   const streak = computeCurrentStreak();
   document.getElementById('streak-number').textContent = streak;
@@ -1809,6 +2007,8 @@ function renderStreakCard(){
 }
 
 function renderProgressTab(){
+  refreshLevelDisplay();
+  renderDailyChallenge();
   renderStreakCard();
   renderPathList();
   const totalTrainable = trainableKeys().length;
@@ -2922,6 +3122,8 @@ function attemptPuzzleMove(source, target){
   applyPuzzleRatingChange(success);
   saveProgress();
   recordActivity();
+  addXP(success ? 12 : 6, 'puzzle');
+  bumpDailyCounter('puzzlesSolvedToday');
   refreshPuzzleHeader();
   if(typeof checkNewBadges === 'function') checkNewBadges();
   if(success) fireConfetti('puzzle');
@@ -3323,6 +3525,10 @@ function checkPlayGameOver(){
     playGameOver = true;
     updatePlayStatus();
     playSound(playGame.in_checkmate() ? 'gameover' : 'move');
+    const won = playGame.in_checkmate() && playGame.turn() !== playerColor;
+    recordActivity();
+    addXP(won ? 25 : 10, 'play');
+    bumpDailyCounter('gamesPlayedToday');
     return true;
   }
   return false;
@@ -3466,6 +3672,41 @@ document.getElementById('play-resign-btn').onclick = () => {
   if(!playGame || playGameOver) return;
   playGameOver = true;
   updatePlayStatus("Partie abandonnée. Lance une nouvelle partie quand tu veux.");
+};
+
+/* ============ LE SAVIEZ-VOUS ? (anecdotes) ============ */
+const CHESS_TRIVIA = [
+  "L'expression \u00ab échec et mat \u00bb vient du perse \u00ab Shâh Mât \u00bb, qui signifie à peu près \u00ab le roi est impuissant \u00bb.",
+  "Le nombre de parties d'échecs différentes possibles est si immense (on parle de 10 puissance 120, le \u00ab nombre de Shannon \u00bb) qu'il dépasserait le nombre d'atomes estimé dans l'univers observable.",
+  "Les échecs sont nés en Inde autour du 6ᵉ siècle sous le nom de chaturanga, avant de voyager vers la Perse puis le monde arabe et l'Europe.",
+  "Le cavalier est la seule pièce du jeu capable de sauter par-dessus les autres pièces, alliées comme adverses.",
+  "En Angleterre, le ministère des Finances s'appelle encore aujourd'hui \u00ab l'Échiquier \u00bb (the Exchequer), car les comptes royaux étaient autrefois calculés sur une table à carreaux façon échiquier.",
+  "En 1997, Garry Kasparov est devenu le premier champion du monde en titre à perdre un match contre un ordinateur, Deep Blue d'IBM.",
+  "Judit Polgár, considérée comme la plus forte joueuse de l'histoire, a battu de nombreux champions du monde masculins au cours de sa carrière.",
+  "Le roi n'est en réalité jamais capturé aux échecs : la partie s'arrête dès qu'il est mis échec et mat, un coup avant une capture théorique.",
+  "La FIDE, la fédération internationale des échecs, est reconnue par le Comité International Olympique depuis 1999.",
+  "On estime qu'il existe déjà plus de combinaisons possibles rien que pour les 10 premiers coups d'une partie que de secondes écoulées depuis le Big Bang.",
+  "Le mot \u00ab pion \u00bb vient du latin pedo, qui désignait un fantassin, un soldat à pied — d'où aussi le mot \u00ab piéton \u00bb.",
+  "Une partie officielle homologuée a duré plus de 20 heures et 269 coups (Nikolić contre Arsović, 1989), l'une des plus longues jamais enregistrées."
+];
+let triviaIndex = -1;
+function showNextTrivia(){
+  let next;
+  do { next = Math.floor(Math.random() * CHESS_TRIVIA.length); } while(CHESS_TRIVIA.length > 1 && next === triviaIndex);
+  triviaIndex = next;
+  document.getElementById('trivia-text').textContent = CHESS_TRIVIA[triviaIndex];
+}
+document.getElementById('trivia-next-btn').onclick = showNextTrivia;
+showNextTrivia();
+
+/* ============ TOUR DE BIENVENUE (première visite) ============ */
+if(!PROGRESS.onboarded){
+  document.getElementById('onboarding-overlay').classList.remove('hidden');
+}
+document.getElementById('onboarding-close-btn').onclick = function(){
+  document.getElementById('onboarding-overlay').classList.add('hidden');
+  PROGRESS.onboarded = true;
+  saveProgress();
 };
 
 /* Sizing initial */
