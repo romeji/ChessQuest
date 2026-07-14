@@ -3,35 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Coach d'Échecs</title>
+<title>Chessy — Coach d'Échecs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
 <style>
   :root{
-    --bg:#FCEEE2;
+    --bg:#F6F3FE;
     --bg-panel:#FFFFFF;
-    --bg-panel-2:#FBF1E7;
-    --line:#F1DFCE;
-    --navy:#2B2F4C;
-    --navy-2:#3A3F63;
-    --coral:#F28163;
-    --coral-dark:#E36A4B;
-    --cream:#FCEEE2;
-    --ink:#2B2F4C;
+    --bg-panel-2:#F1ECFC;
+    --line:#E8E1FA;
+    --navy:#2E2A47;
+    --navy-2:#3D3763;
+    --coral:#7B68EE;
+    --coral-dark:#6552D0;
+    --cream:#F6F3FE;
+    --ink:#2E2A47;
     --text:#332F4B;
-    --text-dim:#9C8E82;
+    --text-dim:#948FAE;
     --best:#4C86C9;
     --good:#3FAE7A;
     --inaccuracy:#E8A93A;
     --mistake:#EF8F4E;
     --blunder:#EA5F63;
     --radius:18px;
-    --shadow:0 10px 26px rgba(43,47,76,0.10);
+    --shadow:0 10px 26px rgba(46,42,71,0.10);
     --accent-blue-bg:#E1EAF6; --accent-blue-text:#4A6FA5;
     --accent-pink-bg:#FBDDE4; --accent-pink-text:#D65D77;
     --accent-yellow-bg:#FFF1CB; --accent-yellow-text:#B7861A;
     --accent-green-bg:#DEF3E7; --accent-green-text:#2F9963;
+    --tile-purple:#7B68EE; --tile-green:#3CB878; --tile-orange:#FF9F43; --tile-blue:#4A90E2;
+    --gem:#8B5CF6;
   }
   *{box-sizing:border-box;}
   html{overflow-x:hidden;}
@@ -49,11 +51,11 @@
     border-radius:42% 58% 63% 37% / 41% 44% 56% 59%;
   }
   body::before{
-    width:260px;height:260px;background:#F7C7B4;opacity:0.5;
+    width:260px;height:260px;background:#D9CFFA;opacity:0.55;
     top:-90px;right:-90px;
   }
   body::after{
-    width:200px;height:200px;background:#C9D8EC;opacity:0.45;
+    width:200px;height:200px;background:#C9EFDD;opacity:0.5;
     bottom:20px;left:-80px;
   }
   .app{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 16px calc(92px + env(safe-area-inset-bottom, 0px));}
@@ -70,7 +72,7 @@
     width:38px;height:38px;border-radius:13px;flex:0 0 auto;
     background:linear-gradient(160deg, var(--coral), var(--coral-dark));
     display:flex;align-items:center;justify-content:center;color:#fff;
-    font-size:1.3rem;box-shadow:0 6px 16px rgba(242,129,99,0.4);
+    font-size:1.3rem;box-shadow:0 6px 16px rgba(123,104,238,0.4);
   }
   header.top h1{
     font-family:'Lora',serif;font-weight:700;font-size:1.5rem;margin:0;
@@ -103,7 +105,7 @@
     stroke-linecap:round;stroke-linejoin:round;transition:transform .2s cubic-bezier(.34,1.56,.64,1);
   }
   .tabbar-item span{font-size:0.6rem;font-weight:600;letter-spacing:0.01em;white-space:nowrap;}
-  .tabbar-item.active{color:var(--coral); background:rgba(242,129,99,0.12);}
+  .tabbar-item.active{color:var(--coral); background:rgba(123,104,238,0.12);}
   .tabbar-item.active .tabicon{transform:scale(1.12) translateY(-1px);}
   .tabbar-item:active{transform:scale(0.92);}
   .tabbar-item::after{
@@ -115,6 +117,65 @@
 
   section.panel{display:none;background:var(--bg-panel);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow);}
   section.panel.active{display:block;}
+
+  /* ---- HOME PANEL ---- */
+  .home-hero{
+    background:linear-gradient(160deg, var(--coral) 0%, var(--coral-dark) 100%);
+    border-radius:26px;padding:22px 20px;margin-bottom:18px;box-shadow:0 16px 34px rgba(123,104,238,0.32);
+  }
+  .home-hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:16px;}
+  .home-greeting{font-family:'Lora',serif;font-weight:700;font-size:1.25rem;color:#fff;}
+  .home-sub{font-size:0.82rem;color:rgba(255,255,255,0.85);margin-top:2px;}
+  .home-hero-stats{display:flex;gap:8px;flex-shrink:0;}
+  .home-chip{
+    background:rgba(255,255,255,0.18);color:#fff;border-radius:14px;padding:6px 11px;
+    font-size:0.82rem;font-weight:700;display:flex;align-items:center;gap:4px;
+  }
+  .home-goal-card{
+    background:rgba(255,255,255,0.95);border-radius:18px;padding:14px 16px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .home-goal-info{flex:1;min-width:0;}
+  .home-goal-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--coral-dark);font-weight:700;}
+  .home-goal-text{font-size:0.86rem;color:var(--navy);font-weight:600;margin:2px 0 8px;}
+  .home-goal-mascot{font-size:2rem;flex:0 0 auto;}
+
+  .home-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px;}
+  .home-tile{
+    display:flex;flex-direction:column;align-items:flex-start;gap:10px;border:none;border-radius:20px;
+    padding:16px;cursor:pointer;color:#fff;font-family:'Inter',sans-serif;font-weight:700;font-size:0.92rem;
+    transition:transform .15s cubic-bezier(.34,1.56,.64,1), box-shadow .15s ease;
+  }
+  .home-tile:active{transform:scale(0.95);}
+  .home-tile-icon{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .tile-purple{background:linear-gradient(160deg, var(--tile-purple), #6552D0); box-shadow:0 10px 22px rgba(123,104,238,0.35);}
+  .tile-green{background:linear-gradient(160deg, var(--tile-green), #2E9860); box-shadow:0 10px 22px rgba(60,184,120,0.35);}
+  .tile-orange{background:linear-gradient(160deg, var(--tile-orange), #E8862A); box-shadow:0 10px 22px rgba(255,159,67,0.35);}
+  .tile-blue{background:linear-gradient(160deg, var(--tile-blue), #3672C4); box-shadow:0 10px 22px rgba(74,144,226,0.35);}
+
+  .home-section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .link-btn{background:none;border:none;color:var(--coral);font-weight:600;font-size:0.82rem;cursor:pointer;}
+
+  .home-path-card{
+    display:flex;align-items:center;gap:14px;background:var(--bg-panel-2);border-radius:18px;
+    padding:14px 16px;margin-bottom:16px;cursor:pointer;
+  }
+  .home-path-icon{font-size:1.6rem;flex:0 0 auto;}
+  .home-path-info{flex:1;min-width:0;}
+  .home-path-title{font-size:0.86rem;font-weight:600;color:var(--navy);margin-bottom:6px;}
+  .home-path-count{font-size:0.72rem;color:var(--text-dim);margin-top:4px;font-family:'IBM Plex Mono',monospace;}
+
+  .home-week-card{background:var(--bg-panel-2);border-radius:18px;padding:16px;margin-bottom:10px;}
+  .home-week-label{font-size:0.82rem;font-weight:600;color:var(--navy);margin-bottom:12px;}
+  .home-week-strip{display:flex;justify-content:space-between;gap:6px;}
+  .home-week-day{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+  .home-week-day .wd-label{font-size:0.66rem;color:var(--text-dim);font-weight:600;}
+  .home-week-day .wd-dot{
+    width:28px;height:28px;border-radius:50%;background:var(--line);display:flex;align-items:center;justify-content:center;
+    font-size:0.8rem;color:transparent;
+  }
+  .home-week-day.done .wd-dot{background:var(--good);color:#fff;}
+  .home-week-day.today .wd-dot{box-shadow:0 0 0 2px var(--coral);}
 
   /* ---- ANALYSIS PANEL ---- */
   .input-block{display:flex;flex-direction:column;gap:14px;max-width:760px;}
@@ -137,9 +198,9 @@
     font-family:'Inter',sans-serif;font-weight:700;font-size:0.86rem;
     background:var(--coral);color:var(--ink);border:none;border-radius:999px;
     padding:12px 22px;cursor:pointer;transition:filter .15s ease, transform .12s cubic-bezier(.34,1.56,.64,1), box-shadow .15s ease;
-    box-shadow:0 4px 14px rgba(242,129,99,0.28);
+    box-shadow:0 4px 14px rgba(123,104,238,0.28);
   }
-  button.btn:hover{filter:brightness(1.08); box-shadow:0 6px 18px rgba(242,129,99,0.38);}
+  button.btn:hover{filter:brightness(1.08); box-shadow:0 6px 18px rgba(123,104,238,0.38);}
   button.btn:active{transform:scale(0.95);}
   button.btn.secondary{background:var(--bg-panel-2);color:var(--navy);border:1px solid var(--line);box-shadow:none;border-radius:999px;}
   button.btn.secondary:hover{border-color:var(--coral);}
@@ -263,6 +324,35 @@
   .engine-note{font-size:0.76rem;color:var(--text-dim);border-top:1px dashed var(--line);padding-top:10px;}
 
   /* ---- TRAIN PANEL ---- */
+  .path-header{margin-bottom:4px;}
+  .skill-path{position:relative;padding:20px 10px 30px;margin-bottom:8px;}
+  .skill-path::before{
+    content:'';position:absolute;left:50%;top:30px;bottom:30px;width:4px;
+    background:repeating-linear-gradient(to bottom, var(--line) 0 8px, transparent 8px 16px);
+    transform:translateX(-50%);z-index:0;
+  }
+  .skill-node-row{display:flex;justify-content:center;position:relative;z-index:1;margin-bottom:6px;}
+  .skill-node-row.align-left{justify-content:flex-start;padding-left:8%;}
+  .skill-node-row.align-right{justify-content:flex-end;padding-right:8%;}
+  .skill-node{
+    display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;
+    background:none;border:none;font-family:'Inter',sans-serif;
+  }
+  .skill-node-circle{
+    width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:1.6rem;color:#fff;box-shadow:0 8px 18px rgba(46,42,71,0.2);border:4px solid #fff;
+    transition:transform .15s cubic-bezier(.34,1.56,.64,1);
+  }
+  .skill-node:active .skill-node-circle{transform:scale(0.92);}
+  .skill-node.done .skill-node-circle{background:linear-gradient(160deg, var(--good), #2E9860);}
+  .skill-node.progress .skill-node-circle{background:linear-gradient(160deg, var(--tile-orange), #E8862A);}
+  .skill-node.todo .skill-node-circle{background:linear-gradient(160deg, var(--coral), var(--coral-dark));}
+  .skill-node-label{font-size:0.74rem;font-weight:700;color:var(--navy);text-align:center;max-width:100px;}
+  .skill-node-sub{font-size:0.64rem;color:var(--text-dim);}
+  .skill-chest{display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;z-index:1;margin-top:6px;}
+  .skill-chest-icon{font-size:2.2rem;}
+  .skill-chest-label{font-size:0.76rem;color:var(--text-dim);font-weight:600;}
+
   details.opening-category{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;background:var(--bg-panel-2);overflow:hidden;}
   details.opening-category summary{
     cursor:pointer;padding:12px 16px;font-family:'Lora',serif;color:var(--coral);font-weight:600;font-size:0.88rem;
@@ -278,7 +368,7 @@
     padding:9px 12px;cursor:pointer;font-family:'Inter',sans-serif;font-size:0.83rem;transition:border-color .15s ease;
   }
   .line-btn:hover{border-color:var(--coral);}
-  .line-btn.active{border-color:var(--coral);background:rgba(242,129,99,0.1);}
+  .line-btn.active{border-color:var(--coral);background:rgba(123,104,238,0.1);}
   .line-btn .n-moves{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;color:var(--text-dim);white-space:nowrap;}
 
   .train-row{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;margin-top:18px;}
@@ -338,7 +428,7 @@
     transition:background .2s cubic-bezier(.34,1.56,.64,1), color .2s ease;
   }
   .level-btn:hover{color:var(--text);}
-  .level-btn.active{background:var(--coral);color:var(--ink);box-shadow:0 2px 8px rgba(242,129,99,0.35);}
+  .level-btn.active{background:var(--coral);color:var(--ink);box-shadow:0 2px 8px rgba(123,104,238,0.35);}
   .theory-intro{font-size:0.88rem;color:var(--text-dim);line-height:1.55;margin-bottom:20px;max-width:760px;}
   .theory-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:30px;}
   .theory-card{background:var(--bg-panel-2);border:none;border-radius:var(--radius);padding:16px 18px;}
@@ -394,7 +484,7 @@
   .level-badge{
     width:52px;height:52px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
     background:linear-gradient(160deg, var(--coral), var(--coral-dark));color:#fff;
-    font-family:'Lora',serif;font-weight:700;font-size:1.4rem;box-shadow:0 6px 16px rgba(242,129,99,0.4);
+    font-family:'Lora',serif;font-weight:700;font-size:1.4rem;box-shadow:0 6px 16px rgba(123,104,238,0.4);
   }
   .level-info{flex:1;min-width:0;}
   .level-title{font-family:'Lora',serif;font-weight:700;color:var(--navy);font-size:1.02rem;margin-bottom:6px;}
@@ -464,16 +554,22 @@
   .stats-row .stat-card:nth-child(4n+4){background:var(--accent-green-bg);}
   .stats-row .stat-card:nth-child(4n+4) .big{color:var(--accent-green-text);}
 
-  .badges-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .badges-row{display:grid;grid-template-columns:repeat(auto-fill, minmax(84px,1fr));gap:14px;margin-bottom:10px;}
   .badge-chip{
-    display:flex;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);
-    border-radius:20px;padding:8px 14px;font-size:0.8rem;opacity:0.4;filter:grayscale(1);
+    display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;
+    opacity:0.35;filter:grayscale(1);
   }
-  .badge-chip.unlocked{opacity:1;filter:none;border-color:var(--coral);}
-  .badge-chip .emoji{font-size:1.15rem;}
+  .badge-chip.unlocked{opacity:1;filter:none;}
+  .badge-chip .hex{
+    width:56px;height:56px;
+    background:linear-gradient(160deg, var(--coral), var(--coral-dark));
+    clip-path:polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+    display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(46,42,71,0.18);
+  }
+  .badge-chip .emoji{font-size:1.4rem;}
   .badge-chip .badge-text{display:flex;flex-direction:column;}
-  .badge-chip .badge-text .name{font-weight:600;color:var(--navy);}
-  .badge-chip .badge-text .desc{font-size:0.68rem;color:var(--text-dim);}
+  .badge-chip .badge-text .name{font-weight:700;color:var(--navy);font-size:0.72rem;}
+  .badge-chip .badge-text .desc{display:none;}
 
   .mastery-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(190px,1fr));gap:8px;margin-bottom:6px;}
   .mastery-chip{
@@ -533,7 +629,7 @@
     border-radius:16px;padding:5px 12px;font-size:0.74rem;cursor:pointer;transition:all .15s ease;
   }
   .theme-chip:hover{border-color:var(--coral);color:var(--text);}
-  .theme-chip.active{border-color:var(--coral);color:var(--coral);background:rgba(242,129,99,0.1);}
+  .theme-chip.active{border-color:var(--coral);color:var(--coral);background:rgba(123,104,238,0.1);}
 
   .difficulty-stars{font-size:0.85rem;color:var(--coral);letter-spacing:1px;white-space:nowrap;}
   .difficulty-stars .dim{color:var(--line);}
@@ -647,12 +743,16 @@
   <header class="top">
     <div class="brand">
       <div class="knight-mark">♞</div>
-      <h1>Coach d'<span class="accent">Échecs</span></h1>
+      <h1>Chess<span class="accent">y</span></h1>
     </div>
   </header>
 
   <nav class="tabbar" id="tabbar">
-    <button id="tab-analyze" class="tabbar-item active" data-tab="analyze">
+    <button id="tab-home" class="tabbar-item active" data-tab="home">
+      <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
+      <span>Accueil</span>
+    </button>
+    <button id="tab-analyze" class="tabbar-item" data-tab="analyze">
       <svg viewBox="0 0 24 24" class="tabicon"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg>
       <span>Analyse</span>
     </button>
@@ -678,8 +778,69 @@
     </button>
   </nav>
 
+  <!-- ================= HOME PANEL ================= -->
+  <section id="panel-home" class="panel active">
+    <div class="home-hero">
+      <div class="home-hero-top">
+        <div>
+          <div class="home-greeting" id="home-greeting">Salut, Champion ! 👋</div>
+          <div class="home-sub">Prêt à progresser aujourd'hui ?</div>
+        </div>
+        <div class="home-hero-stats">
+          <div class="home-chip">🔥 <span id="home-streak">0</span></div>
+          <div class="home-chip gem">💎 <span id="home-xp">0</span></div>
+        </div>
+      </div>
+      <div class="home-goal-card">
+        <div class="home-goal-info">
+          <span class="home-goal-label">Ton objectif du jour</span>
+          <div class="home-goal-text" id="home-goal-text">Chargement…</div>
+          <div class="daily-track"><div class="daily-fill" id="home-goal-fill"></div></div>
+        </div>
+        <div class="home-goal-mascot">🧙</div>
+      </div>
+    </div>
+
+    <div class="home-tiles">
+      <button class="home-tile tile-purple" data-tab="train">
+        <svg viewBox="0 0 24 24" class="home-tile-icon"><path d="M4 19V6a2 2 0 0 1 2-2h13v14H6a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h13"/></svg>
+        <span>Apprendre</span>
+      </button>
+      <button class="home-tile tile-green" data-tab="play">
+        <svg viewBox="0 0 24 24" class="home-tile-icon"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>S'entraîner</span>
+      </button>
+      <button class="home-tile tile-orange" data-tab="puzzles">
+        <svg viewBox="0 0 24 24" class="home-tile-icon"><path d="M14 3v3a2 2 0 0 0 2 2h3M9 21H6a2 2 0 0 1-2-2v-3M4 9V6a2 2 0 0 1 2-2h3m7 17h3a2 2 0 0 0 2-2v-3"/><circle cx="12" cy="12" r="2.5"/></svg>
+        <span>Puzzles</span>
+      </button>
+      <button class="home-tile tile-blue" data-tab="analyze">
+        <svg viewBox="0 0 24 24" class="home-tile-icon"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg>
+        <span>Analyser</span>
+      </button>
+    </div>
+
+    <div class="home-section-head">
+      <h2 class="section-title" style="border:none;padding:0;margin:0;">Ton parcours</h2>
+      <button class="link-btn" data-tab="progress">Voir tout</button>
+    </div>
+    <div class="home-path-card" id="home-path-card">
+      <div class="home-path-icon">📖</div>
+      <div class="home-path-info">
+        <div class="home-path-title" id="home-path-title">Ouvertures : Débutant</div>
+        <div class="daily-track"><div class="daily-fill" id="home-path-fill"></div></div>
+        <div class="home-path-count" id="home-path-count">0/24</div>
+      </div>
+    </div>
+
+    <div class="home-week-card">
+      <div class="home-week-label">Série en cours <span id="home-week-streak">0 jours 🔥</span></div>
+      <div class="home-week-strip" id="home-week-strip"></div>
+    </div>
+  </section>
+
   <!-- ================= ANALYSIS PANEL ================= -->
-  <section id="panel-analyze" class="panel active">
+  <section id="panel-analyze" class="panel">
     <div class="input-block">
       <div>
         <label class="field-label">Coller le PGN</label>
@@ -729,6 +890,12 @@
 
   <!-- ================= TRAIN PANEL ================= -->
   <section id="panel-train" class="panel">
+    <div class="path-header">
+      <h2 class="section-title" style="border:none;padding:0;">🗺️ Ton parcours vedette</h2>
+      <p class="section-sub">Tes deux armes principales, étape par étape. Le reste de la bibliothèque est juste en dessous.</p>
+    </div>
+    <div class="skill-path" id="skill-path"></div>
+
     <input id="opening-search" type="text" placeholder="🔍 Rechercher une ouverture… (ex : Najdorf, Londres, Caro-Kann)">
     <div class="opening-groups" id="opening-groups"></div>
 
@@ -981,6 +1148,7 @@
 const PIECE_THEME = 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png';
 
 /* ============ TABS ============ */
+document.getElementById('tab-home').onclick = () => switchTab('home');
 document.getElementById('tab-analyze').onclick = () => switchTab('analyze');
 document.getElementById('tab-train').onclick = () => switchTab('train');
 document.getElementById('tab-puzzles').onclick = () => switchTab('puzzles');
@@ -988,18 +1156,21 @@ document.getElementById('tab-theory').onclick = () => switchTab('theory');
 document.getElementById('tab-play').onclick = () => switchTab('play');
 document.getElementById('tab-progress').onclick = () => switchTab('progress');
 function switchTab(name){
+  document.getElementById('tab-home').classList.toggle('active', name==='home');
   document.getElementById('tab-analyze').classList.toggle('active', name==='analyze');
   document.getElementById('tab-train').classList.toggle('active', name==='train');
   document.getElementById('tab-puzzles').classList.toggle('active', name==='puzzles');
   document.getElementById('tab-theory').classList.toggle('active', name==='theory');
   document.getElementById('tab-play').classList.toggle('active', name==='play');
   document.getElementById('tab-progress').classList.toggle('active', name==='progress');
+  document.getElementById('panel-home').classList.toggle('active', name==='home');
   document.getElementById('panel-analyze').classList.toggle('active', name==='analyze');
   document.getElementById('panel-train').classList.toggle('active', name==='train');
   document.getElementById('panel-puzzles').classList.toggle('active', name==='puzzles');
   document.getElementById('panel-theory').classList.toggle('active', name==='theory');
   document.getElementById('panel-play').classList.toggle('active', name==='play');
   document.getElementById('panel-progress').classList.toggle('active', name==='progress');
+  if(name==='home' && typeof renderHomeTab === 'function') renderHomeTab();
   if(name==='progress' && typeof renderProgressTab === 'function') renderProgressTab();
   if(name==='puzzles' && typeof ensurePuzzleBoard === 'function'){
     ensurePuzzleBoard();
@@ -2025,9 +2196,9 @@ function renderProgressTab(){
   `;
 
   document.getElementById('badges-row').innerHTML = computeBadges().map(b => `
-    <div class="badge-chip ${b.unlocked ? 'unlocked' : ''}">
-      <span class="emoji">${b.emoji}</span>
-      <span class="badge-text"><span class="name">${escapeHtml(b.name)}</span><span class="desc">${escapeHtml(b.desc)}</span></span>
+    <div class="badge-chip ${b.unlocked ? 'unlocked' : ''}" title="${escapeHtml(b.desc)}">
+      <div class="hex"><span class="emoji">${b.emoji}</span></div>
+      <span class="badge-text"><span class="name">${escapeHtml(b.name)}</span></span>
     </div>
   `).join('');
 
@@ -2516,6 +2687,45 @@ function trainSquareClick(square){
   attemptTrainMove(from, square);
 }
 
+function renderSkillPath(){
+  const el = document.getElementById('skill-path');
+  if(!el) return;
+  const favorites = CATEGORIES.find(c => c.key === 'favorites');
+  const keys = favorites ? favorites.lines : [];
+  const mastered = PROGRESS.mastered || {};
+  const attempts = PROGRESS.attempts || {};
+  let html = '';
+  keys.forEach((key, i) => {
+    const o = OPENINGS[key];
+    const isDone = !!mastered[key];
+    const isStarted = !isDone && (attempts[key] || 0) > 0;
+    const status = isDone ? 'done' : (isStarted ? 'progress' : 'todo');
+    const icon = isDone ? '✓' : (isStarted ? '🎯' : '♟');
+    const sub = isDone ? 'Maîtrisée' : (isStarted ? `${attempts[key]} tentative(s)` : 'À découvrir');
+    const align = i % 2 === 0 ? 'align-left' : 'align-right';
+    html += `<div class="skill-node-row ${align}">
+      <button class="skill-node ${status}" data-line="${key}">
+        <span class="skill-node-circle">${icon}</span>
+        <span class="skill-node-label">${escapeHtml(o.name.replace('Sicilienne — ','').replace('Gambit Dame — ',''))}</span>
+        <span class="skill-node-sub">${escapeHtml(sub)}</span>
+      </button>
+    </div>`;
+  });
+  html += `<div class="skill-chest"><span class="skill-chest-icon">🏆</span><span class="skill-chest-label">Répertoire complet !</span></div>`;
+  el.innerHTML = html;
+  el.querySelectorAll('.skill-node').forEach(btn=>{
+    btn.onclick = () => {
+      const key = btn.dataset.line;
+      document.querySelectorAll('#opening-groups .line-btn').forEach(b=>b.classList.toggle('active', b.dataset.line===key));
+      const target = document.querySelector(`#opening-groups .line-btn[data-line="${key}"]`);
+      const parentDetails = target ? target.closest('details') : null;
+      if(parentDetails) parentDetails.open = true;
+      loadLine(OPENINGS[key], key);
+      window.scrollTo({top:0, behavior:'smooth'});
+    };
+  });
+}
+
 function renderOpeningGroups(){
   const container = document.getElementById('opening-groups');
   const mastered = (typeof PROGRESS !== 'undefined') ? PROGRESS.mastered : {};
@@ -2538,6 +2748,7 @@ function renderOpeningGroups(){
       loadLine(OPENINGS[btn.dataset.line], btn.dataset.line);
     };
   });
+  renderSkillPath();
 }
 renderOpeningGroups();
 
@@ -3709,7 +3920,52 @@ document.getElementById('onboarding-close-btn').onclick = function(){
   saveProgress();
 };
 
+/* ============ ACCUEIL (dashboard) ============ */
+const HOME_GREETINGS = [
+  'Salut, Champion ! 👋', 'Prêt pour la revanche ? ♟️', 'Content de te revoir ! 🎉',
+  'On progresse aujourd\u2019hui ? 🚀', 'Bienvenue de retour ! ✨'
+];
+function renderHomeTab(){
+  document.getElementById('home-greeting').textContent = HOME_GREETINGS[dayOfYear() % HOME_GREETINGS.length];
+  document.getElementById('home-streak').textContent = computeCurrentStreak();
+  document.getElementById('home-xp').textContent = PROGRESS.xp || 0;
+
+  ensureDailyProgressFresh();
+  const challenge = todayChallenge();
+  const current = Math.min(challenge.target, PROGRESS.dailyProgress[challenge.type] || 0);
+  document.getElementById('home-goal-text').textContent = `${challenge.text} (${current}/${challenge.target})`;
+  document.getElementById('home-goal-fill').style.width = Math.round((current/challenge.target)*100) + '%';
+
+  const totalTrainable = (typeof trainableKeys === 'function') ? trainableKeys().length : 0;
+  const masteredCount = Object.keys(PROGRESS.mastered || {}).length;
+  document.getElementById('home-path-title').textContent = `Ouvertures : ${levelTitle(levelFromXp(PROGRESS.xp||0))}`;
+  document.getElementById('home-path-fill').style.width = totalTrainable ? Math.round((masteredCount/totalTrainable)*100) + '%' : '0%';
+  document.getElementById('home-path-count').textContent = `${masteredCount}/${totalTrainable}`;
+
+  const streak = computeCurrentStreak();
+  document.getElementById('home-week-streak').textContent = `${streak} jour${streak>1?'s':''} 🔥`;
+  const dayLabels = ['L','M','M','J','V','S','D'];
+  const dates = new Set(PROGRESS.activityDates || []);
+  const now = new Date();
+  const todayDow = (now.getDay() + 6) % 7; // 0=lundi
+  let html = '';
+  for(let i=0;i<7;i++){
+    const offset = todayDow - i;
+    const active = offset >= 0 ? dates.has(dateKeyOffset(offset)) : false;
+    const isToday = offset === 0;
+    html += `<div class="home-week-day ${active?'done':''} ${isToday?'today':''}"><span class="wd-dot">${active?'✓':''}</span><span class="wd-label">${dayLabels[i]}</span></div>`;
+  }
+  document.getElementById('home-week-strip').innerHTML = html;
+}
+document.querySelectorAll('.home-tile, .link-btn, .home-path-card').forEach(el=>{
+  el.addEventListener('click', () => {
+    const tab = el.dataset.tab;
+    if(tab) switchTab(tab);
+  });
+});
+
 /* Sizing initial */
+if(typeof renderHomeTab === 'function') renderHomeTab();
 fitBoards();
 </script>
 </body>
