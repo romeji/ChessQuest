@@ -24,7 +24,7 @@
         <path d="M18,95 Q18,62 50,62 Q82,62 82,95 Z" fill="#7C6EF0"/>
       </svg>
       <div>
-        <div class="profile-name">Toi</div>
+        <div class="profile-name" id="profile-name">romeji</div>
         <div class="profile-level-title" id="profile-level-title">Novice</div>
         <div class="track" style="width:160px;"><div class="track-fill" id="profile-xp-fill"></div></div>
       </div>
@@ -92,6 +92,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.4/confetti.min.js"></script>
 <script src="assets/js/progress.js"></script>
+<script src="assets/js/chesscom.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
@@ -132,6 +133,7 @@ function renderBadges(){
     </div>`).join('');
 }
 function renderProfile(){
+  document.getElementById('profile-name').textContent = (chessComState().username || (PROGRESS.settings||{}).chessComUsername || 'Toi');
   const level = levelFromXp(PROGRESS.xp || 0);
   const xpIntoLevel = (PROGRESS.xp || 0) % XP_PER_LEVEL;
   document.getElementById('profile-level-title').textContent = `Niveau ${level} — ${levelTitle(level)}`;

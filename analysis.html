@@ -28,8 +28,8 @@
 
     <label class="field-label">Récupération automatique</label>
     <div class="btn-row" style="margin:8px 0;">
-      <input type="text" id="username-input" placeholder="ton pseudo chess.com" style="flex:1;min-width:160px;">
-      <button class="btn secondary" id="fetch-btn">Chercher mes parties</button>
+      <input type="text" id="username-input" value="romeji" placeholder="ton pseudo chess.com" style="flex:1;min-width:160px;">
+      <button class="btn secondary" id="fetch-btn">Synchroniser</button>
     </div>
     <div id="fetch-status" style="font-size:0.8rem;color:var(--text-dim);min-height:1.2em;"></div>
     <div class="games-list" id="games-list"></div>
@@ -102,6 +102,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.4/confetti.min.js"></script>
 <script src="assets/js/progress.js"></script>
+<script src="assets/js/chesscom.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
@@ -177,6 +178,24 @@ document.getElementById('fetch-btn').onclick = async () => {
     statusEl.innerHTML = `Échec (${escapeHtml(e.message||'erreur réseau')}). Colle le PGN manuellement à la place.`;
   }
 };
+
+/* La source publique Chess.com est mise en cache et actualisée en arrière-plan. */
+document.getElementById('fetch-btn').onclick = async () => {
+  const user = document.getElementById('username-input').value.trim();
+  const statusEl = document.getElementById('fetch-status');
+  document.getElementById('games-list').innerHTML = '';
+  if(!user){ statusEl.textContent = 'Entre un pseudo Chess.com.'; return; }
+  statusEl.textContent = 'Synchronisation des parties publiques…';
+  try {
+    const recent = await syncChessCom(user);
+    if(!recent.length) throw new Error('Aucune partie publique récente trouvée.');
+    renderGamesList(recent.slice(0,10), user);
+    statusEl.textContent = `${recent.length} partie(s) synchronisée(s). Actualisation automatique tant que l’application est ouverte.`;
+  } catch(e) { statusEl.textContent = `Échec : ${e.message || 'erreur réseau'}`; }
+};
+const savedChessComName = chessComState().username || (PROGRESS.settings||{}).chessComUsername || 'romeji';
+document.getElementById('username-input').value = savedChessComName;
+if(chessComState().games && chessComState().games.length) renderGamesList(chessComState().games.slice(0,10), savedChessComName);
 
 function adviceFor(r){
   if(r.info.cls==='best') return `${r.san} était bien le meilleur coup ici.`;

@@ -61,6 +61,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.4/confetti.min.js"></script>
 <script src="assets/js/progress.js"></script>
+<script src="assets/js/chesscom.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
@@ -73,32 +74,23 @@ const SKILL_ICON_LOCK = '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" 
 
 function renderSkillPath(){
   const el = document.getElementById('skill-path');
-  const favorites = CATEGORIES.find(c => c.key === 'favorites');
-  const keys = favorites ? favorites.lines : [];
   const mastered = PROGRESS.mastered || {};
   const attempts = PROGRESS.attempts || {};
-  let html = '';
-  keys.forEach((key, i) => {
-    const o = OPENINGS[key];
-    const isDone = !!mastered[key];
-    const isStarted = !isDone && (attempts[key] || 0) > 0;
-    const status = isDone ? 'done' : (isStarted ? 'progress' : 'todo');
-    const icon = isDone ? SKILL_ICON_CHECK : (isStarted ? SKILL_ICON_TROPHY_SM : SKILL_ICON_LOCK);
-    const sub = isDone ? 'Maîtrisée' : (isStarted ? `${Math.min(attempts[key],5)}/5` : 'À découvrir');
-    const align = i % 2 === 0 ? 'align-left' : 'align-right';
-    html += `<div class="skill-node-row ${align}">
-      <a class="skill-node ${status}" href="openings.html?opening=${key}">
-        <span class="skill-node-island">
-          <img class="skill-node-island-img" src="assets/illustrations/island-${key}.png" alt="" onerror="this.remove();">
-          <span class="skill-node-circle">${icon}</span>${isStarted?`<span class="skill-node-badge">${Math.min(attempts[key],5)}/5</span>`:''}
-        </span>
-        <span class="skill-node-label">${escapeHtml(o.name.replace('Sicilienne — ','').replace('Gambit Dame — ',''))}</span>
-        <span class="skill-node-sub">${escapeHtml(sub)}</span>
-      </a>
-    </div>`;
-  });
-  html += `<div class="skill-chest"><span class="skill-chest-icon" style="color:#fff;">${SKILL_ICON_TROPHY_SM.replace('<svg ', '<svg fill="none" stroke="currentColor" stroke-width="1.6" ')}</span><span class="skill-chest-label">Répertoire complet !</span></div>`;
-  el.innerHTML = html;
+  const statusFor = key => mastered[key] ? 'done' : ((attempts[key] || 0) ? 'progress' : 'locked');
+  const island = (key, title, icon, extra='') => `<a class="map-island ${statusFor(key)}" href="openings.html?opening=${key}">
+    <span class="island-ground"><span class="island-rock"></span><span class="island-tree tree-a"></span><span class="island-tree tree-b"></span><span class="island-piece">${icon}</span></span>
+    <span class="map-label">${title}</span><span class="map-state">${mastered[key]?'Maîtrisée':((attempts[key]||0)?'En cours':'À découvrir')}</span>${extra}</a>`;
+  el.innerHTML = `
+    <svg class="map-route" viewBox="0 0 320 760" preserveAspectRatio="none" aria-hidden="true"><path d="M160 34 C55 95 270 145 162 225 S52 355 172 427 S285 535 150 610 S55 700 164 744"/></svg>
+    <span class="map-cloud cloud-one"></span><span class="map-cloud cloud-two"></span><span class="map-cloud cloud-three"></span>
+    <div class="map-stop stop-italian">${island('italienne','Italienne','♜')}</div>
+    <div class="map-stop stop-spanish">${island('espagnole','Espagnole','♞')}</div>
+    <div class="map-stop stop-sicilian">${island('najdorf','Sicilienne','♛')}</div>
+    <section class="map-stop stop-queens">
+      ${island('qgd','Gambit Dame','♕','<span class="map-module-count">3 modules</span>')}
+      <div class="queen-submodules"><a href="openings.html?opening=qgd">Refusé</a><a href="openings.html?opening=qga">Accepté</a><a href="openings.html?opening=slav">Slave</a></div>
+    </section>
+    <a class="map-chest" href="#opening-groups"><span>♜</span><b>Explorer toutes les ouvertures</b></a>`;
   document.getElementById('learn-gem-count').textContent = PROGRESS.xp || 0;
 }
 

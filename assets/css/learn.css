@@ -41,6 +41,27 @@
 .skill-chest-icon{width:50px;height:50px;}
 .skill-chest-label{font-size:0.76rem;color:#fff;font-weight:700;}
 
+/* Carte d'aventure des ouvertures : décor en CSS, nœuds réellement interactifs. */
+.teal-hero{padding-bottom:0;background:linear-gradient(180deg,#82d8c8 0%,#c9f0d8 58%,#e7f7e5 100%);}
+.teal-hero::before{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 100% 20%,rgba(255,255,255,.55) 0 2px,transparent 3px) 0 0/44px 44px;opacity:.38;}
+.teal-hero>*{position:relative;z-index:1;}
+.skill-path{height:770px;padding:0;margin:12px -16px 0;overflow:hidden;position:relative;background:linear-gradient(180deg,transparent 0%,rgba(255,255,255,.18) 100%);}
+.skill-path::before{display:none;}
+.map-route{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.map-route path{fill:none;stroke:#d4aa71;stroke-width:29;stroke-linecap:round;filter:drop-shadow(0 3px 1px rgba(131,91,45,.12));}
+.map-route path::after{stroke:#f5d49a;}
+.map-route path{stroke-dasharray:2 2;}
+.map-cloud{position:absolute;width:76px;height:20px;border-radius:99px;background:rgba(255,255,255,.9);filter:drop-shadow(0 5px 4px rgba(59,120,101,.1));}
+.map-cloud::before,.map-cloud::after{content:'';position:absolute;bottom:7px;border-radius:50%;background:inherit;}.map-cloud::before{width:33px;height:33px;left:13px}.map-cloud::after{width:24px;height:24px;right:12px}
+.cloud-one{left:-12px;top:62px}.cloud-two{right:-20px;top:316px;transform:scale(.72)}.cloud-three{left:5px;top:594px;transform:scale(.58)}
+.map-stop{position:absolute;z-index:2;}.stop-italian{top:24px;left:12%}.stop-spanish{top:183px;right:9%}.stop-sicilian{top:363px;left:8%}.stop-queens{top:521px;right:5%;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.map-island{display:flex;flex-direction:column;align-items:center;position:relative;min-width:122px;color:#254334;text-decoration:none;filter:drop-shadow(0 8px 7px rgba(47,113,76,.2));transition:transform .18s ease;}.map-island:active{transform:scale(.94)}
+.island-ground{width:118px;height:78px;position:relative;border-radius:50% 50% 42% 42%/43% 43% 57% 57%;background:radial-gradient(ellipse at 42% 22%,#dff4b5 0 13%,#93d472 14% 58%,#55a85e 59% 62%,#a6743f 63% 79%,#735029 80%);box-shadow:inset 0 -13px 9px rgba(79,66,27,.18);}
+.island-rock{position:absolute;left:32px;bottom:24px;width:56px;height:26px;border-radius:50% 50% 12px 12px;background:linear-gradient(135deg,#ced4c7,#788980);box-shadow:inset -8px -5px 0 rgba(54,73,61,.16);}.island-rock::after{content:'';position:absolute;width:18px;height:42px;bottom:14px;left:19px;border-radius:10px 10px 5px 5px;background:linear-gradient(90deg,#a6b2a8,#e8ece0,#7f9085);}
+.island-piece{position:absolute;z-index:2;left:50%;bottom:24px;transform:translateX(-50%);font-family:Georgia,serif;font-size:48px;line-height:1;color:#f8f8ec;text-shadow:0 3px 0 #6a6659,0 7px 10px rgba(30,58,39,.28);}.island-tree{position:absolute;z-index:2;width:18px;height:36px;bottom:20px;border-radius:60% 40% 55% 45%;background:linear-gradient(135deg,#9ce777,#338d54);box-shadow:inset -5px -4px 0 rgba(20,91,51,.18);}.island-tree::after{content:'';position:absolute;bottom:-13px;left:7px;width:5px;height:17px;background:#8a6137;border-radius:4px}.tree-a{left:13px;transform:rotate(-15deg)}.tree-b{right:13px;transform:scale(.75) rotate(18deg)}
+.map-label{margin-top:-1px;padding:5px 11px 4px;border-radius:13px;background:#fff;color:#294538;font-size:.77rem;font-weight:900;box-shadow:0 3px 8px rgba(39,91,64,.15);white-space:nowrap}.map-state{font-size:.65rem;font-weight:800;color:#4d8065;margin-top:3px}.map-island.locked .island-ground{filter:saturate(.45) brightness(.92)}.map-island.locked .island-piece{color:#78857e;text-shadow:0 3px 0 #52645b}.map-island.done .island-ground{box-shadow:0 0 0 4px rgba(255,255,255,.85),inset 0 -13px 9px rgba(79,66,27,.18)}.map-island.done::after{content:'✓';position:absolute;top:2px;right:8px;width:25px;height:25px;border-radius:50%;background:#42c56a;color:#fff;text-align:center;line-height:25px;font-weight:900;border:2px solid #fff}.map-island.progress .map-label{background:#fff4cf;color:#a66d11}.map-module-count{position:absolute;right:-4px;top:52px;background:#f6ae38;color:#fff;font-size:.58rem;font-weight:900;padding:3px 6px;border-radius:10px;border:2px solid #fff}
+.queen-submodules{display:flex;gap:4px;padding:5px 6px;border-radius:14px;background:rgba(255,255,255,.5)}.queen-submodules a{font-size:.6rem;font-weight:900;background:#fff;color:#49735c;border-radius:9px;padding:4px 6px;box-shadow:0 2px 5px rgba(39,91,64,.12)}.queen-submodules a:hover{background:#f6db91;color:#6e4e1d}.map-chest{position:absolute;z-index:2;bottom:17px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;color:#4b3a1c;text-align:center;font-size:.72rem;white-space:nowrap}.map-chest span{font-size:44px;line-height:.9;filter:drop-shadow(0 5px 4px rgba(88,68,28,.25));}.map-chest b{background:#fff4cf;border-radius:12px;padding:5px 9px;margin-top:4px;}
+
 /* ---- Bibliothèque complète (accordéon) ---- */
 details.opening-category{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;background:var(--bg-panel-2);overflow:hidden;}
 details.opening-category summary{
@@ -69,3 +90,16 @@ details.opening-category[open] summary::after{content:'\2013';}
 .lesson-progress-label{font-size:0.8rem;color:var(--text-dim);margin:2px 0 4px;font-weight:600;}
 .lesson-heading{font-family:var(--font-display);font-weight:800;font-size:1.3rem;color:var(--navy);margin:16px 0 6px;}
 .lesson-desc{font-size:0.88rem;color:var(--text-dim);line-height:1.55;margin-bottom:16px;}
+
+/* Une ouverture est une leçon focalisée : aucune navigation globale à distraire. */
+.opening-lesson-page{background:linear-gradient(180deg,#effcf5 0,#f8f7fb 42%);}
+.opening-lesson-page::before{background:#bcebd8;opacity:.42;}
+.opening-lesson-page .app{max-width:700px;padding-bottom:36px;}
+.opening-immersive-header{padding:12px 0 4px;margin-bottom:6px;}
+.opening-immersive-header .lesson-title{font-size:1.38rem;}
+.opening-track .track-fill{background:linear-gradient(90deg,#48c96e,#95d933);}
+.opening-lesson-page .board-frame{border-radius:24px;box-shadow:0 18px 42px rgba(38,106,71,.22);}
+.opening-lesson-page .feedback-box{background:#fff;border-color:#d8efe0;}
+.opening-actions{display:grid;grid-template-columns:1fr 1fr 1fr;}
+.opening-actions .btn{padding:12px 8px;font-size:.82rem;}
+@media (max-width:420px){.opening-actions{grid-template-columns:1fr 1fr}.opening-actions .tts-btn{grid-column:1/-1;justify-self:center;}}

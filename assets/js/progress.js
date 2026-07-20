@@ -8,7 +8,8 @@ const PROGRESS_KEY = 'chessQuestProgress';
 
 function defaultProgress(){
   return {
-    mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal', voiceName:null, soundEnabled:true},
+    mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal', voiceName:null, soundEnabled:true, chessComUsername:'romeji'},
+    chessCom:{ username:'romeji', games:[], lastSync:null, syncing:false },
     mistakes: [], puzzleRating: 1000, puzzleRatingHistory: [], puzzlesSolved: 0, puzzlesFailed: 0,
     puzzleStreak: 0, puzzleBestStreak: 0,
     activityDates: [], viewedNotationGuide: false, viewedGlossary: false,

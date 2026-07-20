@@ -21,6 +21,13 @@
       <div class="lesson-title">Réglages</div>
     </div>
 
+    <label class="field-label">Compte Chess.com</label>
+    <div class="btn-row" style="margin:10px 0 6px;">
+      <input type="text" id="chesscom-username" placeholder="pseudo Chess.com" style="flex:1;min-width:150px;">
+      <button class="btn secondary" id="save-chesscom">Synchroniser</button>
+    </div>
+    <p class="section-sub" id="chesscom-status">Les parties publiques sont conservées sur cet appareil et actualisées lorsque l’app est ouverte.</p>
+
     <label class="field-label">Vitesse du moteur d'analyse</label>
     <div class="segmented" id="engine-speed-picker" style="margin:10px 0 6px;">
       <button data-speed="fast">Rapide</button>
@@ -62,10 +69,23 @@
 </nav>
 
 <script src="assets/js/progress.js"></script>
+<script src="assets/js/chesscom.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
 <script>
+const chessComInput = document.getElementById('chesscom-username');
+const chessComStatus = document.getElementById('chesscom-status');
+chessComInput.value = chessComState().username || (PROGRESS.settings||{}).chessComUsername || 'romeji';
+document.getElementById('save-chesscom').onclick = async () => {
+  const username = chessComInput.value.trim();
+  chessComStatus.textContent = 'Synchronisation en cours…';
+  try {
+    const games = await syncChessCom(username);
+    chessComStatus.textContent = `${games.length} parties publiques enregistrées. Les nouvelles parties seront recherchées toutes les 5 minutes tant que l’app est ouverte.`;
+  } catch(error) { chessComStatus.textContent = error.message || 'Synchronisation impossible.'; }
+};
+
 const ENGINE_SPEED_HINTS = {
   fast:"~0,25 s par coup — analyse plus rapide, un peu moins précise.",
   normal:"~0,45 s par coup — bon équilibre vitesse/précision.",
