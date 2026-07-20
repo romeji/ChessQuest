@@ -23,19 +23,27 @@
       <div class="lesson-title">Analyse de partie</div>
     </div>
 
-    <label class="field-label">Coller le PGN</label>
-    <textarea id="pgn-input" style="min-height:100px;margin:8px 0 14px;" placeholder="Sur chess.com : ouvre ta partie → bouton ⋯ → Télécharger le PGN, puis colle-le ici."></textarea>
-
-    <label class="field-label">Récupération automatique</label>
-    <div class="btn-row" style="margin:8px 0;">
-      <input type="text" id="username-input" value="romeji" placeholder="ton pseudo chess.com" style="flex:1;min-width:160px;">
-      <button class="btn secondary" id="fetch-btn">Synchroniser</button>
+    <div class="chesscom-sync-card">
+      <div class="csc-row">
+        <div>
+          <div class="csc-label">Chess.com</div>
+          <div class="csc-username" id="csc-username">—</div>
+        </div>
+        <button class="btn secondary" id="refresh-games-btn">Actualiser</button>
+      </div>
+      <div class="csc-status" id="fetch-status">Chargement de tes parties…</div>
     </div>
-    <div id="fetch-status" style="font-size:0.8rem;color:var(--text-dim);min-height:1.2em;"></div>
     <div class="games-list" id="games-list"></div>
 
+    <details class="opening-category" style="margin:14px 0;">
+      <summary>Coller un PGN manuellement</summary>
+      <div style="padding:0 16px 14px;">
+        <textarea id="pgn-input" style="min-height:100px;width:100%;" placeholder="Sur chess.com : ouvre ta partie → bouton ⋯ → Télécharger le PGN, puis colle-le ici."></textarea>
+        <button class="btn" id="analyze-btn" style="margin-top:10px;width:100%;">Analyser ce PGN</button>
+      </div>
+    </details>
+
     <div style="margin:14px 0;"><span class="engine-badge loading" id="engine-badge">Chargement du moteur Stockfish…</span></div>
-    <button class="btn" id="analyze-btn">Analyser la partie</button>
 
     <div id="analysis-progress" class="hidden" style="margin-top:16px;font-size:0.86rem;color:var(--text-dim);">
       <span id="progress-label">Calcul en cours…</span>
@@ -86,10 +94,10 @@
   <button class="tabbar-item" data-tab="learn" onclick="location.href='learn.html'">
     <svg viewBox="0 0 24 24" class="tabicon"><circle cx="6" cy="19" r="2.5"/><circle cx="12" cy="11" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M6 16.5V13a2 2 0 0 1 2-2h1.5M14.5 9H16a2 2 0 0 0 2-2V5.5"/></svg><span>Parcours</span>
   </button>
-  <button class="tabbar-item" data-tab="play" onclick="location.href='openings.html'">
+  <button class="tabbar-item" data-tab="play" onclick="location.href='entrainement.html'">
     <svg viewBox="0 0 24 24" class="tabicon"><path d="M12 3v3m-3 0h6M8 9h8l-1 4H9L8 9Z"/><path d="M7 20l1.5-7h7L17 20Z"/><path d="M6 20h12"/></svg><span>Jouer</span>
   </button>
-  <button class="tabbar-item" data-tab="progress" onclick="location.href='profile.html'">
+  <button class="tabbar-item" data-tab="progress" onclick="location.href='progress.html'">
     <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 15l4-5 3 3 5-7"/></svg><span>Progrès</span>
   </button>
   <button class="tabbar-item" data-tab="profile" onclick="location.href='profile.html'">
@@ -124,15 +132,6 @@ document.getElementById('analyze-btn').onclick = () => {
 };
 
 let fetchedGames = [];
-async function fetchJsonWithFallback(url){
-  const attempts = [url, 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url), 'https://corsproxy.io/?url=' + encodeURIComponent(url)];
-  let lastError = null;
-  for(const attemptUrl of attempts){
-    try{ const res = await fetch(attemptUrl); if(!res.ok){ lastError = new Error('HTTP '+res.status); continue; } return await res.json(); }
-    catch(e){ lastError = e; }
-  }
-  throw lastError || new Error('Échec réseau');
-}
 function resultLabel(code){
   if(code === 'win') return {label:'Victoire', cls:'win'};
   if(['checkmated','resigned','timeout','abandoned','lose'].includes(code)) return {label:'Défaite', cls:'loss'};
@@ -141,7 +140,8 @@ function resultLabel(code){
 function renderGamesList(games, username){
   fetchedGames = games;
   const el = document.getElementById('games-list');
-  const uLower = username.toLowerCase();
+  if(!games || games.length === 0){ el.innerHTML = ''; return; }
+  const uLower = (username||'').toLowerCase();
   el.innerHTML = games.map((g, idx) => {
     const isWhite = (g.white && g.white.username && g.white.username.toLowerCase() === uLower);
     const opponent = isWhite ? (g.black ? g.black.username : '?') : (g.white ? g.white.username : '?');
@@ -154,48 +154,43 @@ function renderGamesList(games, username){
     btn.onclick = () => { const g = fetchedGames[parseInt(btn.dataset.idx,10)]; document.getElementById('pgn-input').value = g.pgn; runAnalysis(g.pgn); };
   });
 }
-document.getElementById('fetch-btn').onclick = async () => {
-  const user = document.getElementById('username-input').value.trim();
-  const statusEl = document.getElementById('fetch-status');
-  document.getElementById('games-list').innerHTML = '';
-  if(!user){ statusEl.textContent = 'Entre un pseudo.'; return; }
-  statusEl.textContent = 'Recherche du profil…';
-  try{
-    const archJson = await fetchJsonWithFallback(`https://api.chess.com/pub/player/${encodeURIComponent(user)}/games/archives`);
-    if(!archJson.archives || archJson.archives.length === 0) throw new Error("Aucune partie publique trouvée.");
-    let recent = [];
-    let idx = archJson.archives.length - 1;
-    while(recent.length < 10 && idx >= 0){
-      const monthData = await fetchJsonWithFallback(archJson.archives[idx]);
-      recent = recent.concat((monthData.games || []).slice().reverse());
-      idx--;
-    }
-    recent = recent.slice(0, 10);
-    if(recent.length === 0) throw new Error("Aucune partie trouvée dans les archives récentes.");
-    renderGamesList(recent, user);
-    statusEl.textContent = `${recent.length} partie(s) trouvée(s).`;
-  }catch(e){
-    statusEl.innerHTML = `Échec (${escapeHtml(e.message||'erreur réseau')}). Colle le PGN manuellement à la place.`;
-  }
-};
 
-/* La source publique Chess.com est mise en cache et actualisée en arrière-plan. */
-document.getElementById('fetch-btn').onclick = async () => {
-  const user = document.getElementById('username-input').value.trim();
+/* La liste des parties Chess.com est synchronisée en arrière-plan (voir chesscom.js,
+   lancé sur chaque page). Ici on affiche instantanément ce qui est déjà en cache,
+   puis on ne relance un appel réseau que si l'utilisateur clique sur "Actualiser". */
+function timeAgo(iso){
+  if(!iso) return '';
+  const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if(mins < 1) return 'à l\u2019instant';
+  if(mins < 60) return `il y a ${mins} min`;
+  const hrs = Math.round(mins/60);
+  return `il y a ${hrs} h`;
+}
+function refreshChessComUI(){
+  const state = chessComState();
+  const username = state.username || (PROGRESS.settings||{}).chessComUsername || '';
   const statusEl = document.getElementById('fetch-status');
-  document.getElementById('games-list').innerHTML = '';
-  if(!user){ statusEl.textContent = 'Entre un pseudo Chess.com.'; return; }
-  statusEl.textContent = 'Synchronisation des parties publiques…';
-  try {
-    const recent = await syncChessCom(user);
-    if(!recent.length) throw new Error('Aucune partie publique récente trouvée.');
-    renderGamesList(recent.slice(0,10), user);
-    statusEl.textContent = `${recent.length} partie(s) synchronisée(s). Actualisation automatique tant que l’application est ouverte.`;
-  } catch(e) { statusEl.textContent = `Échec : ${e.message || 'erreur réseau'}`; }
+  document.getElementById('csc-username').textContent = username ? '@' + username : 'Aucun pseudo configuré';
+  if(!username){
+    statusEl.innerHTML = `Ajoute ton pseudo dans <a href="settings.html" style="color:var(--coral);font-weight:700;">Réglages</a> pour synchroniser tes parties.`;
+    renderGamesList([], '');
+    return;
+  }
+  if(state.games && state.games.length){
+    renderGamesList(state.games.slice(0,10), username);
+    statusEl.textContent = state.syncing ? 'Synchronisation en cours…' : `${state.games.length} partie(s) — synchronisé ${timeAgo(state.lastSync)}.`;
+  } else {
+    statusEl.textContent = state.syncing ? 'Synchronisation en cours…' : 'Aucune partie publique trouvée pour ce pseudo.';
+  }
+}
+document.getElementById('refresh-games-btn').onclick = async () => {
+  const username = chessComState().username || (PROGRESS.settings||{}).chessComUsername || '';
+  if(!username){ location.href = 'settings.html'; return; }
+  document.getElementById('fetch-status').textContent = 'Synchronisation des parties publiques…';
+  try { await syncChessCom(username); } catch(e){ document.getElementById('fetch-status').textContent = `Échec : ${e.message || 'erreur réseau'}`; return; }
+  refreshChessComUI();
 };
-const savedChessComName = chessComState().username || (PROGRESS.settings||{}).chessComUsername || 'romeji';
-document.getElementById('username-input').value = savedChessComName;
-if(chessComState().games && chessComState().games.length) renderGamesList(chessComState().games.slice(0,10), savedChessComName);
+refreshChessComUI();
 
 function adviceFor(r){
   if(r.info.cls==='best') return `${r.san} était bien le meilleur coup ici.`;

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChessQuest — Mes progrès</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/variables.css">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/profile.css">
+</head>
+<body data-page="progress">
+<div id="toast-container"></div>
+<div class="app">
+  <section class="page">
+    <div class="home-topbar" style="margin-bottom:18px;">
+      <div class="home-greeting">Mes progrès</div>
+    </div>
+
+    <div class="level-card">
+      <div class="level-badge">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16l-1.5 9h-13L4 6Z"/><path d="M8 6 6 3H4M16 6l2-3h2M8 15v3h8v-3"/><path d="M7 18h10v2H7z"/></svg>
+      </div>
+      <div class="level-info">
+        <div class="level-xp-label" style="margin-bottom:2px;">Niveau actuel</div>
+        <div class="level-title" id="progress-level-title">Novice</div>
+        <div class="track" style="margin:8px 0 6px;"><div class="track-fill" id="progress-level-fill"></div></div>
+        <div class="level-xp-label" id="progress-level-xp-label">0/500 XP</div>
+      </div>
+    </div>
+
+    <div class="home-section-head">
+      <h2 class="home-section-title">Statistiques</h2>
+      <a class="link-btn" href="profile.html">Voir tout</a>
+    </div>
+    <div class="stats-row" id="progress-stats-row" style="margin-bottom:26px;"></div>
+
+    <h2 class="home-section-title" style="margin-bottom:12px;">Évolution ÉLO</h2>
+    <div class="elo-chart-card">
+      <div class="elo-chart-current">
+        <span class="val" id="elo-current-val">1000</span>
+        <span class="delta" id="elo-current-delta">+0</span>
+      </div>
+      <svg id="elo-chart-svg" viewBox="0 0 300 90" preserveAspectRatio="none" style="width:100%;height:90px;display:block;"></svg>
+      <div class="elo-chart-dates" id="elo-chart-dates" style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text-dim);margin-top:4px;font-family:var(--font-mono);"></div>
+    </div>
+
+    <p class="section-sub" style="margin-top:22px;">Ces statistiques se mettent à jour au fil de tes puzzles, entraînements et parties analysées.</p>
+  </section>
+
+  <nav class="tabbar">
+    <button class="tabbar-item" data-tab="home" onclick="location.href='index.html'">
+      <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg><span>Accueil</span>
+    </button>
+    <button class="tabbar-item" data-tab="learn" onclick="location.href='learn.html'">
+      <svg viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h6v16H6a2 2 0 0 0-2 2Z"/><path d="M20 19V6a2 2 0 0 0-2-2h-6v16h6a2 2 0 0 1 2 2Z"/></svg><span>Parcours</span>
+    </button>
+    <button class="tabbar-item" data-tab="play" onclick="location.href='entrainement.html'">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg><span>Jouer</span>
+    </button>
+    <button class="tabbar-item active" data-tab="progress" onclick="location.href='progress.html'">
+      <svg viewBox="0 0 24 24"><path d="M4 20V10M11 20V4M18 20v-7"/></svg><span>Progrès</span>
+    </button>
+    <button class="tabbar-item" data-tab="profile" onclick="location.href='profile.html'">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Profil</span>
+    </button>
+  </nav>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.4/confetti.min.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/chesscom.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/navigation.js"></script>
+<script>
+/* ---- Niveau ---- */
+const pLevel = levelFromXp(PROGRESS.xp || 0);
+document.getElementById('progress-level-title').textContent = levelTitle(pLevel);
+const pXpIntoLevel = (PROGRESS.xp || 0) - (pLevel - 1) * XP_PER_LEVEL;
+document.getElementById('progress-level-fill').style.width = Math.round((pXpIntoLevel / XP_PER_LEVEL) * 100) + '%';
+document.getElementById('progress-level-xp-label').textContent = `${pXpIntoLevel}/${XP_PER_LEVEL} XP`;
+
+/* ---- Statistiques ---- */
+const pSolved = PROGRESS.puzzlesSolved || 0;
+const pFailed = PROGRESS.puzzlesFailed || 0;
+const pTotalPuzzles = pSolved + pFailed;
+const pSuccessRate = pTotalPuzzles > 0 ? Math.round((pSolved / pTotalPuzzles) * 100) : 0;
+const pGamesAnalyzed = (PROGRESS.games || []).length;
+const pBestStreak = computeBestStreak();
+document.getElementById('progress-stats-row').innerHTML = `
+  <div class="stat-card"><div class="big">${pTotalPuzzles}</div><div class="label">Puzzles joués</div></div>
+  <div class="stat-card"><div class="big">${pSuccessRate}%</div><div class="label">Taux de réussite</div></div>
+  <div class="stat-card"><div class="big">${pBestStreak}</div><div class="label">Meilleure série (j.)</div></div>
+`;
+
+/* ---- Évolution ÉLO (historique de classement puzzles) ---- */
+const history = (PROGRESS.puzzleRatingHistory && PROGRESS.puzzleRatingHistory.length > 0)
+  ? PROGRESS.puzzleRatingHistory
+  : [{date: todayKey(), rating: PROGRESS.puzzleRating || 1000}];
+const ratings = history.map(h => h.rating);
+const current = ratings[ratings.length - 1];
+const first = ratings[0];
+const delta = current - first;
+document.getElementById('elo-current-val').textContent = current;
+const deltaEl = document.getElementById('elo-current-delta');
+deltaEl.textContent = (delta >= 0 ? '+' : '') + delta;
+deltaEl.style.color = delta >= 0 ? 'var(--good)' : 'var(--blunder)';
+
+const svg = document.getElementById('elo-chart-svg');
+const w = 300, h = 90, pad = 6;
+const min = Math.min(...ratings), max = Math.max(...ratings);
+const range = Math.max(1, max - min);
+const pts = ratings.map((r,i) => {
+  const x = ratings.length > 1 ? pad + (i/(ratings.length-1)) * (w-2*pad) : w/2;
+  const y = h - pad - ((r - min) / range) * (h - 2*pad);
+  return [x,y];
+});
+const pathD = pts.map((p,i) => (i===0?'M':'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+const areaD = pathD + ` L${pts[pts.length-1][0].toFixed(1)},${h} L${pts[0][0].toFixed(1)},${h} Z`;
+svg.innerHTML = `
+  <path d="${areaD}" fill="var(--accent-green-bg)"></path>
+  <path d="${pathD}" fill="none" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+`;
+const dateFmt = (d) => { const dt = new Date(d); if(isNaN(dt)) return ''; return String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0'); };
+const datesEl = document.getElementById('elo-chart-dates');
+if(history.length > 1){
+  const idxs = [0, Math.floor(history.length/2), history.length-1];
+  datesEl.innerHTML = idxs.map(i => `<span>${dateFmt(history[i].date)}</span>`).join('');
+} else {
+  datesEl.innerHTML = '';
+}
+</script>
+</body>
+</html>

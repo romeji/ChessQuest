@@ -96,11 +96,11 @@ function playSound(type){
   }catch(e){}
 }
 
-/* ---- Écran de bienvenue (première visite uniquement, index.html) ---- */
+/* ---- Écran de bienvenue (affiché à chaque démarrage, index.html) ---- */
 function initOnboarding(){
   const overlay = document.getElementById('onboarding-overlay');
   if(!overlay) return;
-  if(!PROGRESS.onboarded) overlay.classList.remove('hidden');
+  overlay.classList.remove('hidden');
   function dismiss(){
     overlay.classList.add('hidden');
     PROGRESS.onboarded = true;

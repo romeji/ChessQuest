@@ -6,6 +6,12 @@
 .engine-badge.ready{color:var(--good);border-color:var(--good);}
 .engine-badge.fallback{color:var(--mistake);border-color:var(--mistake);}
 
+.chesscom-sync-card{background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:4px;box-shadow:var(--shadow);}
+.csc-row{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.csc-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--coral);font-weight:800;}
+.csc-username{font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin-top:2px;}
+.csc-status{font-size:0.78rem;color:var(--text-dim);margin-top:8px;line-height:1.4;}
+
 .games-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
 .game-row{display:grid;grid-template-columns:80px 1fr 60px 76px auto;gap:8px;align-items:center;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:0.78rem;}
 .game-row .g-date{color:var(--text-dim);font-family:var(--font-mono);font-size:0.72rem;}

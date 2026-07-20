@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChessQuest — Partie d'entraînement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+<link rel="stylesheet" href="assets/css/variables.css">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/learn.css">
+<link rel="stylesheet" href="assets/css/training.css">
+</head>
+<body data-page="play">
+<div id="toast-container"></div>
+<div class="app">
+  <section class="page">
+    <div class="subpage-header">
+      <a class="subpage-back" href="entrainement.html"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+      <span class="subpage-title">Partie d'entraînement</span>
+      <button class="subpage-badge" id="difficulty-btn" title="Changer la difficulté">
+        <svg viewBox="0 0 24 24"><path d="M10.3 3.2c.4-1.6 2.7-1.6 3.1 0l.2.9c.2.9 1.2 1.4 2 1l.8-.4c1.4-.7 2.9.8 2.2 2.2l-.4.8c-.4.9.1 1.9 1 2l.9.2c1.6.4 1.6 2.7 0 3.1l-.9.2c-.9.2-1.4 1.2-1 2l.4.8c.7 1.4-.8 2.9-2.2 2.2l-.8-.4c-.9-.4-1.9.1-2 1l-.2.9c-.4 1.6-2.7 1.6-3.1 0l-.2-.9c-.2-.9-1.2-1.4-2-1l-.8.4c-1.4.7-2.9-.8-2.2-2.2l.4-.8c.4-.9-.1-1.9-1-2l-.9-.2c-1.6-.4-1.6-2.7 0-3.1l.9-.2c.9-.2 1.4-1.2 1-2l-.4-.8c-.7-1.4.8-2.9 2.2-2.2l.8.4c.9.4 1.9-.1 2-1l.2-.9Z"/><circle cx="12" cy="12" r="3.2"/></svg>
+      </button>
+    </div>
+
+    <div class="bot-row">
+      <div class="bot-avatar">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2.5 2.5 0 0 0-2 4 4 4 0 0 0-1.6 5.4C7.2 12.4 6 14.2 6 17h12c0-2.8-1.2-4.6-2.4-5.6A4 4 0 0 0 14 6a2.5 2.5 0 0 0-2-4Z"/></svg>
+      </div>
+      <div class="bot-info">
+        <div class="bot-name">BOT <span id="bot-difficulty-label">Intermédiaire</span></div>
+        <div class="bot-sub" id="bot-status">Ta partie contre l'ordinateur</div>
+      </div>
+    </div>
+
+    <div class="training-board-wrap">
+      <div class="board-frame" style="margin:0 auto;display:block;width:fit-content;">
+        <div class="coord-ranks" id="tg-ranks"></div>
+        <div id="tg-board"></div>
+        <div class="coord-files" id="tg-files"></div>
+      </div>
+      <div class="coach-bubble hidden" id="coach-bubble">
+        <span class="coach-icon" id="coach-icon">👍</span>
+        <span id="coach-text">Très bon coup !</span>
+      </div>
+    </div>
+
+    <div class="training-controls">
+      <button class="tc-btn tc-danger" id="resign-btn">
+        <svg viewBox="0 0 24 24"><path d="M6 6 18 18M18 6 6 18"/></svg>Abandonner
+      </button>
+      <button class="tc-btn" id="hint-btn2">
+        <svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.5.4.8 1 .8 1.6V16h5.4v-.5c0-.6.3-1.2.8-1.6A6 6 0 0 0 12 3Z"/></svg>Indices
+      </button>
+      <button class="tc-btn" id="undo-btn">
+        <svg viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-1"/></svg>Retour
+      </button>
+      <button class="tc-btn tc-primary" id="next-btn" disabled>
+        <svg viewBox="0 0 24 24"><path d="M13 5l7 7-7 7M5 12h14"/></svg>Suivant
+      </button>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.4/confetti.min.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/chesscom.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/navigation.js"></script>
+<script src="assets/js/board.js"></script>
+<script src="assets/js/training.js"></script>
+</body>
+</html>
