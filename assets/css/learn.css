@@ -62,6 +62,24 @@
 .map-label{margin-top:-1px;padding:5px 11px 4px;border-radius:13px;background:#fff;color:#294538;font-size:.77rem;font-weight:900;box-shadow:0 3px 8px rgba(39,91,64,.15);white-space:nowrap}.map-state{font-size:.65rem;font-weight:800;color:#4d8065;margin-top:3px}.map-island.locked .island-ground{filter:saturate(.45) brightness(.92)}.map-island.locked .island-piece{color:#78857e;text-shadow:0 3px 0 #52645b}.map-island.done .island-ground{box-shadow:0 0 0 4px rgba(255,255,255,.85),inset 0 -13px 9px rgba(79,66,27,.18)}.map-island.done::after{content:'✓';position:absolute;top:2px;right:8px;width:25px;height:25px;border-radius:50%;background:#42c56a;color:#fff;text-align:center;line-height:25px;font-weight:900;border:2px solid #fff}.map-island.progress .map-label{background:#fff4cf;color:#a66d11}.map-module-count{position:absolute;right:-4px;top:52px;background:#f6ae38;color:#fff;font-size:.58rem;font-weight:900;padding:3px 6px;border-radius:10px;border:2px solid #fff}
 .queen-submodules{display:flex;gap:4px;padding:5px 6px;border-radius:14px;background:rgba(255,255,255,.5)}.queen-submodules a{font-size:.6rem;font-weight:900;background:#fff;color:#49735c;border-radius:9px;padding:4px 6px;box-shadow:0 2px 5px rgba(39,91,64,.12)}.queen-submodules a:hover{background:#f6db91;color:#6e4e1d}.map-chest{position:absolute;z-index:2;bottom:17px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;color:#4b3a1c;text-align:center;font-size:.72rem;white-space:nowrap}.map-chest span{font-size:44px;line-height:.9;filter:drop-shadow(0 5px 4px rgba(88,68,28,.25));}.map-chest b{background:#fff4cf;border-radius:12px;padding:5px 9px;margin-top:4px;}
 
+/* Le parcours est un écran dédié : le décor arrive jusqu'aux bords du viewport. */
+body.opening-map-page{background:#c9f0d8;}
+body.opening-map-page::before,body.opening-map-page::after{display:none;}
+.opening-map-page .map-app{max-width:none;margin:0;padding:0;}
+.opening-map-page .page{padding:0;}
+.opening-map-page .teal-hero{border-radius:0;margin:0;min-height:100vh;padding:14px 16px 0;background-color:#bcebd9;background-image:linear-gradient(rgba(208,247,223,.2),rgba(208,247,223,.35)),url('../../82972140-0c19-44eb-b30c-9cb52953d57a.png');background-size:cover;background-position:center top;}
+.opening-map-page .teal-hero::before{display:none;}
+.opening-map-page .search-input,.opening-map-page .opening-groups,.opening-map-page .section-sub{display:none;}
+.opening-map-page .skill-path{margin-left:-16px;margin-right:-16px;}
+.island-art{position:absolute;z-index:5;left:50%;bottom:-22px;transform:translateX(-50%);width:156px;height:162px;max-width:none;object-fit:contain;filter:drop-shadow(0 9px 7px rgba(42,95,65,.22));}
+.island-art~.island-rock,.island-art~.island-tree,.island-art~.island-piece{display:none;}
+.map-island .island-ground{background:none;box-shadow:none;overflow:visible;}
+.map-island .island-ground::after{content:'';position:absolute;z-index:1;left:13px;right:13px;bottom:5px;height:18px;border-radius:50%;background:rgba(45,111,67,.17);filter:blur(4px);}
+.map-island.done .island-ground{box-shadow:none;}
+.map-island.done::after{z-index:7;}
+.map-island .map-label,.map-island .map-state{z-index:8;}
+@media (min-width:680px){.opening-map-page .teal-hero{max-width:680px;margin:0 auto;box-shadow:0 0 60px rgba(48,105,76,.2)}body.opening-map-page{background:#e6f9eb;}}
+
 /* ---- Bibliothèque complète (accordéon) ---- */
 details.opening-category{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;background:var(--bg-panel-2);overflow:hidden;}
 details.opening-category summary{
