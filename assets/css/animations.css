@@ -1,0 +1,32 @@
+/* ============================================================
+   ChessQuest — Animations
+   ============================================================ */
+@keyframes toastIn{ from{transform:translateX(120%); opacity:0;} to{transform:translateX(0); opacity:1;} }
+@keyframes toastOut{ from{transform:translateX(0); opacity:1;} to{transform:translateX(120%); opacity:0;} }
+.toast{animation:toastIn .35s cubic-bezier(.34,1.56,.64,1) forwards;}
+.toast.leaving{animation:toastOut .3s ease forwards;}
+
+@keyframes pageFadeIn{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+.page{animation:pageFadeIn .32s ease;}
+
+@keyframes badgePop{ 0%{transform:scale(0.85); opacity:0.4;} 60%{transform:scale(1.06);} 100%{transform:scale(1); opacity:1;} }
+.hex-badge.unlocked{animation:badgePop .4s ease;}
+
+@keyframes suggestPulse{ 0%,100%{opacity:1;} 50%{opacity:0.45;} }
+
+@keyframes feedbackPop{ 0%{transform:scale(0.98);} 50%{transform:scale(1.015);} 100%{transform:scale(1);} }
+@keyframes feedbackShake{
+  0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);}
+  50%{transform:translateX(5px);} 75%{transform:translateX(-3px);}
+}
+.feedback-box.good{animation:feedbackPop .3s ease;}
+.feedback-box.bad{animation:feedbackShake .35s ease;}
+
+@keyframes landingCardUp{ from{transform:translateY(40px); opacity:0;} to{transform:translateY(0); opacity:1;} }
+@keyframes overlayFadeIn{ from{opacity:0;} to{opacity:1;} }
+
+.card:hover, .stat-card:hover, .hex-badge.unlocked:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 22px rgba(30,27,46,0.14);
+  transition:transform .18s ease, box-shadow .18s ease;
+}

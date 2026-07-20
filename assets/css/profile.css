@@ -1,0 +1,79 @@
+/* ============================================================
+   ChessQuest — Profil (profile.html)
+   ============================================================ */
+.profile-header{display:flex;align-items:center;gap:16px;margin-bottom:26px;}
+.profile-avatar{width:80px;height:80px;border-radius:50%;flex:0 0 auto;box-shadow:0 8px 20px rgba(36,31,61,0.18);}
+.profile-name{font-family:var(--font-display);font-weight:700;font-size:1.3rem;color:var(--navy);}
+.profile-level-title{font-size:0.86rem;color:var(--coral);font-weight:700;margin:2px 0 9px;}
+.profile-settings-btn{
+  width:40px;height:40px;border-radius:50%;background:var(--bg-panel);border:1px solid var(--line);box-shadow:var(--shadow);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+}
+.profile-settings-btn svg{width:19px;height:19px;fill:none;stroke:var(--text-dim);stroke-width:1.8;}
+
+.level-card{display:flex;align-items:center;gap:16px;background:var(--bg-panel-2);border-radius:22px;padding:16px 20px;margin-bottom:14px;}
+.level-badge{
+  width:52px;height:52px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(160deg, var(--coral), var(--coral-dark));color:#fff;
+  font-family:var(--font-display);font-weight:700;font-size:1.4rem;box-shadow:0 6px 16px rgba(108,92,224,0.4);
+}
+.level-info{flex:1;min-width:0;}
+.level-title{font-family:var(--font-display);font-weight:700;color:var(--navy);font-size:1.02rem;margin-bottom:6px;}
+.level-xp-label{font-size:0.72rem;color:var(--text-dim);margin-top:4px;font-family:var(--font-mono);}
+
+.daily-card{display:flex;align-items:center;gap:14px;background:var(--accent-yellow-bg);border-radius:var(--radius);padding:16px 20px;margin-bottom:22px;}
+.daily-icon{width:34px;height:34px;flex:0 0 auto;}
+.daily-info{flex:1;min-width:0;}
+.daily-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--accent-yellow-text);font-weight:800;}
+.daily-text{font-family:var(--font-display);font-size:0.92rem;color:var(--navy);font-weight:700;margin:3px 0 7px;}
+.daily-check{width:30px;height:30px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--line);transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+.daily-check svg{opacity:0;width:14px;height:14px;stroke:#fff;fill:none;stroke-width:3;}
+.daily-check.done{background:var(--good);transform:scale(1.1);}
+.daily-check.done svg{opacity:1;}
+
+.streak-card{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  background:linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+  border-radius:var(--radius);padding:18px 22px;margin-bottom:22px;box-shadow:0 12px 26px rgba(36,31,61,0.25);
+}
+.streak-flame{width:38px;height:38px;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));}
+.streak-info{display:flex;flex-direction:column;}
+.streak-number{font-family:var(--font-display);font-size:2.1rem;font-weight:800;color:#fff;line-height:1;}
+.streak-label{font-size:0.78rem;color:var(--cream);opacity:0.8;font-weight:600;}
+.streak-calendar{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto;max-width:230px;}
+.streak-day{width:12px;height:12px;border-radius:4px;background:rgba(255,255,255,0.15);}
+.streak-day.active{background:var(--coral);}
+
+.badges-row{display:grid;grid-template-columns:repeat(auto-fill, minmax(84px,1fr));gap:16px;margin-bottom:26px;}
+
+.path-list{display:flex;flex-direction:column;gap:9px;margin-bottom:24px;}
+.path-item{display:flex;align-items:center;gap:12px;background:var(--bg-panel-2);border-radius:var(--radius-btn);padding:13px 16px;cursor:pointer;transition:transform .15s ease, background .15s ease;}
+.path-item:hover{transform:translateX(3px);}
+.path-item.done{background:var(--accent-green-bg);}
+.path-check{width:28px;height:28px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:var(--line);transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+.path-check svg{opacity:0;width:13px;height:13px;stroke:#fff;fill:none;stroke-width:3;}
+.path-item.done .path-check{background:var(--good);transform:scale(1.05);}
+.path-item.done .path-check svg{opacity:1;}
+.path-text{display:flex;flex-direction:column;flex:1;}
+.path-text .path-title{font-weight:700;font-size:0.9rem;color:var(--navy);}
+.path-text .path-desc{font-size:0.78rem;color:var(--text-dim);}
+.path-item.done .path-text .path-title{text-decoration:line-through;opacity:0.65;}
+
+.mastery-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(190px,1fr));gap:8px;margin-bottom:6px;}
+.mastery-chip{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:0.8rem;cursor:pointer;transition:border-color .15s ease;}
+.mastery-chip:hover{border-color:var(--coral);}
+.mastery-chip.done{border-color:var(--good);}
+.mastery-chip .check{color:var(--good);font-weight:700;}
+.mastery-chip .check.empty{color:var(--line);}
+
+#games-history{display:flex;flex-direction:column;gap:6px;margin-bottom:6px;}
+.history-row{display:grid;grid-template-columns:90px 1fr 60px 60px;gap:8px;align-items:center;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:0.78rem;}
+.history-row .h-date{color:var(--text-dim);font-family:var(--font-mono);font-size:0.72rem;}
+.history-row .h-acc{font-family:var(--font-mono);font-weight:600;}
+.history-empty{color:var(--text-dim);font-size:0.85rem;padding:10px 0;}
+
+/* Évolution du classement (mini graphique en ligne, SVG généré en JS) */
+.elo-chart-card{background:var(--bg-panel-2);border-radius:18px;padding:16px;margin-bottom:20px;}
+.elo-chart-current{display:flex;align-items:baseline;gap:8px;margin-bottom:8px;}
+.elo-chart-current .val{font-family:var(--font-display);font-size:1.6rem;font-weight:700;color:var(--navy);}
+.elo-chart-current .delta{font-size:0.82rem;font-weight:600;color:var(--good);}

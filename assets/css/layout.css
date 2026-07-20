@@ -1,0 +1,75 @@
+/* ============================================================
+   ChessQuest — Layout (conteneur, en-tête, barre de navigation)
+   ============================================================ */
+.app{
+  position:relative;z-index:1;max-width:640px;margin:0 auto;
+  padding:0 16px calc(92px + env(safe-area-inset-bottom, 0px));
+}
+
+header.top{
+  display:flex;align-items:center;
+  padding:6px 0 16px;
+}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand .knight-mark{
+  width:38px;height:38px;border-radius:13px;flex:0 0 auto;
+  background:linear-gradient(160deg, var(--coral), var(--coral-dark));
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  font-size:1.3rem;box-shadow:0 6px 16px rgba(124,110,240,0.4);
+}
+header.top h1{
+  font-family:var(--font-display);font-weight:700;font-size:1.6rem;margin:0;
+  letter-spacing:0.2px;color:var(--navy);
+}
+header.top h1 .accent{color:var(--coral);}
+
+/* Page (contenu visible d'une page HTML) */
+.page{padding:4px 0 0;}
+
+/* ---- En-tête des sous-pages : retour + titre + badge (façon image de référence) ---- */
+.subpage-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-top:4px;}
+.subpage-back{
+  width:38px;height:38px;border-radius:50%;background:var(--bg-panel);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;cursor:pointer;box-shadow:var(--shadow);
+}
+.subpage-back svg{width:18px;height:18px;stroke:var(--navy);fill:none;stroke-width:2.6;}
+.subpage-title{font-family:var(--font-display);font-weight:700;font-size:1.25rem;color:var(--navy);flex:1;min-width:0;}
+.subpage-badge{
+  background:var(--bg-panel-2);color:var(--gem);border-radius:14px;padding:7px 13px;font-size:0.86rem;font-weight:800;
+  display:flex;align-items:center;gap:5px;flex:0 0 auto;
+}
+.subpage-badge svg{width:16px;height:16px;fill:var(--gem);}
+/* Variante sur fond coloré (héros teal, etc.) : texte/icônes blancs */
+.subpage-header.on-color .subpage-back{background:rgba(255,255,255,0.22);border:none;box-shadow:none;}
+.subpage-header.on-color .subpage-back svg{stroke:#fff;}
+.subpage-header.on-color .subpage-title{color:#fff;}
+.subpage-header.on-color .subpage-badge{background:rgba(255,255,255,0.22);color:#fff;}
+.subpage-header.on-color .subpage-badge svg{fill:#fff;}
+
+/* ---- Barre de navigation basse (identique sur toutes les pages) ---- */
+nav.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  display:flex;justify-content:space-around;align-items:stretch;
+  padding:10px 6px calc(10px + env(safe-area-inset-bottom, 0px));
+  background:var(--bg-panel);
+  border-top:1px solid var(--line);
+  border-radius:24px 24px 0 0;
+  box-shadow:0 -6px 20px rgba(36,31,61,0.06);
+}
+.tabbar-item{
+  position:relative;flex:1 1 0;min-width:56px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  background:transparent;border:none;color:#B7B3C6;cursor:pointer;
+  padding:4px 1px;
+  transition:color .2s ease, transform .15s cubic-bezier(.34,1.56,.64,1);
+}
+.tabbar-item .tabicon{
+  width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.tabbar-item span{font-size:0.66rem;font-weight:600;letter-spacing:0.01em;white-space:nowrap;}
+.tabbar-item.active{color:var(--coral);}
+.tabbar-item:active{transform:scale(0.92);}
+
+.section-title{font-family:var(--font-display);font-weight:700;color:var(--navy);font-size:1.12rem;margin:0 0 6px;border-top:1px solid var(--line);padding-top:24px;}
+.section-sub{font-size:0.86rem;color:var(--text-dim);margin-bottom:16px;}

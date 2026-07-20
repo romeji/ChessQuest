@@ -1,0 +1,58 @@
+/* ============================================================
+   ChessQuest — Design tokens
+   Toutes les couleurs, rayons, ombres utilisés par l'application.
+   ============================================================ */
+:root{
+  /* Surfaces */
+  --bg:#F6F4FC;
+  --bg-panel:#FFFFFF;
+  --bg-panel-2:#F1EEFA;
+  --line:#E9E5F7;
+
+  /* Texte */
+  --navy:#241F3D;
+  --navy-2:#3D3763;
+  --ink:#241F3D;
+  --text:#2E2A45;
+  --text-dim:#9691A8;
+  --cream:#F8F7FB;
+
+  /* Marque */
+  --coral:#7C6EF0;       /* violet primaire (boutons, accents, actif) */
+  --coral-dark:#6555D8;
+
+  /* Sémantique (analyse / feedback) */
+  --best:#4C86C9;
+  --good:#3CB878;
+  --inaccuracy:#F0A93A;
+  --mistake:#EF8F4E;
+  --blunder:#EF5F63;
+
+  /* Tuiles d'action (Accueil) */
+  --tile-purple:#7C6EF0;
+  --tile-green:#3CB878;
+  --tile-orange:#FFA53D;
+  --tile-blue:#4A90E2;
+  --gem:#9B6BE8;
+
+  /* Dégradé "Apprendre" */
+  --teal-1:#8FDDD1;
+  --teal-2:#4FB3A6;
+  --teal-3:#3B9C94;
+
+  /* Cartes colorées (thème, badges…) */
+  --accent-blue-bg:#E1EAF6;   --accent-blue-text:#4A6FA5;
+  --accent-pink-bg:#FBDDE4;   --accent-pink-text:#D65D77;
+  --accent-yellow-bg:#FFF1CB; --accent-yellow-text:#B7861A;
+  --accent-green-bg:#DEF3E7;  --accent-green-text:#2F9963;
+
+  /* Forme */
+  --radius:20px;
+  --radius-btn:16px;
+  --shadow:0 10px 26px rgba(36,31,61,0.08);
+
+  /* Police : titres/chiffres = rond et ludique, corps = lisible et amical */
+  --font-display:'Baloo 2', 'Nunito', sans-serif;
+  --font-body:'Nunito', sans-serif;
+  --font-mono:'IBM Plex Mono', monospace;
+}
