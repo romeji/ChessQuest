@@ -57,14 +57,16 @@ const SKILL_ICON_LOCK = '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" 
 function renderSkillPath(){
   const el = document.getElementById('skill-path');
   const mastered = PROGRESS.mastered || {};
-  const path = ['italienne','quatre_cavaliers','ecossaise','vienne','espagnole','gambit_roi','londres','colle','qgd','qga','slav','anglaise','reti','francaise','carokann','scandinave','pirc','alekhine','indienne_roi','nimzo_indienne','grunfeld','najdorf','dragon','sveshnikov'];
+  const path = ['italienne','quatre_cavaliers','ecossaise','vienne','espagnole','gambit_roi','londres','colle','gambit_dame','anglaise','reti','francaise','carokann','scandinave','pirc','alekhine','indienne_roi','nimzo_indienne','grunfeld','najdorf','dragon','sveshnikov'];
   const island = (key, index) => {
     const unlocked = index === 0 || !!mastered[path[index - 1]];
-    const status = mastered[key] ? 'done' : (unlocked ? 'current' : 'locked');
-    const title = OPENINGS[key].name.replace('Sicilienne — ','').replace('Gambit Dame — ','');
+    const complete = key === 'gambit_dame' ? ['qgd','qga','slav'].every(k => mastered[k]) : !!mastered[key];
+    const status = complete ? 'done' : (unlocked ? 'current' : 'locked');
+    const title = key === 'gambit_dame' ? 'Gambit Dame' : OPENINGS[key].name.replace('Sicilienne — ','').replace('Gambit Dame — ','');
     const position = `--top:${index * 205 + 20}px;--side:${index % 2 ? 'right' : 'left'};`;
-    const inner = `<span class="island-ground"><span class="island-rock"></span><span class="island-tree tree-a"></span><span class="island-tree tree-b"></span><span class="island-piece">${unlocked?'♜':'🔒'}</span></span><span class="map-label">${escapeHtml(title)}</span><span class="map-state">${mastered[key]?'Maîtrisée':(unlocked?'À apprendre':'Verrouillée')}</span>`;
-    return unlocked ? `<a class="map-island ${status} side-${index % 2 ? 'right' : 'left'}" style="${position}" href="openings.html?opening=${key}">${inner}</a>` : `<span class="map-island ${status} side-${index % 2 ? 'right' : 'left'}" style="${position}" aria-label="${escapeHtml(title)} verrouillée">${inner}</span>`;
+    const inner = `<span class="island-ground">${unlocked?'<span class="island-rock"></span><span class="island-tree tree-a"></span><span class="island-tree tree-b"></span><span class="island-piece">♜</span>':'<img class="locked-island-art" src="38fb1f70-0810-4814-a106-41f640b3b657.png" alt="">'}</span><span class="map-label">${escapeHtml(title)}</span><span class="map-state">${complete?'Maîtrisée':(unlocked?'À apprendre':'Verrouillée')}</span>`;
+    const target = key === 'gambit_dame' ? 'openings.html?path=gambit_dame' : `openings.html?opening=${key}`;
+    return unlocked ? `<a class="map-island ${status} side-${index % 2 ? 'right' : 'left'}" style="${position}" href="${target}">${inner}</a>` : `<span class="map-island ${status} side-${index % 2 ? 'right' : 'left'}" style="${position}" aria-label="${escapeHtml(title)} verrouillée">${inner}</span>`;
   };
   el.style.setProperty('--map-height', `${path.length * 205 + 115}px`);
   el.innerHTML = `<div class="map-nodes">${path.map(island).join('')}</div>`;
