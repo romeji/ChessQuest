@@ -1,2 +1,0 @@
-# Chessle
-Learn chess
