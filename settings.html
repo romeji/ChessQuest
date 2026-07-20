@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChessQuest — Réglages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/variables.css">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body data-page="profile">
+<div id="toast-container"></div>
+<div class="app">
+  <section class="page">
+    <div class="lesson-header">
+      <a class="lesson-back" href="profile.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--navy)" stroke-width="2.4"><path d="M15 5l-7 7 7 7"/></svg></a>
+      <div class="lesson-title">Réglages</div>
+    </div>
+
+    <label class="field-label">Vitesse du moteur d'analyse</label>
+    <div class="segmented" id="engine-speed-picker" style="margin:10px 0 6px;">
+      <button data-speed="fast">Rapide</button>
+      <button data-speed="normal" class="active">Normal</button>
+      <button data-speed="deep">Approfondi</button>
+    </div>
+    <p class="section-sub" id="engine-speed-hint">~0,45 s par coup — bon équilibre vitesse/précision.</p>
+
+    <label class="field-label">Effets sonores</label>
+    <div style="margin:10px 0 20px;"><button class="tts-btn active" id="sound-toggle">Sons activés</button></div>
+
+    <label class="field-label">Voix de lecture</label>
+    <select id="voice-select" class="search-input" style="margin:10px 0;"></select>
+    <div class="btn-row" style="margin-bottom:6px;">
+      <button class="btn secondary" id="voice-test-btn">Tester la voix</button>
+    </div>
+    <p class="section-sub">La qualité dépend des voix françaises installées sur ton appareil.</p>
+
+    <button class="btn secondary" id="reset-progress-btn" style="margin-top:10px;">Réinitialiser ma progression</button>
+  </section>
+</div>
+
+<nav class="tabbar">
+  <button class="tabbar-item" data-tab="home" onclick="location.href='index.html'">
+    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Accueil</span>
+  </button>
+  <button class="tabbar-item" data-tab="learn" onclick="location.href='learn.html'">
+    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="6" cy="19" r="2.5"/><circle cx="12" cy="11" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M6 16.5V13a2 2 0 0 1 2-2h1.5M14.5 9H16a2 2 0 0 0 2-2V5.5"/></svg><span>Parcours</span>
+  </button>
+  <button class="tabbar-item" data-tab="play" onclick="location.href='openings.html'">
+    <svg viewBox="0 0 24 24" class="tabicon"><path d="M12 3v3m-3 0h6M8 9h8l-1 4H9L8 9Z"/><path d="M7 20l1.5-7h7L17 20Z"/><path d="M6 20h12"/></svg><span>Jouer</span>
+  </button>
+  <button class="tabbar-item" data-tab="progress" onclick="location.href='profile.html'">
+    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 15l4-5 3 3 5-7"/></svg><span>Progrès</span>
+  </button>
+  <button class="tabbar-item active" data-tab="profile" onclick="location.href='profile.html'">
+    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg><span>Profil</span>
+  </button>
+</nav>
+
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/navigation.js"></script>
+<script>
+const ENGINE_SPEED_HINTS = {
+  fast:"~0,25 s par coup — analyse plus rapide, un peu moins précise.",
+  normal:"~0,45 s par coup — bon équilibre vitesse/précision.",
+  deep:"~0,9 s par coup — plus précis, plus lent."
+};
+document.querySelectorAll('#engine-speed-picker button').forEach(b=>{
+  b.classList.toggle('active', b.dataset.speed === PROGRESS.settings.engineSpeed);
+  b.onclick = function(){
+    document.querySelectorAll('#engine-speed-picker button').forEach(x=>x.classList.remove('active'));
+    this.classList.add('active');
+    PROGRESS.settings.engineSpeed = this.dataset.speed;
+    document.getElementById('engine-speed-hint').textContent = ENGINE_SPEED_HINTS[this.dataset.speed] || '';
+    saveProgress();
+  };
+});
+
+const soundBtn = document.getElementById('sound-toggle');
+soundBtn.classList.toggle('active', soundEnabled);
+soundBtn.textContent = soundEnabled ? 'Sons activés' : 'Sons coupés';
+soundBtn.onclick = function(){
+  soundEnabled = !soundEnabled;
+  PROGRESS.settings.soundEnabled = soundEnabled;
+  saveProgress();
+  this.classList.toggle('active', soundEnabled);
+  this.textContent = soundEnabled ? 'Sons activés' : 'Sons coupés';
+};
+
+function populateVoiceSelect(){
+  const sel = document.getElementById('voice-select');
+  if(!('speechSynthesis' in window)) return;
+  const voices = window.speechSynthesis.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith('fr'));
+  if(voices.length === 0){ sel.innerHTML = '<option>Aucune voix française détectée</option>'; return; }
+  const currentName = frenchVoice ? frenchVoice.name : '';
+  sel.innerHTML = voices.map(v => `<option value="${escapeHtml(v.name)}" ${v.name===currentName?'selected':''}>${escapeHtml(v.name)}${v.localService?' (locale)':''}</option>`).join('');
+}
+if('speechSynthesis' in window){
+  populateVoiceSelect();
+  window.speechSynthesis.addEventListener('voiceschanged', populateVoiceSelect);
+}
+document.getElementById('voice-select').addEventListener('change', function(){
+  PROGRESS.settings.voiceName = this.value;
+  saveProgress();
+  refreshVoiceChoice();
+  speak("Voici comment sonne cette voix.");
+});
+document.getElementById('voice-test-btn').onclick = () => speak("Bien joué ! Cavalier d6, échec — la dame est maintenant attaquée.");
+
+document.getElementById('reset-progress-btn').onclick = function(){
+  if(!confirm('Réinitialiser toute ta progression ? Cette action est irréversible.')) return;
+  PROGRESS = defaultProgress();
+  saveProgress();
+  alert('Progression réinitialisée.');
+  location.href = 'profile.html';
+};
+</script>
+</body>
+</html>
