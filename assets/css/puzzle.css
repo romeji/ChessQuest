@@ -1,23 +1,19 @@
 /* ============================================================
    ChessQuest — Puzzles (puzzles.html)
    ============================================================ */
-.puzzle-mascot{margin-left:auto;width:40px;height:40px;flex:0 0 auto;}
-.puzzle-mascot img{width:100%;height:100%;object-fit:contain;}
+.puzzle-mascot{margin-left:auto;width:40px;height:40px;flex:0 0 auto;position:relative;}
+.puzzle-mascot img{width:100%;height:100%;object-fit:contain;position:relative;z-index:1;}
+.puzzle-confetti{position:absolute;top:-14px;left:-26px;width:64px;height:32px;pointer-events:none;}
 
-.puzzle-top-row{display:flex;flex-wrap:wrap;gap:16px;align-items:stretch;margin-bottom:16px;}
-.puzzle-rating-badge{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-  background:linear-gradient(160deg, var(--navy) 0%, var(--navy-2) 100%);
-  border-radius:var(--radius);padding:14px 26px;min-width:170px;box-shadow:0 10px 24px rgba(30,27,46,0.28);position:relative;
-}
-.puzzle-rating-badge .pr-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--cream);opacity:0.85;}
-.puzzle-rating-badge .pr-value{font-family:var(--font-display);font-size:2.2rem;font-weight:800;color:var(--cream);line-height:1.1;}
-.puzzle-rating-badge .pr-delta{font-family:var(--font-mono);font-size:0.82rem;font-weight:600;min-height:1.1em;}
-.puzzle-rating-badge .pr-delta.up{color:#8fd39a;}
-.puzzle-rating-badge .pr-delta.down{color:#e79a9a;}
-.puzzle-top-row .stats-row{flex:1;margin-bottom:0;}
-.puzzle-top-row .stat-card{min-width:110px;padding:12px 10px;}
-.puzzle-top-row .stat-card .big{font-size:1.5rem;}
+.puzzle-streak-row{display:flex;align-items:center;gap:5px;margin-bottom:16px;}
+.puzzle-streak-label{font-family:var(--font-display);font-weight:700;font-size:0.98rem;color:var(--navy);}
+.puzzle-streak-label strong{color:var(--navy);}
+.puzzle-streak-flame{font-size:1rem;}
+.puzzle-rating-inline{font-size:0.8rem;color:var(--text-dim);font-weight:600;margin-left:4px;}
+.puzzle-rating-inline strong{color:var(--text-dim);font-weight:800;}
+.puzzle-rating-inline .pr-delta{font-family:var(--font-mono);font-weight:700;margin-left:2px;}
+.puzzle-rating-inline .pr-delta.up{color:var(--good);}
+.puzzle-rating-inline .pr-delta.down{color:var(--blunder);}
 
 .puzzle-source-row{display:flex;gap:2px;margin-bottom:16px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:999px;padding:3px;max-width:fit-content;flex-wrap:wrap;}
 #mistakes-count-badge{display:inline-block;background:var(--blunder);color:#fff;border-radius:10px;padding:1px 7px;font-size:0.68rem;margin-left:4px;font-weight:700;}
@@ -25,7 +21,13 @@
 .theme-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
 .theme-chip{background:var(--bg-panel-2);border:1px solid var(--line);color:var(--text-dim);border-radius:16px;padding:5px 12px;font-size:0.74rem;cursor:pointer;transition:all .15s ease;}
 .theme-chip:hover{border-color:var(--coral);color:var(--text);}
-.theme-chip.active{border-color:var(--coral);color:var(--coral);background:rgba(108,92,224,0.1);}
+.theme-chip.active{border-color:var(--coral);color:var(--coral);background:rgba(124,110,240,0.1);}
+
+/* ---- Carte blanche : question + échiquier (façon capture de référence) ---- */
+.puzzle-card{background:var(--bg-panel);border-radius:26px;padding:20px 16px 18px;box-shadow:var(--shadow);margin-bottom:6px;}
+.puzzle-card-head{text-align:center;margin-bottom:16px;}
+.puzzle-question{font-family:var(--font-display);font-weight:700;font-size:1.15rem;color:var(--navy);}
+.puzzle-kind{font-size:0.84rem;color:var(--tile-orange);font-weight:700;margin-top:4px;}
 
 .difficulty-stars{font-size:0.85rem;color:var(--coral);letter-spacing:1px;white-space:nowrap;}
 .difficulty-stars .dim{color:var(--line);}
@@ -35,20 +37,24 @@
 .progress-dots .dot.done{background:var(--coral);}
 .progress-dots .dot.current{background:var(--good);box-shadow:0 0 0 3px rgba(63,174,122,0.28);}
 
-/* ---- Réponses à choix multiple (variante mobile-first) ---- */
+.puzzle-stats-toggle{font-size:0.82rem;color:var(--coral);font-weight:700;text-align:center;margin:18px 0 8px;cursor:pointer;}
+.puzzle-stats-toggle:hover{text-decoration:underline;}
+
+/* ---- Réponses à choix multiple (lignes pleine largeur, façon capture) ---- */
 .mcq-options{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
 .mcq-option{
-  display:flex;align-items:center;gap:12px;background:var(--bg-panel);border:2px solid var(--line);border-radius:16px;
-  padding:13px 14px;cursor:pointer;text-align:left;font-family:var(--font-mono);font-weight:700;font-size:0.94rem;color:var(--navy);
-  transition:border-color .15s ease, background .15s ease, transform .1s ease;
+  display:flex;align-items:center;gap:12px;background:var(--bg-panel-2);border:none;border-radius:18px;
+  padding:15px 16px;cursor:pointer;text-align:left;font-family:var(--font-body);font-weight:700;font-size:1rem;color:var(--navy);
+  transition:background .15s ease, transform .1s ease;
 }
 .mcq-option:active{transform:scale(0.98);}
 .mcq-option .mcq-letter{
-  width:26px;height:26px;border-radius:50%;background:var(--bg-panel-2);color:var(--text-dim);
-  display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:800;flex:0 0 auto;
+  width:28px;height:28px;border-radius:50%;background:var(--bg-panel);color:var(--text-dim);
+  display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:800;flex:0 0 auto;
+  box-shadow:0 1px 3px rgba(36,31,61,0.12);
 }
-.mcq-option:hover{border-color:var(--coral);}
-.mcq-option.correct{border-color:var(--good);background:rgba(63,174,122,0.1);}
+.mcq-option:hover{background:var(--bg-panel-2);filter:brightness(0.97);}
+.mcq-option.correct{background:var(--accent-green-bg);}
 .mcq-option.correct .mcq-letter{background:var(--good);color:#fff;}
-.mcq-option.wrong{border-color:var(--blunder);background:rgba(234,95,99,0.1);}
+.mcq-option.wrong{background:var(--accent-pink-bg);}
 .mcq-option.wrong .mcq-letter{background:var(--blunder);color:#fff;}

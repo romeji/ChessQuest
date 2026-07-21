@@ -39,17 +39,31 @@
     </div>
     <div class="stats-row" id="progress-stats-row" style="margin-bottom:26px;"></div>
 
-    <h2 class="home-section-title" style="margin-bottom:12px;">Évolution ÉLO</h2>
-    <div class="elo-chart-card">
-      <div class="elo-chart-current">
-        <span class="val" id="elo-current-val">1000</span>
-        <span class="delta" id="elo-current-delta">+0</span>
-      </div>
-      <svg id="elo-chart-svg" viewBox="0 0 300 90" preserveAspectRatio="none" style="width:100%;height:90px;display:block;"></svg>
-      <div class="elo-chart-dates" id="elo-chart-dates" style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text-dim);margin-top:4px;font-family:var(--font-mono);"></div>
+    <div class="home-section-head">
+      <h2 class="home-section-title">Classement Chess.com</h2>
+      <span class="csc-username-small" id="elo-username-label"></span>
     </div>
 
-    <p class="section-sub" style="margin-top:22px;">Ces statistiques se mettent à jour au fil de tes puzzles, entraînements et parties analysées.</p>
+    <div id="elo-no-username" class="hidden csc-mini-card">
+      Ajoute ton pseudo Chess.com dans <a href="settings.html" style="color:var(--coral);font-weight:700;">Réglages</a> pour afficher ton classement Elo réel et son évolution.
+    </div>
+
+    <div id="elo-chesscom-block">
+      <div class="elo-format-tabs" id="elo-format-tabs"></div>
+      <div class="rating-grid" id="rating-grid"></div>
+
+      <div class="elo-chart-card">
+        <div class="elo-chart-current">
+          <span class="val" id="elo-current-val">—</span>
+          <span class="delta" id="elo-current-delta"></span>
+        </div>
+        <svg id="elo-chart-svg" viewBox="0 0 300 90" preserveAspectRatio="none" style="width:100%;height:90px;display:block;"></svg>
+        <div class="elo-chart-dates" id="elo-chart-dates" style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text-dim);margin-top:4px;font-family:var(--font-mono);"></div>
+      </div>
+      <div class="csc-status" id="elo-chart-status" style="margin-top:8px;font-size:0.8rem;color:var(--text-dim);"></div>
+    </div>
+
+    <p class="section-sub" style="margin-top:22px;">Le classement et le graphique viennent directement de l'API Chess.com (parties déjà synchronisées) ; les statistiques ci-dessus viennent de ton activité dans l'app.</p>
   </section>
 
   <nav class="tabbar">
@@ -98,42 +112,119 @@ document.getElementById('progress-stats-row').innerHTML = `
   <div class="stat-card"><div class="big">${pBestStreak}</div><div class="label">Meilleure série (j.)</div></div>
 `;
 
-/* ---- Évolution ÉLO (historique de classement puzzles) ---- */
-const history = (PROGRESS.puzzleRatingHistory && PROGRESS.puzzleRatingHistory.length > 0)
-  ? PROGRESS.puzzleRatingHistory
-  : [{date: todayKey(), rating: PROGRESS.puzzleRating || 1000}];
-const ratings = history.map(h => h.rating);
-const current = ratings[ratings.length - 1];
-const first = ratings[0];
-const delta = current - first;
-document.getElementById('elo-current-val').textContent = current;
-const deltaEl = document.getElementById('elo-current-delta');
-deltaEl.textContent = (delta >= 0 ? '+' : '') + delta;
-deltaEl.style.color = delta >= 0 ? 'var(--good)' : 'var(--blunder)';
+/* ---- Classement & évolution ÉLO — données réelles Chess.com ---- */
+const ELO_FORMATS = [
+  {key:'chess_rapid', label:'Rapide', timeClass:'rapid'},
+  {key:'chess_blitz', label:'Blitz', timeClass:'blitz'},
+  {key:'chess_bullet', label:'Bullet', timeClass:'bullet'},
+  {key:'chess_daily', label:'Journalière', timeClass:'daily'}
+];
+let eloFormatIdx = 0;
+let eloUsername = '';
 
-const svg = document.getElementById('elo-chart-svg');
-const w = 300, h = 90, pad = 6;
-const min = Math.min(...ratings), max = Math.max(...ratings);
-const range = Math.max(1, max - min);
-const pts = ratings.map((r,i) => {
-  const x = ratings.length > 1 ? pad + (i/(ratings.length-1)) * (w-2*pad) : w/2;
-  const y = h - pad - ((r - min) / range) * (h - 2*pad);
-  return [x,y];
-});
-const pathD = pts.map((p,i) => (i===0?'M':'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
-const areaD = pathD + ` L${pts[pts.length-1][0].toFixed(1)},${h} L${pts[0][0].toFixed(1)},${h} Z`;
-svg.innerHTML = `
-  <path d="${areaD}" fill="var(--accent-green-bg)"></path>
-  <path d="${pathD}" fill="none" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-`;
-const dateFmt = (d) => { const dt = new Date(d); if(isNaN(dt)) return ''; return String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0'); };
-const datesEl = document.getElementById('elo-chart-dates');
-if(history.length > 1){
-  const idxs = [0, Math.floor(history.length/2), history.length-1];
-  datesEl.innerHTML = idxs.map(i => `<span>${dateFmt(history[i].date)}</span>`).join('');
-} else {
-  datesEl.innerHTML = '';
+function renderRatingGrid(stats){
+  const grid = document.getElementById('rating-grid');
+  grid.innerHTML = ELO_FORMATS.map(f => {
+    const s = stats && stats[f.key];
+    const last = s && s.last ? s.last.rating : null;
+    const best = s && s.best ? s.best.rating : null;
+    return `<div class="rating-card"><div class="rc-label">${f.label}</div><div class="rc-value">${last != null ? last : '—'}</div><div class="rc-best">${best ? 'Record ' + best : ''}</div></div>`;
+  }).join('');
 }
+
+function renderEloFormatTabs(){
+  const el = document.getElementById('elo-format-tabs');
+  el.innerHTML = ELO_FORMATS.map((f,i) => `<button class="elo-tab ${i===eloFormatIdx?'active':''}" data-i="${i}">${f.label}</button>`).join('');
+  el.querySelectorAll('button').forEach(b => b.onclick = () => {
+    eloFormatIdx = parseInt(b.dataset.i, 10);
+    renderEloFormatTabs();
+    drawEloChart();
+  });
+}
+
+function drawEloChart(){
+  const state = chessComState();
+  const fmt = ELO_FORMATS[eloFormatIdx];
+  const games = (state.games || [])
+    .filter(g => g.time_class === fmt.timeClass)
+    .slice()
+    .sort((a,b) => (a.end_time||0) - (b.end_time||0));
+  const points = games.map(g => {
+    const isWhite = g.white && g.white.username && g.white.username.toLowerCase() === eloUsername;
+    const rating = isWhite ? (g.white && g.white.rating) : (g.black && g.black.rating);
+    return { date: g.end_time || null, rating };
+  }).filter(p => typeof p.rating === 'number');
+
+  const statusEl = document.getElementById('elo-chart-status');
+  const svg = document.getElementById('elo-chart-svg');
+  const datesEl = document.getElementById('elo-chart-dates');
+  const valEl = document.getElementById('elo-current-val');
+  const deltaEl = document.getElementById('elo-current-delta');
+
+  if(points.length === 0){
+    valEl.textContent = '—'; deltaEl.textContent = '';
+    svg.innerHTML = ''; datesEl.innerHTML = '';
+    statusEl.textContent = `Pas encore de partie ${fmt.label.toLowerCase()} synchronisée pour ce pseudo.`;
+    return;
+  }
+  statusEl.textContent = '';
+  const ratings = points.map(p => p.rating);
+  const current = ratings[ratings.length - 1];
+  const first = ratings[0];
+  const delta = current - first;
+  valEl.textContent = current;
+  deltaEl.textContent = (delta >= 0 ? '+' : '') + delta;
+  deltaEl.style.color = delta >= 0 ? 'var(--good)' : 'var(--blunder)';
+
+  const w = 300, h = 90, pad = 6;
+  const min = Math.min(...ratings), max = Math.max(...ratings);
+  const range = Math.max(1, max - min);
+  const pts = ratings.map((r,i) => {
+    const x = ratings.length > 1 ? pad + (i/(ratings.length-1)) * (w-2*pad) : w/2;
+    const y = h - pad - ((r - min) / range) * (h - 2*pad);
+    return [x,y];
+  });
+  const pathD = pts.map((p,i) => (i===0?'M':'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  const areaD = pathD + ` L${pts[pts.length-1][0].toFixed(1)},${h} L${pts[0][0].toFixed(1)},${h} Z`;
+  svg.innerHTML = `
+    <path d="${areaD}" fill="var(--accent-green-bg)"></path>
+    <path d="${pathD}" fill="none" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+  `;
+  const dateFmt = (ts) => { if(!ts) return ''; const dt = new Date(ts*1000); return String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0'); };
+  if(points.length > 1){
+    const idxs = [0, Math.floor(points.length/2), points.length-1];
+    datesEl.innerHTML = idxs.map(i => `<span>${dateFmt(points[i].date)}</span>`).join('');
+  } else {
+    datesEl.innerHTML = '';
+  }
+}
+
+async function initElo(){
+  const state = chessComState();
+  eloUsername = (state.username || (PROGRESS.settings||{}).chessComUsername || '').toLowerCase();
+  if(!eloUsername){
+    document.getElementById('elo-no-username').classList.remove('hidden');
+    document.getElementById('elo-chesscom-block').classList.add('hidden');
+    return;
+  }
+  document.getElementById('elo-username-label').textContent = '@' + eloUsername;
+
+  // Choisit par défaut le format le plus joué parmi les parties déjà en cache
+  const counts = {};
+  (state.games || []).forEach(g => { counts[g.time_class] = (counts[g.time_class]||0) + 1; });
+  let bestIdx = 0, bestCount = -1;
+  ELO_FORMATS.forEach((f,i) => { if((counts[f.timeClass]||0) > bestCount){ bestCount = counts[f.timeClass]||0; bestIdx = i; } });
+  eloFormatIdx = bestIdx;
+
+  renderEloFormatTabs();
+  renderRatingGrid(state.stats);
+  drawEloChart();
+
+  // Rafraîchit en arrière-plan (le cache déjà là s'affiche instantanément pendant ce temps)
+  try{ const stats = await fetchChessComStats(eloUsername); renderRatingGrid(stats); }catch(e){ console.warn(e.message); }
+  try{ await syncChessCom(eloUsername); drawEloChart(); }catch(e){ console.warn(e.message); }
+}
+initElo();
 </script>
 </body>
 </html>

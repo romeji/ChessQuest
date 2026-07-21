@@ -22,17 +22,18 @@
       <a class="lesson-back" href="index.html"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
       <div class="lesson-title">Puzzle</div>
       <div class="puzzle-mascot">
+        <svg class="puzzle-confetti" viewBox="0 0 60 40" aria-hidden="true">
+          <circle cx="6" cy="8" r="2.4" fill="#3CB878"/><circle cx="18" cy="4" r="2" fill="#FFA53D"/>
+          <circle cx="30" cy="10" r="2.2" fill="#7C6EF0"/><circle cx="44" cy="5" r="1.8" fill="#4A90E2"/>
+        </svg>
         <img src="assets/illustrations/crown-mascot.png" alt="" onerror="this.remove();">
       </div>
     </div>
 
-    <div class="puzzle-top-row">
-      <div class="puzzle-rating-badge">
-        <span class="pr-label">Classement</span>
-        <span class="pr-value" id="puzzle-rating-value">1000</span>
-        <span class="pr-delta" id="puzzle-rating-delta"></span>
-      </div>
-      <div class="stats-row" id="puzzle-stats"></div>
+    <div class="puzzle-streak-row">
+      <span class="puzzle-streak-label">Série : <strong id="puzzle-streak-value">0</strong></span>
+      <span class="puzzle-streak-flame">🔥</span>
+      <span class="puzzle-rating-inline">· Classement <strong id="puzzle-rating-value">1000</strong><span class="pr-delta" id="puzzle-rating-delta"></span></span>
     </div>
 
     <div class="puzzle-source-row">
@@ -42,20 +43,24 @@
     </div>
     <div class="theme-filter-row" id="theme-filter-row"></div>
 
-    <div class="board-frame" style="margin:0 auto 8px;display:block;width:fit-content;">
-      <div class="coord-ranks" id="puzzle-ranks"></div>
-      <div id="puzzle-board"></div>
-      <div class="coord-files" id="puzzle-files"></div>
+    <div class="puzzle-card">
+      <div class="puzzle-card-head">
+        <div class="puzzle-question" id="puzzle-question">Trouve le meilleur coup !</div>
+        <div class="puzzle-kind" id="puzzle-kind">Coup gagnant</div>
+      </div>
+      <div class="board-frame" style="margin:0 auto;display:block;width:fit-content;">
+        <div class="coord-ranks" id="puzzle-ranks"></div>
+        <div id="puzzle-board"></div>
+        <div class="coord-files" id="puzzle-files"></div>
+      </div>
     </div>
-    <div class="progress-dots" id="puzzle-dots" style="justify-content:center;margin-bottom:10px;"></div>
+    <div class="progress-dots" id="puzzle-dots" style="justify-content:center;margin:12px 0 10px;"></div>
 
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-      <div class="lesson-title" id="puzzle-title" style="font-size:0.95rem;">Trouve le meilleur coup !</div>
-      <span class="difficulty-stars" id="puzzle-stars"></span>
-    </div>
     <div class="feedback-box" id="puzzle-feedback">Sélectionne une source de puzzles.</div>
-
     <div class="mcq-options" id="mcq-options"></div>
+
+    <div class="puzzle-stats-toggle" id="puzzle-stats-toggle">Voir mes statistiques</div>
+    <div class="stats-row hidden" id="puzzle-stats"></div>
   </section>
 </div>
 
@@ -110,6 +115,12 @@ document.getElementById('src-random').onclick = () => {
   document.getElementById('src-classic').classList.remove('active');
   document.getElementById('src-mistakes').classList.remove('active');
   renderThemeFilters(); generateRandomPuzzle();
+};
+
+document.getElementById('puzzle-stats-toggle').onclick = function(){
+  const row = document.getElementById('puzzle-stats');
+  const nowHidden = row.classList.toggle('hidden');
+  this.textContent = nowHidden ? 'Voir mes statistiques' : 'Masquer les statistiques';
 };
 
 ensurePuzzleBoard();

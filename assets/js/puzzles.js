@@ -96,6 +96,16 @@ function renderThemeFilters(){
   });
 }
 
+/* ---- Notation figurine (♛h5+ plutôt que Qh5+), façon apps d'échecs ---- */
+const FIGURINE = { w:{K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘'}, b:{K:'♚',Q:'♛',R:'♜',B:'♝',N:'♞'} };
+function toFigurine(san, color){
+  const letter = san[0];
+  if('KQRBN'.includes(letter) && FIGURINE[color]){
+    return FIGURINE[color][letter] + san.slice(1);
+  }
+  return san;
+}
+
 /* ---- Génère 3 options QCM (1 bonne + 2 distracteurs pris parmi les coups légaux) ---- */
 function buildMcqOptions(game, solutionSan){
   const legal = game.moves({verbose:true}).map(m => m.san).filter(s => s !== solutionSan);
@@ -111,8 +121,8 @@ function loadPuzzle(idx){
   if(puzzleQueue.length === 0){
     puzzleGame = new Chess();
     puzzleBoard.position('start');
-    setText('puzzle-title', puzzleSource === 'mistakes' ? "Pas encore d'erreur enregistrée" : "Aucun puzzle dans ce thème");
-    setHtml('puzzle-stars', '');
+    setText('puzzle-question', puzzleSource === 'mistakes' ? "Pas encore d'erreur enregistrée" : "Aucun puzzle dans ce thème");
+    setText('puzzle-kind', '');
     setHtml('puzzle-dots', '');
     if(container) container.innerHTML = '';
     setPuzzleFeedback(puzzleSource === 'mistakes' ? "Analyse une partie dans Analyse : tes erreurs y apparaîtront ici." : "Choisis un autre thème.", 'prompt');
@@ -133,17 +143,19 @@ function loadPuzzle(idx){
   clearHighlights('#puzzle-board');
 
   const label = puzzleSource === 'mistakes' ? (p.gameLabel || 'Ta partie') : `Puzzle ${puzzleIndex+1}/${puzzleQueue.length}`;
-  setText('puzzle-title', `${p.theme} — ${label}`);
-  setHtml('puzzle-stars', p.rating ? ratingStars(p.rating) : '');
+  const solutionClean0 = p.solution.replace(/[!?]+$/, '');
+  setText('puzzle-question', solutionClean0.includes('#') ? 'Trouve le mat !' : 'Trouve le meilleur coup !');
+  setText('puzzle-kind', `${p.theme} · ${label}`);
   setHtml('puzzle-dots', puzzleQueue.map((_,i)=>`<span class="dot ${i<puzzleIndex?'done':''} ${i===puzzleIndex?'current':''}"></span>`).join(''));
 
   const solutionClean = p.solution.replace(/[!?]+$/, '');
   const options = buildMcqOptions(puzzleGame, solutionClean);
   if(container){
+    const moverColor = puzzleGame.turn();
     container.innerHTML = options.map((opt, i) => `
       <button class="mcq-option" data-san="${escapeHtml(opt)}">
         <span class="mcq-letter">${String.fromCharCode(65+i)}</span>
-        <span>${escapeHtml(opt)}</span>
+        <span>${escapeHtml(toFigurine(opt, moverColor))}</span>
       </button>
     `).join('');
     container.querySelectorAll('.mcq-option').forEach(btn=>{
@@ -216,6 +228,7 @@ function showRatingDelta(delta){
 
 function refreshPuzzleHeader(){
   setText('puzzle-rating-value', PROGRESS.puzzleRating);
+  setText('puzzle-streak-value', PROGRESS.puzzleStreak || 0);
   const count = (PROGRESS.mistakes || []).length;
   setText('mistakes-count-badge', count > 0 ? count : '');
   setHtml('puzzle-stats', `
@@ -259,7 +272,7 @@ function playRandomContinuation(g, plies){
 async function generateRandomPuzzle(){
   if(generatingPuzzle) return;
   generatingPuzzle = true;
-  setText('puzzle-title', "Génération d'un défi…");
+  setText('puzzle-question', "Génération d'un défi…");
   setPuzzleFeedback("Stockfish analyse une nouvelle position…", 'prompt');
   await waitForEngineReady();
   sfSetSkillLevel(20);

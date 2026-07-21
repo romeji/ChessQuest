@@ -44,6 +44,21 @@
 .streak-day{width:12px;height:12px;border-radius:4px;background:rgba(255,255,255,0.15);}
 .streak-day.active{background:var(--coral);}
 
+/* ---- Classement Chess.com (progress.html) ---- */
+.csc-username-small{font-size:0.82rem;color:var(--coral);font-weight:700;}
+.csc-mini-card{background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;font-size:0.86rem;color:var(--text-dim);line-height:1.5;margin-bottom:20px;box-shadow:var(--shadow);}
+
+.elo-format-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.elo-tab{background:var(--bg-panel-2);border:1px solid var(--line);color:var(--text-dim);border-radius:14px;padding:7px 14px;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all .15s ease;}
+.elo-tab:hover{border-color:var(--coral);color:var(--text);}
+.elo-tab.active{border-color:var(--coral);color:var(--coral);background:rgba(124,110,240,0.1);}
+
+.rating-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+.rating-card{background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;text-align:center;box-shadow:var(--shadow);}
+.rating-card .rc-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-dim);font-weight:700;}
+.rating-card .rc-value{font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--navy);margin:2px 0;}
+.rating-card .rc-best{font-size:0.68rem;color:var(--tile-orange);font-weight:700;min-height:1em;}
+
 .badges-row{display:grid;grid-template-columns:repeat(auto-fill, minmax(84px,1fr));gap:16px;margin-bottom:26px;}
 
 .path-list{display:flex;flex-direction:column;gap:9px;margin-bottom:24px;}
