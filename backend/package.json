@@ -1,0 +1,17 @@
+{
+  "name": "chessquest-analyzer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Analyse en arrière-plan (GitHub Actions) des parties Chess.com de ChessQuest, avec Stockfish natif + Firestore.",
+  "main": "analyze.js",
+  "scripts": {
+    "analyze": "node analyze.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "chess.js": "0.10.3",
+    "firebase-admin": "^12.6.0"
+  }
+}

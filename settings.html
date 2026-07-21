@@ -68,8 +68,11 @@
   </button>
 </nav>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/chesscom.js"></script>
+<script src="assets/js/firebase-sync.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
@@ -80,9 +83,10 @@ chessComInput.value = chessComState().username || (PROGRESS.settings||{}).chessC
 document.getElementById('save-chesscom').onclick = async () => {
   const username = chessComInput.value.trim();
   chessComStatus.textContent = 'Synchronisation en cours…';
+  registerChessComUsername(username); // best-effort, pour l'analyse en arrière-plan (voir SETUP-BACKEND.md)
   try {
     const games = await syncChessCom(username);
-    chessComStatus.textContent = `${games.length} parties publiques enregistrées. Les nouvelles parties seront recherchées toutes les 5 minutes tant que l’app est ouverte.`;
+    chessComStatus.textContent = `${games.length} parties publiques enregistrées. Les nouvelles parties seront recherchées toutes les 5 minutes tant que l’app est ouverte, et analysées en arrière-plan même app fermée si le backend est configuré (voir SETUP-BACKEND.md).`;
   } catch(error) { chessComStatus.textContent = error.message || 'Synchronisation impossible.'; }
 };
 

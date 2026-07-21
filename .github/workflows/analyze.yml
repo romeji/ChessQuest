@@ -1,0 +1,40 @@
+name: Analyse des parties en arrière-plan
+
+on:
+  schedule:
+    # Toutes les 30 minutes. GitHub peut retarder légèrement les crons
+    # sur les dépôts peu actifs — c'est normal et sans conséquence ici.
+    - cron: '*/30 * * * *'
+  workflow_dispatch: {}   # bouton "Run workflow" manuel dans l'onglet Actions
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Installer Stockfish (binaire natif)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y stockfish
+          echo "/usr/games" >> "$GITHUB_PATH"
+
+      - name: Installer les dépendances Node
+        working-directory: backend
+        run: npm install
+
+      - name: Lancer l'analyse
+        working-directory: backend
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          STOCKFISH_PATH: /usr/games/stockfish
+        run: node analyze.js

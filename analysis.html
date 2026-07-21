@@ -109,8 +109,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.4/confetti.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/chesscom.js"></script>
+<script src="assets/js/firebase-sync.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
@@ -151,7 +154,21 @@ function renderGamesList(games, username){
     return `<div class="game-row"><span class="g-date">${date}</span><span>vs ${escapeHtml(opponent)}</span><span>${isWhite?'Blancs':'Noirs'}</span><span class="g-result ${r.cls}">${r.label}</span><button class="btn secondary g-analyze" data-idx="${idx}">Analyser</button></div>`;
   }).join('');
   el.querySelectorAll('.g-analyze').forEach(btn=>{
-    btn.onclick = () => { const g = fetchedGames[parseInt(btn.dataset.idx,10)]; document.getElementById('pgn-input').value = g.pgn; runAnalysis(g.pgn); };
+    btn.onclick = async () => {
+      const g = fetchedGames[parseInt(btn.dataset.idx,10)];
+      document.getElementById('pgn-input').value = g.pgn;
+      const originalLabel = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Chargement…';
+      const pre = g.url ? await fetchPrecomputedAnalysis(g.url) : null;
+      btn.disabled = false; btn.textContent = originalLabel;
+      if(pre && Array.isArray(pre.results) && pre.results.length){
+        analysisResults = pre.results;
+        renderAnalysis(pre.headers || { White: g.white && g.white.username, Black: g.black && g.black.username });
+        showToast('Analyse chargée', 'Déjà calculée en arrière-plan — instantané !');
+      } else {
+        runAnalysis(g.pgn); // repli : pas encore précalculée, analyse locale (plus lente)
+      }
+    };
   });
 }
 

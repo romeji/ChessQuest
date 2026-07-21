@@ -2,7 +2,7 @@
    ChessQuest — Profil (profile.html)
    ============================================================ */
 .profile-header{display:flex;align-items:center;gap:16px;margin-bottom:26px;}
-.profile-avatar{width:80px;height:80px;border-radius:50%;flex:0 0 auto;box-shadow:0 8px 20px rgba(36,31,61,0.18);}
+.profile-avatar{width:104px;height:104px;object-fit:contain;flex:0 0 auto;filter:drop-shadow(0 6px 14px rgba(36,31,61,0.22));}
 .profile-name{font-family:var(--font-display);font-weight:700;font-size:1.3rem;color:var(--navy);}
 .profile-level-title{font-size:0.86rem;color:var(--coral);font-weight:700;margin:2px 0 9px;}
 .profile-settings-btn{
