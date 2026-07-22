@@ -33,7 +33,13 @@ async function fetchChessComStats(username){
 function startChessComBackgroundSync(){
   const state = chessComState(); const username = state.username || (PROGRESS.settings || {}).chessComUsername;
   if(!username) return;
-  const runSync = () => { syncChessCom(username).catch(() => {}); fetchChessComStats(username).catch(() => {}); };
+  const runSync = () => {
+    syncChessCom(username).catch(() => {});
+    fetchChessComStats(username).catch(() => {});
+    // Reprend l'inscription dans Firestore si elle n'avait pas abouti la première fois
+    // (ex : Firebase pas encore configuré côté app au moment du clic sur "Enregistrer").
+    if(typeof registerChessComUsername === 'function') registerChessComUsername(username).catch(() => {});
+  };
   if(!state.lastSync || Date.now() - new Date(state.lastSync).getTime() > CHESSCOM_SYNC_MS) runSync();
   window.setInterval(runSync, CHESSCOM_SYNC_MS);
 }
