@@ -18,32 +18,12 @@
 <div id="toast-container"></div>
 <div class="app">
   <section class="page">
-    <div class="lesson-header">
-      <a class="lesson-back" href="index.html"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
-      <div class="lesson-title">Analyse de partie</div>
-    </div>
+    <a class="subpage-back" href="index.html" style="margin-bottom:16px;">
+      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+    </a>
+    <h1 class="section-title" style="border-top:none;padding-top:0;margin-bottom:14px;">Mes parties</h1>
 
-    <div class="chesscom-sync-card">
-      <div class="csc-row">
-        <div>
-          <div class="csc-label">Chess.com</div>
-          <div class="csc-username" id="csc-username">—</div>
-        </div>
-        <button class="btn secondary" id="refresh-games-btn">Actualiser</button>
-      </div>
-      <div class="csc-status" id="fetch-status">Chargement de tes parties…</div>
-    </div>
     <div class="games-list" id="games-list"></div>
-
-    <details class="opening-category" style="margin:14px 0;">
-      <summary>Coller un PGN manuellement</summary>
-      <div style="padding:0 16px 14px;">
-        <textarea id="pgn-input" style="min-height:100px;width:100%;" placeholder="Sur chess.com : ouvre ta partie → bouton ⋯ → Télécharger le PGN, puis colle-le ici."></textarea>
-        <button class="btn" id="analyze-btn" style="margin-top:10px;width:100%;">Analyser ce PGN</button>
-      </div>
-    </details>
-
-    <div style="margin:14px 0;"><span class="engine-badge loading" id="engine-badge">Chargement du moteur Stockfish…</span></div>
 
     <div id="analysis-progress" class="hidden" style="margin-top:16px;font-size:0.86rem;color:var(--text-dim);">
       <span id="progress-label">Calcul en cours…</span>
@@ -51,16 +31,28 @@
     </div>
 
     <div id="analysis-results" style="display:none;margin-top:20px;">
-      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:18px;">
-        <div class="board-frame">
-          <div class="coord-ranks" id="board-ranks"></div>
-          <div id="board"></div>
-          <div class="coord-files" id="board-files"></div>
+      <div class="game-info-row" id="game-info-row"></div>
+      <div class="accuracy-row" id="accuracy-row"></div>
+
+      <div style="display:flex;gap:10px;align-items:stretch;justify-content:center;margin-bottom:18px;">
+        <div class="eval-bar-wrap">
+          <div class="eval-bar" id="eval-bar">
+            <div class="eval-bar-black" id="eval-bar-black"></div>
+            <div class="eval-bar-mid"></div>
+          </div>
+          <div class="eval-bar-label" id="eval-bar-label">+0.0</div>
         </div>
-        <div class="nav-controls">
-          <button id="nav-start">«</button><button id="nav-prev">‹</button><button id="nav-next">›</button><button id="nav-end">»</button>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+          <div class="board-frame">
+            <div class="coord-ranks" id="board-ranks"></div>
+            <div id="board"></div>
+            <div class="coord-files" id="board-files"></div>
+          </div>
+          <div class="nav-controls">
+            <button id="nav-start">«</button><button id="nav-prev">‹</button><button id="nav-next">›</button><button id="nav-end">»</button>
+          </div>
+          <div class="feedback-box" id="move-comment-box" style="width:100%;">Sélectionne un coup pour voir le commentaire.</div>
         </div>
-        <div class="feedback-box" id="move-comment-box" style="width:100%;">Sélectionne un coup pour voir le commentaire.</div>
       </div>
 
       <div class="analysis-tabs" id="analysis-tabs">
@@ -122,17 +114,17 @@
 let analysisBoard = null;
 let analysisResults = [];
 let analysisIndex = -1;
+let analysisBoardWatching = false;
 function ensureAnalysisBoard(){
-  if(analysisBoard) return;
+  if(analysisBoard){ fitBoards('board', analysisBoard, '.page', '.eval-bar-wrap'); return; }
   analysisBoard = Chessboard('board', { position:'start', draggable:false, pieceTheme: PIECE_THEME, showNotation:false });
   renderCoords('board-ranks', 'board-files', 'white');
+  fitBoards('board', analysisBoard, '.page', '.eval-bar-wrap');
+  if(!analysisBoardWatching){
+    watchBoardResize('board', () => analysisBoard, '.page', '.eval-bar-wrap');
+    analysisBoardWatching = true;
+  }
 }
-
-document.getElementById('analyze-btn').onclick = () => {
-  const pgn = document.getElementById('pgn-input').value.trim();
-  if(!pgn){ alert("Colle d'abord un PGN, ou récupère une partie via ton pseudo."); return; }
-  runAnalysis(pgn);
-};
 
 let fetchedGames = [];
 function resultLabel(code){
@@ -143,7 +135,10 @@ function resultLabel(code){
 function renderGamesList(games, username){
   fetchedGames = games;
   const el = document.getElementById('games-list');
-  if(!games || games.length === 0){ el.innerHTML = ''; return; }
+  if(!games || games.length === 0){
+    el.innerHTML = `<p class="section-sub">Aucune partie trouvée. Ajoute ton pseudo Chess.com dans <a href="settings.html" style="color:var(--coral);font-weight:700;">Réglages</a>.</p>`;
+    return;
+  }
   const uLower = (username||'').toLowerCase();
   el.innerHTML = games.map((g, idx) => {
     const isWhite = (g.white && g.white.username && g.white.username.toLowerCase() === uLower);
@@ -151,63 +146,83 @@ function renderGamesList(games, username){
     const resCode = isWhite ? (g.white ? g.white.result : '') : (g.black ? g.black.result : '');
     const r = resultLabel(resCode);
     const date = g.end_time ? new Date(g.end_time * 1000).toLocaleDateString('fr-FR') : '';
-    return `<div class="game-row"><span class="g-date">${date}</span><span>vs ${escapeHtml(opponent)}</span><span>${isWhite?'Blancs':'Noirs'}</span><span class="g-result ${r.cls}">${r.label}</span><button class="btn secondary g-analyze" data-idx="${idx}">Analyser</button></div>`;
+    return `<div class="game-row" data-idx="${idx}">
+      <span class="g-date">${date}</span><span>vs ${escapeHtml(opponent)}</span>
+      <span class="g-result ${r.cls}">${r.label}</span>
+      <span class="g-status checking" data-status-idx="${idx}">…</span>
+    </div>`;
   }).join('');
-  el.querySelectorAll('.g-analyze').forEach(btn=>{
-    btn.onclick = async () => {
-      const g = fetchedGames[parseInt(btn.dataset.idx,10)];
-      document.getElementById('pgn-input').value = g.pgn;
-      const originalLabel = btn.textContent;
-      btn.disabled = true; btn.textContent = 'Chargement…';
-      const pre = g.url ? await fetchPrecomputedAnalysis(g.url) : null;
-      btn.disabled = false; btn.textContent = originalLabel;
-      if(pre && Array.isArray(pre.results) && pre.results.length){
-        analysisResults = pre.results;
-        renderAnalysis(pre.headers || { White: g.white && g.white.username, Black: g.black && g.black.username });
-        showToast('Analyse chargée', 'Déjà calculée en arrière-plan — instantané !');
-      } else {
-        runAnalysis(g.pgn); // repli : pas encore précalculée, analyse locale (plus lente)
-      }
-    };
-  });
+  el.querySelectorAll('.game-row').forEach(row => { row.onclick = () => openGame(parseInt(row.dataset.idx,10)); });
+  refreshStatuses(games);
 }
 
-/* La liste des parties Chess.com est synchronisée en arrière-plan (voir chesscom.js,
-   lancé sur chaque page). Ici on affiche instantanément ce qui est déjà en cache,
-   puis on ne relance un appel réseau que si l'utilisateur clique sur "Actualiser". */
-function timeAgo(iso){
-  if(!iso) return '';
-  const mins = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
-  if(mins < 1) return 'à l\u2019instant';
-  if(mins < 60) return `il y a ${mins} min`;
-  const hrs = Math.round(mins/60);
-  return `il y a ${hrs} h`;
+/** Vérifie discrètement, pour chaque partie affichée, si son analyse a déjà
+ *  été précalculée en arrière-plan (voir backend/analyze.js) ou non. */
+async function refreshStatuses(games){
+  await Promise.all(games.map(async (g, idx) => {
+    const badge = document.querySelector(`[data-status-idx="${idx}"]`);
+    if(!badge) return;
+    const pre = g.url ? await fetchPrecomputedAnalysis(g.url) : null;
+    const ready = pre && Array.isArray(pre.results) && pre.results.length;
+    badge.textContent = ready ? '✓ Analysée' : 'En attente';
+    badge.className = 'g-status ' + (ready ? 'ready' : 'pending');
+  }));
 }
+
+/** Ouvre une partie : instantané si déjà précalculée, sinon analyse en direct (repli). */
+async function openGame(idx){
+  const g = fetchedGames[idx];
+  if(!g) return;
+  const pre = g.url ? await fetchPrecomputedAnalysis(g.url) : null;
+  if(pre && Array.isArray(pre.results) && pre.results.length){
+    analysisResults = pre.results;
+    renderAnalysis(pre.headers || { White: g.white && g.white.username, Black: g.black && g.black.username });
+    showToast('Analyse chargée', 'Déjà calculée en arrière-plan — instantané !');
+  } else {
+    runAnalysis(g.pgn); // repli : pas encore précalculée, analyse locale (plus lente)
+  }
+}
+
 function refreshChessComUI(){
   const state = chessComState();
   const username = state.username || (PROGRESS.settings||{}).chessComUsername || '';
-  const statusEl = document.getElementById('fetch-status');
-  document.getElementById('csc-username').textContent = username ? '@' + username : 'Aucun pseudo configuré';
-  if(!username){
-    statusEl.innerHTML = `Ajoute ton pseudo dans <a href="settings.html" style="color:var(--coral);font-weight:700;">Réglages</a> pour synchroniser tes parties.`;
-    renderGamesList([], '');
-    return;
-  }
-  if(state.games && state.games.length){
-    renderGamesList(state.games.slice(0,10), username);
-    statusEl.textContent = state.syncing ? 'Synchronisation en cours…' : `${state.games.length} partie(s) — synchronisé ${timeAgo(state.lastSync)}.`;
-  } else {
-    statusEl.textContent = state.syncing ? 'Synchronisation en cours…' : 'Aucune partie publique trouvée pour ce pseudo.';
+  renderGamesList((state.games||[]).slice(0,10), username);
+}
+async function initGamesList(){
+  refreshChessComUI(); // affiche instantanément ce qui est déjà en cache
+  const username = chessComState().username || (PROGRESS.settings||{}).chessComUsername || '';
+  if(username){
+    try{ await syncChessCom(username); refreshChessComUI(); }catch(e){ /* pas grave, le cache reste affiché */ }
   }
 }
-document.getElementById('refresh-games-btn').onclick = async () => {
-  const username = chessComState().username || (PROGRESS.settings||{}).chessComUsername || '';
-  if(!username){ location.href = 'settings.html'; return; }
-  document.getElementById('fetch-status').textContent = 'Synchronisation des parties publiques…';
-  try { await syncChessCom(username); } catch(e){ document.getElementById('fetch-status').textContent = `Échec : ${e.message || 'erreur réseau'}`; return; }
-  refreshChessComUI();
-};
-refreshChessComUI();
+initGamesList();
+
+/* Formules usuelles (façon Lichess) pour convertir une évaluation en % de gain
+   et en une note de précision par coup, à partir de la perte en centipions. */
+function winPercentFromCp(cp, mate){
+  if(mate !== null && mate !== undefined){
+    return mate > 0 ? 100 : 0;
+  }
+  const capped = Math.max(-1000, Math.min(1000, cp));
+  return 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * capped)) - 1);
+}
+function moveAccuracy(dropCp){
+  const acc = 103.1668 * Math.exp(-0.04354 * (dropCp/100)) - 3.1669;
+  return Math.max(0, Math.min(100, acc));
+}
+function updateEvalBar(r){
+  const whiteScore = typeof r.whiteScore === 'number' ? r.whiteScore : 0;
+  const whiteMate = r.whiteMate !== undefined ? r.whiteMate : null;
+  const pct = winPercentFromCp(whiteScore, whiteMate);
+  document.getElementById('eval-bar-black').style.height = (100 - pct) + '%';
+  const label = document.getElementById('eval-bar-label');
+  if(whiteMate !== null){
+    label.textContent = 'M' + Math.abs(whiteMate);
+  } else {
+    const pawns = whiteScore / 100;
+    label.textContent = (pawns >= 0 ? '+' : '') + pawns.toFixed(1);
+  }
+}
 
 function adviceFor(r){
   if(r.info.cls==='best') return `${r.san} était bien le meilleur coup ici.`;
@@ -244,8 +259,11 @@ async function runAnalysis(pgn){
     const drop = Math.max(0, bestScoreForMover - actualScoreForMover);
     const isBest = (bestSan === mv.san);
     const info = classify(drop, isBest);
+    const whiteScore = work.turn() === 'w' ? evalAfter.scoreForMover : -evalAfter.scoreForMover;
+    const whiteMate = (evalAfter.mate !== null && evalAfter.mate !== undefined)
+      ? (work.turn() === 'w' ? evalAfter.mate : -evalAfter.mate) : null;
     results.push({ ply:i, color:mv.color, san:mv.san, fen: work.fen(), fenBefore: fenBeforeMove, from: mv.from, to: mv.to,
-      bestSan, drop: Math.round(drop), info,
+      bestSan, drop: Math.round(drop), info, whiteScore, whiteMate,
       mateMissed: evalBefore.mate !== null && evalBefore.mate > 0 && !isBest,
       mateAllowed: evalAfter.mate !== null && evalAfter.mate > 0, moveNumber: Math.floor(i/2)+1 });
     evalBefore = evalAfter;
@@ -308,6 +326,28 @@ function renderAnalysis(headers){
   recordAnalyzedGame(headers, sums);
   recordMistakesFromAnalysis(headers, analysisResults);
   const white = headers.White || 'Blancs', black = headers.Black || 'Noirs';
+
+  /* ---- Ligne d'info partie (adversaires, résultat, date, ouverture) ---- */
+  const dateRaw = headers.Date || headers.UTCDate || headers.EndDate || '';
+  const dateNice = dateRaw && dateRaw !== '????.??.??' ? dateRaw.replace(/\./g,'/') : '';
+  const resultText = { '1-0':'1-0 — Victoire des Blancs', '0-1':'0-1 — Victoire des Noirs', '1/2-1/2':'½-½ — Nulle' }[headers.Result] || headers.Result || '';
+  const whiteElo = headers.WhiteElo ? ` (${headers.WhiteElo})` : '';
+  const blackElo = headers.BlackElo ? ` (${headers.BlackElo})` : '';
+  const infoBits = [resultText, dateNice, headers.ECO ? `ECO ${headers.ECO}` : '', headers.TimeControl ? `Cadence ${headers.TimeControl}` : ''].filter(Boolean);
+  document.getElementById('game-info-row').innerHTML = `
+    <div class="gi-players"><strong>${escapeHtml(white)}${whiteElo}</strong> vs <strong>${escapeHtml(black)}${blackElo}</strong></div>
+    <div class="gi-meta">${infoBits.map(escapeHtml).join(' · ')}</div>`;
+
+  /* ---- Précision par joueur (façon chess.com) ---- */
+  const accByColor = {w:[], b:[]};
+  analysisResults.forEach(r => accByColor[r.color].push(moveAccuracy(r.drop)));
+  const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 100;
+  const whiteAcc = avg(accByColor.w), blackAcc = avg(accByColor.b);
+  document.getElementById('accuracy-row').innerHTML = `
+    <div class="acc-card"><div class="acc-label">${escapeHtml(white)}</div><div class="acc-value">${whiteAcc.toFixed(1)}%</div><div class="acc-sub">Précision</div></div>
+    <div class="acc-vs">vs</div>
+    <div class="acc-card"><div class="acc-label">${escapeHtml(black)}</div><div class="acc-value">${blackAcc.toFixed(1)}%</div><div class="acc-sub">Précision</div></div>`;
+
   document.getElementById('summary-row').innerHTML = `
     <div class="stat-card"><div class="label" style="font-weight:700;color:var(--navy);margin-bottom:8px;">${escapeHtml(white)}</div>${summaryLines(sums.w)}</div>
     <div class="stat-card"><div class="label" style="font-weight:700;color:var(--navy);margin-bottom:8px;">${escapeHtml(black)}</div>${summaryLines(sums.b)}</div>`;
@@ -331,6 +371,7 @@ function goToPly(idx){
   const r = analysisResults[idx];
   analysisBoard.position(r.fen);
   highlightMove('#board', r.from, r.to);
+  updateEvalBar(r);
   document.querySelectorAll('.move-chip').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.idx,10)===idx));
   document.getElementById('move-comment-box').innerHTML = `<span class="tag tag-${r.info.cls}">${r.info.glyph} ${r.info.label}</span>${escapeHtml(r.advice)}`;
 }

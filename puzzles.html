@@ -18,49 +18,17 @@
 <div id="toast-container"></div>
 <div class="app">
   <section class="page">
-    <div class="lesson-header" style="position:relative;">
-      <a class="lesson-back" href="index.html"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
-      <div class="lesson-title">Puzzle</div>
-      <div class="puzzle-mascot">
-        <svg class="puzzle-confetti" viewBox="0 0 60 40" aria-hidden="true">
-          <circle cx="6" cy="8" r="2.4" fill="#3CB878"/><circle cx="18" cy="4" r="2" fill="#FFA53D"/>
-          <circle cx="30" cy="10" r="2.2" fill="#7C6EF0"/><circle cx="44" cy="5" r="1.8" fill="#4A90E2"/>
-        </svg>
-        <img src="assets/illustrations/crown-mascot.png" alt="" onerror="this.remove();">
-      </div>
+    <a class="subpage-back" href="index.html" style="margin-bottom:16px;">
+      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+    </a>
+
+    <div class="board-frame" style="margin:0 auto 20px;display:block;width:fit-content;">
+      <div class="coord-ranks" id="puzzle-ranks"></div>
+      <div id="puzzle-board"></div>
+      <div class="coord-files" id="puzzle-files"></div>
     </div>
 
-    <div class="puzzle-streak-row">
-      <span class="puzzle-streak-label">Série : <strong id="puzzle-streak-value">0</strong></span>
-      <span class="puzzle-streak-flame">🔥</span>
-      <span class="puzzle-rating-inline">· Classement <strong id="puzzle-rating-value">1000</strong><span class="pr-delta" id="puzzle-rating-delta"></span></span>
-    </div>
-
-    <div class="puzzle-source-row">
-      <button class="tts-btn active" id="src-classic">Puzzles classiques</button>
-      <button class="tts-btn" id="src-random">Défi aléatoire</button>
-      <button class="tts-btn" id="src-mistakes">Mes erreurs <span id="mistakes-count-badge"></span></button>
-    </div>
-    <div class="theme-filter-row" id="theme-filter-row"></div>
-
-    <div class="puzzle-card">
-      <div class="puzzle-card-head">
-        <div class="puzzle-question" id="puzzle-question">Trouve le meilleur coup !</div>
-        <div class="puzzle-kind" id="puzzle-kind">Coup gagnant</div>
-      </div>
-      <div class="board-frame" style="margin:0 auto;display:block;width:fit-content;">
-        <div class="coord-ranks" id="puzzle-ranks"></div>
-        <div id="puzzle-board"></div>
-        <div class="coord-files" id="puzzle-files"></div>
-      </div>
-    </div>
-    <div class="progress-dots" id="puzzle-dots" style="justify-content:center;margin:12px 0 10px;"></div>
-
-    <div class="feedback-box" id="puzzle-feedback">Sélectionne une source de puzzles.</div>
     <div class="mcq-options" id="mcq-options"></div>
-
-    <div class="puzzle-stats-toggle" id="puzzle-stats-toggle">Voir mes statistiques</div>
-    <div class="stats-row hidden" id="puzzle-stats"></div>
   </section>
 </div>
 
@@ -95,36 +63,7 @@
 <script src="assets/js/openings.js"></script>
 <script src="assets/js/puzzles.js"></script>
 <script>
-document.getElementById('src-classic').onclick = () => {
-  puzzleSource = 'classic';
-  document.getElementById('src-classic').classList.add('active');
-  document.getElementById('src-random').classList.remove('active');
-  document.getElementById('src-mistakes').classList.remove('active');
-  renderThemeFilters(); buildPuzzleQueue(); loadPuzzle(0);
-};
-document.getElementById('src-mistakes').onclick = () => {
-  puzzleSource = 'mistakes';
-  document.getElementById('src-mistakes').classList.add('active');
-  document.getElementById('src-classic').classList.remove('active');
-  document.getElementById('src-random').classList.remove('active');
-  renderThemeFilters(); buildPuzzleQueue(); loadPuzzle(0);
-};
-document.getElementById('src-random').onclick = () => {
-  puzzleSource = 'random';
-  document.getElementById('src-random').classList.add('active');
-  document.getElementById('src-classic').classList.remove('active');
-  document.getElementById('src-mistakes').classList.remove('active');
-  renderThemeFilters(); generateRandomPuzzle();
-};
-
-document.getElementById('puzzle-stats-toggle').onclick = function(){
-  const row = document.getElementById('puzzle-stats');
-  const nowHidden = row.classList.toggle('hidden');
-  this.textContent = nowHidden ? 'Voir mes statistiques' : 'Masquer les statistiques';
-};
-
 ensurePuzzleBoard();
-refreshPuzzleHeader();
 watchBoardResize('puzzle-board', () => puzzleBoard, '.page');
 </script>
 </body>

@@ -8,27 +8,33 @@
 const PIECE_THEME = 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png';
 
 /* ---- Dimensionnement fiable des échiquiers (mesure réelle du DOM) ---- */
-function fitOneBoard(boardId, pageSelector){
+function fitOneBoard(boardId, pageSelector, reserveSelector){
   const boardEl = document.getElementById(boardId);
   const frameEl = boardEl ? boardEl.closest('.board-frame') : null;
   const pageEl = pageSelector ? document.querySelector(pageSelector) : document.querySelector('.page');
   if(!boardEl || !frameEl || !pageEl) return;
   const pageStyle = getComputedStyle(pageEl);
   const framePad = getComputedStyle(frameEl);
-  const pageInner = pageEl.clientWidth
+  let pageInner = pageEl.clientWidth
     - (parseFloat(pageStyle.paddingLeft)||0) - (parseFloat(pageStyle.paddingRight)||0);
+  // Si un élément voisin (ex. barre d'évaluation) partage la largeur disponible
+  // avec l'échiquier, on retire sa largeur réelle + une petite marge (gap).
+  if(reserveSelector){
+    const reserveEl = document.querySelector(reserveSelector);
+    if(reserveEl) pageInner -= (reserveEl.getBoundingClientRect().width + 16);
+  }
   const frameInner = pageInner
     - (parseFloat(framePad.paddingLeft)||0) - (parseFloat(framePad.paddingRight)||0);
   const px = Math.max(200, Math.min(460, frameInner - 6));
   boardEl.style.width = px + 'px';
 }
-function fitBoards(boardId, boardObjRef, pageSelector){
-  fitOneBoard(boardId, pageSelector);
+function fitBoards(boardId, boardObjRef, pageSelector, reserveSelector){
+  fitOneBoard(boardId, pageSelector, reserveSelector);
   if(boardObjRef) boardObjRef.resize();
 }
 let fitTimer = null;
-function watchBoardResize(boardId, getBoardObj, pageSelector){
-  const handler = () => { clearTimeout(fitTimer); fitTimer = setTimeout(()=>fitBoards(boardId, getBoardObj(), pageSelector), 120); };
+function watchBoardResize(boardId, getBoardObj, pageSelector, reserveSelector){
+  const handler = () => { clearTimeout(fitTimer); fitTimer = setTimeout(()=>fitBoards(boardId, getBoardObj(), pageSelector, reserveSelector), 120); };
   window.addEventListener('resize', handler);
   window.addEventListener('orientationchange', () => { setTimeout(handler, 250); setTimeout(handler, 600); });
 }

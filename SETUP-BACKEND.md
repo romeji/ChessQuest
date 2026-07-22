@@ -94,7 +94,10 @@ GitHub Actions (cron, gratuit)  →  Stockfish natif  →  Firestore (gratuit)
   authentification (Firebase Auth) sera l'étape suivante logique.
 - GitHub peut retarder légèrement les crons sur les dépôts peu actifs
   (quelques minutes) — sans conséquence ici.
-- Le job traite au maximum 5 nouvelles parties par exécution
-  (`MAX_NEW_GAMES_PER_RUN` dans `backend/analyze.js`) pour rester rapide ;
-  s'il y a un gros historique à rattraper au premier lancement, ça se
-  fera sur plusieurs runs successifs (quelques heures max).
+- Le job analyse les **5 parties les plus récentes** de chaque pseudo
+  suivi (`RECENT_GAMES_PER_USER` dans `backend/analyze.js`), et saute
+  celles déjà présentes en base — donc en régime normal, une fois les 5
+  dernières analysées, un run ne fait quasiment rien tant qu'aucune
+  nouvelle partie n'est jouée. Les parties plus anciennes que ce top 5
+  restent consultables dans l'app, juste sans précalcul (analyse en
+  direct, plus lente, comme repli).

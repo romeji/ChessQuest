@@ -6,20 +6,41 @@
 .engine-badge.ready{color:var(--good);border-color:var(--good);}
 .engine-badge.fallback{color:var(--mistake);border-color:var(--mistake);}
 
-.chesscom-sync-card{background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:4px;box-shadow:var(--shadow);}
-.csc-row{display:flex;justify-content:space-between;align-items:center;gap:10px;}
-.csc-label{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--coral);font-weight:800;}
-.csc-username{font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);margin-top:2px;}
-.csc-status{font-size:0.78rem;color:var(--text-dim);margin-top:8px;line-height:1.4;}
+.games-list{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
 
-.games-list{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
-.game-row{display:grid;grid-template-columns:80px 1fr 60px 76px auto;gap:8px;align-items:center;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:0.78rem;}
+/* ---- Info partie + précision (façon chess.com) ---- */
+.game-info-row{text-align:center;margin-bottom:10px;}
+.gi-players{font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--navy);}
+.gi-meta{font-size:0.78rem;color:var(--text-dim);margin-top:2px;}
+
+.accuracy-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:16px;flex-wrap:wrap;}
+.acc-card{background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;padding:10px 18px;text-align:center;box-shadow:var(--shadow);min-width:110px;}
+.acc-label{font-size:0.74rem;color:var(--text-dim);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px;}
+.acc-value{font-family:var(--font-display);font-size:1.4rem;font-weight:800;color:var(--good);}
+.acc-sub{font-size:0.68rem;color:var(--text-dim);}
+.acc-vs{font-weight:700;color:var(--text-dim);font-size:0.82rem;}
+
+/* ---- Barre d'évaluation verticale ---- */
+.eval-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.eval-bar{position:relative;width:20px;flex:1;min-height:220px;background:#F4F3FA;border-radius:8px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line);}
+.eval-bar-black{position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,#3a3550,var(--navy));transition:height .25s ease;}
+.eval-bar-mid{position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(36,31,61,0.15);}
+.eval-bar-label{font-family:var(--font-mono);font-size:0.7rem;font-weight:700;color:var(--navy);white-space:nowrap;}
+.game-row{
+  display:grid;grid-template-columns:74px 1fr 64px 84px;gap:8px;align-items:center;
+  background:var(--bg-panel);border:1px solid var(--line);border-radius:14px;padding:14px 14px;
+  font-size:0.82rem;cursor:pointer;box-shadow:var(--shadow);transition:transform .12s ease;
+}
+.game-row:active{transform:scale(0.98);}
 .game-row .g-date{color:var(--text-dim);font-family:var(--font-mono);font-size:0.72rem;}
-.game-row .g-result{font-weight:600;font-size:0.76rem;}
+.game-row .g-result{font-weight:700;font-size:0.78rem;}
 .game-row .g-result.win{color:var(--good);}
 .game-row .g-result.loss{color:var(--blunder);}
 .game-row .g-result.draw{color:var(--inaccuracy);}
-.game-row button{padding:6px 10px;font-size:0.76rem;}
+.g-status{font-size:0.7rem;font-weight:700;text-align:center;border-radius:10px;padding:5px 8px;white-space:nowrap;}
+.g-status.ready{background:var(--accent-green-bg);color:var(--good);}
+.g-status.pending{background:var(--bg-panel-2);color:var(--text-dim);}
+.g-status.checking{background:var(--bg-panel-2);color:var(--text-dim);opacity:0.6;}
 
 /* Onglets internes : Résumé / Erreurs / Moments clés */
 .analysis-tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:18px;}

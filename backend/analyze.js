@@ -21,9 +21,8 @@ const { Chess } = require('chess.js');
 const { StockfishEngine } = require('./stockfish-uci');
 
 const MOVETIME_MS = parseInt(process.env.ANALYZE_MOVETIME_MS || '400', 10);
-const MAX_NEW_GAMES_PER_RUN = parseInt(process.env.MAX_NEW_GAMES_PER_RUN || '5', 10);
-const ARCHIVES_TO_CHECK = 2;   // les 2 derniers mois d'archives Chess.com
-const GAMES_PER_ARCHIVE = 20;  // les 20 dernières parties de chaque mois
+const MAX_NEW_GAMES_PER_RUN = parseInt(process.env.MAX_NEW_GAMES_PER_RUN || '10', 10);
+const RECENT_GAMES_PER_USER = parseInt(process.env.RECENT_GAMES_PER_USER || '5', 10); // fenêtre demandée : les 5 dernières parties
 
 /* ---- Init Firebase Admin ---- */
 const rawCredentials = process.env.FIREBASE_SERVICE_ACCOUNT;
@@ -104,9 +103,12 @@ async function analyzeGame(engine, pgn){
     const drop = Math.max(0, bestScoreForMover - actualScoreForMover);
     const isBest = (bestSan === mv.san);
     const info = classify(drop, isBest);
+    const whiteScore = work.turn() === 'w' ? evalAfter.scoreForMover : -evalAfter.scoreForMover;
+    const whiteMate = (evalAfter.mate !== null && evalAfter.mate !== undefined)
+      ? (work.turn() === 'w' ? evalAfter.mate : -evalAfter.mate) : null;
     const r = {
       ply: i, color: mv.color, san: mv.san, fen: work.fen(), fenBefore: fenBeforeMove,
-      from: mv.from, to: mv.to, bestSan, drop: Math.round(drop), info,
+      from: mv.from, to: mv.to, bestSan, drop: Math.round(drop), info, whiteScore, whiteMate,
       mateMissed: !!(evalBefore.mate && evalBefore.mate > 0 && !isBest),
       mateAllowed: !!(evalAfter.mate && evalAfter.mate > 0),
       moveNumber: Math.floor(i / 2) + 1
@@ -122,6 +124,22 @@ async function fetchJson(url){
   const res = await fetch(url, { headers: { 'User-Agent': 'ChessQuest-analyzer/1.0 (contact via GitHub repo)' } });
   if(!res.ok) throw new Error(`HTTP ${res.status} sur ${url}`);
   return res.json();
+}
+
+/** Récupère les N parties les plus récentes d'un joueur, toutes archives
+ *  confondues (en général l'archive du mois en cours suffit ; on retombe
+ *  sur le mois précédent si besoin, par exemple en tout début de mois). */
+async function fetchRecentGames(username, count){
+  const archives = (await fetchJson(`https://api.chess.com/pub/player/${encodeURIComponent(username)}/games/archives`)).archives || [];
+  let collected = [];
+  let idx = archives.length - 1;
+  while(collected.length < count && idx >= 0){
+    const monthGames = (await fetchJson(archives[idx])).games || [];
+    collected = collected.concat(monthGames);
+    idx--;
+  }
+  collected.sort((a,b) => (b.end_time || 0) - (a.end_time || 0));
+  return collected.slice(0, count);
 }
 
 async function main(){
@@ -141,38 +159,34 @@ async function main(){
   for(const username of usernames){
     if(analyzedCount >= MAX_NEW_GAMES_PER_RUN) break;
     try{
-      const archives = (await fetchJson(`https://api.chess.com/pub/player/${encodeURIComponent(username)}/games/archives`)).archives || [];
-      const recentArchives = archives.slice(-ARCHIVES_TO_CHECK);
-      for(const archiveUrl of recentArchives.reverse()){
+      const recentGames = await fetchRecentGames(username, RECENT_GAMES_PER_USER);
+      console.log(`  ${username} : ${recentGames.length} partie(s) récente(s) trouvée(s) (fenêtre des ${RECENT_GAMES_PER_USER} dernières).`);
+      for(const g of recentGames){
         if(analyzedCount >= MAX_NEW_GAMES_PER_RUN) break;
-        const monthGames = ((await fetchJson(archiveUrl)).games || []).slice(-GAMES_PER_ARCHIVE).reverse();
-        for(const g of monthGames){
-          if(analyzedCount >= MAX_NEW_GAMES_PER_RUN) break;
-          if(!g.pgn) continue;
-          const gameId = gameIdFromUrl(g.url);
-          const ref = db.collection('games').doc(gameId);
-          const existing = await ref.get();
-          if(existing.exists) continue;
+        if(!g.pgn) continue;
+        const gameId = gameIdFromUrl(g.url);
+        const ref = db.collection('games').doc(gameId);
+        const existing = await ref.get();
+        if(existing.exists) continue; // déjà analysée lors d'un run précédent
 
-          console.log(`  → Analyse de ${gameId} (${username})…`);
-          const analyzed = await analyzeGame(engine, g.pgn);
-          if(!analyzed){ console.log('    (PGN illisible, ignoré)'); continue; }
+        console.log(`  → Analyse de ${gameId} (${username})…`);
+        const analyzed = await analyzeGame(engine, g.pgn);
+        if(!analyzed){ console.log('    (PGN illisible, ignoré)'); continue; }
 
-          await ref.set({
-            gameId,
-            username: username.toLowerCase(),
-            url: g.url || null,
-            white: g.white ? g.white.username : null,
-            black: g.black ? g.black.username : null,
-            end_time: g.end_time || null,
-            pgn: g.pgn,
-            headers: analyzed.headers,
-            results: analyzed.results,
-            analyzedAt: admin.firestore.FieldValue.serverTimestamp()
-          });
-          analyzedCount++;
-          console.log(`    ✓ enregistré (${analyzed.results.length} coups)`);
-        }
+        await ref.set({
+          gameId,
+          username: username.toLowerCase(),
+          url: g.url || null,
+          white: g.white ? g.white.username : null,
+          black: g.black ? g.black.username : null,
+          end_time: g.end_time || null,
+          pgn: g.pgn,
+          headers: analyzed.headers,
+          results: analyzed.results,
+          analyzedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        analyzedCount++;
+        console.log(`    ✓ enregistré (${analyzed.results.length} coups)`);
       }
     }catch(e){
       console.error(`Erreur pour ${username} :`, e.message);
