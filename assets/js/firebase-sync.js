@@ -11,12 +11,12 @@
    ces clés. Voir SETUP-BACKEND.md pour la marche à suivre complète.
    ============================================================ */
 const FIREBASE_CONFIG = {
-  apiKey: "REMPLACE_MOI",
-  authDomain: "REMPLACE_MOI.firebaseapp.com",
-  projectId: "REMPLACE_MOI",
-  storageBucket: "REMPLACE_MOI.appspot.com",
-  messagingSenderId: "REMPLACE_MOI",
-  appId: "REMPLACE_MOI"
+  apiKey: "AIzaSyAYFoAYo-f9clafg0ArzTNrwZwtGvHhvjc",
+  authDomain: "chessquest-251ed.firebaseapp.com",
+  projectId: "chessquest-251ed",
+  storageBucket: "chessquest-251ed.firebasestorage.app",
+  messagingSenderId: "113306734865",
+  appId: "1:113306734865:web:307c2d09ba79efd849bcb0",
 };
 
 let _fbDb = null;
