@@ -32,6 +32,12 @@
     <h1 class="section-title" style="border-top:none;padding-top:0;margin-bottom:2px;">Analyser vos parties Chess.com</h1>
     <p class="section-sub" style="margin-bottom:14px;">Choisis une partie pour l'ouvrir dans sa propre fenêtre d'analyse.</p>
 
+    <section class="analysis-quest-card hidden" id="analysis-quest-card">
+      <span class="analysis-quest-piece">♟</span>
+      <div><span>DERNIÈRE PARTIE</span><strong id="analysis-quest-title">Prête à analyser</strong><small id="analysis-quest-copy">Découvre les moments clés de ta partie.</small></div>
+      <button class="analysis-quest-btn" id="analysis-quest-btn" type="button">Analyser</button>
+    </section>
+
     <div class="games-list" id="games-list"></div>
   </section>
 </div>
@@ -73,6 +79,16 @@ function resultLabel(code){
 function renderGamesList(games, username){
   fetchedGames = games;
   const el = document.getElementById('games-list');
+  const quest = document.getElementById('analysis-quest-card');
+  if(games && games.length){
+    const latest = games[0];
+    const yoursWhite = latest.white && latest.white.username && latest.white.username.toLowerCase() === (username||'').toLowerCase();
+    const opponent = yoursWhite ? latest.black?.username : latest.white?.username;
+    document.getElementById('analysis-quest-title').textContent = `Ta partie contre ${opponent || 'ton adversaire'}`;
+    document.getElementById('analysis-quest-copy').textContent = 'Identifie tes meilleurs coups et les moments à revoir.';
+    quest.classList.remove('hidden');
+    document.getElementById('analysis-quest-btn').onclick = () => openGame(0);
+  } else { quest.classList.add('hidden'); }
   if(!games || games.length === 0){
     el.innerHTML = `<p class="section-sub">Aucune partie trouvée. Ajoute ton pseudo Chess.com dans <a href="settings.html" style="color:var(--coral);font-weight:700;">Réglages</a>.</p>`;
     return;
