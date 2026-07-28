@@ -31,6 +31,12 @@ function fitOneBoard(boardId, pageSelector, reserveSelector){
   // toujours tenir dans le viewport : ne jamais imposer un minimum qui crée
   // un débordement sur les petits téléphones.
   const px = Math.max(96, Math.min(460, Math.floor(frameInner - 6)));
+  const frameWidth = px + (parseFloat(framePad.paddingLeft)||0) + (parseFloat(framePad.paddingRight)||0);
+  // Certaines pages utilisent width:fit-content (et les ouvertures avaient
+  // même une variante !important). Dimensionner aussi le cadre évite que le
+  // plateau soit correctement réduit tout en restant visuellement rogné.
+  frameEl.style.setProperty('width', frameWidth + 'px', 'important');
+  frameEl.style.maxWidth = '100%';
   boardEl.style.width = px + 'px';
 }
 function fitBoards(boardId, boardObjRef, pageSelector, reserveSelector){
