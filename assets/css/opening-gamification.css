@@ -44,6 +44,10 @@ body.opening-lesson-page{
 .opening-memory-head{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;background:#f2f8f3;color:#294638;font-size:.75rem;}.opening-memory-head span{color:#718478;font-weight:700;}
 .opening-move-memory .move-list{max-height:112px;overflow:auto;margin:0;padding:7px 12px 9px;}
 .opening-move-memory .move-list li{grid-template-columns:28px 1fr 1fr;}
+.opening-theory-card{margin-top:18px;background:linear-gradient(145deg,#fffdf5,#f0faf4);border:1px solid #dce9df;border-radius:19px;padding:16px;box-shadow:0 8px 20px rgba(42,81,58,.08);}
+.theory-kicker{font-size:.65rem;letter-spacing:.08em;font-weight:900;color:#59846a;margin-bottom:5px;}.opening-theory-card h2{font:800 1.06rem var(--font-display);color:#294638;margin-bottom:8px;}
+.opening-theory-card .lesson-desc{margin-bottom:12px;line-height:1.5;}.theory-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}.theory-grid>div{background:rgba(255,255,255,.76);border:1px solid #e3eee6;border-radius:13px;padding:10px;}.theory-grid span{display:block;color:#59846a;font-size:.66rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}.theory-grid p{font-size:.76rem;line-height:1.4;color:#405648;}
+@media(max-width:380px){.theory-grid{grid-template-columns:1fr;}}
 .opening-tool{border:1px solid #e4ebe6;background:#fff;border-radius:15px;padding:9px 5px;display:flex;flex-direction:column;align-items:center;gap:1px;color:#294638;cursor:pointer}
 .opening-tool>span{font-size:1.05rem}
 .opening-tool strong{font-size:.7rem}

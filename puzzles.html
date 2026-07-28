@@ -47,11 +47,9 @@
     </div>
 
     <div class="puzzle-source-row" aria-label="Source des puzzles">
-      <button class="puzzle-source active" id="src-classic" type="button">Classiques</button>
       <button class="puzzle-source" id="src-random" type="button">Aléatoire</button>
       <button class="puzzle-source" id="src-mistakes" type="button">Mes erreurs <span id="mistakes-count-badge"></span></button>
     </div>
-    <div class="theme-filter-row" id="theme-filter-row"></div>
 
     <div class="puzzle-card">
       <div class="puzzle-card-head">
@@ -110,29 +108,18 @@
 <script>
 const urlParams = new URLSearchParams(location.search);
 const urlSource = urlParams.get('source');
-const urlTheme = urlParams.get('theme');
-if(urlSource === 'mistakes' || urlSource === 'random') puzzleSource = urlSource;
-if(urlTheme) puzzleThemeFilter = urlTheme;
+if(urlSource === 'mistakes') puzzleSource = urlSource;
 ensurePuzzleBoard();
 watchBoardResize('puzzle-board', () => puzzleBoard, '.page');
 document.querySelectorAll('.puzzle-source').forEach(button => button.classList.toggle('active', button.id === `src-${puzzleSource}`));
 
 function selectPuzzleSource(source){
   puzzleSource = source;
-  puzzleThemeFilter = 'all';
   document.querySelectorAll('.puzzle-source').forEach(button => button.classList.toggle('active', button.id === `src-${source}`));
-  renderThemeFilters();
-  if(source === 'random'){
-    generatedPuzzle = null;
-    buildPuzzleQueue();
-    generateRandomPuzzle();
-  }else{
-    buildPuzzleQueue();
-    loadPuzzle(0);
-  }
+  buildPuzzleQueue();
+  loadPuzzle(0);
   refreshPuzzleHeader();
 }
-document.getElementById('src-classic').onclick = () => selectPuzzleSource('classic');
 document.getElementById('src-random').onclick = () => selectPuzzleSource('random');
 document.getElementById('src-mistakes').onclick = () => selectPuzzleSource('mistakes');
 document.getElementById('puzzle-hint-btn').onclick = showPuzzleHint;

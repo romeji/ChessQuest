@@ -45,14 +45,11 @@ const CLASSIC_PUZZLES = [
   { id:'king-rook-corner', fen:'7k/8/6K1/8/8/8/8/R7 w - - 0 1', solution:'Ra8#', theme:'Mats de base', rating:550,
     explanation:"Le roi blanc contrôle déjà g7 et h7. La tour délivre l'échec sur la 8e rangée." }
 ];
-const PUZZLE_THEMES = [...new Set(CLASSIC_PUZZLES.map(p => p.theme))];
-
 let puzzleBoard = null;
 let puzzleGame = null;
-let puzzleSource = 'classic';
+let puzzleSource = 'random';
 let puzzleQueue = [];
 let puzzleIndex = 0;
-let puzzleThemeFilter = 'all';
 let puzzleHasFailed = false;
 let puzzleHintUsed = false;
 let mcqLocked = false;
@@ -65,15 +62,10 @@ function ratingStars(rating){
 }
 
 function buildPuzzleQueue(){
-  if(puzzleSource === 'classic'){
-    let list = CLASSIC_PUZZLES.slice();
-    if(puzzleThemeFilter !== 'all') list = list.filter(p => p.theme === puzzleThemeFilter);
-    list.sort((a,b) => a.rating - b.rating);
-    puzzleQueue = list;
-  } else if(puzzleSource === 'mistakes'){
+  if(puzzleSource === 'mistakes'){
     puzzleQueue = (PROGRESS.mistakes || []).slice();
-  } else if(puzzleSource === 'random'){
-    puzzleQueue = generatedPuzzle ? [generatedPuzzle] : [];
+  } else {
+    puzzleQueue = CLASSIC_PUZZLES.slice().sort(() => Math.random() - 0.5);
   }
 }
 
@@ -84,7 +76,6 @@ function ensurePuzzleBoard(){
     onDrop: onPuzzleBoardDrop
   });
   renderCoords('puzzle-ranks', 'puzzle-files', 'white');
-  renderThemeFilters();
   buildPuzzleQueue();
   loadPuzzle(0);
   refreshPuzzleHeader();
@@ -98,17 +89,6 @@ function onPuzzleBoardDrop(source, target){
   const option = document.querySelector(`#mcq-options .mcq-option[data-san="${CSS.escape(move.san)}"]`);
   handleMcqAnswer(option || {dataset:{san:move.san}}, move.san === solution, solution);
   return 'snapback';
-}
-
-function renderThemeFilters(){
-  const el = document.getElementById('theme-filter-row');
-  if(!el) return;
-  const chips = ['all', ...PUZZLE_THEMES];
-  el.innerHTML = chips.map(t => `<button class="theme-chip ${t===puzzleThemeFilter?'active':''}" data-theme="${escapeHtml(t)}">${t==='all'?'Tous les thèmes':escapeHtml(t)}</button>`).join('');
-  el.classList.toggle('hidden', puzzleSource !== 'classic');
-  el.querySelectorAll('.theme-chip').forEach(chip=>{
-    chip.onclick = () => { puzzleThemeFilter = chip.dataset.theme; renderThemeFilters(); buildPuzzleQueue(); loadPuzzle(0); };
-  });
 }
 
 /* ---- Notation figurine (♛h5+ plutôt que Qh5+), façon apps d'échecs ---- */
@@ -136,11 +116,11 @@ function loadPuzzle(idx){
   if(puzzleQueue.length === 0){
     puzzleGame = new Chess();
     puzzleBoard.position('start');
-    setText('puzzle-question', puzzleSource === 'mistakes' ? "Pas encore d'erreur enregistrée" : "Aucun puzzle dans ce thème");
+    setText('puzzle-question', puzzleSource === 'mistakes' ? "Pas encore d'erreur enregistrée" : "Aucun puzzle disponible");
     setText('puzzle-kind', '');
     setHtml('puzzle-dots', '');
     if(container) container.innerHTML = '';
-    setPuzzleFeedback(puzzleSource === 'mistakes' ? "Analyse une partie dans Analyse : tes erreurs y apparaîtront ici." : "Choisis un autre thème.", 'prompt');
+    setPuzzleFeedback(puzzleSource === 'mistakes' ? "Analyse une partie dans Analyse : tes erreurs y apparaîtront ici." : "Reviens dans un instant.", 'prompt');
     return;
   }
   puzzleIndex = ((idx % puzzleQueue.length) + puzzleQueue.length) % puzzleQueue.length;
@@ -237,13 +217,10 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   showRatingDelta(delta);
   setPuzzleFeedback(`${success ? 'Bravo !' : 'Pas cette fois.'} ${p.explanation || (solutionClean + ' était le coup gagnant.')}`, success ? 'good' : 'bad');
 
-  if(puzzleSource === 'mistakes' && success){
-    PROGRESS.mistakes.splice(puzzleQueue.indexOf(p), 1);
-    saveProgress();
-    buildPuzzleQueue();
-    setTimeout(()=> loadPuzzle(puzzleIndex), 1600);
-  } else if(puzzleSource === 'random' && success){
-    setTimeout(()=> generateRandomPuzzle(), 1600);
+  if(puzzleSource === 'mistakes'){
+    // Une erreur reste dans le carnet de révision : on peut toujours y
+    // revenir, même après l'avoir résolue correctement une première fois.
+    setTimeout(()=> loadPuzzle(success ? puzzleIndex+1 : puzzleIndex), 1600);
   } else {
     setTimeout(()=> loadPuzzle(success ? puzzleIndex+1 : puzzleIndex), 1600);
   }

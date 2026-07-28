@@ -470,6 +470,12 @@ function loadLine(line, key){
   const nameEl = document.getElementById('line-name'); if(nameEl) nameEl.textContent = line.name;
   const introEl = document.getElementById('line-intro'); if(introEl) introEl.textContent = line.intro;
   const aboutEl = document.getElementById('line-about'); if(aboutEl) aboutEl.textContent = line.about || '';
+  const titleEl = document.getElementById('theory-title'); if(titleEl) titleEl.textContent = `Pourquoi jouer ${line.name} ?`;
+  const planEl = document.getElementById('line-plan');
+  if(planEl){
+    const sequence = line.moves.slice(0, 6).map(move => move.san).join(' · ');
+    planEl.textContent = sequence ? `Mémorise d’abord cette colonne vertébrale : ${sequence}. Chaque coup sert l’idée décrite ci-dessus.` : 'Observe la logique de placement des pièces avant de chercher les variantes.';
+  }
   if(typeof renderDots === 'function') renderDots();
   if(typeof renderTrainMoveList === 'function') renderTrainMoveList();
   setTrainFeedback(line.forColor === null ? "Démonstration : regarde la séquence se jouer automatiquement." : "C'est parti ! Les coups de l'adversaire sont joués automatiquement.", 'info');
