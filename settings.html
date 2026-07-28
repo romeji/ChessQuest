@@ -21,22 +21,27 @@
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/polish.css">
 </head>
-<body data-page="profile">
+<body data-page="settings">
 <div id="toast-container"></div>
 <div class="app">
   <section class="page">
-    <div class="lesson-header">
+    <div class="lesson-header settings-header">
       <a class="lesson-back" aria-label="Retour" href="profile.html"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--navy)" stroke-width="2.4"><path d="M15 5l-7 7 7 7"/></svg></a>
       <div class="lesson-title">Réglages</div>
     </div>
 
+    <section class="settings-group">
+    <div class="settings-group-title"><span>♞</span><div><strong>Synchronisation</strong><small>Retrouve tes parties Chess.com</small></div></div>
     <label class="field-label">Compte Chess.com</label>
     <div class="btn-row" style="margin:10px 0 6px;">
       <input type="text" id="chesscom-username" placeholder="pseudo Chess.com" style="flex:1;min-width:150px;">
       <button class="btn secondary" id="save-chesscom">Synchroniser</button>
     </div>
     <p class="section-sub" id="chesscom-status">Les parties publiques sont conservées sur cet appareil et actualisées lorsque l’app est ouverte.</p>
+    </section>
 
+    <section class="settings-group">
+    <div class="settings-group-title"><span>✨</span><div><strong>Expérience de jeu</strong><small>Adapte ChessQuest à ton rythme</small></div></div>
     <label class="field-label">Vitesse du moteur d'analyse</label>
     <div class="segmented" id="engine-speed-picker" style="margin:10px 0 6px;">
       <button data-speed="fast">Rapide</button>
@@ -47,15 +52,19 @@
 
     <label class="field-label">Effets sonores</label>
     <div style="margin:10px 0 20px;"><button class="tts-btn active" id="sound-toggle">Sons activés</button></div>
+    </section>
 
+    <section class="settings-group">
+    <div class="settings-group-title"><span>🔊</span><div><strong>Coach vocal</strong><small>Lis les conseils à haute voix</small></div></div>
     <label class="field-label">Voix de lecture</label>
     <select id="voice-select" class="search-input" style="margin:10px 0;"></select>
     <div class="btn-row" style="margin-bottom:6px;">
       <button class="btn secondary" id="voice-test-btn">Tester la voix</button>
     </div>
     <p class="section-sub">La qualité dépend des voix françaises installées sur ton appareil.</p>
+    </section>
 
-    <button class="btn secondary" id="reset-progress-btn" style="margin-top:10px;">Réinitialiser ma progression</button>
+    <button class="btn settings-danger" id="reset-progress-btn" style="margin-top:10px;">Réinitialiser ma progression</button>
   </section>
 </div>
 

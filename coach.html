@@ -28,8 +28,14 @@
 <div id="toast-container"></div>
 <div class="app">
   <section class="page">
-    <h1 class="section-title" style="border-top:none;padding-top:0;margin-bottom:2px;">Coach</h1>
-    <p class="section-sub" style="margin-bottom:16px;">Installe n'importe quelle position — en déplaçant les pièces ou en collant un FEN — et demande l'avis de Stockfish.</p>
+    <header class="coach-hero">
+      <div>
+        <span class="coach-kicker">ATELIER DU GRAND MAÎTRE</span>
+        <h1>Coach d'analyse</h1>
+        <p>Installe une position, déplace les pièces et demande l'avis de Stockfish.</p>
+      </div>
+      <div class="coach-hero-piece" aria-hidden="true">♞</div>
+    </header>
 
     <div class="coach-board-row">
       <div class="eval-bar-wrap">
@@ -46,6 +52,7 @@
       </div>
     </div>
 
+    <div class="coach-controls-card">
     <div class="coach-turn-row">
       <span class="coach-turn-label">Trait à :</span>
       <button class="tts-btn active" id="turn-white">Blancs</button>
@@ -58,6 +65,7 @@
       <label><input type="checkbox" id="castle-wq" checked> O-O-O ♔</label>
       <label><input type="checkbox" id="castle-bk" checked> O-O ♚</label>
       <label><input type="checkbox" id="castle-bq" checked> O-O-O ♚</label>
+    </div>
     </div>
 
     <div class="btn-row" style="margin:14px 0;">
