@@ -9,12 +9,24 @@
    un échiquier, y compris à la première ouverture de la PWA. */
 const PIECE_THEME = 'assets/chesspieces/{piece}.png';
 
+/* Sur mobile, un geste sur l'échiquier doit déplacer une pièce, jamais faire
+   défiler la page. Le verrou est posé une seule fois par plateau et ne
+   concerne pas les boutons/sections autour du plateau. */
+const boardTouchLocks = new Set();
+function lockBoardScroll(boardEl){
+  if(!boardEl || boardTouchLocks.has(boardEl.id)) return;
+  boardTouchLocks.add(boardEl.id);
+  boardEl.style.touchAction = 'none';
+  boardEl.addEventListener('touchmove', event => event.preventDefault(), {passive:false});
+}
+
 /* ---- Dimensionnement fiable des échiquiers (mesure réelle du DOM) ---- */
 function fitOneBoard(boardId, pageSelector, reserveSelector){
   const boardEl = document.getElementById(boardId);
   const frameEl = boardEl ? boardEl.closest('.board-frame') : null;
   const pageEl = pageSelector ? document.querySelector(pageSelector) : document.querySelector('.page');
   if(!boardEl || !frameEl || !pageEl) return;
+  lockBoardScroll(boardEl);
   const pageStyle = getComputedStyle(pageEl);
   const framePad = getComputedStyle(frameEl);
   let pageInner = pageEl.clientWidth

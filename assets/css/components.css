@@ -89,6 +89,7 @@ input[type="text"]:focus, textarea:focus{outline:none;border-color:var(--coral);
   background:linear-gradient(160deg,#4A2E1B 0%, #8B5E3C 45%, #5E3A20 100%);
   border-radius:20px;box-shadow:0 16px 34px rgba(30,27,46,0.22), inset 0 0 0 1px rgba(255,255,255,0.07);
 }
+.board-frame [id$="-board"]{touch-action:none;-ms-touch-action:none;-webkit-user-select:none;user-select:none;}
 .board-frame .coord-ranks{
   position:absolute;left:6px;top:12px;bottom:26px;width:18px;
   display:flex;flex-direction:column;justify-content:space-around;align-items:center;
