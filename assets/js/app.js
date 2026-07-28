@@ -117,6 +117,91 @@ function initOnboarding(){
 }
 document.addEventListener('DOMContentLoaded', initOnboarding);
 
+/* ---- Centre de notifications : rappels utiles et actions directes ---- */
+function questNotificationState(){
+  PROGRESS.notificationState = Object.assign({dismissed:{}, lastToastDate:null}, PROGRESS.notificationState || {});
+  return PROGRESS.notificationState;
+}
+function questNotifications(){
+  const items = [];
+  if(typeof ensureDailyProgressFresh === 'function' && typeof todayChallenge === 'function'){
+    ensureDailyProgressFresh();
+    const challenge = todayChallenge();
+    const current = PROGRESS.dailyProgress[challenge.type] || 0;
+    if(!PROGRESS.dailyProgress.rewardClaimed){
+      items.push({
+        id:`daily-${todayKey()}`, icon:'🎯', title:'Ton défi quotidien t’attend',
+        text:`${challenge.text} · ${current}/${challenge.target}`, href:'daily-challenge.html', priority:3
+      });
+    }
+  }
+  if(typeof chessComState === 'function'){
+    const games = chessComState().games || [];
+    const latest = games.slice().sort((a,b) => (b.end_time||0) - (a.end_time||0))[0];
+    if(latest && latest.url){
+      const opponent = latest.white && latest.black ? ((latest.white.username || '') === chessComState().username ? latest.black.username : latest.white.username) : 'ton adversaire';
+      items.push({
+        id:`game-${latest.url}`, icon:'♟', title:'Ta dernière partie est prête',
+        text:`Analyse-la contre ${opponent || 'ton adversaire'} et découvre tes meilleurs coups.`, href:'analysis.html', priority:4
+      });
+    }
+  }
+  if(typeof computeCurrentStreak === 'function' && computeCurrentStreak() >= 2 && !(PROGRESS.activityDates || []).includes(todayKey())){
+    items.push({id:`streak-${todayKey()}`, icon:'🔥', title:'Garde ta série en vie', text:'Un puzzle ou une leçon suffit pour continuer ta progression.', href:'puzzles.html', priority:2});
+  }
+  const dismissed = questNotificationState().dismissed || {};
+  return items.filter(item => !dismissed[item.id]).sort((a,b) => b.priority - a.priority);
+}
+function initQuestNotifications(){
+  if(document.getElementById('quest-notifications')) return;
+  const items = questNotifications();
+  if(!items.length) return;
+  const root = document.createElement('aside');
+  root.id = 'quest-notifications';
+  root.className = 'quest-notifications';
+  const toggle = document.createElement('button');
+  toggle.type = 'button'; toggle.className = 'quest-notification-toggle';
+  toggle.setAttribute('aria-label', `${items.length} notification${items.length > 1 ? 's' : ''}`);
+  toggle.innerHTML = '<span aria-hidden="true">🔔</span><b></b>';
+  const panel = document.createElement('div');
+  panel.className = 'quest-notification-panel hidden';
+  panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Notifications');
+  const heading = document.createElement('div'); heading.className = 'quest-notification-heading'; heading.textContent = 'À ne pas manquer'; panel.appendChild(heading);
+  function render(){
+    const fresh = questNotifications();
+    toggle.querySelector('b').textContent = fresh.length > 9 ? '9+' : fresh.length;
+    toggle.querySelector('b').classList.toggle('hidden', fresh.length === 0);
+    panel.querySelectorAll('.quest-notification-item,.quest-notification-empty').forEach(el => el.remove());
+    if(!fresh.length){ const empty=document.createElement('p'); empty.className='quest-notification-empty'; empty.textContent='Tu es à jour. Bien joué !'; panel.appendChild(empty); return; }
+    fresh.forEach(item => {
+      const row=document.createElement('div'); row.className='quest-notification-item';
+      const go=document.createElement('button'); go.type='button'; go.className='quest-notification-go';
+      const icon=document.createElement('span'); icon.className='quest-notification-icon'; icon.textContent=item.icon;
+      const copy=document.createElement('span'); copy.className='quest-notification-copy';
+      const title=document.createElement('strong'); title.textContent=item.title;
+      const text=document.createElement('small'); text.textContent=item.text;
+      copy.append(title,text); go.append(icon,copy); go.onclick=()=>{ location.href=item.href; };
+      const close=document.createElement('button'); close.type='button'; close.className='quest-notification-dismiss'; close.setAttribute('aria-label','Masquer cette notification'); close.textContent='×';
+      close.onclick=()=>{ questNotificationState().dismissed[item.id]=Date.now(); saveProgress(); render(); };
+      row.append(go,close); panel.appendChild(row);
+    });
+  }
+  toggle.onclick=()=>panel.classList.toggle('hidden');
+  root.append(toggle,panel); document.body.appendChild(root); render();
+  const state = questNotificationState();
+  if(document.body.dataset.page === 'home' && state.lastToastDate !== todayKey()){
+    state.lastToastDate = todayKey(); saveProgress();
+    const first = items[0];
+    if(first && typeof showToast === 'function') showToast(first.title, first.text);
+  }
+}
+document.addEventListener('DOMContentLoaded', initQuestNotifications);
+window.addEventListener('cq:chesscom-sync', () => {
+  const existing = document.getElementById('quest-notifications');
+  if(existing) existing.remove();
+  initQuestNotifications();
+});
+
 /* ---- PWA : installation propre et navigation dans le scope de l'app ---- */
 function initPwa(){
   if(!('serviceWorker' in navigator)) return;

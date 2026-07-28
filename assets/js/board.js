@@ -5,20 +5,10 @@
    Nécessite : jQuery, chess.js, chessboard.js chargés avant ce fichier.
    ============================================================ */
 
-/* PiÃ¨ces autonomes : aucun appel au domaine chessboardjs.com n'est requis.
-   Les Ã©chiquiers continuent donc Ã  fonctionner une fois la PWA installÃ©e, y
-   compris en connexion instable. */
-const PIECE_GLYPHS = {
-  wK:'â™”', wQ:'â™•', wR:'â™–', wB:'â™—', wN:'â™˜', wP:'â™™',
-  bK:'â™š', bQ:'â™›', bR:'â™œ', bB:'â™', bN:'â™ž', bP:'â™Ÿ'
-};
-const PIECE_THEME = (piece) => {
-  const glyph = PIECE_GLYPHS[piece] || '';
-  const fill = piece.charAt(0) === 'w' ? '#fffaf0' : '#252634';
-  const stroke = piece.charAt(0) === 'w' ? '#7c6ef0' : '#11111a';
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="77" text-anchor="middle" font-family="Georgia,serif" font-size="82" font-weight="700" fill="${fill}" stroke="${stroke}" stroke-width="1.8" paint-order="stroke">${glyph}</text></svg>`;
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-};
+/* chessboard.js 1.0 attend une URL modÃ¨le, pas une fonction. Le CDN est
+   mis en cache par le service worker dÃ¨s le premier chargement afin de rester
+   disponible dans la PWA par la suite. */
+const PIECE_THEME = 'https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/img/chesspieces/wikipedia/{piece}.png';
 
 /* ---- Dimensionnement fiable des échiquiers (mesure réelle du DOM) ---- */
 function fitOneBoard(boardId, pageSelector, reserveSelector){

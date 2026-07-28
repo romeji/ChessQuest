@@ -31,7 +31,9 @@ async function syncChessCom(username){
       games = Array.from(known.values()).sort((a,b) => (b.end_time||0)-(a.end_time||0));
     }
     state.username = name; state.games = games.slice(0,80); state.lastSync = new Date().toISOString();
-    PROGRESS.settings.chessComUsername = name; saveProgress(); return games;
+    PROGRESS.settings.chessComUsername = name; saveProgress();
+    window.dispatchEvent(new Event('cq:chesscom-sync'));
+    return games;
   } finally { state.syncing = false; }
 }
 async function fetchChessComStats(username){
