@@ -12,13 +12,16 @@ service cloud.firestore {
                    && request.resource.data.username == username;
     }
 
-    // Parties précalculées : lecture libre (ce sont des parties Chess.com
-    // déjà publiques), mais écriture interdite depuis le navigateur —
-    // seul le script GitHub Actions (via le compte de service Admin SDK,
-    // qui ignore ces règles) a le droit d'écrire ici.
+    // Parties précalculées (par le job GitHub Actions) OU sauvegardées par l'app
+    // elle-même juste après une analyse en direct (repli quand le job n'est pas
+    // encore passé). Lecture libre. Écriture autorisée uniquement en création —
+    // une partie déjà analysée ne peut jamais être réécrite depuis le navigateur.
     match /games/{gameId} {
       allow read: if true;
-      allow write: if false;
+      allow create: if request.resource.data.keys().hasAll(['gameId', 'pgn', 'results'])
+                    && request.resource.data.gameId == gameId;
+      allow update: if false;
+      allow delete: if false;
     }
   }
 }

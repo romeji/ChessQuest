@@ -76,6 +76,38 @@ async function fetchPrecomputedAnalysis(gameUrlOrId){
   }
 }
 
+/** Enregistre une analyse tout juste calculée en local (repli en direct) dans
+ *  Firestore, pour qu'elle soit instantanée la prochaine fois — sans écraser
+ *  une éventuelle analyse déjà précalculée par le job GitHub Actions (voir
+ *  règle Firestore : create uniquement). */
+async function saveAnalysisToFirestore(game, headers, results){
+  const db = await fbInit();
+  if(!db || !game || !game.url || !Array.isArray(results) || results.length === 0) return false;
+  const id = gameIdFromUrl(game.url);
+  try{
+    const ref = db.collection('games').doc(id);
+    const existing = await ref.get();
+    if(existing.exists) return true; // déjà là (précalculée entre-temps), rien à faire
+    await ref.set({
+      gameId: id,
+      username: (game.username || '').toLowerCase(),
+      url: game.url,
+      white: game.white ? game.white.username : null,
+      black: game.black ? game.black.username : null,
+      end_time: game.end_time || null,
+      pgn: game.pgn,
+      headers: headers || {},
+      results,
+      analyzedAt: new Date().toISOString(),
+      source: 'client'
+    });
+    return true;
+  }catch(e){
+    console.warn('[ChessQuest] Sauvegarde Firestore de l\u2019analyse impossible :', e.message);
+    return false;
+  }
+}
+
 /** Ajoute (ou met à jour) un pseudo Chess.com à la liste surveillée par
  *  le job d'analyse en arrière-plan. Best-effort : en cas d'échec (pas
  *  configuré, hors-ligne...), on n'interrompt pas le reste de l'app. */

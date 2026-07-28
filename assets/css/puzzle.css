@@ -21,7 +21,7 @@
 .theme-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
 .theme-chip{background:var(--bg-panel-2);border:1px solid var(--line);color:var(--text-dim);border-radius:16px;padding:5px 12px;font-size:0.74rem;cursor:pointer;transition:all .15s ease;}
 .theme-chip:hover{border-color:var(--coral);color:var(--text);}
-.theme-chip.active{border-color:var(--coral);color:var(--coral);background:rgba(124,110,240,0.1);}
+.theme-chip.active{border-color:var(--coral);color:var(--coral);background:rgba(112,86,217,0.1);}
 
 /* ---- Carte blanche : question + échiquier (façon capture de référence) ---- */
 .puzzle-card{background:var(--bg-panel);border-radius:26px;padding:20px 16px 18px;box-shadow:var(--shadow);margin-bottom:6px;}

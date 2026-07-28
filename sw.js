@@ -1,12 +1,17 @@
-const CACHE_VERSION = 'chessquest-v2';
+const CACHE_VERSION = 'chessquest-v4';
 const APP_SHELL = [
   './',
   './index.html',
   './learn.html',
+  './openings.html',
   './entrainement.html',
   './training-game.html',
+  './training-target.html',
+  './daily-challenge.html',
+  './coach.html',
   './puzzles.html',
   './analysis.html',
+  './game-view.html',
   './progress.html',
   './profile.html',
   './settings.html',
@@ -28,6 +33,7 @@ const APP_SHELL = [
   './assets/css/puzzle.css',
   './assets/css/analysis.css',
   './assets/css/profile.css',
+  './assets/css/coach.css',
   './assets/css/opening-gamification.css',
   './assets/js/progress.js',
   './assets/js/chesscom.js',

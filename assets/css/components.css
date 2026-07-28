@@ -7,10 +7,10 @@ button.btn{
   font-family:var(--font-display);font-weight:700;font-size:0.94rem;
   background:var(--coral);color:#fff;border:none;border-radius:var(--radius-btn);
   padding:14px 22px;cursor:pointer;transition:filter .15s ease, transform .12s cubic-bezier(.34,1.56,.64,1), box-shadow .15s ease;
-  box-shadow:0 4px 0 var(--coral-dark), 0 8px 18px rgba(124,110,240,0.28);
+  box-shadow:0 4px 0 var(--coral-dark), 0 8px 18px rgba(112,86,217,0.28);
 }
 button.btn:hover{filter:brightness(1.05);}
-button.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--coral-dark), 0 4px 10px rgba(124,110,240,0.28);}
+button.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--coral-dark), 0 4px 10px rgba(112,86,217,0.28);}
 button.btn.secondary{background:var(--bg-panel-2);color:var(--navy);border:1px solid var(--line);box-shadow:none;}
 button.btn.secondary:active{transform:scale(0.97);}
 button.btn.secondary:hover{border-color:var(--coral);}
@@ -44,7 +44,7 @@ input[type="text"]:focus, textarea:focus{outline:none;border-color:var(--coral);
   border:none;border-radius:999px;padding:8px 15px;cursor:pointer;white-space:nowrap;
   transition:background .2s cubic-bezier(.34,1.56,.64,1), color .2s ease;
 }
-.segmented button.active{background:var(--coral);color:#fff;box-shadow:0 2px 8px rgba(108,92,224,0.35);}
+.segmented button.active{background:var(--coral);color:#fff;box-shadow:0 2px 8px rgba(112,86,217,0.35);}
 
 /* ---- Cartes / statistiques ---- */
 .card{background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);}

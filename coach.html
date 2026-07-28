@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#7C6EF0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ChessQuest">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/chessquest-logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<title>ChessQuest — Coach</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+<link rel="stylesheet" href="assets/css/variables.css">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/analysis.css">
+<link rel="stylesheet" href="assets/css/coach.css">
+<link rel="stylesheet" href="assets/css/polish.css">
+</head>
+<body data-page="coach">
+<div id="toast-container"></div>
+<div class="app">
+  <section class="page">
+    <h1 class="section-title" style="border-top:none;padding-top:0;margin-bottom:2px;">Coach</h1>
+    <p class="section-sub" style="margin-bottom:16px;">Installe n'importe quelle position — en déplaçant les pièces ou en collant un FEN — et demande l'avis de Stockfish.</p>
+
+    <div style="display:flex;gap:10px;align-items:stretch;justify-content:center;margin-bottom:14px;">
+      <div class="eval-bar-wrap">
+        <div class="eval-bar" id="eval-bar">
+          <div class="eval-bar-black" id="eval-bar-black" style="height:50%;"></div>
+          <div class="eval-bar-mid"></div>
+        </div>
+        <div class="eval-bar-label" id="eval-bar-label">–</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+        <div class="board-frame">
+          <div id="coach-board"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="coach-turn-row">
+      <span class="coach-turn-label">Trait à :</span>
+      <button class="tts-btn active" id="turn-white">Blancs</button>
+      <button class="tts-btn" id="turn-black">Noirs</button>
+    </div>
+
+    <div class="coach-castling-row">
+      <span class="coach-turn-label">Roques possibles :</span>
+      <label><input type="checkbox" id="castle-wk" checked> O-O ♔</label>
+      <label><input type="checkbox" id="castle-wq" checked> O-O-O ♔</label>
+      <label><input type="checkbox" id="castle-bk" checked> O-O ♚</label>
+      <label><input type="checkbox" id="castle-bq" checked> O-O-O ♚</label>
+    </div>
+
+    <div class="btn-row" style="margin:14px 0;">
+      <button class="btn secondary" id="reset-start-btn">Position de départ</button>
+      <button class="btn secondary" id="clear-board-btn">Vider l'échiquier</button>
+    </div>
+
+    <details class="opening-category" style="margin-bottom:14px;">
+      <summary>Charger un FEN ou un PGN</summary>
+      <div style="padding:0 16px 14px;display:flex;flex-direction:column;gap:10px;">
+        <input type="text" id="fen-input" placeholder="Colle un FEN ici…" style="width:100%;">
+        <button class="btn secondary" id="load-fen-btn">Charger ce FEN</button>
+        <textarea id="pgn-input" placeholder="…ou colle un PGN pour reprendre la position finale" style="min-height:80px;width:100%;"></textarea>
+        <button class="btn secondary" id="load-pgn-btn">Charger ce PGN</button>
+      </div>
+    </details>
+
+    <div class="coach-fen-display" id="coach-fen-display"></div>
+
+    <button class="btn" id="analyze-coach-btn" style="width:100%;margin:14px 0;">Analyser cette position</button>
+
+    <div id="coach-result" class="feedback-box hidden" style="width:100%;"></div>
+  </section>
+</div>
+
+<nav class="tabbar">
+  <button class="tabbar-item" data-tab="home" data-href="index.html">
+    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Accueil</span>
+  </button>
+  <button class="tabbar-item" data-tab="learn" data-href="learn.html">
+    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="6" cy="19" r="2.5"/><circle cx="12" cy="11" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M6 16.5V13a2 2 0 0 1 2-2h1.5M14.5 9H16a2 2 0 0 0 2-2V5.5"/></svg><span>Parcours</span>
+  </button>
+  <button class="tabbar-item active" data-tab="coach" data-href="coach.html">
+    <svg viewBox="0 0 24 24" class="tabicon"><path d="M12 2a2.5 2.5 0 0 0-2 4 4 4 0 0 0-1.6 5.4C7.2 12.4 6 14.2 6 17h12c0-2.8-1.2-4.6-2.4-5.6A4 4 0 0 0 14 6a2.5 2.5 0 0 0-2-4Z"/><rect x="5" y="19" width="14" height="3" rx="1"/></svg><span>Coach</span>
+  </button>
+  <button class="tabbar-item" data-tab="progress" data-href="progress.html">
+    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 15l4-5 3 3 5-7"/></svg><span>Progrès</span>
+  </button>
+  <button class="tabbar-item" data-tab="profile" data-href="profile.html">
+    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Profil</span>
+  </button>
+</nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/navigation.js"></script>
+<script src="assets/js/board.js"></script>
+<script>
+let coachBoard = null;
+let coachTurn = 'w';
+
+function ensureCoachBoard(){
+  if(coachBoard) return;
+  coachBoard = Chessboard('coach-board', {
+    position: 'start', draggable: true, dropOffBoard: 'trash', sparePieces: true,
+    pieceTheme: PIECE_THEME, showNotation: true,
+    onChange: updateFenDisplay
+  });
+  fitBoards('coach-board', coachBoard, '.page', '.eval-bar-wrap');
+  watchBoardResize('coach-board', () => coachBoard, '.page', '.eval-bar-wrap');
+  updateFenDisplay();
+}
+
+function setTurn(turn){
+  coachTurn = turn;
+  document.getElementById('turn-white').classList.toggle('active', turn === 'w');
+  document.getElementById('turn-black').classList.toggle('active', turn === 'b');
+  updateFenDisplay();
+}
+document.getElementById('turn-white').onclick = () => setTurn('w');
+document.getElementById('turn-black').onclick = () => setTurn('b');
+['castle-wk','castle-wq','castle-bk','castle-bq'].forEach(id => {
+  document.getElementById(id).addEventListener('change', updateFenDisplay);
+});
+
+function castlingRights(){
+  let s = '';
+  if(document.getElementById('castle-wk').checked) s += 'K';
+  if(document.getElementById('castle-wq').checked) s += 'Q';
+  if(document.getElementById('castle-bk').checked) s += 'k';
+  if(document.getElementById('castle-bq').checked) s += 'q';
+  return s || '-';
+}
+
+function currentFen(){
+  const placement = coachBoard.fen();
+  return `${placement} ${coachTurn} ${castlingRights()} - 0 1`;
+}
+
+function updateFenDisplay(){
+  document.getElementById('coach-fen-display').textContent = currentFen();
+}
+
+document.getElementById('reset-start-btn').onclick = () => { coachBoard.start(); updateFenDisplay(); };
+document.getElementById('clear-board-btn').onclick = () => { coachBoard.clear(); updateFenDisplay(); };
+
+document.getElementById('load-fen-btn').onclick = () => {
+  const raw = document.getElementById('fen-input').value.trim();
+  if(!raw){ return; }
+  try{
+    const parts = raw.split(' ');
+    coachBoard.position(parts[0], false);
+    if(parts[1]) setTurn(parts[1] === 'b' ? 'b' : 'w');
+    if(parts[2]){
+      document.getElementById('castle-wk').checked = parts[2].includes('K');
+      document.getElementById('castle-wq').checked = parts[2].includes('Q');
+      document.getElementById('castle-bk').checked = parts[2].includes('k');
+      document.getElementById('castle-bq').checked = parts[2].includes('q');
+    }
+    updateFenDisplay();
+    showToast('Position chargée', 'Le FEN a été appliqué à l\u2019échiquier.');
+  }catch(e){ alert("Ce FEN n'a pas pu être lu."); }
+};
+
+document.getElementById('load-pgn-btn').onclick = () => {
+  const pgn = document.getElementById('pgn-input').value.trim();
+  if(!pgn) return;
+  const g = new Chess();
+  if(!g.load_pgn(pgn, {sloppy:true})){ alert("Ce PGN n'a pas pu être lu."); return; }
+  const fen = g.fen();
+  const parts = fen.split(' ');
+  coachBoard.position(parts[0], false);
+  setTurn(parts[1]);
+  document.getElementById('castle-wk').checked = parts[2].includes('K');
+  document.getElementById('castle-wq').checked = parts[2].includes('Q');
+  document.getElementById('castle-bk').checked = parts[2].includes('k');
+  document.getElementById('castle-bq').checked = parts[2].includes('q');
+  updateFenDisplay();
+  showToast('Position chargée', 'Position finale du PGN appliquée à l\u2019échiquier.');
+};
+
+function winPercentFromCp(cp, mate){
+  if(mate !== null && mate !== undefined) return mate > 0 ? 100 : 0;
+  const capped = Math.max(-1000, Math.min(1000, cp));
+  return 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * capped)) - 1);
+}
+function updateCoachEvalBar(whiteScore, whiteMate){
+  const pct = winPercentFromCp(whiteScore, whiteMate);
+  document.getElementById('eval-bar-black').style.height = (100 - pct) + '%';
+  const label = document.getElementById('eval-bar-label');
+  if(whiteMate !== null && whiteMate !== undefined) label.textContent = 'M' + Math.abs(whiteMate);
+  else label.textContent = (whiteScore >= 0 ? '+' : '') + (whiteScore/100).toFixed(1);
+}
+
+function explainPosition(turn, evalResult){
+  const sideToMove = turn === 'w' ? 'Les Blancs' : 'Les Noirs';
+  if(evalResult.mate !== null && evalResult.mate !== undefined){
+    const winner = evalResult.mate > 0 ? sideToMove : (turn === 'w' ? 'Les Noirs' : 'Les Blancs');
+    return `Mat forcé en ${Math.abs(evalResult.mate)} coup(s) pour ${winner.toLowerCase()} ! Commence par ${evalResult.bestMoveSan}.`;
+  }
+  const cp = evalResult.scoreForMover;
+  const pawns = (cp/100).toFixed(1);
+  let judgement;
+  if(Math.abs(cp) < 50) judgement = "la position est à peu près équilibrée";
+  else if(cp > 250) judgement = `${sideToMove.toLowerCase()} ont un avantage décisif`;
+  else if(cp > 50) judgement = `${sideToMove.toLowerCase()} ont l'avantage`;
+  else if(cp < -250) judgement = `${sideToMove.toLowerCase()} sont en grande difficulté`;
+  else judgement = `${sideToMove.toLowerCase()} sont légèrement moins bien`;
+  return `${judgement.charAt(0).toUpperCase()+judgement.slice(1)} (${pawns>=0?'+':''}${pawns}). Le meilleur coup ici est ${escapeHtml(evalResult.bestMoveSan || '?')}.`;
+}
+
+document.getElementById('analyze-coach-btn').onclick = async () => {
+  const fen = currentFen();
+  const btn = document.getElementById('analyze-coach-btn');
+  const resultBox = document.getElementById('coach-result');
+  btn.disabled = true; btn.textContent = 'Réflexion en cours…';
+  resultBox.classList.remove('hidden');
+  resultBox.textContent = 'Stockfish analyse la position…';
+  try{
+    await waitForEngineReady();
+    const res = await engineAnalyzeFEN(fen);
+    const whiteScore = coachTurn === 'w' ? res.scoreForMover : -res.scoreForMover;
+    const rawMate = res.mate !== undefined ? res.mate : null;
+    const whiteMate = rawMate !== null ? (coachTurn === 'w' ? rawMate : -rawMate) : null;
+    updateCoachEvalBar(whiteScore, whiteMate);
+    resultBox.textContent = explainPosition(coachTurn, res);
+    if(res.bestMoveSan){
+      try{
+        const g = new Chess(fen);
+        const match = g.moves({verbose:true}).find(m => m.san === res.bestMoveSan);
+        if(match) flashSquares('#coach-board', [match.from, match.to], 'hint-square', 1400);
+      }catch(e){}
+    }
+  }catch(e){
+    resultBox.textContent = "Impossible d'analyser cette position (elle n'est peut-être pas valide).";
+  }
+  btn.disabled = false; btn.textContent = 'Analyser cette position';
+};
+
+ensureCoachBoard();
+</script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#7C6EF0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ChessQuest">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/chessquest-logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<title>ChessQuest — Partie analysée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+<link rel="stylesheet" href="assets/css/variables.css">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/analysis.css">
+<link rel="stylesheet" href="assets/css/polish.css">
+</head>
+<body data-page="analyze">
+<div id="toast-container"></div>
+<div class="app">
+  <section class="page">
+    <a class="subpage-back" aria-label="Retour" href="analysis.html" style="margin-bottom:16px;">
+      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+    </a>
+
+    <div id="analysis-progress" class="hidden" style="margin-top:4px;font-size:0.86rem;color:var(--text-dim);">
+      <span id="progress-label">Calcul en cours…</span>
+      <div class="track" style="margin-top:8px;"><div class="track-fill" id="bar-fill"></div></div>
+    </div>
+
+    <div id="analysis-results" style="display:none;margin-top:4px;">
+      <div class="game-info-row" id="game-info-row"></div>
+      <div class="accuracy-row" id="accuracy-row"></div>
+
+      <div style="display:flex;gap:10px;align-items:stretch;justify-content:center;margin-bottom:18px;">
+        <div class="eval-bar-wrap">
+          <div class="eval-bar" id="eval-bar">
+            <div class="eval-bar-black" id="eval-bar-black"></div>
+            <div class="eval-bar-mid"></div>
+          </div>
+          <div class="eval-bar-label" id="eval-bar-label">+0.0</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+          <div class="board-frame">
+            <div class="coord-ranks" id="board-ranks"></div>
+            <div id="board"></div>
+            <div class="coord-files" id="board-files"></div>
+          </div>
+          <div class="nav-controls">
+            <button id="nav-start" aria-label="Premier coup">«</button><button id="nav-prev" aria-label="Coup précédent">‹</button><button id="nav-next" aria-label="Coup suivant">›</button><button id="nav-end" aria-label="Dernier coup">»</button>
+          </div>
+          <div class="feedback-box" id="move-comment-box" style="width:100%;">Sélectionne un coup pour voir le commentaire.</div>
+        </div>
+      </div>
+
+      <div class="analysis-tabs" id="analysis-tabs">
+        <button class="active" data-tab="summary">Résumé</button>
+        <button data-tab="errors">Erreurs</button>
+        <button data-tab="keymoves">Moments clés</button>
+      </div>
+
+      <div class="analysis-tab-panel" id="tab-summary">
+        <div class="stats-row" id="summary-row" style="margin-bottom:14px;"></div>
+      </div>
+
+      <div class="analysis-tab-panel hidden" id="tab-errors">
+        <div id="error-pills-row" style="margin-bottom:16px;"></div>
+        <div id="error-cards"></div>
+      </div>
+
+      <div class="analysis-tab-panel hidden" id="tab-keymoves">
+        <ol class="move-list" id="move-list" style="margin-bottom:14px;"></ol>
+      </div>
+
+      <p class="section-sub">Analyse par Stockfish (WASM), ~0,45 s par position. Repli automatique sur un moteur maison si Stockfish ne charge pas.</p>
+    </div>
+
+    <div id="no-game-msg" class="hidden">
+      <p class="section-sub">Aucune partie sélectionnée. Retourne à la liste de tes parties pour en choisir une.</p>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/chesscom.js"></script>
+<script src="assets/js/firebase-sync.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/navigation.js"></script>
+<script src="assets/js/board.js"></script>
+<script>
+let analysisBoard = null;
+let analysisResults = [];
+let analysisIndex = -1;
+let analysisBoardWatching = false;
+function ensureAnalysisBoard(){
+  if(analysisBoard){ fitBoards('board', analysisBoard, '.page', '.eval-bar-wrap'); return; }
+  analysisBoard = Chessboard('board', { position:'start', draggable:false, pieceTheme: PIECE_THEME, showNotation:false });
+  renderCoords('board-ranks', 'board-files', 'white');
+  fitBoards('board', analysisBoard, '.page', '.eval-bar-wrap');
+  if(!analysisBoardWatching){
+    watchBoardResize('board', () => analysisBoard, '.page', '.eval-bar-wrap');
+    analysisBoardWatching = true;
+  }
+}
+
+function winPercentFromCp(cp, mate){
+  if(mate !== null && mate !== undefined){
+    return mate > 0 ? 100 : 0;
+  }
+  const capped = Math.max(-1000, Math.min(1000, cp));
+  return 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * capped)) - 1);
+}
+function moveAccuracy(dropCp){
+  const acc = 103.1668 * Math.exp(-0.04354 * (dropCp/100)) - 3.1669;
+  return Math.max(0, Math.min(100, acc));
+}
+function updateEvalBar(r){
+  const whiteScore = typeof r.whiteScore === 'number' ? r.whiteScore : 0;
+  const whiteMate = r.whiteMate !== undefined ? r.whiteMate : null;
+  const pct = winPercentFromCp(whiteScore, whiteMate);
+  document.getElementById('eval-bar-black').style.height = (100 - pct) + '%';
+  const label = document.getElementById('eval-bar-label');
+  if(whiteMate !== null){
+    label.textContent = 'M' + Math.abs(whiteMate);
+  } else {
+    const pawns = whiteScore / 100;
+    label.textContent = (pawns >= 0 ? '+' : '') + pawns.toFixed(1);
+  }
+}
+
+function adviceFor(r){
+  if(r.info.cls==='best') return `${r.san} était bien le meilleur coup ici.`;
+  if(r.info.cls==='good') return `${r.san} est un bon coup, proche de l'optimal (${r.bestSan}).`;
+  let txt = `${r.bestSan} était plus fort. `;
+  if(r.mateMissed) txt += "Ce coup menait à un mat forcé et l'a laissé passer.";
+  else if(r.mateAllowed) txt += "Ce coup permet à l'adversaire de forcer le mat.";
+  else if(r.info.cls==='blunder') txt += "Ce coup laisse probablement une pièce en prise ou permet une attaque décisive.";
+  else if(r.info.cls==='mistake') txt += "Ce coup cède un avantage matériel ou positionnel net à l'adversaire.";
+  else txt += "Léger manque de précision, la position reste globalement tenable.";
+  return txt;
+}
+
+async function runAnalysis(pgn, gameMeta){
+  const master = new Chess();
+  if(!master.load_pgn(pgn, {sloppy:true})){ alert("Ce PGN n'a pas pu être lu."); return; }
+  const history = master.history({verbose:true});
+  if(history.length===0){ alert("Aucun coup trouvé dans ce PGN."); return; }
+  document.getElementById('analysis-progress').classList.remove('hidden');
+  document.getElementById('analysis-results').style.display = 'none';
+  const barFill = document.getElementById('bar-fill');
+  const progressLabel = document.getElementById('progress-label');
+  await waitForEngineReady();
+  const work = new Chess();
+  const results = [];
+  let evalBefore = await engineAnalyzeFEN(work.fen());
+  for(let i=0;i<history.length;i++){
+    const mv = history[i];
+    const bestSan = evalBefore.bestMoveSan || mv.san;
+    const bestScoreForMover = evalBefore.scoreForMover;
+    const fenBeforeMove = work.fen();
+    work.move(mv.san);
+    const evalAfter = await engineAnalyzeFEN(work.fen());
+    const actualScoreForMover = -evalAfter.scoreForMover;
+    const drop = Math.max(0, bestScoreForMover - actualScoreForMover);
+    const isBest = (bestSan === mv.san);
+    const info = classify(drop, isBest);
+    const whiteScore = work.turn() === 'w' ? evalAfter.scoreForMover : -evalAfter.scoreForMover;
+    const whiteMate = (evalAfter.mate !== null && evalAfter.mate !== undefined)
+      ? (work.turn() === 'w' ? evalAfter.mate : -evalAfter.mate) : null;
+    results.push({ ply:i, color:mv.color, san:mv.san, fen: work.fen(), fenBefore: fenBeforeMove, from: mv.from, to: mv.to,
+      bestSan, drop: Math.round(drop), info, whiteScore, whiteMate,
+      mateMissed: evalBefore.mate !== null && evalBefore.mate > 0 && !isBest,
+      mateAllowed: evalAfter.mate !== null && evalAfter.mate > 0, moveNumber: Math.floor(i/2)+1 });
+    evalBefore = evalAfter;
+    progressLabel.textContent = `Analyse du coup ${i+1} / ${history.length}…`;
+    barFill.style.width = Math.round(((i+1)/history.length)*100) + '%';
+    await new Promise(r=>setTimeout(r,0));
+  }
+  results.forEach(r => r.advice = adviceFor(r));
+  analysisResults = results;
+  const headers = master.header();
+  document.getElementById('analysis-progress').classList.add('hidden');
+  renderAnalysis(headers);
+  if(gameMeta && gameMeta.url) saveAnalysisToFirestore(gameMeta, headers, results).catch(()=>{});
+}
+function renderErrorsTab(){
+  const flat = analysisResults.map((r,idx)=>({...r, idx})).filter(r => r.info.cls==='mistake' || r.info.cls==='blunder' || r.info.cls==='inaccuracy');
+  const counts = {blunder:{n:0,sum:0}, mistake:{n:0,sum:0}, inaccuracy:{n:0,sum:0}};
+  flat.forEach(r => { counts[r.info.cls].n++; counts[r.info.cls].sum += r.drop/100; });
+  const pillLabel = {blunder:'gaffe', mistake:'erreur', inaccuracy:'imprécision'};
+  let pillsHtml = '';
+  ['blunder','mistake','inaccuracy'].forEach(cls => {
+    if(counts[cls].n === 0) return;
+    const avg = (counts[cls].sum / counts[cls].n).toFixed(2);
+    const cssCls = cls === 'inaccuracy' ? 'mistake' : cls;
+    pillsHtml += `<span class="error-pill ${cssCls}"><span class="ep-count">${counts[cls].n} ${pillLabel[cls]}${counts[cls].n>1?'s':''}</span><span class="ep-val">-${avg}</span></span>`;
+  });
+  document.getElementById('error-pills-row').innerHTML = pillsHtml || '<p class="section-sub">Aucune erreur notable sur cette partie, bravo !</p>';
+  document.getElementById('error-cards').innerHTML = flat.map((r,i) => `
+    <div class="error-card ${r.info.cls}">
+      <div class="ec-title">Erreur ${i+1} <span style="color:var(--text-dim);font-weight:600;">−${(r.drop/100).toFixed(2)}</span></div>
+      <div class="ec-desc">${r.moveNumber}${r.color==='b'?'…':'.'} ${escapeHtml(r.san)}. ${escapeHtml(r.advice)}</div>
+      <div class="ec-best">Meilleur coup : ${r.moveNumber}${r.color==='b'?'…':'.'} ${escapeHtml(r.bestSan)}</div>
+      <button class="btn secondary error-view-btn" data-idx="${r.idx}" style="margin-top:10px;padding:8px 14px;font-size:0.8rem;">Voir la séquence</button>
+    </div>`).join('');
+  document.getElementById('error-cards').querySelectorAll('.error-view-btn').forEach(btn => {
+    btn.onclick = () => { document.querySelector('.analysis-tabs button[data-tab="summary"]').click(); goToPly(parseInt(btn.dataset.idx,10)); };
+  });
+}
+document.querySelectorAll('.analysis-tabs button').forEach(btn => {
+  btn.onclick = function(){
+    document.querySelectorAll('.analysis-tabs button').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+    document.querySelectorAll('.analysis-tab-panel').forEach(p=>p.classList.add('hidden'));
+    document.getElementById('tab-'+this.dataset.tab).classList.remove('hidden');
+  };
+});
+
+function summaryLines(s){
+  return `<div class="stat-line"><span>Meilleurs coups</span><span>${s.best}</span></div>
+    <div class="stat-line"><span>Bons coups</span><span>${s.good}</span></div>
+    <div class="stat-line"><span>Imprécisions</span><span>${s.inaccuracy}</span></div>
+    <div class="stat-line"><span>Erreurs</span><span>${s.mistake}</span></div>
+    <div class="stat-line"><span>Gaffes</span><span>${s.blunder}</span></div>`;
+}
+function renderAnalysis(headers){
+  document.getElementById('analysis-results').style.display = 'block';
+  document.querySelectorAll('.analysis-tabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab==='summary'));
+  document.querySelectorAll('.analysis-tab-panel').forEach(p=>p.classList.toggle('hidden', p.id!=='tab-summary'));
+  ensureAnalysisBoard();
+  const sums = {w:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}, b:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}};
+  analysisResults.forEach(r => sums[r.color][r.info.cls]++);
+  recordAnalyzedGame(headers, sums);
+  recordMistakesFromAnalysis(headers, analysisResults);
+  const white = headers.White || 'Blancs', black = headers.Black || 'Noirs';
+
+  const dateRaw = headers.Date || headers.UTCDate || headers.EndDate || '';
+  const dateNice = dateRaw && dateRaw !== '????.??.??' ? dateRaw.replace(/\./g,'/') : '';
+  const resultText = { '1-0':'1-0 — Victoire des Blancs', '0-1':'0-1 — Victoire des Noirs', '1/2-1/2':'½-½ — Nulle' }[headers.Result] || headers.Result || '';
+  const whiteElo = headers.WhiteElo ? ` (${headers.WhiteElo})` : '';
+  const blackElo = headers.BlackElo ? ` (${headers.BlackElo})` : '';
+  const infoBits = [resultText, dateNice, headers.ECO ? `ECO ${headers.ECO}` : '', headers.TimeControl ? `Cadence ${headers.TimeControl}` : ''].filter(Boolean);
+  document.getElementById('game-info-row').innerHTML = `
+    <div class="gi-players"><strong>${escapeHtml(white)}${whiteElo}</strong> vs <strong>${escapeHtml(black)}${blackElo}</strong></div>
+    <div class="gi-meta">${infoBits.map(escapeHtml).join(' · ')}</div>`;
+
+  const accByColor = {w:[], b:[]};
+  analysisResults.forEach(r => accByColor[r.color].push(moveAccuracy(r.drop)));
+  const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 100;
+  const whiteAcc = avg(accByColor.w), blackAcc = avg(accByColor.b);
+  document.getElementById('accuracy-row').innerHTML = `
+    <div class="acc-card"><div class="acc-label">${escapeHtml(white)}</div><div class="acc-value">${whiteAcc.toFixed(1)}%</div><div class="acc-sub">Précision</div></div>
+    <div class="acc-vs">vs</div>
+    <div class="acc-card"><div class="acc-label">${escapeHtml(black)}</div><div class="acc-value">${blackAcc.toFixed(1)}%</div><div class="acc-sub">Précision</div></div>`;
+
+  document.getElementById('summary-row').innerHTML = `
+    <div class="stat-card"><div class="label" style="font-weight:700;color:var(--navy);margin-bottom:8px;">${escapeHtml(white)}</div>${summaryLines(sums.w)}</div>
+    <div class="stat-card"><div class="label" style="font-weight:700;color:var(--navy);margin-bottom:8px;">${escapeHtml(black)}</div>${summaryLines(sums.b)}</div>`;
+  const list = document.getElementById('move-list');
+  list.innerHTML = '';
+  for(let i=0;i<analysisResults.length;i+=2){
+    const w = analysisResults[i], b = analysisResults[i+1];
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="num">${w.moveNumber}.</span>
+      <span class="move-chip" data-idx="${w.ply}"><span class="glyph glyph-${w.info.cls}">${w.info.glyph}</span>${escapeHtml(w.san)}</span>
+      ${b ? `<span class="move-chip" data-idx="${b.ply}"><span class="glyph glyph-${b.info.cls}">${b.info.glyph}</span>${escapeHtml(b.san)}</span>` : '<span></span>'}`;
+    list.appendChild(li);
+  }
+  list.querySelectorAll('.move-chip').forEach(chip => chip.onclick = () => goToPly(parseInt(chip.dataset.idx,10)));
+  renderErrorsTab();
+  goToPly(analysisResults.length-1);
+}
+function goToPly(idx){
+  if(idx < 0 || idx >= analysisResults.length) return;
+  analysisIndex = idx;
+  const r = analysisResults[idx];
+  analysisBoard.position(r.fen);
+  highlightMove('#board', r.from, r.to);
+  updateEvalBar(r);
+  document.querySelectorAll('.move-chip').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.idx,10)===idx));
+  document.getElementById('move-comment-box').innerHTML = `<span class="tag tag-${r.info.cls}">${r.info.glyph} ${r.info.label}</span>${escapeHtml(r.advice)}`;
+}
+document.getElementById('nav-start').onclick = () => goToPly(0);
+document.getElementById('nav-prev').onclick = () => goToPly(analysisIndex-1);
+document.getElementById('nav-next').onclick = () => goToPly(analysisIndex+1);
+document.getElementById('nav-end').onclick = () => goToPly(analysisResults.length-1);
+document.addEventListener('keydown', (e) => {
+  const active = document.activeElement;
+  if(active && (active.tagName === 'TEXTAREA' || active.tagName === 'INPUT')) return;
+  if(analysisResults.length === 0) return;
+  if(e.key === 'ArrowLeft'){ e.preventDefault(); goToPly(analysisIndex-1); }
+  else if(e.key === 'ArrowRight'){ e.preventDefault(); goToPly(analysisIndex+1); }
+});
+
+async function initGameView(){
+  const raw = sessionStorage.getItem('cq_selected_game');
+  if(!raw){ document.getElementById('no-game-msg').classList.remove('hidden'); return; }
+  const g = JSON.parse(raw);
+  g.username = chessComState().username || (PROGRESS.settings||{}).chessComUsername || '';
+  const pre = g.url ? await fetchPrecomputedAnalysis(g.url) : null;
+  if(pre && Array.isArray(pre.results) && pre.results.length){
+    analysisResults = pre.results;
+    renderAnalysis(pre.headers || { White: g.white && g.white.username, Black: g.black && g.black.username });
+    showToast('Analyse chargée', 'Déjà calculée en arrière-plan — instantané !');
+  } else {
+    runAnalysis(g.pgn, g);
+  }
+}
+initGameView();
+</script>
+</body>
+</html>

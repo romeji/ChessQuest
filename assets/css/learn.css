@@ -270,7 +270,7 @@ details.opening-category[open] summary::after{content:'\2013';}
   padding:9px 12px;cursor:pointer;font-size:0.83rem;transition:border-color .15s ease;
 }
 .line-btn:hover{border-color:var(--coral);}
-.line-btn.active{border-color:var(--coral);background:rgba(108,92,224,0.08);}
+.line-btn.active{border-color:var(--coral);background:rgba(112,86,217,0.08);}
 .line-btn .n-moves{font-family:var(--font-mono);font-size:0.68rem;color:var(--text-dim);white-space:nowrap;}
 .mastery-badge-inline{color:var(--good);font-weight:700;margin-left:4px;}
 

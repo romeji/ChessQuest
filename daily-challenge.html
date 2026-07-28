@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#7C6EF0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ChessQuest">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/chessquest-logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<title>ChessQuest — Défi du jour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+<link rel="stylesheet" href="assets/css/variables.css">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/puzzle.css">
+<link rel="stylesheet" href="assets/css/entrainement.css">
+<style>
+.daily-hero{background:linear-gradient(135deg,var(--coral) 0%,var(--coral-dark) 100%);border-radius:var(--radius);padding:22px 20px;margin-bottom:22px;color:#fff;box-shadow:0 10px 26px rgba(124,110,240,0.3);}
+.daily-hero-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.06em;opacity:0.85;font-weight:800;}
+.daily-hero-text{font-family:var(--font-display);font-weight:700;font-size:1.15rem;margin:6px 0 14px;}
+.daily-hero .track{background:rgba(255,255,255,0.25);}
+.daily-hero .track-fill{background:#fff;}
+.daily-hero-progress{margin-top:8px;font-size:0.82rem;font-weight:700;opacity:0.9;}
+.daily-done-banner{text-align:center;padding:40px 20px;}
+.daily-done-banner .big-check{width:64px;height:64px;border-radius:50%;background:var(--good);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.daily-done-banner h2{font-family:var(--font-display);font-size:1.3rem;color:var(--navy);margin-bottom:6px;}
+.daily-done-banner p{color:var(--text-dim);font-size:0.9rem;}
+</style>
+<link rel="stylesheet" href="assets/css/polish.css">
+</head>
+<body data-page="play">
+<div id="toast-container"></div>
+<div class="app">
+  <section class="page">
+    <a class="subpage-back" aria-label="Retour" href="index.html" style="margin-bottom:16px;">
+      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+    </a>
+
+    <div class="daily-hero">
+      <div class="daily-hero-label">Défi du jour</div>
+      <div class="daily-hero-text" id="daily-challenge-text">Chargement…</div>
+      <div class="track"><div class="track-fill" id="daily-challenge-fill"></div></div>
+      <div class="daily-hero-progress" id="daily-challenge-progress"></div>
+    </div>
+
+    <div id="daily-puzzle-mode" class="hidden">
+      <div class="board-frame" style="margin:0 auto 20px;display:block;width:fit-content;">
+        <div class="coord-ranks" id="daily-ranks"></div>
+        <div id="daily-board"></div>
+        <div class="coord-files" id="daily-files"></div>
+      </div>
+      <div class="mcq-options" id="daily-mcq-options"></div>
+    </div>
+
+    <div id="daily-redirect-mode" class="hidden" style="text-align:center;">
+      <p class="section-sub" id="daily-redirect-text"></p>
+      <a class="btn" id="daily-redirect-btn" style="display:inline-block;text-decoration:none;">C'est parti</a>
+    </div>
+
+    <div id="daily-done-banner" class="daily-done-banner hidden">
+      <div class="big-check"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg></div>
+      <h2>Défi du jour terminé !</h2>
+      <p>Reviens demain pour un nouveau défi.</p>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/board.js"></script>
+<script src="assets/js/puzzles.js"></script>
+<script>
+let dailyQueue = [];
+let dailyIdx = 0;
+let dailyBoard = null;
+let dailyGame = null;
+
+/* Choix déterministe par jour : même défi (et mêmes puzzles) pour tout le
+   monde ce jour-là, sans avoir besoin d'un serveur pour le décider. */
+function pickDailyPuzzles(n){
+  const seed = dayOfYear();
+  const shuffled = CLASSIC_PUZZLES
+    .map((p,i) => ({p, k:((i+1)*2654435761 + seed*40503) % 100000}))
+    .sort((a,b) => a.k - b.k)
+    .map(x => x.p);
+  return shuffled.slice(0, Math.min(n, shuffled.length));
+}
+
+function ensureDailyBoard(){
+  if(dailyBoard) return;
+  dailyBoard = Chessboard('daily-board', {position:'start', draggable:false, pieceTheme: PIECE_THEME, showNotation:false});
+  renderCoords('daily-ranks', 'daily-files', 'white');
+}
+
+function loadDailyPuzzle(){
+  const p = dailyQueue[dailyIdx];
+  if(!p){ showDailyDone(); return; }
+  dailyGame = p.fen ? new Chess(p.fen) : new Chess();
+  if(p.setupMoves) p.setupMoves.forEach(m => dailyGame.move(m));
+  const orientation = dailyGame.turn() === 'b' ? 'black' : 'white';
+  dailyBoard.orientation(orientation);
+  dailyBoard.position(dailyGame.fen());
+  renderCoords('daily-ranks', 'daily-files', orientation);
+  clearHighlights('#daily-board');
+  const solutionClean = p.solution.replace(/[!?]+$/, '');
+  const options = buildMcqOptions(dailyGame, solutionClean);
+  const moverColor = dailyGame.turn();
+  const container = document.getElementById('daily-mcq-options');
+  container.innerHTML = options.map((opt, i) => `
+    <button class="mcq-option" data-san="${escapeHtml(opt)}">
+      <span class="mcq-letter">${String.fromCharCode(65+i)}</span>
+      <span>${escapeHtml(toFigurine(opt, moverColor))}</span>
+    </button>`).join('');
+  container.querySelectorAll('.mcq-option').forEach(btn => {
+    btn.onclick = () => onDailyAnswer(btn, solutionClean);
+  });
+}
+
+function onDailyAnswer(btn, solutionClean){
+  const container = document.getElementById('daily-mcq-options');
+  const correct = btn.dataset.san === solutionClean;
+  container.querySelectorAll('.mcq-option').forEach(b => {
+    b.disabled = true;
+    if(b.dataset.san === solutionClean) b.classList.add('correct');
+    else if(b === btn) b.classList.add('wrong');
+  });
+  if(typeof playSound === 'function') playSound(correct ? 'correct' : 'wrong');
+  if(correct){
+    bumpDailyCounter('puzzlesSolvedToday');
+    updateDailyProgressUI();
+    dailyIdx++;
+    setTimeout(() => {
+      if(PROGRESS.dailyProgress.rewardClaimed || dailyIdx >= dailyQueue.length) showDailyDone();
+      else loadDailyPuzzle();
+    }, 1200);
+  } else {
+    setTimeout(loadDailyPuzzle, 1600); // on retente le même puzzle
+  }
+}
+
+function updateDailyProgressUI(){
+  ensureDailyProgressFresh();
+  const challenge = todayChallenge();
+  const current = Math.min(challenge.target, PROGRESS.dailyProgress[challenge.type] || 0);
+  document.getElementById('daily-challenge-text').textContent = challenge.text;
+  document.getElementById('daily-challenge-fill').style.width = Math.round((current/challenge.target)*100) + '%';
+  document.getElementById('daily-challenge-progress').textContent = `${current}/${challenge.target} · +${challenge.xp} XP`;
+}
+
+function showDailyDone(){
+  document.getElementById('daily-puzzle-mode').classList.add('hidden');
+  document.getElementById('daily-redirect-mode').classList.add('hidden');
+  document.getElementById('daily-done-banner').classList.remove('hidden');
+}
+
+function initDailyChallenge(){
+  ensureDailyProgressFresh();
+  updateDailyProgressUI();
+  const challenge = todayChallenge();
+  if(PROGRESS.dailyProgress.rewardClaimed){ showDailyDone(); return; }
+
+  if(challenge.type === 'puzzlesSolvedToday'){
+    document.getElementById('daily-puzzle-mode').classList.remove('hidden');
+    ensureDailyBoard();
+    dailyQueue = pickDailyPuzzles(challenge.target);
+    dailyIdx = Math.min(PROGRESS.dailyProgress[challenge.type] || 0, Math.max(0, dailyQueue.length - 1));
+    loadDailyPuzzle();
+    watchBoardResize('daily-board', () => dailyBoard, '.page');
+  } else {
+    document.getElementById('daily-redirect-mode').classList.remove('hidden');
+    const info = {
+      linesCompletedToday: {text:"Termine une leçon d'ouverture dans Parcours pour valider ton défi du jour.", href:'learn.html'},
+      gamesAnalyzedToday: {text:"Analyse une de tes parties Chess.com pour valider ton défi du jour.", href:'analysis.html'},
+      gamesPlayedToday: {text:"Termine une partie contre le bot pour valider ton défi du jour.", href:'training-game.html'}
+    }[challenge.type] || {text:'', href:'index.html'};
+    document.getElementById('daily-redirect-text').textContent = info.text;
+    document.getElementById('daily-redirect-btn').setAttribute('href', info.href);
+  }
+}
+initDailyChallenge();
+</script>
+</body>
+</html>

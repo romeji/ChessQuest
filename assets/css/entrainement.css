@@ -9,6 +9,7 @@
 .entrainement-sub{font-size:0.86rem;color:var(--text-dim);margin:2px 0 0;font-weight:600;}
 
 .entrainement-list{display:flex;flex-direction:column;gap:12px;}
+.theme-picker-grid{display:flex;flex-direction:column;gap:10px;}
 .entrainement-card{
   display:flex;align-items:center;gap:14px;background:var(--bg-panel);border:1px solid var(--line);border-radius:var(--radius);
   padding:16px;box-shadow:var(--shadow);cursor:pointer;transition:transform .15s ease;

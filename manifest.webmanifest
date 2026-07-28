@@ -56,6 +56,12 @@
       "short_name": "Puzzles",
       "url": "./puzzles.html",
       "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Coach",
+      "short_name": "Coach",
+      "url": "./coach.html",
+      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

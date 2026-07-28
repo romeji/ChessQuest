@@ -6,7 +6,6 @@
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   const aliases = {
-    puzzles: 'play',
     analyze: 'home',
     analysis: 'home',
     settings: 'profile'

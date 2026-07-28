@@ -1,0 +1,5 @@
+.coach-turn-row, .coach-castling-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:0.82rem;}
+.coach-turn-label{font-weight:700;color:var(--navy);font-size:0.82rem;}
+.coach-castling-row label{display:flex;align-items:center;gap:4px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:10px;padding:5px 9px;font-size:0.76rem;color:var(--text-dim);cursor:pointer;}
+.coach-castling-row input{accent-color:var(--coral);}
+.coach-fen-display{font-family:var(--font-mono);font-size:0.72rem;color:var(--text-dim);background:var(--bg-panel-2);border-radius:10px;padding:8px 10px;word-break:break-all;}
