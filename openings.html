@@ -76,6 +76,11 @@
         </div>
       </div>
 
+      <section class="opening-move-memory" aria-label="Coups mémorisés">
+        <div class="opening-memory-head"><strong>Coups mémorisés</strong><span id="train-memory-count">0 coup</span></div>
+        <ol class="move-list" id="train-move-list"><li class="empty">Les coups joués apparaîtront ici.</li></ol>
+      </section>
+
       <div class="btn-row opening-actions">
         <button class="opening-tool" id="hint-btn"><span>💡</span><strong>Indice</strong><small>-1 étoile</small></button>
         <button class="opening-tool" id="reset-btn"><span>↻</span><strong>Recommencer</strong><small>À zéro</small></button>
@@ -100,16 +105,7 @@
         <summary>Pourquoi jouer cette ouverture ?</summary>
         <p class="lesson-desc" id="line-about" style="padding:0 16px 14px;"></p>
       </details>
-      <details class="opening-category">
-        <summary>Voir les coups mémorisés</summary>
-        <ol class="move-list" id="train-move-list"><li class="empty">Aucun coup joué</li></ol>
-      </details>
     </section>
-
-    <details class="opening-category" style="margin-top:20px;">
-      <summary>Choisir une autre ouverture</summary>
-      <div class="opening-buttons" id="quick-picker"></div>
-    </details>
   </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -164,7 +160,9 @@ function renderOpeningHud(){
 function renderTrainMoveList(){
   const hist = trainGame.history();
   const el = document.getElementById('train-move-list');
-  if(hist.length === 0){ el.innerHTML = '<li class="empty">Aucun coup joué</li>'; return; }
+  const count = document.getElementById('train-memory-count');
+  if(count) count.textContent = `${hist.length} coup${hist.length>1?'s':''}`;
+  if(hist.length === 0){ el.innerHTML = '<li class="empty">Les coups joués apparaîtront ici.</li>'; return; }
   let html = '';
   for(let i=0;i<hist.length;i+=2) html += `<li><span class="num">${Math.floor(i/2)+1}.</span><span>${hist[i]||''}</span><span>${hist[i+1]||''}</span></li>`;
   el.innerHTML = html;
@@ -204,10 +202,6 @@ document.getElementById('replay-btn').onclick = () => {
 };
 
 /* Sélecteur rapide (favoris) */
-const quickKeys = CATEGORIES.find(c=>c.key==='favorites').lines;
-document.getElementById('quick-picker').innerHTML = quickKeys.map(k=>
-  `<a class="line-btn" href="openings.html?opening=${k}"><span>${escapeHtml(OPENINGS[k].name)}</span></a>`
-).join('');
 
 /* Charge l'ouverture depuis l'URL (?opening=najdorf), sinon Najdorf par défaut */
 const params = new URLSearchParams(window.location.search);

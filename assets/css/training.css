@@ -4,6 +4,8 @@
 .bot-name{font-family:var(--font-display);font-weight:700;font-size:0.92rem;color:var(--navy);}
 .bot-name span{color:var(--coral);}
 .bot-sub{font-size:0.78rem;color:var(--text-dim);margin-top:1px;}
+.bot-elo-picker{display:flex;align-items:center;gap:5px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:12px;padding:5px 8px;color:var(--text-dim);font-size:.62rem;font-weight:900;letter-spacing:.04em;}
+.bot-elo-picker select{border:0;background:transparent;color:var(--coral);font:800 .78rem var(--font-body);outline:0;cursor:pointer;}
 
 .training-board-wrap{position:relative;margin-bottom:16px;}
 .training-moves-card{background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;margin:0 0 16px;overflow:hidden;box-shadow:0 4px 12px rgba(36,31,61,.06);}

@@ -31,9 +31,9 @@
     <div class="subpage-header">
       <a class="subpage-back" aria-label="Retour" href="entrainement.html"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
       <span class="subpage-title">Partie d'entraînement</span>
-      <button class="subpage-badge" id="difficulty-btn" title="Changer la difficulté" aria-label="Changer la difficulté du bot">
-        <svg viewBox="0 0 24 24"><path d="M10.3 3.2c.4-1.6 2.7-1.6 3.1 0l.2.9c.2.9 1.2 1.4 2 1l.8-.4c1.4-.7 2.9.8 2.2 2.2l-.4.8c-.4.9.1 1.9 1 2l.9.2c1.6.4 1.6 2.7 0 3.1l-.9.2c-.9.2-1.4 1.2-1 2l.4.8c.7 1.4-.8 2.9-2.2 2.2l-.8-.4c-.9-.4-1.9.1-2 1l-.2.9c-.4 1.6-2.7 1.6-3.1 0l-.2-.9c-.2-.9-1.2-1.4-2-1l-.8.4c-1.4.7-2.9-.8-2.2-2.2l.4-.8c.4-.9-.1-1.9-1-2l-.9-.2c-1.6-.4-1.6-2.7 0-3.1l.9-.2c.9-.2 1.4-1.2 1-2l-.4-.8c-.7-1.4.8-2.9 2.2-2.2l.8.4c.9.4 1.9-.1 2-1l.2-.9Z"/><circle cx="12" cy="12" r="3.2"/></svg>
-      </button>
+      <label class="bot-elo-picker" for="bot-elo-select">ELO
+        <select id="bot-elo-select" aria-label="Niveau ELO du bot"></select>
+      </label>
     </div>
 
     <div class="bot-row">
@@ -41,7 +41,7 @@
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2.5 2.5 0 0 0-2 4 4 4 0 0 0-1.6 5.4C7.2 12.4 6 14.2 6 17h12c0-2.8-1.2-4.6-2.4-5.6A4 4 0 0 0 14 6a2.5 2.5 0 0 0-2-4Z"/></svg>
       </div>
       <div class="bot-info">
-        <div class="bot-name">BOT <span id="bot-difficulty-label">Intermédiaire</span></div>
+        <div class="bot-name">BOT <span id="bot-difficulty-label">1200 ELO</span></div>
         <div class="bot-sub" id="bot-status">Ta partie contre l'ordinateur</div>
       </div>
     </div>

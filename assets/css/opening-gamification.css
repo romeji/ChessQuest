@@ -40,6 +40,10 @@ body.opening-lesson-page{
 .opening-lesson-page .coach-message .feedback-box{padding:2px 0 0;min-height:0;border:0;background:transparent;font-size:.82rem;color:#274434;line-height:1.4}
 
 .opening-actions{grid-template-columns:repeat(3,1fr)!important;gap:8px;margin-top:11px}
+.opening-move-memory{margin-top:12px;border:1px solid #dce9df;border-radius:15px;background:#fff;overflow:hidden;}
+.opening-memory-head{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;background:#f2f8f3;color:#294638;font-size:.75rem;}.opening-memory-head span{color:#718478;font-weight:700;}
+.opening-move-memory .move-list{max-height:112px;overflow:auto;margin:0;padding:7px 12px 9px;}
+.opening-move-memory .move-list li{grid-template-columns:28px 1fr 1fr;}
 .opening-tool{border:1px solid #e4ebe6;background:#fff;border-radius:15px;padding:9px 5px;display:flex;flex-direction:column;align-items:center;gap:1px;color:#294638;cursor:pointer}
 .opening-tool>span{font-size:1.05rem}
 .opening-tool strong{font-size:.7rem}

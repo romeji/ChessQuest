@@ -4,12 +4,23 @@
    des messages d'encouragement façon coach après chaque coup.
    ============================================================ */
 
-const DIFFICULTIES = [
-  {label:'Facile', skill:2, movetime:300},
-  {label:'Intermédiaire', skill:8, movetime:500},
-  {label:'Difficile', skill:16, movetime:900}
+const BOT_LEVELS = [
+  {elo:400, skill:0, movetime:220}, {elo:600, skill:2, movetime:280},
+  {elo:800, skill:4, movetime:340}, {elo:1000, skill:6, movetime:420},
+  {elo:1200, skill:8, movetime:500}, {elo:1400, skill:10, movetime:580},
+  {elo:1600, skill:13, movetime:680}, {elo:1800, skill:16, movetime:820},
+  {elo:2000, skill:20, movetime:1000}
 ];
-let difficultyIdx = 1;
+let botElo = Number((PROGRESS.settings || {}).botElo) || 1200;
+function currentBotLevel(){ return BOT_LEVELS.find(level => level.elo === botElo) || BOT_LEVELS[4]; }
+function renderBotElo(){
+  const select = document.getElementById('bot-elo-select');
+  if(select){
+    select.innerHTML = BOT_LEVELS.map(level => `<option value="${level.elo}">${level.elo}</option>`).join('');
+    select.value = String(botElo);
+  }
+  document.getElementById('bot-difficulty-label').textContent = `${botElo} ELO`;
+}
 
 let tgGame = null;
 let tgBoard = null;
@@ -140,7 +151,7 @@ function onTgDrop(source, target){
 }
 
 async function playBotMove(){
-  const diff = DIFFICULTIES[difficultyIdx];
+  const diff = currentBotLevel();
   const fen = tgGame.fen();
   let res;
   try{
@@ -240,12 +251,14 @@ document.getElementById('hint-btn2').onclick = async () => {
 
 document.getElementById('next-btn').onclick = () => newTrainingGame();
 
-document.getElementById('difficulty-btn').onclick = () => {
-  difficultyIdx = (difficultyIdx + 1) % DIFFICULTIES.length;
-  document.getElementById('bot-difficulty-label').textContent = DIFFICULTIES[difficultyIdx].label;
-  showToast('Difficulté du bot', DIFFICULTIES[difficultyIdx].label);
+document.getElementById('bot-elo-select').onchange = event => {
+  botElo = Number(event.target.value);
+  PROGRESS.settings.botElo = botElo;
+  saveProgress();
+  renderBotElo();
+  showToast('Niveau du bot', `${botElo} ELO sélectionné`);
 };
 
-document.getElementById('bot-difficulty-label').textContent = DIFFICULTIES[difficultyIdx].label;
+renderBotElo();
 newTrainingGame();
 watchBoardResize('tg-board', () => tgBoard, '.page');
