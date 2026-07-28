@@ -31,7 +31,7 @@
     <h1 class="section-title" style="border-top:none;padding-top:0;margin-bottom:2px;">Coach</h1>
     <p class="section-sub" style="margin-bottom:16px;">Installe n'importe quelle position — en déplaçant les pièces ou en collant un FEN — et demande l'avis de Stockfish.</p>
 
-    <div style="display:flex;gap:10px;align-items:stretch;justify-content:center;margin-bottom:14px;">
+    <div class="coach-board-row">
       <div class="eval-bar-wrap">
         <div class="eval-bar" id="eval-bar">
           <div class="eval-bar-black" id="eval-bar-black" style="height:50%;"></div>
@@ -39,7 +39,7 @@
         </div>
         <div class="eval-bar-label" id="eval-bar-label">–</div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <div class="coach-board-stack">
         <div class="board-frame">
           <div id="coach-board"></div>
         </div>
@@ -116,7 +116,7 @@ let coachTurn = 'w';
 function ensureCoachBoard(){
   if(coachBoard) return;
   coachBoard = Chessboard('coach-board', {
-    position: 'start', draggable: true, dropOffBoard: 'trash', sparePieces: true,
+    position: 'start', draggable: true,
     pieceTheme: PIECE_THEME, showNotation: true,
     onChange: () => requestAnimationFrame(updateFenDisplay)
   });

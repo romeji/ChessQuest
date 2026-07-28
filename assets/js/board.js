@@ -27,7 +27,10 @@ function fitOneBoard(boardId, pageSelector, reserveSelector){
   }
   const frameInner = pageInner
     - (parseFloat(framePad.paddingLeft)||0) - (parseFloat(framePad.paddingRight)||0);
-  const px = Math.max(200, Math.min(460, frameInner - 6));
+  // Le cadre, les coordonnées et une éventuelle barre d'évaluation doivent
+  // toujours tenir dans le viewport : ne jamais imposer un minimum qui crée
+  // un débordement sur les petits téléphones.
+  const px = Math.max(96, Math.min(460, Math.floor(frameInner - 6)));
   boardEl.style.width = px + 'px';
 }
 function fitBoards(boardId, boardObjRef, pageSelector, reserveSelector){
@@ -35,10 +38,18 @@ function fitBoards(boardId, boardObjRef, pageSelector, reserveSelector){
   if(boardObjRef) boardObjRef.resize();
 }
 let fitTimer = null;
+const boardResizeObservers = {};
 function watchBoardResize(boardId, getBoardObj, pageSelector, reserveSelector){
   const handler = () => { clearTimeout(fitTimer); fitTimer = setTimeout(()=>fitBoards(boardId, getBoardObj(), pageSelector, reserveSelector), 120); };
   window.addEventListener('resize', handler);
   window.addEventListener('orientationchange', () => { setTimeout(handler, 250); setTimeout(handler, 600); });
+  const boardEl = document.getElementById(boardId);
+  const observeTarget = boardEl && (boardEl.closest('.board-frame') || boardEl.parentElement);
+  if(window.ResizeObserver && observeTarget){
+    if(boardResizeObservers[boardId]) boardResizeObservers[boardId].disconnect();
+    boardResizeObservers[boardId] = new ResizeObserver(handler);
+    boardResizeObservers[boardId].observe(observeTarget.parentElement || observeTarget);
+  }
 }
 
 /* ---- Coordonnées (rangées / colonnes) ---- */
