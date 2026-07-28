@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v12';
+const CACHE_VERSION = 'chessquest-v13';
 const APP_SHELL = [
   './',
   './index.html',
@@ -45,6 +45,18 @@ const APP_SHELL = [
   './assets/js/training.js',
   './assets/js/puzzles.js',
   './assets/js/firebase-sync.js',
+  './assets/chesspieces/wK.png',
+  './assets/chesspieces/wQ.png',
+  './assets/chesspieces/wR.png',
+  './assets/chesspieces/wB.png',
+  './assets/chesspieces/wN.png',
+  './assets/chesspieces/wP.png',
+  './assets/chesspieces/bK.png',
+  './assets/chesspieces/bQ.png',
+  './assets/chesspieces/bR.png',
+  './assets/chesspieces/bB.png',
+  './assets/chesspieces/bN.png',
+  './assets/chesspieces/bP.png',
   './assets/illustrations/background_mobile.png',
   './assets/illustrations/background_desktop.png',
   './assets/illustrations/opening-kingdom-v2.png',

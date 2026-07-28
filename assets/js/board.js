@@ -5,10 +5,9 @@
    Nécessite : jQuery, chess.js, chessboard.js chargés avant ce fichier.
    ============================================================ */
 
-/* chessboard.js 1.0 attend une URL modÃ¨le, pas une fonction. Le CDN est
-   mis en cache par le service worker dÃ¨s le premier chargement afin de rester
-   disponible dans la PWA par la suite. */
-const PIECE_THEME = 'https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/img/chesspieces/wikipedia/{piece}.png';
+/* Pièces locales : aucun chargement externe n'est nécessaire pour afficher
+   un échiquier, y compris à la première ouverture de la PWA. */
+const PIECE_THEME = 'assets/chesspieces/{piece}.png';
 
 /* ---- Dimensionnement fiable des échiquiers (mesure réelle du DOM) ---- */
 function fitOneBoard(boardId, pageSelector, reserveSelector){
