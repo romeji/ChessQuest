@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v4';
+const CACHE_VERSION = 'chessquest-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -47,7 +47,8 @@ const APP_SHELL = [
   './assets/js/firebase-sync.js',
   './assets/illustrations/background_mobile.png',
   './assets/illustrations/background_desktop.png',
-  './assets/illustrations/opening-kingdom-v2.png'
+  './assets/illustrations/opening-kingdom-v2.png',
+  './assets/illustrations/opening-map-bg.svg'
 ];
 
 self.addEventListener('install', event => {

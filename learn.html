@@ -81,7 +81,8 @@ function renderSkillPath(){
   const coords = path.map((_,i)=>({x:i%2 ? 278 : 112,y:topPad+i*step}));
   const road = coords.map((p,i)=> i===0 ? `M ${p.x} ${p.y}` : `C ${coords[i-1].x} ${p.y-76}, ${p.x} ${p.y-76}, ${p.x} ${p.y}`).join(' ');
   const island = (key, index) => {
-    const unlocked = index === 0 || !!mastered[path[index - 1]];
+    const previous = path[index - 1];
+    const unlocked = index === 0 || (previous === 'gambit_dame' ? ['qgd','qga','slav'].every(k => mastered[k]) : !!mastered[previous]);
     const complete = key === 'gambit_dame' ? ['qgd','qga','slav'].every(k => mastered[k]) : !!mastered[key];
     const status = complete ? 'done' : (unlocked ? 'current' : 'locked');
     const title = key === 'gambit_dame' ? 'Gambit Dame' : OPENINGS[key].name.replace('Sicilienne — ','').replace('Gambit Dame — ','');

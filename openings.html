@@ -195,7 +195,13 @@ document.getElementById('autohint-toggle').onclick = function(){
   if(!autoHintEnabled) $('#train-board [data-square]').removeClass('suggest-from suggest-to');
   else showExpectedMove();
 };
-document.getElementById('replay-btn').onclick = () => document.getElementById('reset-btn').click();
+document.getElementById('replay-btn').onclick = () => {
+  if(gambitDameCurriculum){
+    const next = GAMBIT_DAME_STEPS.find(key => !PROGRESS.mastered[key]);
+    if(next && next !== currentLineKey){ location.href = `openings.html?path=gambit_dame&opening=${next}`; return; }
+  }
+  document.getElementById('reset-btn').click();
+};
 
 /* Sélecteur rapide (favoris) */
 const quickKeys = CATEGORIES.find(c=>c.key==='favorites').lines;
@@ -205,8 +211,15 @@ document.getElementById('quick-picker').innerHTML = quickKeys.map(k=>
 
 /* Charge l'ouverture depuis l'URL (?opening=najdorf), sinon Najdorf par défaut */
 const params = new URLSearchParams(window.location.search);
+const GAMBIT_DAME_STEPS = ['qgd','qga','slav'];
+const gambitDameCurriculum = params.get('path') === 'gambit_dame';
 const requested = params.get('opening');
-const startKey = (requested && OPENINGS[requested]) ? requested : 'najdorf';
+const firstGambitStep = GAMBIT_DAME_STEPS.find(key => !PROGRESS.mastered[key]) || GAMBIT_DAME_STEPS[0];
+const startKey = gambitDameCurriculum ? ((requested && GAMBIT_DAME_STEPS.includes(requested)) ? requested : firstGambitStep) : ((requested && OPENINGS[requested]) ? requested : 'italienne');
+if(gambitDameCurriculum){
+  document.getElementById('mission-title').textContent = `Gambit Dame · étape ${GAMBIT_DAME_STEPS.indexOf(startKey)+1}/${GAMBIT_DAME_STEPS.length}`;
+  document.getElementById('replay-btn').textContent = 'Continuer le parcours';
+}
 ensureTrainBoard();
 loadLine(OPENINGS[startKey], startKey);
 watchBoardResize('train-board', () => trainBoard, '.page');
