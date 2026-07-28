@@ -8,8 +8,8 @@
   "scope": "./",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
-  "background_color": "#F8F7FB",
-  "theme_color": "#7C6EF0",
+  "background_color": "#063427",
+  "theme_color": "#063427",
   "categories": ["education", "games"],
   "icons": [
     {

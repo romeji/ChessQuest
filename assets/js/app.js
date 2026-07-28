@@ -212,3 +212,6 @@ function initPwa(){
   });
 }
 initPwa();
+
+const questThemeMeta = document.querySelector('meta[name="theme-color"]');
+if(questThemeMeta) questThemeMeta.setAttribute('content', '#063427');
