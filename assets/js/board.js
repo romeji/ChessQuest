@@ -31,6 +31,16 @@ function fitOneBoard(boardId, pageSelector, reserveSelector){
   const framePad = getComputedStyle(frameEl);
   let pageInner = pageEl.clientWidth
     - (parseFloat(pageStyle.paddingLeft)||0) - (parseFloat(pageStyle.paddingRight)||0);
+  // Un plateau peut vivre dans une carte (Puzzle, leçon d'ouverture). Dans ce
+  // cas la largeur de la page est trop optimiste car elle ignore le padding de
+  // la carte : on se cale sur le plus petit conteneur réel.
+  const parentEl = frameEl.parentElement;
+  if(parentEl){
+    const parentStyle = getComputedStyle(parentEl);
+    const parentInner = parentEl.clientWidth
+      - (parseFloat(parentStyle.paddingLeft)||0) - (parseFloat(parentStyle.paddingRight)||0);
+    if(parentInner > 0) pageInner = Math.min(pageInner, parentInner);
+  }
   // Si un élément voisin (ex. barre d'évaluation) partage la largeur disponible
   // avec l'échiquier, on retire sa largeur réelle + une petite marge (gap).
   if(reserveSelector){
