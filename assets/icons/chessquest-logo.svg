@@ -1,38 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
   <title id="title">ChessQuest</title>
-  <desc id="desc">Logo ChessQuest avec couronne, cavalier et sentier d'apprentissage.</desc>
+  <desc id="desc">Un roi d'échecs espiègle portant une grande couronne.</desc>
   <defs>
-    <linearGradient id="sky" x1="74" y1="36" x2="440" y2="470" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#8FDDD1"/>
-      <stop offset=".52" stop-color="#7C6EF0"/>
-      <stop offset="1" stop-color="#FFA53D"/>
-    </linearGradient>
-    <linearGradient id="gold" x1="162" y1="122" x2="360" y2="396" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#FFE68A"/>
-      <stop offset=".48" stop-color="#FFB84D"/>
-      <stop offset="1" stop-color="#D77B21"/>
-    </linearGradient>
-    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="150%">
-      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#241F3D" flood-opacity=".24"/>
-    </filter>
+    <linearGradient id="mint" x1="52" y1="30" x2="458" y2="486" gradientUnits="userSpaceOnUse"><stop stop-color="#DDF59D"/><stop offset="1" stop-color="#9DD558"/></linearGradient>
+    <linearGradient id="gold" x1="155" y1="51" x2="366" y2="208" gradientUnits="userSpaceOnUse"><stop stop-color="#FFF6A3"/><stop offset=".42" stop-color="#FFC845"/><stop offset="1" stop-color="#DF7C1B"/></linearGradient>
+    <linearGradient id="ruby" x1="171" y1="104" x2="345" y2="184" gradientUnits="userSpaceOnUse"><stop stop-color="#FF7565"/><stop offset="1" stop-color="#C92C52"/></linearGradient>
+    <linearGradient id="king" x1="187" y1="176" x2="322" y2="455" gradientUnits="userSpaceOnUse"><stop stop-color="#4F506A"/><stop offset=".53" stop-color="#272A42"/><stop offset="1" stop-color="#171B30"/></linearGradient>
+    <filter id="shadow" x="-30%" y="-25%" width="160%" height="165%"><feDropShadow dx="0" dy="13" stdDeviation="10" flood-color="#4C7130" flood-opacity=".28"/></filter>
   </defs>
-  <rect width="512" height="512" rx="116" fill="#F8F7FB"/>
-  <rect x="32" y="32" width="448" height="448" rx="96" fill="url(#sky)"/>
-  <path d="M92 374c77-48 98-112 163-118 57-6 93 39 164 9" fill="none" stroke="#F8F7FB" stroke-width="32" stroke-linecap="round" opacity=".72"/>
-  <path d="M94 374c78-48 98-112 164-118 56-5 91 38 162 9" fill="none" stroke="#D8C29A" stroke-width="18" stroke-linecap="round"/>
-  <g filter="url(#softShadow)">
-    <path d="M173 370h167l-19 44H192l-19-44Z" fill="#241F3D"/>
-    <path d="M200 347h112l24 31H176l24-31Z" fill="#3D3763"/>
-    <path d="M227 326h58l18 28h-94l18-28Z" fill="#F8F7FB"/>
-    <path d="M213 315c-8-35 8-66 38-84 22-13 20-38 2-51 41 2 79 31 79 75 0 33-16 53-47 70h-72Z" fill="#F8F7FB"/>
-    <path d="M256 176c-7 32-30 45-49 58 3-36 23-61 49-58Z" fill="#241F3D"/>
-    <path d="M287 226c20 2 36 11 45 28-24 2-41-4-55-18l10-10Z" fill="#241F3D"/>
-    <circle cx="275" cy="244" r="7" fill="#241F3D"/>
-    <path d="M180 176l24 21 35-54 35 54 35-54 35 54 24-21-15 90H195l-15-90Z" fill="url(#gold)" stroke="#F8F7FB" stroke-width="8" stroke-linejoin="round"/>
-    <circle cx="239" cy="143" r="14" fill="#FFE68A"/>
-    <circle cx="309" cy="143" r="14" fill="#FFE68A"/>
-    <circle cx="180" cy="176" r="12" fill="#FFE68A"/>
-    <circle cx="368" cy="176" r="12" fill="#FFE68A"/>
+  <rect width="512" height="512" rx="118" fill="#F7F5FF"/>
+  <rect x="27" y="27" width="458" height="458" rx="98" fill="url(#mint)"/>
+  <g fill="#FFF" opacity=".4"><circle cx="96" cy="110" r="11"/><circle cx="416" cy="390" r="17"/><circle cx="115" cy="389" r="7"/></g>
+  <g filter="url(#shadow)" stroke="#1B2034" stroke-linejoin="round">
+    <!-- Roi -->
+    <path d="M164 443q0-25 28-34l18-8v-70l-12-19c-14-23-17-50-8-77h132c9 27 6 54-8 77l-12 19v70l18 8q28 9 28 34l-16 21H180l-16-21Z" fill="url(#king)" stroke-width="10"/>
+    <path d="M190 233q0-45 66-45t66 45q0 37-66 37t-66-37Z" fill="#30334C" stroke-width="10"/>
+    <path d="M180 430h152l-7 31H187l-7-31Z" fill="#24283E" stroke-width="10"/>
+    <path d="M217 287h78l-8 27h-62l-8-27Z" fill="#4A4C65" stroke-width="8"/>
+    <path d="M228 337h18" stroke="#777A95" stroke-width="11" stroke-linecap="round" opacity=".7"/>
+    <path d="M250 359h20" stroke="#6F728C" stroke-width="10" stroke-linecap="round" opacity=".58"/>
+    <path d="M200 420h77" stroke="#6A6D87" stroke-width="13" stroke-linecap="round" opacity=".54"/>
+    <!-- Couronne -->
+    <path d="M150 144 171 72l44 47 41-72 41 72 44-47 21 72-17 60H167l-17-60Z" fill="url(#gold)" stroke-width="10"/>
+    <path d="M173 137q23-38 47 1 18-37 36 0 18-37 36 0 24-39 47-1l-9 46H182l-9-46Z" fill="url(#ruby)" stroke-width="7"/>
+    <path d="M158 176h196l-8 42H166l-8-42Z" fill="url(#gold)" stroke-width="10"/>
+    <path d="M168 191h176" stroke="#FFF4A3" stroke-width="6" stroke-linecap="round" opacity=".8"/>
+    <g fill="#6EE4E8" stroke-width="5"><path d="m204 188 8 8-8 8-8-8 8-8Z"/><path d="m256 188 8 8-8 8-8-8 8-8Z"/><path d="m308 188 8 8-8 8-8-8 8-8Z"/></g>
+    <g fill="#FFF8CF" stroke-width="5"><circle cx="171" cy="72" r="10"/><circle cx="215" cy="119" r="10"/><circle cx="256" cy="47" r="11"/><circle cx="297" cy="119" r="10"/><circle cx="341" cy="72" r="10"/></g>
+    <path d="M256 28c-11 12-13 23 0 35 13-12 11-23 0-35Z" fill="#FFDA48" stroke-width="7"/>
   </g>
-  <path d="M97 126c18-18 45-18 63 0M361 382c19-18 47-18 66 0" fill="none" stroke="#F8F7FB" stroke-width="14" stroke-linecap="round" opacity=".78"/>
 </svg>
