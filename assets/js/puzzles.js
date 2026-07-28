@@ -54,6 +54,7 @@ let puzzleQueue = [];
 let puzzleIndex = 0;
 let puzzleThemeFilter = 'all';
 let puzzleHasFailed = false;
+let puzzleHintUsed = false;
 let mcqLocked = false;
 
 function ratingStars(rating){
@@ -78,11 +79,25 @@ function buildPuzzleQueue(){
 
 function ensurePuzzleBoard(){
   if(puzzleBoard) return;
-  puzzleBoard = Chessboard('puzzle-board', { position:'start', draggable:false, pieceTheme: PIECE_THEME, showNotation:false });
+  puzzleBoard = Chessboard('puzzle-board', {
+    position:'start', draggable:true, pieceTheme: PIECE_THEME, showNotation:false,
+    onDrop: onPuzzleBoardDrop
+  });
   renderCoords('puzzle-ranks', 'puzzle-files', 'white');
   renderThemeFilters();
   buildPuzzleQueue();
   loadPuzzle(0);
+  refreshPuzzleHeader();
+}
+
+function onPuzzleBoardDrop(source, target){
+  if(mcqLocked || !puzzleGame) return 'snapback';
+  const move = puzzleGame.moves({verbose:true}).find(m => m.from === source && m.to === target);
+  if(!move) return 'snapback';
+  const solution = (puzzleQueue[puzzleIndex].solution || '').replace(/[!?]+$/, '');
+  const option = document.querySelector(`#mcq-options .mcq-option[data-san="${CSS.escape(move.san)}"]`);
+  handleMcqAnswer(option || {dataset:{san:move.san}}, move.san === solution, solution);
+  return 'snapback';
 }
 
 function renderThemeFilters(){
@@ -131,6 +146,7 @@ function loadPuzzle(idx){
   puzzleIndex = ((idx % puzzleQueue.length) + puzzleQueue.length) % puzzleQueue.length;
   const p = puzzleQueue[puzzleIndex];
   puzzleHasFailed = false;
+  puzzleHintUsed = false;
   mcqLocked = false;
 
   puzzleGame = p.fen ? new Chess(p.fen) : new Chess();
@@ -165,6 +181,20 @@ function loadPuzzle(idx){
   const sideText = puzzleGame.turn() === 'w' ? 'Blancs' : 'Noirs';
   setPuzzleFeedback(`Aux ${sideText} de jouer — trouve le meilleur coup.`, 'prompt');
   if(typeof fitBoards === 'function') fitBoards('puzzle-board', puzzleBoard);
+  const hintButton = document.getElementById('puzzle-hint-btn');
+  if(hintButton){ hintButton.disabled = false; hintButton.textContent = 'Indice'; }
+}
+
+function showPuzzleHint(){
+  if(mcqLocked || !puzzleGame || !puzzleQueue.length) return;
+  const solution = (puzzleQueue[puzzleIndex].solution || '').replace(/[!?]+$/, '');
+  const match = puzzleGame.moves({verbose:true}).find(move => move.san === solution);
+  if(!match) return;
+  puzzleHintUsed = true;
+  flashSquares('#puzzle-board', [match.from, match.to], 'hint-square', 1800);
+  setPuzzleFeedback(`Indice : regarde la pièce en ${match.from.toUpperCase()}.`, 'prompt');
+  const hintButton = document.getElementById('puzzle-hint-btn');
+  if(hintButton){ hintButton.disabled = true; hintButton.textContent = 'Indice affiché'; }
 }
 
 function handleMcqAnswer(btn, isCorrect, solutionClean){
@@ -191,12 +221,15 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   } else {
     PROGRESS.puzzleStreak = 0;
   }
-  PROGRESS.puzzlesSolved++;
+  if(success) PROGRESS.puzzlesSolved++;
+  else PROGRESS.puzzlesFailed = (PROGRESS.puzzlesFailed || 0) + 1;
   const delta = applyPuzzleRatingChange(p.rating || 1000, success);
   saveProgress();
   recordActivity();
-  addXP(success ? 12 : 6);
-  bumpDailyCounter('puzzlesSolvedToday');
+  if(success){
+    addXP(12);
+    bumpDailyCounter('puzzlesSolvedToday');
+  }
   refreshPuzzleHeader();
   checkNewBadges();
   if(success) fireConfetti('puzzle');
@@ -204,15 +237,15 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   showRatingDelta(delta);
   setPuzzleFeedback(`${success ? 'Bravo !' : 'Pas cette fois.'} ${p.explanation || (solutionClean + ' était le coup gagnant.')}`, success ? 'good' : 'bad');
 
-  if(puzzleSource === 'mistakes'){
+  if(puzzleSource === 'mistakes' && success){
     PROGRESS.mistakes.splice(puzzleQueue.indexOf(p), 1);
     saveProgress();
     buildPuzzleQueue();
     setTimeout(()=> loadPuzzle(puzzleIndex), 1600);
-  } else if(puzzleSource === 'random'){
+  } else if(puzzleSource === 'random' && success){
     setTimeout(()=> generateRandomPuzzle(), 1600);
   } else {
-    setTimeout(()=> loadPuzzle(puzzleIndex+1), 1600);
+    setTimeout(()=> loadPuzzle(success ? puzzleIndex+1 : puzzleIndex), 1600);
   }
 }
 

@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="assets/icons/chessquest-logo.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
 <title>ChessQuest — Défi du jour</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -87,6 +87,7 @@ let dailyQueue = [];
 let dailyIdx = 0;
 let dailyBoard = null;
 let dailyGame = null;
+let dailyLocked = false;
 
 /* Choix déterministe par jour : même défi (et mêmes puzzles) pour tout le
    monde ce jour-là, sans avoir besoin d'un serveur pour le décider. */
@@ -101,13 +102,28 @@ function pickDailyPuzzles(n){
 
 function ensureDailyBoard(){
   if(dailyBoard) return;
-  dailyBoard = Chessboard('daily-board', {position:'start', draggable:false, pieceTheme: PIECE_THEME, showNotation:false});
+  dailyBoard = Chessboard('daily-board', {
+    position:'start', draggable:true, pieceTheme: PIECE_THEME, showNotation:false,
+    onDrop: onDailyBoardDrop
+  });
   renderCoords('daily-ranks', 'daily-files', 'white');
+  requestAnimationFrame(() => fitBoards('daily-board', dailyBoard, '.page'));
+}
+
+function onDailyBoardDrop(source, target){
+  if(dailyLocked || !dailyGame || !dailyQueue[dailyIdx]) return 'snapback';
+  const move = dailyGame.moves({verbose:true}).find(m => m.from === source && m.to === target);
+  if(!move) return 'snapback';
+  const solution = (dailyQueue[dailyIdx].solution || '').replace(/[!?]+$/, '');
+  const option = document.querySelector(`#daily-mcq-options .mcq-option[data-san="${CSS.escape(move.san)}"]`);
+  onDailyAnswer(option || {dataset:{san:move.san}}, solution);
+  return 'snapback';
 }
 
 function loadDailyPuzzle(){
   const p = dailyQueue[dailyIdx];
   if(!p){ showDailyDone(); return; }
+  dailyLocked = false;
   dailyGame = p.fen ? new Chess(p.fen) : new Chess();
   if(p.setupMoves) p.setupMoves.forEach(m => dailyGame.move(m));
   const orientation = dailyGame.turn() === 'b' ? 'black' : 'white';
@@ -130,6 +146,8 @@ function loadDailyPuzzle(){
 }
 
 function onDailyAnswer(btn, solutionClean){
+  if(dailyLocked) return;
+  dailyLocked = true;
   const container = document.getElementById('daily-mcq-options');
   const correct = btn.dataset.san === solutionClean;
   container.querySelectorAll('.mcq-option').forEach(b => {

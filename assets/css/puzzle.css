@@ -16,6 +16,27 @@
 .puzzle-rating-inline .pr-delta.down{color:var(--blunder);}
 
 .puzzle-source-row{display:flex;gap:2px;margin-bottom:16px;background:var(--bg-panel-2);border:1px solid var(--line);border-radius:999px;padding:3px;max-width:fit-content;flex-wrap:wrap;}
+.puzzle-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:-4px 0 8px;}
+.puzzle-page-head h1{font-family:var(--font-display);font-size:1.65rem;line-height:1;color:var(--navy);}
+.eyebrow{font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--coral);margin-bottom:4px;}
+.puzzle-rating-card{display:grid;grid-template-columns:auto auto;align-items:baseline;column-gap:5px;background:var(--accent-purple-bg);border:1px solid rgba(112,86,217,.18);border-radius:14px;padding:7px 10px;color:var(--coral);}
+.puzzle-rating-card span{grid-column:1/-1;font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.05em;}
+.puzzle-rating-card strong{font-family:var(--font-display);font-size:1.1rem;}
+.puzzle-rating-card em{font-style:normal;font-size:.75rem;font-weight:800;}
+.puzzle-source{border:0;background:transparent;border-radius:999px;padding:7px 11px;color:var(--text-dim);font:700 .76rem var(--font-body);cursor:pointer;}
+.puzzle-source.active{background:var(--coral);color:#fff;box-shadow:0 2px 6px rgba(112,86,217,.26);}
+.puzzle-action-row{display:flex;align-items:stretch;gap:8px;margin-top:12px;}
+.feedback-box{margin:0;border-radius:14px;padding:11px 13px;font-size:.84rem;font-weight:700;line-height:1.35;flex:1;}
+.puzzle-hint-btn{border:1px solid var(--line);border-radius:14px;padding:8px 11px;background:var(--bg-panel);font:800 .75rem var(--font-body);color:var(--coral);cursor:pointer;white-space:nowrap;}
+.puzzle-hint-btn:disabled{opacity:.55;cursor:default;}
+.feedback-box.prompt{background:var(--accent-purple-bg);color:var(--text-dim);}
+.feedback-box.good{background:var(--accent-green-bg);color:var(--good-dark);}
+.feedback-box.bad{background:var(--accent-pink-bg);color:var(--blunder);}
+.puzzle-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 6px;}
+.puzzle-stats .stat-card{background:var(--bg-panel);border:1px solid var(--line);border-radius:14px;padding:10px 7px;text-align:center;}
+.puzzle-stats .big{font-family:var(--font-display);font-size:1.1rem;color:var(--navy);line-height:1.1;}
+.puzzle-stats .label{font-size:.66rem;color:var(--text-dim);font-weight:700;margin-top:4px;}
+@media (max-width:360px){.puzzle-source{padding:6px 8px;font-size:.7rem}.puzzle-rating-card{padding:6px 8px}.puzzle-page-head h1{font-size:1.45rem}}
 #mistakes-count-badge{display:inline-block;background:var(--blunder);color:#fff;border-radius:10px;padding:1px 7px;font-size:0.68rem;margin-left:4px;font-weight:700;}
 
 .theme-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}

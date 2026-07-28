@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="assets/icons/chessquest-logo.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
 <title>ChessQuest — Coach</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -118,9 +118,9 @@ function ensureCoachBoard(){
   coachBoard = Chessboard('coach-board', {
     position: 'start', draggable: true, dropOffBoard: 'trash', sparePieces: true,
     pieceTheme: PIECE_THEME, showNotation: true,
-    onChange: updateFenDisplay
+    onChange: () => requestAnimationFrame(updateFenDisplay)
   });
-  fitBoards('coach-board', coachBoard, '.page', '.eval-bar-wrap');
+  requestAnimationFrame(() => fitBoards('coach-board', coachBoard, '.page', '.eval-bar-wrap'));
   watchBoardResize('coach-board', () => coachBoard, '.page', '.eval-bar-wrap');
   updateFenDisplay();
 }
@@ -146,9 +146,29 @@ function castlingRights(){
   return s || '-';
 }
 
+function coachPlacementFen(){
+  if(!coachBoard) return '8/8/8/8/8/8/8/8';
+  const position = coachBoard.position();
+  const files = 'abcdefgh';
+  const ranks = [];
+  for(let rank = 8; rank >= 1; rank--){
+    let empty = 0;
+    let fenRank = '';
+    for(const file of files){
+      const piece = position[file + rank];
+      if(!piece){ empty++; continue; }
+      if(empty){ fenRank += empty; empty = 0; }
+      const type = piece.charAt(1);
+      fenRank += piece.charAt(0) === 'w' ? type.toUpperCase() : type.toLowerCase();
+    }
+    if(empty) fenRank += empty;
+    ranks.push(fenRank);
+  }
+  return ranks.join('/');
+}
+
 function currentFen(){
-  const placement = coachBoard.fen();
-  return `${placement} ${coachTurn} ${castlingRights()} - 0 1`;
+  return `${coachPlacementFen()} ${coachTurn} ${castlingRights()} - 0 1`;
 }
 
 function updateFenDisplay(){
@@ -163,6 +183,9 @@ document.getElementById('load-fen-btn').onclick = () => {
   if(!raw){ return; }
   try{
     const parts = raw.split(' ');
+    const candidate = `${parts[0]} ${parts[1] === 'b' ? 'b' : 'w'} ${parts[2] || '-'} ${parts[3] || '-'} ${parts[4] || 0} ${parts[5] || 1}`;
+    const validation = new Chess();
+    if(!validation.load(candidate)) throw new Error('FEN invalide');
     coachBoard.position(parts[0], false);
     if(parts[1]) setTurn(parts[1] === 'b' ? 'b' : 'w');
     if(parts[2]){

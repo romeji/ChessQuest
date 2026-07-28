@@ -8,15 +8,14 @@
   "scope": "./",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
-  "orientation": "portrait",
   "background_color": "#F8F7FB",
   "theme_color": "#7C6EF0",
   "categories": ["education", "games"],
   "icons": [
     {
-      "src": "assets/icons/chessquest-logo.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "assets/icons/chessquest-app-icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
@@ -25,25 +24,25 @@
       "name": "Parcours",
       "short_name": "Parcours",
       "url": "./learn.html",
-      "icons": [{ "src": "assets/icons/chessquest-logo.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "icons": [{ "src": "assets/icons/chessquest-app-icon.png", "sizes": "1024x1024", "type": "image/png" }]
     },
     {
       "name": "S'entrainer",
       "short_name": "Jouer",
       "url": "./entrainement.html",
-      "icons": [{ "src": "assets/icons/chessquest-logo.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "icons": [{ "src": "assets/icons/chessquest-app-icon.png", "sizes": "1024x1024", "type": "image/png" }]
     },
     {
       "name": "Puzzles",
       "short_name": "Puzzles",
       "url": "./puzzles.html",
-      "icons": [{ "src": "assets/icons/chessquest-logo.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "icons": [{ "src": "assets/icons/chessquest-app-icon.png", "sizes": "1024x1024", "type": "image/png" }]
     },
     {
       "name": "Coach",
       "short_name": "Coach",
       "url": "./coach.html",
-      "icons": [{ "src": "assets/icons/chessquest-logo.svg", "sizes": "any", "type": "image/svg+xml" }]
+      "icons": [{ "src": "assets/icons/chessquest-app-icon.png", "sizes": "1024x1024", "type": "image/png" }]
     }
   ]
 }

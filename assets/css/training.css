@@ -6,6 +6,10 @@
 .bot-sub{font-size:0.78rem;color:var(--text-dim);margin-top:1px;}
 
 .training-board-wrap{position:relative;margin-bottom:16px;}
+.training-moves-card{background:var(--bg-panel);border:1px solid var(--line);border-radius:16px;margin:0 0 16px;overflow:hidden;box-shadow:0 4px 12px rgba(36,31,61,.06);}
+.training-moves-head{display:flex;justify-content:space-between;gap:12px;padding:10px 13px;background:var(--bg-panel-2);font-size:.72rem;font-weight:800;color:var(--text-dim);}
+.training-move-log{display:grid;grid-template-columns:30px 1fr 1fr;gap:4px 10px;min-height:42px;max-height:94px;overflow:auto;padding:10px 13px;font:700 .82rem var(--font-mono);color:var(--navy);}
+.training-move-log .move-no{color:var(--text-dim);}.move-log-empty{grid-column:1/-1;font:600 .78rem var(--font-body);color:var(--text-dim);align-self:center;}
 
 .coach-bubble{
   position:absolute;right:6px;bottom:-14px;max-width:230px;background:var(--bg-panel);border-radius:16px 16px 4px 16px;

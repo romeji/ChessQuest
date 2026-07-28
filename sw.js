@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v7';
+const CACHE_VERSION = 'chessquest-v11';
 const APP_SHELL = [
   './',
   './index.html',
@@ -16,7 +16,7 @@ const APP_SHELL = [
   './profile.html',
   './settings.html',
   './manifest.webmanifest',
-  './assets/icons/chessquest-logo.svg',
+  './assets/icons/chessquest-app-icon.png',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
   './assets/icons/maskable-512.png',
@@ -70,7 +70,14 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
-  if (url.origin !== self.location.origin) return;
+  const supportedOrigins = [
+    self.location.origin,
+    'https://cdnjs.cloudflare.com',
+    'https://cdn.jsdelivr.net',
+    'https://fonts.googleapis.com',
+    'https://fonts.gstatic.com'
+  ];
+  if (!supportedOrigins.includes(url.origin)) return;
 
   event.respondWith(
     caches.match(event.request).then(cached => {

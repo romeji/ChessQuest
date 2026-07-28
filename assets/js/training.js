@@ -15,6 +15,7 @@ let tgGame = null;
 let tgBoard = null;
 let tgOver = false;
 let tgBotThinking = false;
+let tgSelectedSquare = null;
 
 /* ---- Messages du coach (choisis selon des indices simples, sans appel moteur) ---- */
 const COACH_DEV = ["Très bon coup ! Tu développes bien tes pièces.", "Bien vu, sortir cette pièce tôt est une bonne idée.", "Beau développement, continue comme ça !"];
@@ -62,7 +63,41 @@ function ensureTgBoard(){
     onDrop: onTgDrop, onSnapEnd: () => { if(tgGame) tgBoard.position(tgGame.fen()); }
   });
   renderCoords('tg-ranks', 'tg-files', 'white');
+  $('#tg-board').on('click', '[data-square]', function(){ tgSquareClick(this.getAttribute('data-square')); });
   document.getElementById('tg-board').addEventListener('touchmove', e => e.preventDefault(), {passive:false});
+}
+
+function clearTgSelection(){
+  $('#tg-board [data-square]').removeClass('selected-square');
+  $('#tg-board .move-dot').remove();
+  tgSelectedSquare = null;
+}
+function tgSquareClick(square){
+  if(!tgGame || tgOver || tgBotThinking || tgGame.turn() !== 'w') return;
+  if(tgSelectedSquare === square){ clearTgSelection(); return; }
+  if(tgSelectedSquare === null){
+    const piece = tgGame.get(square);
+    if(piece && piece.color === 'w'){
+      tgSelectedSquare = square;
+      $(`#tg-board [data-square="${square}"]`).addClass('selected-square');
+      tgGame.moves({square, verbose:true}).forEach(move => $(`#tg-board [data-square="${move.to}"]`).append('<div class="move-dot"></div>'));
+    }
+    return;
+  }
+  const from = tgSelectedSquare;
+  clearTgSelection();
+  onTgDrop(from, square);
+}
+
+function renderTgMoveLog(){
+  const el = document.getElementById('tg-move-log');
+  if(!el || !tgGame) return;
+  const moves = tgGame.history();
+  if(!moves.length){ el.innerHTML = '<span class="move-log-empty">Les coups de la partie apparaîtront ici.</span>'; return; }
+  const rows = [];
+  for(let i=0; i<moves.length; i += 2){ rows.push(`<span class="move-no">${Math.floor(i/2)+1}.</span><span>${escapeHtml(moves[i])}</span><span>${moves[i+1] ? escapeHtml(moves[i+1]) : ''}</span>`); }
+  el.innerHTML = rows.join('');
+  el.scrollTop = el.scrollHeight;
 }
 
 function newTrainingGame(){
@@ -74,20 +109,25 @@ function newTrainingGame(){
   tgBoard.start();
   renderCoords('tg-ranks', 'tg-files', 'white');
   clearHighlights('#tg-board');
+  clearTgSelection();
   hideCoach();
   setBotStatus("Ta partie contre l'ordinateur");
   document.getElementById('next-btn').disabled = true;
   document.getElementById('undo-btn').disabled = true;
+  renderTgMoveLog();
   fitBoards('tg-board', tgBoard, '.page');
 }
 
 function onTgDrop(source, target){
   if(tgOver || tgBotThinking) return 'snapback';
+  if(tgGame.turn() !== 'w') return 'snapback';
   const moveObj = tgGame.move({from:source, to:target, promotion:'q'});
   if(moveObj === null) return 'snapback';
+  clearTgSelection();
   playSound(moveObj.captured ? 'capture' : 'move');
   highlightMove('#tg-board', moveObj.from, moveObj.to);
   document.getElementById('undo-btn').disabled = false;
+  renderTgMoveLog();
   const ply = tgGame.history().length;
   const comment = coachCommentFor(moveObj, tgGame, ply);
   showCoach(comment.text, comment.icon);
@@ -178,6 +218,7 @@ document.getElementById('undo-btn').onclick = () => {
   hideCoach();
   setBotStatus('Coup annulé — à toi de rejouer.');
   document.getElementById('undo-btn').disabled = tgGame.history().length === 0;
+  renderTgMoveLog();
 };
 
 document.getElementById('hint-btn2').onclick = async () => {

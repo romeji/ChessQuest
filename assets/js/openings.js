@@ -373,6 +373,9 @@ let currentLineKey = null;
 let trainPly = 0;
 let lineMistakes = 0;
 let autoHintEnabled = true;
+let trainSession = 0;
+let trainAutoTimer = null;
+let lineCompletionRecorded = false;
 
 const WRONG_MOVE_PHRASES = [
   "Pas tout à fait ! Indice : le coup attendu déplace un {piece}. Réessaie.",
@@ -453,10 +456,12 @@ function showExpectedMove(){
 
 function loadLine(line, key){
   ensureTrainBoard();
+  trainSession++;
+  if(trainAutoTimer) clearTimeout(trainAutoTimer);
   currentLine = line;
   currentLineKey = key || currentLineKey;
   trainGame = new Chess();
-  trainPly = 0; lineMistakes = 0;
+  trainPly = 0; lineMistakes = 0; lineCompletionRecorded = false;
   clearTrainSelection();
   trainBoard.orientation(line.forColor==='b' ? 'black' : 'white');
   trainBoard.start();
@@ -478,13 +483,18 @@ function continueTrainLine(){
   $('#train-board [data-square]').removeClass('suggest-from suggest-to');
   if(trainPly >= currentLine.moves.length){
     setTrainFeedback('Ligne terminée — bravo ! Recommence pour la mémoriser, ou choisis-en une autre.', 'done');
-    if(currentLine.forColor !== null) recordLineCompletion(currentLineKey, lineMistakes === 0);
+    if(currentLine.forColor !== null && !lineCompletionRecorded){
+      lineCompletionRecorded = true;
+      recordLineCompletion(currentLineKey, lineMistakes === 0);
+    }
     return;
   }
   const nextColor = (trainPly % 2 === 0) ? 'w' : 'b';
   const next = currentLine.moves[trainPly];
   if(nextColor !== currentLine.forColor){
-    setTimeout(()=>{
+    const session = trainSession;
+    trainAutoTimer = setTimeout(()=>{
+      if(session !== trainSession || !currentLine) return;
       const mv = trainGame.move(next.san.replace(/[!?]+$/, ''));
       trainBoard.position(trainGame.fen());
       if(mv) highlightMove('#train-board', mv.from, mv.to);

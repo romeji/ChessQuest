@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="assets/icons/chessquest-logo.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+<link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
 <title>ChessQuest — Puzzles</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -31,13 +31,48 @@
       <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
     </a>
 
-    <div class="board-frame" style="margin:0 auto 20px;display:block;width:fit-content;">
-      <div class="coord-ranks" id="puzzle-ranks"></div>
-      <div id="puzzle-board"></div>
-      <div class="coord-files" id="puzzle-files"></div>
+    <div class="puzzle-page-head">
+      <div>
+        <p class="eyebrow">DÃ©fi tactique</p>
+        <h1>Puzzles</h1>
+      </div>
+      <div class="puzzle-rating-card" aria-label="Classement puzzle">
+        <span>Classement</span><strong id="puzzle-rating-value">800</strong><em id="puzzle-rating-delta"></em>
+      </div>
     </div>
 
+    <div class="puzzle-streak-row">
+      <span class="puzzle-streak-flame">ðŸ”¥</span><span class="puzzle-streak-label">SÃ©rie : <strong id="puzzle-streak-value">0</strong></span>
+      <span class="puzzle-rating-inline">Trouve le coup qui gagne.</span>
+    </div>
+
+    <div class="puzzle-source-row" aria-label="Source des puzzles">
+      <button class="puzzle-source active" id="src-classic" type="button">Classiques</button>
+      <button class="puzzle-source" id="src-random" type="button">AlÃ©atoire</button>
+      <button class="puzzle-source" id="src-mistakes" type="button">Mes erreurs <span id="mistakes-count-badge"></span></button>
+    </div>
+    <div class="theme-filter-row" id="theme-filter-row"></div>
+
+    <div class="puzzle-card">
+      <div class="puzzle-card-head">
+        <div class="puzzle-question" id="puzzle-question">Trouve le meilleur coup !</div>
+        <div class="puzzle-kind" id="puzzle-kind"></div>
+      </div>
+
+      <div class="board-frame" style="margin:0 auto 16px;display:block;width:fit-content;">
+        <div class="coord-ranks" id="puzzle-ranks"></div>
+        <div id="puzzle-board"></div>
+        <div class="coord-files" id="puzzle-files"></div>
+      </div>
+      <div class="progress-dots" id="puzzle-dots" aria-label="Progression des puzzles"></div>
+    </div>
+
+    <div class="puzzle-action-row">
+      <div class="feedback-box prompt" id="puzzle-feedback">Observe la position puis choisis ton coup.</div>
+      <button class="puzzle-hint-btn" id="puzzle-hint-btn" type="button">Indice</button>
+    </div>
     <div class="mcq-options" id="mcq-options"></div>
+    <div class="puzzle-stats" id="puzzle-stats"></div>
   </section>
 </div>
 
@@ -80,6 +115,27 @@ if(urlSource === 'mistakes' || urlSource === 'random') puzzleSource = urlSource;
 if(urlTheme) puzzleThemeFilter = urlTheme;
 ensurePuzzleBoard();
 watchBoardResize('puzzle-board', () => puzzleBoard, '.page');
+document.querySelectorAll('.puzzle-source').forEach(button => button.classList.toggle('active', button.id === `src-${puzzleSource}`));
+
+function selectPuzzleSource(source){
+  puzzleSource = source;
+  puzzleThemeFilter = 'all';
+  document.querySelectorAll('.puzzle-source').forEach(button => button.classList.toggle('active', button.id === `src-${source}`));
+  renderThemeFilters();
+  if(source === 'random'){
+    generatedPuzzle = null;
+    buildPuzzleQueue();
+    generateRandomPuzzle();
+  }else{
+    buildPuzzleQueue();
+    loadPuzzle(0);
+  }
+  refreshPuzzleHeader();
+}
+document.getElementById('src-classic').onclick = () => selectPuzzleSource('classic');
+document.getElementById('src-random').onclick = () => selectPuzzleSource('random');
+document.getElementById('src-mistakes').onclick = () => selectPuzzleSource('mistakes');
+document.getElementById('puzzle-hint-btn').onclick = showPuzzleHint;
 </script>
 </body>
 </html>
