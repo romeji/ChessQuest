@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v27';
+const CACHE_VERSION = 'chessquest-v28';
 const APP_SHELL = [
   './',
   './index.html',
@@ -66,7 +66,8 @@ const APP_SHELL = [
   './assets/illustrations/opening-islands-spritesheet.png',
   './assets/illustrations/opening-map-night.png',
   './assets/illustrations/analysis-hero-chess.png',
-  './assets/illustrations/rewards-spritesheet.png'
+  './assets/illustrations/rewards-spritesheet.png',
+  './assets/illustrations/training-menu-hero.png'
 ];
 
 self.addEventListener('install', event => {

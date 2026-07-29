@@ -66,38 +66,32 @@ const SKILL_ICON_LOCK = '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" 
 function renderSkillPath(){
   const el = document.getElementById('skill-path');
   const mastered = PROGRESS.mastered || {};
-  const path = ['italienne','quatre_cavaliers','ecossaise','vienne','espagnole','gambit_roi','londres','colle','gambit_dame','anglaise','reti','francaise','carokann','scandinave','pirc','alekhine','indienne_roi','nimzo_indienne','grunfeld','najdorf','dragon','sveshnikov'];
-  const pieces = ['♜','♞','♝','♛','♚','♟'];
-  const worlds = {
-    0:['ROYAUME DU CENTRE','Les bases de 1.e4','🌿'],
-    5:['FORÊT DES GAMBITs','Attaque et initiative','🔥'],
-    10:['ARCHIPEL STRATÉGIQUE','Contrôle et structures','🧭'],
-    15:['MONTAGNES INDIENNES','Jeu dynamique','⛰'],
-    19:['VOLCAN SICILIEN','Tactique avancée','🌋']
-  };
-  const step = 158;
-  const topPad = 112;
-  const height = topPad + path.length * step + 130;
-  const coords = path.map((_,i)=>({x:i%2 ? 278 : 112,y:topPad+i*step}));
-  const road = coords.map((p,i)=> i===0 ? `M ${p.x} ${p.y}` : `C ${coords[i-1].x} ${p.y-76}, ${p.x} ${p.y-76}, ${p.x} ${p.y}`).join(' ');
-  const island = (key, index) => {
+  const path = [
+    {key:'italienne', title:'Italienne', x:48, y:15},
+    {key:'gambit_dame', title:'Gambit Dame', x:69, y:32},
+    {key:'najdorf', title:'Sicilienne', x:31, y:45},
+    {key:'francaise', title:'Défense Française', x:69, y:56},
+    {key:'carokann', title:'Caro-Kann', x:31, y:68},
+    {key:'dragon', title:'Ouvertures rares', x:69, y:78}
+  ];
+  const isComplete = key => key === 'gambit_dame'
+    ? ['qgd','qga','slav'].every(line => mastered[line])
+    : !!mastered[key];
+  const island = (item, index) => {
     const previous = path[index - 1];
-    const unlocked = index === 0 || (previous === 'gambit_dame' ? ['qgd','qga','slav'].every(k => mastered[k]) : !!mastered[previous]);
-    const complete = key === 'gambit_dame' ? ['qgd','qga','slav'].every(k => mastered[k]) : !!mastered[key];
+    const unlocked = index === 0 || isComplete(previous.key);
+    const complete = isComplete(item.key);
     const status = complete ? 'done' : (unlocked ? 'current' : 'locked');
-    const title = key === 'gambit_dame' ? 'Gambit Dame' : OPENINGS[key].name.replace('Sicilienne — ','').replace('Gambit Dame — ','');
-    const position = `--top:${topPad + index * step}px;--side:${index % 2 ? 'right' : 'left'};`;
+    const position = `--top:${item.y}%;--left:${item.x}%;`;
     const stars = complete ? '<span class="island-stars">★★★</span>' : '';
-    const inner = `<span class="island-ground sprite-${index%6}"><span class="island-grass"></span><span class="island-piece">${unlocked?pieces[index%pieces.length]:'🔒'}</span><span class="island-spark spark-a"></span><span class="island-spark spark-b"></span></span><span class="map-label">${escapeHtml(title)}</span><span class="map-state">${complete?'Maîtrisée':(unlocked?'Jouer maintenant':'Termine l’étape précédente')}</span>${stars}`;
-    const target = key === 'gambit_dame' ? 'openings.html?path=gambit_dame' : `openings.html?opening=${key}`;
-    const world = worlds[index] ? `<div class="world-banner" style="--world-top:${topPad + index*step - 88}px"><span>${worlds[index][2]}</span><div><small>MONDE ${Object.keys(worlds).indexOf(String(index))+1}</small><strong>${worlds[index][0]}</strong><em>${worlds[index][1]}</em></div></div>` : '';
-    const checkpoint = index>0 && index%5===4 ? `<div class="quest-chest" style="--chest-top:${topPad+index*step+82}px"><span>🎁</span><b>Coffre de monde</b><small>${complete?'Récompense débloquée':'Encore '+(5-(index%5))+' étape'}</small></div>` : '';
-    const worldClass = `world-${Math.floor(index/5)+1}`;
-    const node = unlocked ? `<a class="map-island ${status} ${worldClass} side-${index % 2 ? 'right' : 'left'}" style="${position}" href="${target}">${inner}</a>` : `<span class="map-island ${status} ${worldClass} side-${index % 2 ? 'right' : 'left'}" style="${position}" aria-label="${escapeHtml(title)} verrouillée">${inner}</span>`;
-    return world + node + checkpoint;
+    const marker = complete ? '✓' : (unlocked ? '▶' : '🔒');
+    const inner = `<span class="map-hotspot">${marker}</span><span class="map-label">${escapeHtml(item.title)}</span><span class="map-state">${complete?'Maîtrisée':(unlocked?'Jouer maintenant':'Termine l’île précédente')}</span>${stars}`;
+    const target = item.key === 'gambit_dame' ? 'openings.html?path=gambit_dame' : `openings.html?opening=${item.key}`;
+    return unlocked
+      ? `<a class="map-island ${status}" style="${position}" href="${target}">${inner}</a>`
+      : `<span class="map-island ${status}" style="${position}" aria-label="${escapeHtml(item.title)} verrouillée">${inner}</span>`;
   };
-  el.style.setProperty('--map-height', `${height}px`);
-  el.innerHTML = `<svg class="quest-road" viewBox="0 0 390 ${height}" preserveAspectRatio="none" aria-hidden="true"><path class="road-shadow" d="${road}"></path><path class="road-main" d="${road}"></path><path class="road-dashes" d="${road}"></path></svg><div class="map-scenery" aria-hidden="true"></div><div class="map-nodes">${path.map(island).join('')}</div><div class="final-castle">🏰<strong>Le Château des Maîtres</strong><small>Maîtrise les 22 ouvertures</small></div>`;
+  el.innerHTML = `<div class="map-nodes">${path.map(island).join('')}</div><div class="map-treasure-label"><strong>Trésor du parcours</strong><small>Maîtrise les six îles pour l’ouvrir</small></div>`;
   document.getElementById('learn-gem-count').textContent = PROGRESS.xp || 0;
 }
 
