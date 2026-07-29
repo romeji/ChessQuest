@@ -110,12 +110,15 @@
 const urlParams = new URLSearchParams(location.search);
 const urlSource = urlParams.get('source');
 if(urlSource === 'mistakes') puzzleSource = urlSource;
+const urlTheme = urlParams.get('theme');
+if(urlTheme && CLASSIC_PUZZLES.some(puzzle => puzzle.theme === urlTheme)) puzzleTheme = urlTheme;
 ensurePuzzleBoard();
 watchBoardResize('puzzle-board', () => puzzleBoard, '.page');
 document.querySelectorAll('.puzzle-source').forEach(button => button.classList.toggle('active', button.id === `src-${puzzleSource}`));
 
 function selectPuzzleSource(source){
   puzzleSource = source;
+  puzzleTheme = '';
   document.querySelectorAll('.puzzle-source').forEach(button => button.classList.toggle('active', button.id === `src-${source}`));
   buildPuzzleQueue();
   loadPuzzle(0);

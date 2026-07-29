@@ -48,6 +48,7 @@ const CLASSIC_PUZZLES = [
 let puzzleBoard = null;
 let puzzleGame = null;
 let puzzleSource = 'random';
+let puzzleTheme = '';
 let puzzleQueue = [];
 let puzzleIndex = 0;
 let puzzleHasFailed = false;
@@ -65,7 +66,10 @@ function buildPuzzleQueue(){
   if(puzzleSource === 'mistakes'){
     puzzleQueue = (PROGRESS.mistakes || []).slice();
   } else {
-    puzzleQueue = CLASSIC_PUZZLES.slice().sort(() => Math.random() - 0.5);
+    const candidates = puzzleTheme
+      ? CLASSIC_PUZZLES.filter(puzzle => puzzle.theme === puzzleTheme)
+      : CLASSIC_PUZZLES;
+    puzzleQueue = candidates.slice().sort(() => Math.random() - 0.5);
   }
 }
 
