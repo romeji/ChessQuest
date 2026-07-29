@@ -126,7 +126,10 @@ function dayOfYear(){
   const start = new Date(now.getFullYear(), 0, 0);
   return Math.floor((now - start) / 86400000);
 }
-function todayChallenge(){ return DAILY_CHALLENGES[dayOfYear() % DAILY_CHALLENGES.length]; }
+/* Le défi quotidien est volontairement stable : trois puzzles aléatoires.
+   Les autres activités restent disponibles dans S'entraîner, sans remplacer
+   le rituel tactique que le joueur retrouve chaque jour. */
+function todayChallenge(){ return DAILY_CHALLENGES[0]; }
 function ensureDailyProgressFresh(){
   PROGRESS.dailyProgress = PROGRESS.dailyProgress || {};
   if(PROGRESS.dailyProgress.date !== todayKey()){

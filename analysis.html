@@ -2,18 +2,18 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#7C6EF0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#004d38">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
-<title>ChessQuest — Analyser vos parties Chess.com</title>
+<title>ChessQuest — Analyse de partie</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/layout.css">
@@ -21,45 +21,43 @@
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/analysis.css">
 <link rel="stylesheet" href="assets/css/polish.css">
+<link rel="stylesheet" href="assets/css/mockup-pages.css">
 </head>
-<body data-page="analyze">
+<body data-page="analyze" class="quest-screen analysis-page">
 <div id="toast-container"></div>
-<div class="app">
+<main class="app">
   <section class="page">
-    <a class="subpage-back" aria-label="Retour" href="index.html" style="margin-bottom:16px;">
-      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
-    </a>
-    <h1 class="section-title" style="border-top:none;padding-top:0;margin-bottom:2px;">Analyser vos parties Chess.com</h1>
-    <p class="section-sub" style="margin-bottom:14px;">Choisis une partie pour l'ouvrir dans sa propre fenêtre d'analyse.</p>
+    <header class="quest-page-title">
+      <span></span>
+      <h1>Analyse de partie</h1>
+      <span class="quest-currency" id="analysis-gem-count">0</span>
+    </header>
 
-    <section class="analysis-quest-card hidden" id="analysis-quest-card">
-      <img class="analysis-quest-art" src="assets/illustrations/analysis-hero-chess.png" alt="Pièces d'échecs prêtes à être analysées">
-      <div><span>DERNIÈRE PARTIE</span><strong id="analysis-quest-title">Prête à analyser</strong><small id="analysis-quest-copy">Découvre les moments clés de ta partie.</small></div>
-      <button class="analysis-quest-btn" id="analysis-quest-btn" type="button">Analyser</button>
+    <section class="analysis-hero">
+      <img class="analysis-hero-art" src="assets/illustrations/analysis-hero-chess.png" alt="Pions noir et blanc">
+      <div class="analysis-hero-content">
+        <div class="analysis-brand"><span class="pawn">♟</span>Chess.com</div>
+        <h2 id="analysis-quest-title">Ta dernière partie est prête à analyser</h2>
+        <p id="analysis-quest-copy">Synchronise tes parties récentes, puis découvre les moments clés et les erreurs à corriger.</p>
+        <button class="analysis-quest-btn" id="analysis-quest-btn" type="button">⌕&nbsp; Analyser</button>
+      </div>
     </section>
 
-    <div class="games-list" id="games-list"></div>
-  </section>
-</div>
+    <section class="quest-card analysis-section-card">
+      <h2>Parties récentes</h2>
+      <div class="games-list" id="games-list"></div>
+    </section>
 
-<nav class="tabbar">
-  <button class="tabbar-item" data-tab="home" data-href="index.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Accueil</span>
-  </button>
-  <button class="tabbar-item" data-tab="learn" data-href="learn.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="6" cy="19" r="2.5"/><circle cx="12" cy="11" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M6 16.5V13a2 2 0 0 1 2-2h1.5M14.5 9H16a2 2 0 0 0 2-2V5.5"/></svg><span>Parcours</span>
-  </button>
-  <button class="tabbar-item" data-tab="coach" data-href="coach.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M12 2a2.5 2.5 0 0 0-2 4 4 4 0 0 0-1.6 5.4C7.2 12.4 6 14.2 6 17h12c0-2.8-1.2-4.6-2.4-5.6A4 4 0 0 0 14 6a2.5 2.5 0 0 0-2-4Z"/><rect x="5" y="19" width="14" height="3" rx="1"/></svg>
-    <span>Coach</span>
-  </button>
-  <button class="tabbar-item" data-tab="progress" data-href="progress.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 15l4-5 3 3 5-7"/></svg><span>Progrès</span>
-  </button>
-  <button class="tabbar-item" data-tab="profile" data-href="profile.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Profil</span>
-  </button>
-</nav>
+    <section class="quest-card analysis-section-card">
+      <h2>Évaluation de la dernière partie</h2>
+      <div class="analysis-eval">
+        <svg id="analysis-eval-svg" viewBox="0 0 280 92" preserveAspectRatio="none" aria-label="Courbe d'évaluation"></svg>
+        <div class="analysis-eval-score" id="analysis-eval-score">—<small>En attente d’analyse</small></div>
+      </div>
+    </section>
+  </section>
+</main>
+<nav class="tabbar"></nav>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -71,78 +69,124 @@
 <script src="assets/js/navigation.js"></script>
 <script>
 let fetchedGames = [];
-function resultLabel(code){
-  if(code === 'win') return {label:'Victoire', cls:'win'};
-  if(['checkmated','resigned','timeout','abandoned','lose'].includes(code)) return {label:'Défaite', cls:'loss'};
-  return {label:'Nulle', cls:'draw'};
-}
-function renderGamesList(games, username){
-  fetchedGames = games;
-  const el = document.getElementById('games-list');
-  const quest = document.getElementById('analysis-quest-card');
-  if(games && games.length){
-    const latest = games[0];
-    const yoursWhite = latest.white && latest.white.username && latest.white.username.toLowerCase() === (username||'').toLowerCase();
-    const opponent = yoursWhite ? latest.black?.username : latest.white?.username;
-    document.getElementById('analysis-quest-title').textContent = `Ta partie contre ${opponent || 'ton adversaire'}`;
-    document.getElementById('analysis-quest-copy').textContent = 'Identifie tes meilleurs coups et les moments à revoir.';
-    quest.classList.remove('hidden');
-    document.getElementById('analysis-quest-btn').onclick = () => openGame(0);
-  } else { quest.classList.add('hidden'); }
-  if(!games || games.length === 0){
-    el.innerHTML = `<p class="section-sub">Aucune partie trouvée. Ajoute ton pseudo Chess.com dans <a href="settings.html" style="color:var(--coral);font-weight:700;">Réglages</a>.</p>`;
-    return;
-  }
-  const uLower = (username||'').toLowerCase();
-  el.innerHTML = games.map((g, idx) => {
-    const isWhite = (g.white && g.white.username && g.white.username.toLowerCase() === uLower);
-    const opponent = isWhite ? (g.black ? g.black.username : '?') : (g.white ? g.white.username : '?');
-    const resCode = isWhite ? (g.white ? g.white.result : '') : (g.black ? g.black.result : '');
-    const r = resultLabel(resCode);
-    const date = g.end_time ? new Date(g.end_time * 1000).toLocaleDateString('fr-FR') : '';
-    return `<div class="game-row" data-idx="${idx}">
-      <span class="g-date">${date}</span><span>vs ${escapeHtml(opponent)}</span>
-      <span class="g-result ${r.cls}">${r.label}</span>
-      <span class="g-status checking" data-status-idx="${idx}">…</span>
-    </div>`;
-  }).join('');
-  el.querySelectorAll('.game-row').forEach(row => { row.onclick = () => openGame(parseInt(row.dataset.idx,10)); });
-  refreshStatuses(games);
+
+function resultMeta(game,isWhite){
+  const mine = isWhite ? game.white : game.black;
+  const theirs = isWhite ? game.black : game.white;
+  const mineResult = mine?.result || '';
+  const theirResult = theirs?.result || '';
+  const drawCodes = ['agreed','repetition','stalemate','insufficient','50move','timevsinsufficient'];
+  if(mineResult === 'win') return {score:'1–0',label:'Bon coup',cls:'ready'};
+  if(drawCodes.includes(mineResult) || drawCodes.includes(theirResult)) return {score:'½–½',label:'Imprécis',cls:'pending'};
+  return {score:'0–1',label:'À revoir',cls:'pending'};
 }
 
-/** Vérifie discrètement, pour chaque partie affichée, si son analyse a déjà
- *  été précalculée en arrière-plan (voir backend/analyze.js) ou non. */
+function renderEvaluation(games,username){
+  const svg = document.getElementById('analysis-eval-svg');
+  const score = document.getElementById('analysis-eval-score');
+  const values = (games || []).slice(0,12).reverse().map(game => {
+    const isWhite = game.white?.username?.toLowerCase() === username.toLowerCase();
+    return Number(isWhite ? game.white?.rating : game.black?.rating);
+  }).filter(Number.isFinite);
+  if(values.length < 2){
+    svg.innerHTML = '<path d="M0 47H280" stroke="#d8cfbd" stroke-width="1"/>';
+    score.innerHTML = '—<small>Joue ou synchronise une partie</small>';
+    return;
+  }
+  const min = Math.min(...values), max = Math.max(...values), range = Math.max(1,max - min);
+  const points = values.map((value,index) => [
+    4 + index * (272 / (values.length - 1)),
+    82 - ((value - min) / range) * 66
+  ]);
+  const line = points.map((point,index) => `${index ? 'L' : 'M'}${point[0].toFixed(1)},${point[1].toFixed(1)}`).join(' ');
+  const area = `${line} L${points.at(-1)[0]},88 L${points[0][0]},88 Z`;
+  const delta = values.at(-1) - values[0];
+  svg.innerHTML = `
+    <defs><linearGradient id="analysisFill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#3f9a50" stop-opacity=".72"/><stop offset="1" stop-color="#3f9a50" stop-opacity=".08"/></linearGradient></defs>
+    <path d="M0 46H280" stroke="#d8cfbd" stroke-width="1"/>
+    <path d="${area}" fill="url(#analysisFill)"/>
+    <path d="${line}" fill="none" stroke="#176c38" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  score.innerHTML = `${delta >= 0 ? '+' : ''}${delta}<small>${delta >= 0 ? 'Avantage en progression' : 'Points à reconquérir'}</small>`;
+}
+
+function renderGamesList(games,username){
+  fetchedGames = games || [];
+  const list = document.getElementById('games-list');
+  const latest = fetchedGames[0];
+  document.getElementById('analysis-gem-count').textContent = PROGRESS.xp || 0;
+  if(latest){
+    const isWhite = latest.white?.username?.toLowerCase() === username.toLowerCase();
+    const opponent = isWhite ? latest.black?.username : latest.white?.username;
+    document.getElementById('analysis-quest-title').textContent = 'Ta dernière partie est prête à analyser';
+    document.getElementById('analysis-quest-copy').textContent = `${opponent || 'Adversaire'} · ${latest.time_class || 'Partie'} · ouvre l’analyse sans la retélécharger.`;
+    document.getElementById('analysis-quest-btn').onclick = () => openGame(0);
+  }else{
+    document.getElementById('analysis-quest-btn').textContent = 'Connecter Chess.com';
+    document.getElementById('analysis-quest-btn').onclick = () => { location.href = 'settings.html'; };
+  }
+  if(!fetchedGames.length){
+    list.innerHTML = '<p class="section-sub" style="margin:4px 0">Aucune partie en cache. Ajoute ton pseudo Chess.com dans les réglages.</p>';
+    renderEvaluation([],username);
+    return;
+  }
+  list.innerHTML = fetchedGames.slice(0,5).map((game,index) => {
+    const isWhite = game.white?.username?.toLowerCase() === username.toLowerCase();
+    const opponent = isWhite ? game.black : game.white;
+    const meta = resultMeta(game,isWhite);
+    const date = game.end_time ? new Date(game.end_time * 1000).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) : '';
+    return `<button class="game-row" data-idx="${index}" type="button">
+      <span class="g-player">
+        <span class="g-avatar">♞</span>
+        <span><span class="g-name">${escapeHtml(opponent?.username || 'Adversaire')}</span><span class="g-rating">${opponent?.rating || '—'} · ${date}</span></span>
+      </span>
+      <span class="g-score">${meta.score}</span>
+      <span class="g-status ${meta.cls}" data-status-idx="${index}">${meta.label}</span>
+    </button>`;
+  }).join('');
+  list.querySelectorAll('.game-row').forEach(row => {
+    row.onclick = () => openGame(Number(row.dataset.idx));
+  });
+  renderEvaluation(fetchedGames,username);
+  refreshStatuses(fetchedGames);
+}
+
 async function refreshStatuses(games){
-  await Promise.all(games.map(async (g, idx) => {
-    const badge = document.querySelector(`[data-status-idx="${idx}"]`);
-    if(!badge) return;
-    const pre = g.url ? await fetchPrecomputedAnalysis(g.url) : null;
-    const ready = pre && Array.isArray(pre.results) && pre.results.length;
-    badge.textContent = ready ? '✓ Analysée' : 'En attente';
-    badge.className = 'g-status ' + (ready ? 'ready' : 'pending');
+  await Promise.all(games.slice(0,5).map(async (game,index) => {
+    const badge = document.querySelector(`[data-status-idx="${index}"]`);
+    if(!badge || !game.url) return;
+    const precomputed = await fetchPrecomputedAnalysis(game.url);
+    if(precomputed?.results?.length){
+      badge.textContent = 'Analyse prête';
+      badge.className = 'g-status ready';
+    }
   }));
 }
 
-/** Ouvre une partie dans sa propre fenêtre dédiée (game-view.html). */
-function openGame(idx){
-  const g = fetchedGames[idx];
-  if(!g) return;
-  sessionStorage.setItem('cq_selected_game', JSON.stringify(g));
+function openGame(index){
+  const game = fetchedGames[index];
+  if(!game) return;
+  sessionStorage.setItem('cq_selected_game',JSON.stringify(game));
   location.href = 'game-view.html';
 }
 
 function refreshChessComUI(){
   const state = chessComState();
-  const username = state.username || (PROGRESS.settings||{}).chessComUsername || '';
-  renderGamesList((state.games||[]).slice(0,10), username);
+  const username = state.username || PROGRESS.settings?.chessComUsername || '';
+  renderGamesList((state.games || []).slice(0,10),username);
 }
+
 async function initGamesList(){
-  refreshChessComUI(); // affiche instantanément ce qui est déjà en cache
-  const username = chessComState().username || (PROGRESS.settings||{}).chessComUsername || '';
-  if(username){
-    try{ await syncChessCom(username); refreshChessComUI(); }catch(e){ /* pas grave, le cache reste affiché */ }
+  refreshChessComUI();
+  const username = chessComState().username || PROGRESS.settings?.chessComUsername || '';
+  if(!username) return;
+  try{
+    await syncChessCom(username);
+    refreshChessComUI();
+  }catch(error){
+    console.warn(error);
   }
 }
+
 initGamesList();
 </script>
 </body>

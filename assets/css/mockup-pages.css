@@ -1,0 +1,680 @@
+/* ============================================================
+   ChessQuest — pages premium fidèles aux maquettes finales
+   ============================================================ */
+:root{
+  --quest-ink:#171128;
+  --quest-green:#004d38;
+  --quest-green-dark:#003d2d;
+  --quest-green-mid:#0b6749;
+  --quest-cream:#fffaf0;
+  --quest-cream-2:#f7efdf;
+  --quest-gold:#dba626;
+  --quest-purple:#6731a5;
+  --quest-border:#dfd0b5;
+  --quest-shadow:0 10px 24px rgba(34,25,12,.16);
+}
+
+.quest-screen{
+  min-height:100dvh;
+  padding:0!important;
+  background:#f7f0e3;
+  color:var(--quest-ink);
+}
+.quest-screen .app{
+  width:min(100%,430px);
+  max-width:430px;
+  min-height:100dvh;
+  margin:0 auto;
+  padding:0 12px calc(88px + env(safe-area-inset-bottom,0px));
+  background:linear-gradient(180deg,var(--quest-green-dark),var(--quest-green));
+  box-shadow:0 8px 30px rgba(24,18,9,.2);
+}
+.quest-screen .page{padding:18px 0 12px}
+.quest-page-title{
+  position:relative;
+  min-height:44px;
+  display:grid;
+  grid-template-columns:44px 1fr 62px;
+  align-items:center;
+  margin-bottom:8px;
+  color:#fff8e6;
+}
+.quest-page-title h1{
+  margin:0;
+  text-align:center;
+  font:700 1.08rem Georgia,"Times New Roman",serif;
+  color:#fff8e6;
+}
+.quest-page-title .subpage-back{
+  width:34px;height:34px;
+  background:rgba(0,34,25,.26);
+  border:1px solid rgba(237,211,142,.42);
+  box-shadow:none;
+}
+.quest-page-title .subpage-back svg{stroke:#fff9e9}
+.quest-currency{
+  justify-self:end;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  min-width:58px;
+  height:30px;
+  padding:0 9px;
+  border:1px solid rgba(238,206,113,.38);
+  border-radius:16px;
+  background:rgba(0,33,24,.2);
+  color:#fff8dd;
+  font-size:.72rem;
+  font-weight:900;
+}
+.quest-currency::before{content:"♛";color:#f8c83b;font-size:.9rem}
+.quest-card{
+  background:linear-gradient(145deg,#fffdf7,var(--quest-cream-2));
+  border:1px solid var(--quest-border);
+  border-radius:16px;
+  box-shadow:0 4px 12px rgba(16,29,21,.12);
+}
+
+/* ---- Carte des ouvertures ---- */
+.opening-map-page{
+  height:100dvh;
+  min-height:100dvh;
+  padding:0!important;
+  overflow:hidden;
+  background:#f7f0e3;
+}
+.opening-map-page .map-app{
+  width:min(100%,430px);
+  max-width:430px;
+  height:100dvh;
+  min-height:100dvh;
+  padding:0;
+  overflow:hidden;
+  background:#063c34;
+  box-shadow:0 8px 30px rgba(24,18,9,.2);
+}
+.opening-map-page .page,
+.opening-map-page .teal-hero{
+  width:100%;
+  height:100%;
+  min-height:100%;
+  margin:0;
+  padding:0!important;
+}
+.opening-map-page .teal-hero{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:#063c34 url("../illustrations/opening-map-maquette-v2.png") center/cover no-repeat!important;
+}
+.opening-map-page .teal-hero::after{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0 0 auto;
+  height:118px;
+  background:linear-gradient(180deg,rgba(0,30,23,.64),transparent);
+  pointer-events:none;
+}
+.opening-map-page .map-header{
+  position:absolute;
+  z-index:8;
+  top:calc(14px + env(safe-area-inset-top,0px));
+  left:14px;
+  right:14px;
+  display:grid;
+  grid-template-columns:38px 1fr 62px;
+  align-items:center;
+}
+.opening-map-page .map-header h1{
+  color:#fff9e9;
+  text-align:center;
+  font:700 1.06rem Georgia,"Times New Roman",serif;
+  text-shadow:0 2px 8px rgba(0,0,0,.5);
+}
+.opening-map-page .map-header .subpage-back{
+  width:34px;height:34px;
+  background:rgba(0,31,25,.38);
+  border:1px solid rgba(244,216,143,.46);
+  box-shadow:none;
+}
+.opening-map-page .map-header .subpage-back svg{stroke:#fff}
+.opening-map-page .skill-path{
+  position:absolute!important;
+  z-index:3;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:none!important;
+  box-shadow:none!important;
+  overflow:hidden!important;
+}
+.opening-map-page .map-nodes{position:absolute;inset:0}
+.opening-map-page .map-island{
+  position:absolute!important;
+  top:var(--top)!important;
+  left:var(--left)!important;
+  width:126px!important;
+  min-width:0!important;
+  transform:translate(-50%,-50%)!important;
+  display:flex!important;
+  flex-direction:column;
+  align-items:center;
+  text-decoration:none;
+  z-index:4;
+}
+.opening-map-page .map-hotspot{
+  display:grid;
+  place-items:center;
+  width:34px;height:34px;
+  margin-bottom:4px;
+  border-radius:50%;
+  border:2px solid #fff0ad;
+  background:linear-gradient(145deg,#90e74f,#269b4d);
+  color:#fff;
+  font-size:.8rem;
+  font-weight:1000;
+  box-shadow:0 0 0 7px rgba(142,225,76,.15),0 7px 13px rgba(0,0,0,.44);
+}
+.opening-map-page .map-label{
+  display:block;
+  max-width:126px;
+  padding:6px 12px;
+  border:1px solid #d9b963;
+  border-radius:8px;
+  background:linear-gradient(180deg,#7941aa,#4d1c79);
+  color:#fff;
+  text-align:center;
+  font:800 .72rem Nunito,sans-serif;
+  line-height:1.05;
+  text-shadow:0 1px 2px rgba(0,0,0,.42);
+  box-shadow:0 5px 12px rgba(0,0,0,.34);
+}
+.opening-map-page .map-state{display:none}
+.opening-map-page .island-stars{
+  order:3;
+  margin-top:3px;
+  padding:2px 6px;
+  border-radius:8px;
+  background:rgba(0,31,24,.74);
+  color:#ffd04b;
+  font-size:.54rem;
+  letter-spacing:1px;
+}
+.opening-map-page .map-island.locked .map-hotspot{
+  background:#303733;
+  border-color:#8b948e;
+  box-shadow:0 5px 12px rgba(0,0,0,.44);
+  filter:grayscale(1);
+}
+.opening-map-page .map-island.locked .map-label{
+  background:linear-gradient(180deg,#4b504d,#262d29);
+  border-color:#787d76;
+  color:#ece8df;
+}
+.opening-map-page .map-island.current .map-hotspot{
+  animation:mapPulse 1.8s ease-in-out infinite;
+}
+@keyframes mapPulse{
+  50%{box-shadow:0 0 0 12px rgba(148,231,74,.05),0 0 24px rgba(194,255,92,.8)}
+}
+.opening-map-page .map-treasure-label{
+  position:absolute;
+  z-index:5;
+  left:30%;
+  bottom:5.5%;
+  transform:translateX(-50%);
+  display:grid;
+  gap:2px;
+  width:118px;
+  padding:7px 8px;
+  border:1px solid rgba(242,207,106,.55);
+  border-radius:8px;
+  background:rgba(20,45,35,.86);
+  color:#fff8e1;
+  text-align:center;
+  box-shadow:0 6px 16px rgba(0,0,0,.4);
+}
+.opening-map-page .map-treasure-label strong{font-size:.65rem}
+.opening-map-page .map-treasure-label small{font-size:.52rem;color:#f7d668}
+
+/* ---- Défi quotidien ---- */
+.daily-page{overflow:hidden}
+.daily-page .app{padding-bottom:0}
+.daily-page .page{
+  height:100dvh;
+  min-height:100dvh;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding-top:calc(12px + env(safe-area-inset-top,0px));
+}
+.daily-page .quest-page-title{flex:0 0 auto;margin-bottom:5px}
+.daily-page .daily-hero{
+  flex:0 0 auto;
+  min-height:84px;
+  margin:0 0 10px;
+  padding:10px 88px 10px 14px;
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(231,194,96,.55);
+  border-radius:14px;
+  background:linear-gradient(145deg,#0b6847,#064632);
+  color:#fff;
+  box-shadow:0 5px 13px rgba(0,20,14,.2);
+}
+.daily-page .daily-hero-label{
+  color:#fff;
+  font-size:.86rem;
+  letter-spacing:0;
+  text-transform:none;
+  opacity:1;
+}
+.daily-page .daily-hero-text{
+  margin:3px 0 7px;
+  font:700 .72rem Nunito,sans-serif;
+  color:#e9f6db;
+}
+.daily-page .daily-hero .track{height:9px;background:rgba(0,32,22,.42)}
+.daily-page .daily-hero .track-fill{background:linear-gradient(90deg,#67c956,#97db62)}
+.daily-page .daily-hero-progress{
+  position:absolute;
+  right:66px;
+  bottom:10px;
+  margin:0;
+  color:#fff;
+  font-size:.68rem;
+}
+.daily-page .daily-hero-loot{
+  position:absolute;
+  top:5px;right:5px;
+  width:78px;height:72px;
+  background:url("../illustrations/rewards-spritesheet.png") 100% 0/200% 200% no-repeat!important;
+}
+.daily-page .daily-puzzle-shell{
+  min-height:0;
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+}
+.daily-page .daily-board-wrap{
+  flex:0 1 auto;
+  width:min(100%,calc(100dvh - 485px));
+  min-width:min(100%,245px);
+  max-width:350px;
+  margin:0 auto 6px;
+}
+.daily-page .board-frame{
+  width:100%!important;
+  max-width:100%!important;
+  margin:0!important;
+  border-radius:7px;
+  background:#fff8e9;
+  box-shadow:0 4px 12px rgba(0,20,14,.24);
+}
+.daily-page #daily-board{width:100%!important;max-width:100%!important}
+.daily-question{
+  margin:2px 4px 7px;
+  color:#fff9e8;
+  font-size:.78rem;
+  font-weight:800;
+}
+.daily-page .mcq-options{
+  flex:0 0 auto;
+  display:grid;
+  gap:5px;
+  margin:0 3px;
+}
+.daily-page .mcq-option{
+  min-height:34px;
+  padding:4px 9px;
+  border:1px solid rgba(234,205,133,.45);
+  border-radius:8px;
+  background:rgba(0,54,39,.65);
+  color:#fffaf0;
+  box-shadow:none;
+  font-size:.78rem;
+}
+.daily-page .mcq-option.correct{background:#427f42;border-color:#a6d267}
+.daily-page .mcq-option.wrong{background:#863c40;border-color:#f09585}
+.daily-page .mcq-letter{
+  width:25px;height:25px;
+  background:rgba(255,255,255,.08);
+  color:#fff7dc;
+}
+.daily-coach{
+  position:relative;
+  flex:0 0 118px;
+  min-height:118px;
+  margin-top:4px;
+}
+.daily-coach img{
+  position:absolute;
+  left:-12px;bottom:-9px;
+  width:144px;height:144px;
+  object-fit:cover;
+  object-position:50% 52%;
+  border-radius:0 0 0 26px;
+  mix-blend-mode:multiply;
+}
+.daily-coach-copy{
+  position:absolute;
+  z-index:2;
+  left:126px;right:4px;top:16px;
+  min-height:88px;
+  padding:11px 11px 10px 16px;
+  border:1px solid rgba(231,202,124,.48);
+  border-radius:10px;
+  background:rgba(4,72,51,.84);
+  color:#fffce9;
+  font-size:.7rem;
+  line-height:1.35;
+}
+.daily-coach-copy::before{
+  content:"";
+  position:absolute;
+  left:-11px;top:18px;
+  border-width:8px 11px 8px 0;
+  border-style:solid;
+  border-color:transparent rgba(231,202,124,.48) transparent transparent;
+}
+.daily-coach-copy strong{
+  display:block;
+  margin-bottom:3px;
+  font:700 .92rem Georgia,"Times New Roman",serif;
+}
+
+/* ---- Analyse de partie ---- */
+.analysis-page .analysis-hero{
+  display:grid;
+  grid-template-columns:92px 1fr;
+  gap:10px;
+  align-items:center;
+  min-height:190px;
+  margin:0 0 12px;
+  padding:12px;
+  border:1px solid rgba(224,192,99,.5);
+  border-radius:14px;
+  background:linear-gradient(145deg,#0b6847,#064632);
+  color:#fff;
+}
+.analysis-page .analysis-hero-art{
+  width:92px;height:160px;
+  object-fit:cover;
+  object-position:50% 66%;
+  border-radius:10px;
+  mix-blend-mode:screen;
+}
+.analysis-page .analysis-hero-content{display:flex;flex-direction:column;align-items:stretch}
+.analysis-brand{margin-bottom:7px;font-weight:900;font-size:.9rem}
+.analysis-brand .pawn{color:#77b84f;font-size:1.2rem}
+.analysis-page .analysis-hero h2{
+  margin:0 0 8px;
+  color:#fffdf1;
+  font:700 1.13rem/1.14 Georgia,"Times New Roman",serif;
+}
+.analysis-page .analysis-hero p{
+  margin:0 0 11px;
+  color:#e9f1dc;
+  font-size:.68rem;
+  line-height:1.45;
+}
+.analysis-page .analysis-quest-btn{
+  width:100%;
+  min-height:38px;
+  border:1px solid #ad79d3;
+  border-radius:8px;
+  background:linear-gradient(180deg,#984cc5,#6e2b9d);
+  color:#fff;
+  box-shadow:0 5px 10px rgba(29,5,43,.3);
+  font-size:.8rem;
+}
+.analysis-page .analysis-section-card{
+  margin-bottom:11px;
+  padding:12px;
+}
+.analysis-page .analysis-section-card h2{
+  margin:0 0 8px;
+  color:#1e2630;
+  font:800 .8rem Nunito,sans-serif;
+}
+.analysis-page .games-list{gap:5px;margin:0}
+.analysis-page .game-row{
+  grid-template-columns:1fr 50px 78px;
+  gap:6px;
+  min-height:47px;
+  padding:6px 7px;
+  border:1px solid #e6d8bf;
+  border-radius:10px;
+  background:#fffaf0;
+  box-shadow:none;
+  font-size:.7rem;
+}
+.analysis-page .game-row .g-player{
+  display:grid;
+  grid-template-columns:34px 1fr;
+  align-items:center;
+  gap:7px;
+  min-width:0;
+}
+.analysis-page .game-row .g-avatar{
+  width:34px;height:34px;
+  display:grid;place-items:center;
+  border-radius:50%;
+  background:linear-gradient(145deg,#e1bc75,#6d3a24);
+  color:#fff;
+  font-size:.9rem;
+  box-shadow:inset 0 0 0 2px #fff2c4;
+}
+.analysis-page .game-row .g-name{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.analysis-page .game-row .g-rating{display:block;color:#6e776e;font-size:.6rem}
+.analysis-page .game-row .g-score{text-align:center;font-weight:900}
+.analysis-page .g-status{font-size:.6rem;padding:5px;border-radius:8px}
+.analysis-page .analysis-eval{
+  display:grid;
+  grid-template-columns:1fr 55px;
+  align-items:center;
+  gap:9px;
+}
+.analysis-page .analysis-eval svg{width:100%;height:92px}
+.analysis-eval-score{color:#106b40;text-align:center;font-weight:900;font-size:1.12rem}
+.analysis-eval-score small{display:block;margin-top:4px;color:#2d362f;font-size:.58rem;line-height:1.3}
+.analysis-page .analysis-section-card .section-sub{color:#657069!important}
+
+/* ---- Progression ---- */
+.progress-page .progress-rank-card{
+  display:grid;
+  grid-template-columns:98px 1fr;
+  gap:10px;
+  align-items:center;
+  padding:12px;
+  margin-bottom:10px;
+}
+.progress-rank-emblem{
+  width:94px;height:104px;
+  background:url("../illustrations/rewards-spritesheet.png") 0 0/200% 200% no-repeat;
+}
+.progress-rank-copy .eyebrow{font-size:.62rem;color:#4f584f}
+.progress-rank-copy h2{
+  margin:2px 0 6px;
+  font:700 1.42rem Georgia,"Times New Roman",serif;
+  color:#171128;
+}
+.progress-rank-rating{font-size:.62rem;color:#4f584f}
+.progress-rank-number{font:800 1.6rem/1 Nunito,sans-serif}
+.progress-rank-number small{color:#298b43;font-size:.72rem}
+.rank-track{grid-column:1/-1;margin-top:4px}
+.rank-track .track{height:6px;background:#ddd5c6}
+.rank-track .track-fill{background:#409d4e}
+.rank-scale{display:flex;justify-content:space-between;margin-top:5px;color:#667068;font-size:.55rem}
+.progress-page .progress-chart-panel{
+  margin-bottom:8px;
+  padding:10px;
+  border:1px solid rgba(230,201,120,.38);
+  border-radius:12px;
+  background:linear-gradient(180deg,#07543e,#044832);
+  color:#fff;
+}
+.progress-chart-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.progress-chart-head strong{font-size:.72rem}
+.progress-period{padding:4px 7px;border-radius:7px;background:rgba(0,30,22,.27);font-size:.55rem}
+.progress-page #elo-chart-svg{height:130px!important}
+.progress-page .elo-chart-dates{color:#d7e9d7!important;font-size:.54rem!important}
+.progress-streak-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.progress-streak-card{
+  min-height:96px;
+  padding:10px;
+  border:1px solid rgba(228,192,100,.44);
+  border-radius:11px;
+  background:#172737;
+  color:#fff;
+}
+.progress-streak-card > span{display:block;font-size:.62rem}
+.progress-streak-card strong{display:block;margin:8px 0;color:#f8d252;font-size:1.35rem}
+.progress-streak-card strong span,.progress-streak-card strong small{display:inline}
+.progress-streak-card small{font-size:.58rem;color:#e3eee6}
+.progress-badges-card,.progress-xp-card{padding:11px;margin-bottom:10px}
+.progress-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.progress-card-head strong{font-size:.76rem}
+.progress-card-head a{color:#505b55;font-size:.56rem;text-decoration:none}
+.progress-badge-row{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.progress-badge-item{text-align:center;min-width:0}
+.progress-badge-item .badge-shield{
+  width:43px;height:48px;
+  margin:auto;
+  background:url("../illustrations/rewards-spritesheet.png") 0 0/200% 200% no-repeat;
+}
+.progress-badge-item:nth-child(2) .badge-shield{background-position:100% 100%}
+.progress-badge-item:nth-child(3) .badge-shield{background-position:0 100%}
+.progress-badge-item:nth-child(4) .badge-shield{background-position:100% 0}
+.progress-badge-item:nth-child(5) .badge-shield{filter:hue-rotate(150deg)}
+.progress-badge-item span{display:block;font-size:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.progress-xp-card{position:relative;padding-right:76px}
+.progress-xp-card strong{display:block;font-size:.72rem}
+.progress-xp-value{margin:7px 0 8px;font-size:.68rem}
+.progress-xp-card .track{height:8px;background:#ded5c5}
+.progress-xp-card .track-fill{background:linear-gradient(90deg,#7a3ca8,#542383)}
+.progress-xp-chest{
+  position:absolute;right:4px;bottom:2px;
+  width:72px;height:68px;
+  background:url("../illustrations/rewards-spritesheet.png") 100% 0/200% 200% no-repeat;
+}
+
+/* ---- Profil ---- */
+.profile-page .profile-summary{
+  padding:10px;
+  margin-bottom:8px;
+}
+.profile-summary-main{
+  display:grid;
+  grid-template-columns:118px 1fr;
+  gap:10px;
+  align-items:center;
+  padding-bottom:9px;
+  border-bottom:1px solid #e1d4bd;
+}
+.profile-page .profile-avatar{
+  width:112px;height:112px;
+  border:3px solid #e0c25d;
+  border-radius:50%;
+  object-fit:cover;
+  object-position:50% 45%;
+  background:#5e2b80;
+}
+.profile-identity{min-width:0}
+.profile-page .profile-name{
+  margin-bottom:8px;
+  padding-bottom:4px;
+  border-bottom:1px solid #eadfc8;
+  font:700 1.55rem Georgia,"Times New Roman",serif;
+}
+.profile-elo-label{font-size:.62rem;color:#5f685f}
+.profile-elo{font:800 1.45rem/1 Nunito,sans-serif}
+.profile-rank{margin-top:3px;color:#6c319f;font-size:.64rem;font-weight:900}
+.profile-edit{
+  display:inline-grid;place-items:center;
+  width:27px;height:27px;
+  margin-left:-38px;transform:translateY(40px);
+  border:2px solid #fff3da;border-radius:50%;
+  background:#0d694c;color:#fff;
+  font-size:.7rem;
+}
+.profile-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  padding-top:9px;
+}
+.profile-stat{text-align:center;border-right:1px solid #e2d5bd}
+.profile-stat:last-child{border:0}
+.profile-stat span{display:block;color:#606a61;font-size:.54rem}
+.profile-stat strong{font-size:.88rem}
+.profile-page .profile-section{
+  padding:10px;
+  margin-bottom:8px;
+}
+.profile-section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}
+.profile-section-head strong{font-size:.72rem}
+.profile-section-head a{font-size:.54rem;color:#536059;text-decoration:none}
+.profile-badges{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.profile-badge{
+  aspect-ratio:1;
+  background:url("../illustrations/rewards-spritesheet.png") 0 0/200% 200% no-repeat;
+}
+.profile-badge:nth-child(2){background-position:100% 100%}
+.profile-badge:nth-child(3){background-position:0 100%}
+.profile-badge:nth-child(4){background-position:100% 0}
+.profile-badge:nth-child(5){filter:hue-rotate(105deg)}
+.profile-badge-more{display:grid;place-items:center;font-size:.65rem;font-weight:900;color:#3b413d}
+.profile-objectives,.profile-achievements{display:grid;gap:4px}
+.profile-objective,.profile-achievement{
+  display:grid;
+  grid-template-columns:24px 1fr auto;
+  align-items:center;
+  gap:7px;
+  min-height:40px;
+  padding:4px 0;
+  border-bottom:1px solid #e5d8c1;
+}
+.profile-objective:last-child,.profile-achievement:last-child{border:0}
+.profile-row-icon{
+  display:grid;place-items:center;
+  width:22px;height:22px;border-radius:50%;
+  background:#173b32;color:#fff;
+  font-size:.65rem;
+}
+.profile-objective-copy strong,.profile-achievement-copy strong{display:block;font-size:.62rem}
+.profile-objective-copy small,.profile-achievement-copy small{display:block;color:#687068;font-size:.5rem}
+.profile-objective-meta{font-size:.52rem;color:#58645b}
+.profile-objective .mini-track{height:4px;margin-top:4px;border-radius:4px;background:#ddd4c3;overflow:hidden}
+.profile-objective .mini-track i{display:block;height:100%;background:#7438a1}
+.profile-settings-row{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-height:44px;
+  padding:0 10px;
+  color:#17251f;
+  text-decoration:none;
+  font-size:.72rem;
+  font-weight:900;
+}
+.profile-settings-row span:last-child{margin-left:auto}
+
+@media (max-height:720px){
+  .daily-page .daily-hero{min-height:70px;padding-top:7px;padding-bottom:7px;margin-bottom:6px}
+  .daily-page .daily-board-wrap{width:min(100%,calc(100dvh - 430px));min-width:220px}
+  .daily-coach{flex-basis:96px;min-height:96px}
+  .daily-coach img{width:118px;height:118px}
+  .daily-coach-copy{left:105px;top:8px;min-height:75px}
+}
+@media (min-width:720px){
+  .quest-screen .app,.opening-map-page .map-app{border-radius:28px}
+  .quest-screen{padding:22px 0!important}
+  .quest-screen .app,.opening-map-page .map-app{min-height:calc(100dvh - 44px);height:auto}
+  .opening-map-page{padding:0!important}
+  .opening-map-page .map-app{height:100dvh!important;min-height:100dvh!important;border-radius:0}
+}

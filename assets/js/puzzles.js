@@ -105,11 +105,11 @@ function toFigurine(san, color){
   return san;
 }
 
-/* ---- Génère 3 options QCM (1 bonne + 2 distracteurs pris parmi les coups légaux) ---- */
+/* ---- Génère 4 options QCM (1 bonne + 3 distracteurs pris parmi les coups légaux) ---- */
 function buildMcqOptions(game, solutionSan){
   const legal = game.moves({verbose:true}).map(m => m.san).filter(s => s !== solutionSan);
   const shuffled = legal.sort(() => Math.random() - 0.5);
-  const distractors = shuffled.slice(0, 2);
+  const distractors = shuffled.slice(0, 3);
   const options = [solutionSan, ...distractors].sort(() => Math.random() - 0.5);
   return options;
 }

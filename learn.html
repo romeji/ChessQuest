@@ -2,19 +2,18 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#7C6EF0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#063c34">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
-<title>ChessQuest — Apprendre</title>
+<title>ChessQuest — Ouvertures</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/layout.css">
@@ -22,113 +21,66 @@
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/learn.css">
 <link rel="stylesheet" href="assets/css/polish.css">
+<link rel="stylesheet" href="assets/css/mockup-pages.css">
 </head>
 <body data-page="learn" class="opening-map-page">
 <div id="toast-container"></div>
-<div class="app map-app">
+<main class="app map-app">
   <section class="page">
     <div class="teal-hero">
-      <div class="subpage-header on-color" style="margin-bottom:2px;">
-        <a class="subpage-back" aria-label="Retour" href="index.html"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
-        <span class="subpage-title" style="font-size:1.05rem;">Apprendre</span>
-        <span class="subpage-badge">
-          <svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 12L2 9Z"/><path d="M2 9h20M9 3l-2 6 5 12 5-12-2-6"/></svg>
-          <span id="learn-gem-count">0</span>
-        </span>
-      </div>
-      <h2 class="teal-title">Ouvertures</h2>
-      <p class="teal-sub">Choisis ton répertoire et deviens imbattable !</p>
-      <div class="skill-path" id="skill-path"></div>
+      <header class="map-header">
+        <a class="subpage-back" aria-label="Retour à l'accueil" href="index.html">
+          <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+        </a>
+        <h1>Ouvertures</h1>
+        <span class="quest-currency" id="learn-gem-count">0</span>
+      </header>
+      <div class="skill-path" id="skill-path" aria-label="Parcours des ouvertures"></div>
     </div>
-
-    <input class="search-input" id="opening-search" type="text" placeholder="Rechercher une ouverture… (ex : Najdorf, Londres, Caro-Kann)">
-    <div class="opening-groups" id="opening-groups"></div>
-    <p class="section-sub" style="margin-top:14px;">Touche une ouverture pour l'ouvrir dans <a href="openings.html" style="color:var(--coral);font-weight:600;">S'entraîner</a>.</p>
   </section>
-</div>
+</main>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 <script src="assets/js/progress.js"></script>
-<script src="assets/js/chesscom.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
-<script src="assets/js/navigation.js"></script>
-<script src="assets/js/board.js"></script>
-<script src="assets/js/openings.js"></script>
 <script>
-const SKILL_ICON_CHECK = '<svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg>';
-const SKILL_ICON_TROPHY_SM = '<svg viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4a3 3 0 0 0 3 4M17 5h3a3 3 0 0 1-3 4"/><path d="M12 14v3M9 20h6l-1-3H10l-1 3Z"/></svg>';
-const SKILL_ICON_LOCK = '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+const LOCK_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 
 function renderSkillPath(){
-  const el = document.getElementById('skill-path');
   const mastered = PROGRESS.mastered || {};
   const path = [
-    {key:'italienne', title:'Italienne', x:48, y:15},
-    {key:'gambit_dame', title:'Gambit Dame', x:69, y:32},
-    {key:'najdorf', title:'Sicilienne', x:31, y:45},
-    {key:'francaise', title:'Défense Française', x:69, y:56},
-    {key:'carokann', title:'Caro-Kann', x:31, y:68},
-    {key:'dragon', title:'Ouvertures rares', x:69, y:78}
+    {key:'italienne', title:'Italienne', x:43, y:16},
+    {key:'gambit_dame', title:'Gambit Dame', x:28, y:38, requires:'italienne'},
+    {key:'francaise', title:'Défense Française', x:73, y:43, requires:'najdorf'},
+    {key:'najdorf', title:'Sicilienne', x:29, y:62, requires:'gambit_dame'},
+    {key:'carokann', title:'Caro-Kann', x:73, y:70, requires:'francaise'},
+    {key:'dragon', title:'Ouvertures rares', x:73, y:87, requires:'carokann'}
   ];
   const isComplete = key => key === 'gambit_dame'
     ? ['qgd','qga','slav'].every(line => mastered[line])
     : !!mastered[key];
-  const island = (item, index) => {
-    const previous = path[index - 1];
-    const unlocked = index === 0 || isComplete(previous.key);
+  const markup = path.map(item => {
+    const unlocked = !item.requires || isComplete(item.requires);
     const complete = isComplete(item.key);
     const status = complete ? 'done' : (unlocked ? 'current' : 'locked');
-    const position = `--top:${item.y}%;--left:${item.x}%;`;
-    const stars = complete ? '<span class="island-stars">★★★</span>' : '';
-    const marker = complete ? '✓' : (unlocked ? '▶' : '🔒');
-    const inner = `<span class="map-hotspot">${marker}</span><span class="map-label">${escapeHtml(item.title)}</span><span class="map-state">${complete?'Maîtrisée':(unlocked?'Jouer maintenant':'Termine l’île précédente')}</span>${stars}`;
-    const target = item.key === 'gambit_dame' ? 'openings.html?path=gambit_dame' : `openings.html?opening=${item.key}`;
+    const marker = complete ? '✓' : (unlocked ? '▶' : LOCK_ICON);
+    const stars = complete ? '<span class="island-stars">★ ★ ★</span>' : '';
+    const content = `<span class="map-hotspot">${marker}</span><span class="map-label">${escapeHtml(item.title)}</span>${stars}`;
+    const style = `--top:${item.y}%;--left:${item.x}%;`;
+    const href = item.key === 'gambit_dame'
+      ? 'openings.html?path=gambit_dame'
+      : `openings.html?opening=${item.key}`;
     return unlocked
-      ? `<a class="map-island ${status}" style="${position}" href="${target}">${inner}</a>`
-      : `<span class="map-island ${status}" style="${position}" aria-label="${escapeHtml(item.title)} verrouillée">${inner}</span>`;
-  };
-  el.innerHTML = `<div class="map-nodes">${path.map(island).join('')}</div><div class="map-treasure-label"><strong>Trésor du parcours</strong><small>Maîtrise les six îles pour l’ouvrir</small></div>`;
+      ? `<a class="map-island ${status}" style="${style}" href="${href}" aria-label="${escapeHtml(item.title)}">${content}</a>`
+      : `<span class="map-island locked" style="${style}" aria-label="${escapeHtml(item.title)}, verrouillée">${content}</span>`;
+  }).join('');
+  document.getElementById('skill-path').innerHTML = `
+    <div class="map-nodes">${markup}</div>
+    <div class="map-treasure-label"><strong>Trésor découvert</strong><small>Collecte 5 ★ pour l’ouvrir !</small></div>`;
   document.getElementById('learn-gem-count').textContent = PROGRESS.xp || 0;
 }
 
-function renderOpeningGroups(){
-  const container = document.getElementById('opening-groups');
-  const mastered = PROGRESS.mastered || {};
-  container.innerHTML = CATEGORIES.map(cat => `
-    <details class="opening-category" ${cat.key==='favorites' ? 'open' : ''}>
-      <summary>${escapeHtml(cat.title)}</summary>
-      <div class="opening-buttons">
-        ${cat.lines.map(key => {
-          const o = OPENINGS[key];
-          const check = mastered[key] ? '<span class="mastery-badge-inline">\u2713</span>' : '';
-          return `<a class="line-btn" href="openings.html?opening=${key}"><span>${escapeHtml(o.name)}${check}</span><span class="n-moves">${o.moves.length} demi-coups</span></a>`;
-        }).join('')}
-      </div>
-    </details>
-  `).join('');
-}
-
-document.getElementById('opening-search').addEventListener('input', function(){
-  const q = this.value.trim().toLowerCase();
-  document.querySelectorAll('#opening-groups details.opening-category').forEach(details => {
-    let visibleCount = 0;
-    details.querySelectorAll('.line-btn').forEach(btn => {
-      const name = btn.querySelector('span').textContent.toLowerCase();
-      const match = q === '' || name.includes(q);
-      btn.classList.toggle('hidden', !match);
-      if(match) visibleCount++;
-    });
-    details.classList.toggle('hidden', visibleCount === 0);
-    if(q !== '' && visibleCount > 0) details.open = true;
-  });
-});
-
 renderSkillPath();
-renderOpeningGroups();
 </script>
 </body>
 </html>

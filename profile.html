@@ -2,18 +2,18 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#7C6EF0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#004d38">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
 <title>ChessQuest — Profil</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/layout.css">
@@ -21,81 +21,66 @@
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/profile.css">
 <link rel="stylesheet" href="assets/css/polish.css">
+<link rel="stylesheet" href="assets/css/mockup-pages.css">
 </head>
-<body data-page="profile">
+<body data-page="profile" class="quest-screen profile-page">
 <div id="toast-container"></div>
-<div class="app">
+<main class="app">
   <section class="page">
-    <div class="profile-header profile-hero">
-      <img class="profile-avatar" src="assets/illustrations/mascot-knight-home.png" alt="Avatar cavalier du joueur">
-      <div>
-        <div class="profile-name" id="profile-name">romeji</div>
-        <div class="profile-level-title" id="profile-level-title">Novice</div>
-        <div class="track" style="width:160px;"><div class="track-fill" id="profile-xp-fill"></div></div>
+    <header class="quest-page-title">
+      <span></span>
+      <h1>Profil</h1>
+      <span class="quest-currency" id="profile-gem-count">0</span>
+    </header>
+
+    <section class="quest-card profile-summary">
+      <div class="profile-summary-main">
+        <div>
+          <img class="profile-avatar" src="assets/illustrations/mascot-knight-home.png" alt="Avatar cavalier ChessQuest">
+          <span class="profile-edit">✎</span>
+        </div>
+        <div class="profile-identity">
+          <div class="profile-name" id="profile-name">Alex</div>
+          <div class="profile-elo-label">ELO actuel</div>
+          <div class="profile-elo" id="profile-elo">—</div>
+          <div class="profile-rank">♛ <span id="profile-rank">Stratège</span></div>
+        </div>
       </div>
-      <a href="settings.html" class="profile-settings-btn" aria-label="Réglages" style="margin-left:auto;">
-        <svg viewBox="0 0 24 24"><path d="M10.3 3.2c.4-1.6 2.7-1.6 3.1 0l.2.9c.2.9 1.2 1.4 2 1l.8-.4c1.4-.7 2.9.8 2.2 2.2l-.4.8c-.4.9.1 1.9 1 2l.9.2c1.6.4 1.6 2.7 0 3.1l-.9.2c-.9.2-1.4 1.2-1 2l.4.8c.7 1.4-.8 2.9-2.2 2.2l-.8-.4c-.9-.4-1.9.1-2 1l-.2.9c-.4 1.6-2.7 1.6-3.1 0l-.2-.9c-.2-.9-1.2-1.4-2-1l-.8.4c-1.4.7-2.9-.8-2.2-2.2l.4-.8c.4-.9-.1-1.9-1-2l-.9-.2c-1.6-.4-1.6-2.7 0-3.1l.9-.2c.9-.2 1.4-1.2 1-2l-.4-.8c-.7-1.4.8-2.9 2.2-2.2l.8.4c.9.4 1.9-.1 2-1l.2-.9Z"/><circle cx="12" cy="12" r="3.2"/></svg>
-      </a>
-    </div>
-    <div class="profile-quest-line"><span>♛</span><span id="profile-quest-line">Chaque partie est une nouvelle quête.</span></div>
-
-    <div class="daily-card">
-      <div class="daily-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#B7861A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="#B7861A"/></svg>
+      <div class="profile-stats">
+        <div class="profile-stat"><span>Parties jouées</span><strong id="profile-games">0</strong></div>
+        <div class="profile-stat"><span>Taux de victoire</span><strong id="profile-winrate">0%</strong></div>
+        <div class="profile-stat"><span>Meilleur ELO</span><strong id="profile-best-elo">—</strong></div>
       </div>
-      <div class="daily-info">
-        <div class="daily-label">Défi du jour</div>
-        <div class="daily-text" id="daily-text">Chargement…</div>
-        <div class="track"><div class="track-fill" id="daily-fill"></div></div>
+    </section>
+
+    <section class="quest-card profile-section">
+      <div class="profile-section-head"><strong>Badges obtenus</strong><a href="progress.html">Voir tout</a></div>
+      <div class="profile-badges">
+        <div class="profile-badge" title="Tacticien"></div>
+        <div class="profile-badge" title="Visionnaire"></div>
+        <div class="profile-badge" title="Finisseur"></div>
+        <div class="profile-badge" title="Stratège"></div>
+        <div class="profile-badge" title="Régulier"></div>
+        <div class="profile-badge-more" id="profile-extra-badges">+0</div>
       </div>
-      <div class="daily-check" id="daily-check"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
-    </div>
+    </section>
 
-    <div class="streak-card">
-      <svg viewBox="0 0 24 24" class="streak-flame" fill="var(--tile-orange)"><path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c1 1 2 2.5 2 4.5A5 5 0 0 1 7 17c0-3 1.5-4 2-6-1 0-3 1-3 3.5A7.5 7.5 0 0 0 12 22a7.5 7.5 0 0 0 7.5-7.5C19.5 8 15 6 12 2Z"/></svg>
-      <div class="streak-info">
-        <div class="streak-number" id="streak-number">0</div>
-        <div class="streak-label">jour(s) de série</div>
-      </div>
-      <div class="streak-calendar" id="streak-calendar"></div>
-    </div>
+    <section class="quest-card profile-section">
+      <div class="profile-section-head"><strong>Objectifs quotidiens</strong></div>
+      <div class="profile-objectives" id="profile-objectives"></div>
+    </section>
 
-    <div class="stats-row" id="progress-stats" style="margin-bottom:26px;"></div>
+    <section class="quest-card profile-section">
+      <div class="profile-section-head"><strong>Réalisations récentes</strong><a href="progress.html">Voir tout</a></div>
+      <div class="profile-achievements" id="profile-achievements"></div>
+    </section>
 
-    <h2 class="section-title">Badges</h2>
-    <div class="badges-row" id="badges-row"></div>
-
-    <h2 class="section-title">Objectifs</h2>
-    <p class="section-sub">Suis ces étapes dans l'ordre pour progresser efficacement.</p>
-    <div class="path-list" id="path-list"></div>
-
-    <h2 class="section-title">Ouvertures maîtrisées</h2>
-    <p class="section-sub">Touche une case pour t'entraîner directement dessus.</p>
-    <div class="mastery-grid" id="mastery-grid"></div>
-
-    <h2 class="section-title">Historique des analyses</h2>
-    <div id="games-history"></div>
+    <a class="quest-card profile-settings-row" href="settings.html">
+      <span>⚙</span><span>Paramètres</span><span>›</span>
+    </a>
   </section>
-</div>
-
-<nav class="tabbar">
-  <button class="tabbar-item" data-tab="home" data-href="index.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Accueil</span>
-  </button>
-  <button class="tabbar-item" data-tab="learn" data-href="learn.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="6" cy="19" r="2.5"/><circle cx="12" cy="11" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M6 16.5V13a2 2 0 0 1 2-2h1.5M14.5 9H16a2 2 0 0 0 2-2V5.5"/></svg><span>Parcours</span>
-  </button>
-  <button class="tabbar-item" data-tab="coach" data-href="coach.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M12 2a2.5 2.5 0 0 0-2 4 4 4 0 0 0-1.6 5.4C7.2 12.4 6 14.2 6 17h12c0-2.8-1.2-4.6-2.4-5.6A4 4 0 0 0 14 6a2.5 2.5 0 0 0-2-4Z"/><rect x="5" y="19" width="14" height="3" rx="1"/></svg>
-    <span>Coach</span>
-  </button>
-  <button class="tabbar-item" data-tab="progress" data-href="progress.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 15l4-5 3 3 5-7"/></svg><span>Progrès</span>
-  </button>
-  <button class="tabbar-item" data-tab="profile" data-href="profile.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg><span>Profil</span>
-  </button>
-</nav>
+</main>
+<nav class="tabbar"></nav>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 <script src="assets/js/progress.js"></script>
@@ -103,93 +88,92 @@
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
-<script src="assets/js/openings.js"></script>
 <script>
-function renderPathList(){
-  const totalTrainable = trainableKeys().length;
-  const masteredCount = Object.keys(PROGRESS.mastered).length;
-  const steps = [
-    { title:"Découvre la notation", desc:"Onglet Progrès puis Réglages", done: PROGRESS.viewedNotationGuide },
-    { title:"Résous ton premier puzzle", desc:"Onglet Puzzles", done: PROGRESS.puzzlesSolved >= 1, href:'puzzles.html' },
-    { title:"Maîtrise une ouverture", desc:"Termine une ligne sans erreur", done: masteredCount >= 1, href:'learn.html' },
-    { title:"Analyse ta première partie", desc:"Colle un PGN ou récupère-en un", done: PROGRESS.games.length >= 1, href:'analysis.html' },
-    { title:"Tiens une série de 3 jours", desc:"Reviens t'entraîner 3 jours de suite", done: computeCurrentStreak() >= 3 },
-    { title:"Résous 10 puzzles", desc:"Deviens un vrai tacticien", done: PROGRESS.puzzlesSolved >= 10, href:'puzzles.html' },
-    { title:"Maîtrise 5 ouvertures", desc:"Construis ton répertoire", done: masteredCount >= 5, href:'learn.html' }
-  ];
-  document.getElementById('path-list').innerHTML = steps.map(s => `
-    <a class="path-item ${s.done?'done':''}" href="${s.href||'#'}" style="text-decoration:none;">
-      <span class="path-check"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></span>
-      <span class="path-text"><span class="path-title">${escapeHtml(s.title)}</span><span class="path-desc">${escapeHtml(s.desc)}</span></span>
-    </a>`).join('');
+function profileRank(rating){
+  if(rating >= 2000) return 'Maître';
+  if(rating >= 1600) return 'Stratège';
+  if(rating >= 1300) return 'Tacticien';
+  if(rating >= 1000) return 'Chevalier';
+  return 'Apprenti';
 }
-const BADGE_ICONS = {
-  medal:'<svg viewBox="0 0 24 24"><circle cx="12" cy="15" r="6"/><path d="M9 10L7 3h10l-2 7"/></svg>',
-  trophy:'<svg viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4a3 3 0 0 0 3 4M17 5h3a3 3 0 0 1-3 4"/><path d="M12 14v3M9 20h6l-1-3H10l-1 3Z"/></svg>',
-  chart:'<svg viewBox="0 0 24 24"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 15l4-5 3 3 5-7"/></svg>',
-  target:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>',
-  puzzle:'<svg viewBox="0 0 24 24"><path d="M14 3v3a2 2 0 0 0 2 2h3M9 21H6a2 2 0 0 1-2-2v-3M4 9V6a2 2 0 0 1 2-2h3m7 17h3a2 2 0 0 0 2-2v-3"/><circle cx="12" cy="12" r="2.5"/></svg>',
-  flame:'<svg viewBox="0 0 24 24"><path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c1 1 2 2.5 2 4.5A5 5 0 0 1 7 17c0-3 1.5-4 2-6-1 0-3 1-3 3.5A7.5 7.5 0 0 0 12 22a7.5 7.5 0 0 0 7.5-7.5C19.5 8 15 6 12 2Z"/></svg>',
-  star:'<svg viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4.5L18.5 21 12 16.5 5.5 21 7.5 13.5 2 9h7Z"/></svg>'
-};
-function renderBadges(){
-  document.getElementById('badges-row').innerHTML = computeBadges().map(b => `
-    <div class="hex-badge ${b.unlocked?'unlocked':''}" title="${escapeHtml(b.desc)}">
-      <div class="hex">${BADGE_ICONS[b.icon]||''}</div>
-      <span class="name">${escapeHtml(b.name)}</span>
-    </div>`).join('');
+
+function objectiveRow(icon,title,current,target,color){
+  const progress = Math.min(100,Math.round((current / target) * 100));
+  return `<div class="profile-objective">
+    <span class="profile-row-icon">${icon}</span>
+    <span class="profile-objective-copy">
+      <strong>${title}</strong>
+      <span class="mini-track"><i style="width:${progress}%;background:${color}"></i></span>
+    </span>
+    <span class="profile-objective-meta">${Math.min(current,target)}/${target}&nbsp;&nbsp; ♦ 20</span>
+  </div>`;
 }
+
+function achievementRow(icon,title,subtitle,date){
+  return `<div class="profile-achievement">
+    <span class="profile-row-icon">${icon}</span>
+    <span class="profile-achievement-copy"><strong>${title}</strong><small>${subtitle}</small></span>
+    <span class="profile-objective-meta">${date}</span>
+  </div>`;
+}
+
 function renderProfile(){
-  document.getElementById('profile-name').textContent = (chessComState().username || (PROGRESS.settings||{}).chessComUsername || 'Toi');
-  const level = levelFromXp(PROGRESS.xp || 0);
-  const xpIntoLevel = (PROGRESS.xp || 0) % XP_PER_LEVEL;
-  document.getElementById('profile-level-title').textContent = `Niveau ${level} — ${levelTitle(level)}`;
-  document.getElementById('profile-xp-fill').style.width = Math.round((xpIntoLevel / XP_PER_LEVEL) * 100) + '%';
-
   ensureDailyProgressFresh();
-  const challenge = todayChallenge();
-  const current = Math.min(challenge.target, PROGRESS.dailyProgress[challenge.type] || 0);
-  document.getElementById('daily-text').textContent = `${challenge.text} (${current}/${challenge.target}) — +${challenge.xp} XP`;
-  document.getElementById('daily-fill').style.width = Math.round((current/challenge.target)*100) + '%';
-  document.getElementById('daily-check').classList.toggle('done', PROGRESS.dailyProgress.rewardClaimed);
+  const state = chessComState();
+  const username = state.username || PROGRESS.settings?.chessComUsername || 'Alex';
+  const games = state.games || [];
+  const lower = username.toLowerCase();
+  const ratings = games.map(game => {
+    const white = game.white?.username?.toLowerCase() === lower;
+    return Number(white ? game.white?.rating : game.black?.rating);
+  }).filter(Number.isFinite);
+  const statCurrent = Number(state.stats?.chess_rapid?.last?.rating);
+  const statBest = Number(state.stats?.chess_rapid?.best?.rating);
+  const current = Number.isFinite(statCurrent) ? statCurrent : (ratings[0] || 1200);
+  const best = Number.isFinite(statBest) ? statBest : (ratings.length ? Math.max(...ratings) : current);
+  const wins = games.filter(game => {
+    const white = game.white?.username?.toLowerCase() === lower;
+    return (white ? game.white?.result : game.black?.result) === 'win';
+  }).length;
+  const winrate = games.length ? Math.round((wins / games.length) * 100) : 0;
+  const mastered = Object.keys(PROGRESS.mastered || {}).length;
+  const badges = computeBadges().filter(badge => badge.unlocked).length;
+  document.getElementById('profile-gem-count').textContent = PROGRESS.xp || 0;
+  document.getElementById('profile-name').textContent = username;
+  document.getElementById('profile-elo').textContent = current;
+  document.getElementById('profile-rank').textContent = profileRank(current);
+  document.getElementById('profile-games').textContent = games.length;
+  document.getElementById('profile-winrate').textContent = `${winrate}%`;
+  document.getElementById('profile-best-elo').textContent = best;
+  document.getElementById('profile-extra-badges').textContent = `+${Math.max(0,badges - 5)}`;
+  const daily = PROGRESS.dailyProgress;
+  document.getElementById('profile-objectives').innerHTML = [
+    objectiveRow('♟','Résoudre 3 puzzles',daily.puzzlesSolvedToday || 0,3,'#7337a3'),
+    objectiveRow('♞','Jouer 1 partie',daily.gamesPlayedToday || 0,1,'#4c9c5a'),
+    objectiveRow('◉','Analyser 1 partie',daily.gamesAnalyzedToday || 0,1,'#27645b')
+  ].join('');
+  const today = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+  document.getElementById('profile-achievements').innerHTML = [
+    achievementRow('🏆','Maître des ouvertures',`${mastered} ouverture${mastered > 1 ? 's' : ''} maîtrisée${mastered > 1 ? 's' : ''}`,today),
+    achievementRow('🔥',`Série de ${computeCurrentStreak()} jours`,'Continue ta régularité',today),
+    achievementRow('♛','Tacticien accompli',`${PROGRESS.puzzlesSolved || 0} puzzles résolus`,today)
+  ].join('');
+}
 
-  const streak = computeCurrentStreak();
-  document.getElementById('streak-number').textContent = streak;
-  const dates = new Set(PROGRESS.activityDates || []);
-  let calHtml = '';
-  for(let i=27;i>=0;i--) calHtml += `<span class="streak-day ${dates.has(dateKeyOffset(i))?'active':''}"></span>`;
-  document.getElementById('streak-calendar').innerHTML = calHtml;
-
-  const totalTrainable = trainableKeys().length;
-  const masteredCount = Object.keys(PROGRESS.mastered).length;
-  const avgAcc = PROGRESS.games.length ? Math.round(PROGRESS.games.reduce((s,g)=>s+(g.whiteAcc+g.blackAcc)/2,0) / PROGRESS.games.length) : null;
-  document.getElementById('progress-stats').innerHTML = `
-    <div class="stat-card"><div class="big">${masteredCount}/${totalTrainable}</div><div class="label">Ouvertures maîtrisées</div></div>
-    <div class="stat-card"><div class="big">${PROGRESS.games.length}</div><div class="label">Parties analysées</div></div>
-    <div class="stat-card"><div class="big">${avgAcc!==null?avgAcc+'%':'—'}</div><div class="label">Précision moyenne</div></div>
-    <div class="stat-card"><div class="big">${PROGRESS.puzzlesSolved}</div><div class="label">Puzzles résolus</div></div>`;
-
-  renderBadges();
-  renderPathList();
-
-  document.getElementById('mastery-grid').innerHTML = trainableKeys().map(key => {
-    const o = OPENINGS[key];
-    const done = !!PROGRESS.mastered[key];
-    return `<a class="mastery-chip ${done?'done':''}" href="openings.html?opening=${key}" style="text-decoration:none;">
-      <span>${escapeHtml(o.name)}</span><span class="check ${done?'':'empty'}">${done?'\u2713':'\u25CB'}</span></a>`;
-  }).join('');
-
-  const histEl = document.getElementById('games-history');
-  if(PROGRESS.games.length === 0){
-    histEl.innerHTML = '<div class="history-empty">Aucune partie analysée pour l\'instant.</div>';
-  } else {
-    histEl.innerHTML = PROGRESS.games.map(g => {
-      const d = new Date(g.date).toLocaleDateString('fr-FR');
-      return `<div class="history-row"><span class="h-date">${d}</span><span>${escapeHtml(g.white)} vs ${escapeHtml(g.black)}</span><span class="h-acc">${g.whiteAcc}%</span><span class="h-acc">${g.blackAcc}%</span></div>`;
-    }).join('');
+async function initProfile(){
+  renderProfile();
+  const username = chessComState().username || PROGRESS.settings?.chessComUsername || '';
+  if(!username) return;
+  try{
+    await fetchChessComStats(username);
+    await syncChessCom(username);
+    renderProfile();
+  }catch(error){
+    console.warn(error);
   }
 }
-renderProfile();
+
+initProfile();
 </script>
 </body>
 </html>

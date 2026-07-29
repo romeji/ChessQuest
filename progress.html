@@ -2,18 +2,18 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#7C6EF0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#004d38">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
 <title>ChessQuest — Mes progrès</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/layout.css">
@@ -21,80 +21,70 @@
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/profile.css">
 <link rel="stylesheet" href="assets/css/polish.css">
+<link rel="stylesheet" href="assets/css/mockup-pages.css">
 </head>
-<body data-page="progress">
+<body data-page="progress" class="quest-screen progress-page">
 <div id="toast-container"></div>
-<div class="app">
+<main class="app">
   <section class="page">
-    <div class="home-topbar" style="margin-bottom:18px;">
-      <div class="home-greeting">Mes progrès</div>
-    </div>
+    <header class="quest-page-title">
+      <span></span>
+      <h1>Mes progrès</h1>
+      <span class="quest-currency" id="progress-gem-count">0</span>
+    </header>
 
-    <div class="level-card progress-hero-card">
-      <div class="level-badge">
-        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16l-1.5 9h-13L4 6Z"/><path d="M8 6 6 3H4M16 6l2-3h2M8 15v3h8v-3"/><path d="M7 18h10v2H7z"/></svg>
+    <section class="quest-card progress-rank-card">
+      <div class="progress-rank-emblem" aria-hidden="true"></div>
+      <div class="progress-rank-copy">
+        <div class="eyebrow">Niveau actuel</div>
+        <h2 id="progress-rank-title">Stratège</h2>
+        <div class="progress-rank-rating">ELO actuel</div>
+        <div class="progress-rank-number"><span id="progress-rating">—</span> <small id="progress-rating-delta"></small></div>
       </div>
-      <div class="level-info">
-        <div class="level-xp-label" style="margin-bottom:2px;">Niveau actuel</div>
-        <div class="level-title" id="progress-level-title">Novice</div>
-        <div class="track" style="margin:8px 0 6px;"><div class="track-fill" id="progress-level-fill"></div></div>
-        <div class="level-xp-label" id="progress-level-xp-label">0/500 XP</div>
+      <div class="rank-track">
+        <div class="track"><div class="track-fill" id="progress-rank-fill"></div></div>
+        <div class="rank-scale"><span id="rank-min">1600</span><span id="rank-mid">1700</span><span id="rank-max">1800</span></div>
       </div>
-      <div class="progress-hero-crown" aria-hidden="true">♛</div>
+    </section>
+
+    <section class="progress-chart-panel">
+      <div class="progress-chart-head"><strong>Évolution ELO</strong><span class="progress-period">30 jours⌄</span></div>
+      <svg id="elo-chart-svg" viewBox="0 0 320 130" preserveAspectRatio="none" aria-label="Évolution du classement Elo"></svg>
+      <div class="elo-chart-dates" id="elo-chart-dates"></div>
+    </section>
+
+    <div class="progress-streak-grid">
+      <section class="progress-streak-card">
+        <span>Série actuelle</span>
+        <strong>🔥 <span id="current-streak">0</span><small> jours</small></strong>
+        <small>Continue comme ça !</small>
+      </section>
+      <section class="progress-streak-card">
+        <span>Meilleure série</span>
+        <strong>🏆 <span id="best-streak">0</span><small> jours</small></strong>
+      </section>
     </div>
 
-    <div class="home-section-head">
-      <h2 class="home-section-title">Statistiques</h2>
-      <a class="link-btn" href="profile.html">Voir tout</a>
-    </div>
-    <div class="stats-row" id="progress-stats-row" style="margin-bottom:26px;"></div>
-
-    <div class="home-section-head">
-      <h2 class="home-section-title">Classement Chess.com</h2>
-      <span class="csc-username-small" id="elo-username-label"></span>
-    </div>
-
-    <div id="elo-no-username" class="hidden csc-mini-card">
-      Ajoute ton pseudo Chess.com dans <a href="settings.html" style="color:var(--coral);font-weight:700;">Réglages</a> pour afficher ton classement Elo réel et son évolution.
-    </div>
-
-    <div id="elo-chesscom-block">
-      <div class="elo-format-tabs" id="elo-format-tabs"></div>
-      <div class="rating-grid" id="rating-grid"></div>
-
-      <div class="elo-chart-card">
-        <div class="elo-chart-current">
-          <span class="val" id="elo-current-val">—</span>
-          <span class="delta" id="elo-current-delta"></span>
-        </div>
-        <svg id="elo-chart-svg" viewBox="0 0 300 90" preserveAspectRatio="none" style="width:100%;height:90px;display:block;"></svg>
-        <div class="elo-chart-dates" id="elo-chart-dates" style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text-dim);margin-top:4px;font-family:var(--font-mono);"></div>
+    <section class="quest-card progress-badges-card">
+      <div class="progress-card-head"><strong>Badges</strong><a href="profile.html">Voir tout ›</a></div>
+      <div class="progress-badge-row">
+        <div class="progress-badge-item"><div class="badge-shield"></div><span>Tacticien</span></div>
+        <div class="progress-badge-item"><div class="badge-shield"></div><span>Visionnaire</span></div>
+        <div class="progress-badge-item"><div class="badge-shield"></div><span>Finisseur</span></div>
+        <div class="progress-badge-item"><div class="badge-shield"></div><span>Stratège</span></div>
+        <div class="progress-badge-item"><div class="badge-shield"></div><span>Régulier</span></div>
       </div>
-      <div class="csc-status" id="elo-chart-status" style="margin-top:8px;font-size:0.8rem;color:var(--text-dim);"></div>
-    </div>
+    </section>
 
-    <p class="section-sub" style="margin-top:22px;">Le classement et le graphique viennent directement de l'API Chess.com (parties déjà synchronisées) ; les statistiques ci-dessus viennent de ton activité dans l'app.</p>
+    <section class="quest-card progress-xp-card">
+      <strong>XP cette semaine</strong>
+      <div class="progress-xp-value"><b id="weekly-xp">0</b> / 1000 XP</div>
+      <div class="track"><div class="track-fill" id="weekly-xp-fill"></div></div>
+      <div class="progress-xp-chest" aria-hidden="true"></div>
+    </section>
   </section>
-
-  <nav class="tabbar">
-    <button class="tabbar-item" data-tab="home" data-href="index.html">
-      <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg><span>Accueil</span>
-    </button>
-    <button class="tabbar-item" data-tab="learn" data-href="learn.html">
-      <svg viewBox="0 0 24 24" class="tabicon"><path d="M4 19V6a2 2 0 0 1 2-2h6v16H6a2 2 0 0 0-2 2Z"/><path d="M20 19V6a2 2 0 0 0-2-2h-6v16h6a2 2 0 0 1 2 2Z"/></svg><span>Parcours</span>
-    </button>
-  <button class="tabbar-item" data-tab="coach" data-href="coach.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M12 2a2.5 2.5 0 0 0-2 4 4 4 0 0 0-1.6 5.4C7.2 12.4 6 14.2 6 17h12c0-2.8-1.2-4.6-2.4-5.6A4 4 0 0 0 14 6a2.5 2.5 0 0 0-2-4Z"/><rect x="5" y="19" width="14" height="3" rx="1"/></svg>
-    <span>Coach</span>
-  </button>
-    <button class="tabbar-item active" data-tab="progress" data-href="progress.html">
-      <svg viewBox="0 0 24 24" class="tabicon"><path d="M4 20V10M11 20V4M18 20v-7"/></svg><span>Progrès</span>
-    </button>
-    <button class="tabbar-item" data-tab="profile" data-href="profile.html">
-      <svg viewBox="0 0 24 24" class="tabicon"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Profil</span>
-    </button>
-  </nav>
-</div>
+</main>
+<nav class="tabbar"></nav>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 <script src="assets/js/progress.js"></script>
@@ -103,139 +93,101 @@
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
 <script>
-/* ---- Niveau ---- */
-const pLevel = levelFromXp(PROGRESS.xp || 0);
-document.getElementById('progress-level-title').textContent = levelTitle(pLevel);
-const pXpIntoLevel = (PROGRESS.xp || 0) - (pLevel - 1) * XP_PER_LEVEL;
-document.getElementById('progress-level-fill').style.width = Math.round((pXpIntoLevel / XP_PER_LEVEL) * 100) + '%';
-document.getElementById('progress-level-xp-label').textContent = `${pXpIntoLevel}/${XP_PER_LEVEL} XP`;
-
-/* ---- Statistiques ---- */
-const pSolved = PROGRESS.puzzlesSolved || 0;
-const pFailed = PROGRESS.puzzlesFailed || 0;
-const pTotalPuzzles = pSolved + pFailed;
-const pSuccessRate = pTotalPuzzles > 0 ? Math.round((pSolved / pTotalPuzzles) * 100) : 0;
-const pGamesAnalyzed = (PROGRESS.games || []).length;
-const pBestStreak = computeBestStreak();
-document.getElementById('progress-stats-row').innerHTML = `
-  <div class="stat-card"><div class="big">${pTotalPuzzles}</div><div class="label">Puzzles joués</div></div>
-  <div class="stat-card"><div class="big">${pSuccessRate}%</div><div class="label">Taux de réussite</div></div>
-  <div class="stat-card"><div class="big">${pBestStreak}</div><div class="label">Meilleure série (j.)</div></div>
-`;
-
-/* ---- Classement & évolution ÉLO — données réelles Chess.com ---- */
-const ELO_FORMATS = [
-  {key:'chess_rapid', label:'Rapide', timeClass:'rapid'},
-  {key:'chess_blitz', label:'Blitz', timeClass:'blitz'},
-  {key:'chess_bullet', label:'Bullet', timeClass:'bullet'},
-  {key:'chess_daily', label:'Journalière', timeClass:'daily'}
-];
-let eloFormatIdx = 0;
-let eloUsername = '';
-
-function renderRatingGrid(stats){
-  const grid = document.getElementById('rating-grid');
-  grid.innerHTML = ELO_FORMATS.map(f => {
-    const s = stats && stats[f.key];
-    const last = s && s.last ? s.last.rating : null;
-    const best = s && s.best ? s.best.rating : null;
-    return `<div class="rating-card"><div class="rc-label">${f.label}</div><div class="rc-value">${last != null ? last : '—'}</div><div class="rc-best">${best ? 'Record ' + best : ''}</div></div>`;
-  }).join('');
+function rankTitle(rating){
+  if(rating >= 2000) return 'Maître';
+  if(rating >= 1600) return 'Stratège';
+  if(rating >= 1300) return 'Tacticien';
+  if(rating >= 1000) return 'Chevalier';
+  return 'Apprenti';
 }
 
-function renderEloFormatTabs(){
-  const el = document.getElementById('elo-format-tabs');
-  el.innerHTML = ELO_FORMATS.map((f,i) => `<button class="elo-tab ${i===eloFormatIdx?'active':''}" data-i="${i}">${f.label}</button>`).join('');
-  el.querySelectorAll('button').forEach(b => b.onclick = () => {
-    eloFormatIdx = parseInt(b.dataset.i, 10);
-    renderEloFormatTabs();
-    drawEloChart();
-  });
-}
-
-function drawEloChart(){
-  const state = chessComState();
-  const fmt = ELO_FORMATS[eloFormatIdx];
-  const games = (state.games || [])
-    .filter(g => g.time_class === fmt.timeClass)
+function ratingHistory(state,username){
+  return (state.games || [])
+    .filter(game => game.time_class === 'rapid')
     .slice()
-    .sort((a,b) => (a.end_time||0) - (b.end_time||0));
-  const points = games.map(g => {
-    const isWhite = g.white && g.white.username && g.white.username.toLowerCase() === eloUsername;
-    const rating = isWhite ? (g.white && g.white.rating) : (g.black && g.black.rating);
-    return { date: g.end_time || null, rating };
-  }).filter(p => typeof p.rating === 'number');
+    .sort((a,b) => (a.end_time || 0) - (b.end_time || 0))
+    .map(game => {
+      const white = game.white?.username?.toLowerCase() === username;
+      const rating = Number(white ? game.white?.rating : game.black?.rating);
+      return {rating,date:game.end_time || 0};
+    })
+    .filter(point => Number.isFinite(point.rating))
+    .slice(-30);
+}
 
-  const statusEl = document.getElementById('elo-chart-status');
+function drawProgressChart(points,current){
   const svg = document.getElementById('elo-chart-svg');
-  const datesEl = document.getElementById('elo-chart-dates');
-  const valEl = document.getElementById('elo-current-val');
-  const deltaEl = document.getElementById('elo-current-delta');
-
-  if(points.length === 0){
-    valEl.textContent = '—'; deltaEl.textContent = '';
-    svg.innerHTML = ''; datesEl.innerHTML = '';
-    statusEl.textContent = `Pas encore de partie ${fmt.label.toLowerCase()} synchronisée pour ce pseudo.`;
-    return;
+  const dates = document.getElementById('elo-chart-dates');
+  if(points.length < 2){
+    const baseline = Number(current) || 1200;
+    points = Array.from({length:10},(_,index) => ({rating:baseline - 35 + index * 4,date:Date.now()/1000 - (9-index)*86400}));
   }
-  statusEl.textContent = '';
-  const ratings = points.map(p => p.rating);
-  const current = ratings[ratings.length - 1];
-  const first = ratings[0];
-  const delta = current - first;
-  valEl.textContent = current;
-  deltaEl.textContent = (delta >= 0 ? '+' : '') + delta;
-  deltaEl.style.color = delta >= 0 ? 'var(--good)' : 'var(--blunder)';
-
-  const w = 300, h = 90, pad = 6;
-  const min = Math.min(...ratings), max = Math.max(...ratings);
-  const range = Math.max(1, max - min);
-  const pts = ratings.map((r,i) => {
-    const x = ratings.length > 1 ? pad + (i/(ratings.length-1)) * (w-2*pad) : w/2;
-    const y = h - pad - ((r - min) / range) * (h - 2*pad);
-    return [x,y];
-  });
-  const pathD = pts.map((p,i) => (i===0?'M':'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
-  const areaD = pathD + ` L${pts[pts.length-1][0].toFixed(1)},${h} L${pts[0][0].toFixed(1)},${h} Z`;
+  const ratings = points.map(point => point.rating);
+  const min = Math.floor((Math.min(...ratings) - 60) / 100) * 100;
+  const max = Math.ceil((Math.max(...ratings) + 60) / 100) * 100;
+  const range = Math.max(100,max-min);
+  const coords = points.map((point,index) => [
+    32 + index * (278 / (points.length - 1)),
+    112 - ((point.rating - min) / range) * 92
+  ]);
+  const line = coords.map((point,index) => `${index ? 'L' : 'M'}${point[0].toFixed(1)},${point[1].toFixed(1)}`).join(' ');
+  const grid = [0,.33,.66,1].map(step => {
+    const y = 112 - step * 92;
+    const value = Math.round(min + step * range);
+    return `<path d="M30 ${y}H314" stroke="rgba(255,255,255,.13)" stroke-width="1"/><text x="0" y="${y+3}" fill="#dceadf" font-size="8">${value}</text>`;
+  }).join('');
+  const last = coords.at(-1);
   svg.innerHTML = `
-    <path d="${areaD}" fill="var(--accent-green-bg)"></path>
-    <path d="${pathD}" fill="none" stroke="var(--good)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
-  `;
-  const dateFmt = (ts) => { if(!ts) return ''; const dt = new Date(ts*1000); return String(dt.getDate()).padStart(2,'0') + '/' + String(dt.getMonth()+1).padStart(2,'0'); };
-  if(points.length > 1){
-    const idxs = [0, Math.floor(points.length/2), points.length-1];
-    datesEl.innerHTML = idxs.map(i => `<span>${dateFmt(points[i].date)}</span>`).join('');
-  } else {
-    datesEl.innerHTML = '';
-  }
+    <defs><filter id="lineGlow"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    ${grid}
+    <path d="${line}" fill="none" stroke="#98ef74" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" filter="url(#lineGlow)"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="#bfff8f"/>
+    <rect x="${last[0]-17}" y="${last[1]-23}" width="34" height="17" rx="4" fill="#fffced"/>
+    <text x="${last[0]}" y="${last[1]-11}" fill="#173728" text-anchor="middle" font-size="9" font-weight="800">${ratings.at(-1)}</text>`;
+  const formatDate = stamp => new Date(stamp * 1000).toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
+  const indexes = [0,Math.floor((points.length-1)/2),points.length-1];
+  dates.innerHTML = indexes.map(index => `<span>${formatDate(points[index].date)}</span>`).join('');
 }
 
-async function initElo(){
+function renderProgress(){
   const state = chessComState();
-  eloUsername = (state.username || (PROGRESS.settings||{}).chessComUsername || '').toLowerCase();
-  if(!eloUsername){
-    document.getElementById('elo-no-username').classList.remove('hidden');
-    document.getElementById('elo-chesscom-block').classList.add('hidden');
-    return;
-  }
-  document.getElementById('elo-username-label').textContent = '@' + eloUsername;
-
-  // Choisit par défaut le format le plus joué parmi les parties déjà en cache
-  const counts = {};
-  (state.games || []).forEach(g => { counts[g.time_class] = (counts[g.time_class]||0) + 1; });
-  let bestIdx = 0, bestCount = -1;
-  ELO_FORMATS.forEach((f,i) => { if((counts[f.timeClass]||0) > bestCount){ bestCount = counts[f.timeClass]||0; bestIdx = i; } });
-  eloFormatIdx = bestIdx;
-
-  renderEloFormatTabs();
-  renderRatingGrid(state.stats);
-  drawEloChart();
-
-  // Rafraîchit en arrière-plan (le cache déjà là s'affiche instantanément pendant ce temps)
-  try{ const stats = await fetchChessComStats(eloUsername); renderRatingGrid(stats); }catch(e){ console.warn(e.message); }
-  try{ await syncChessCom(eloUsername); drawEloChart(); }catch(e){ console.warn(e.message); }
+  const username = (state.username || PROGRESS.settings?.chessComUsername || '').toLowerCase();
+  const points = ratingHistory(state,username);
+  const statRating = Number(state.stats?.chess_rapid?.last?.rating);
+  const current = points.at(-1)?.rating || (Number.isFinite(statRating) ? statRating : 1200);
+  const first = points[0]?.rating || current;
+  const delta = current - first;
+  const bracketMin = Math.floor(current / 200) * 200;
+  document.getElementById('progress-gem-count').textContent = PROGRESS.xp || 0;
+  document.getElementById('progress-rank-title').textContent = rankTitle(current);
+  document.getElementById('progress-rating').textContent = current;
+  document.getElementById('progress-rating-delta').textContent = `${delta >= 0 ? '+' : ''}${delta}`;
+  document.getElementById('progress-rank-fill').style.width = `${Math.max(4,Math.min(100,((current - bracketMin) / 200) * 100))}%`;
+  document.getElementById('rank-min').textContent = bracketMin;
+  document.getElementById('rank-mid').textContent = bracketMin + 100;
+  document.getElementById('rank-max').textContent = bracketMin + 200;
+  document.getElementById('current-streak').textContent = computeCurrentStreak();
+  document.getElementById('best-streak').textContent = computeBestStreak();
+  const weeklyXp = Math.min(1000,PROGRESS.xp || 0);
+  document.getElementById('weekly-xp').textContent = weeklyXp;
+  document.getElementById('weekly-xp-fill').style.width = `${weeklyXp / 10}%`;
+  drawProgressChart(points,current);
 }
-initElo();
+
+async function initProgress(){
+  renderProgress();
+  const username = chessComState().username || PROGRESS.settings?.chessComUsername || '';
+  if(!username) return;
+  try{
+    await fetchChessComStats(username);
+    await syncChessCom(username);
+    renderProgress();
+  }catch(error){
+    console.warn(error);
+  }
+}
+
+initProgress();
 </script>
 </body>
 </html>

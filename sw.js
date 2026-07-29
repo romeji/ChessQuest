@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v28';
+const CACHE_VERSION = 'chessquest-v31';
 const APP_SHELL = [
   './',
   './index.html',
@@ -26,6 +26,7 @@ const APP_SHELL = [
   './assets/css/components.css',
   './assets/css/animations.css',
   './assets/css/polish.css',
+  './assets/css/mockup-pages.css',
   './assets/css/home.css',
   './assets/css/learn.css',
   './assets/css/entrainement.css',
@@ -65,6 +66,7 @@ const APP_SHELL = [
   './assets/illustrations/mascot-knight-hint.png',
   './assets/illustrations/opening-islands-spritesheet.png',
   './assets/illustrations/opening-map-night.png',
+  './assets/illustrations/opening-map-maquette-v2.png',
   './assets/illustrations/analysis-hero-chess.png',
   './assets/illustrations/rewards-spritesheet.png',
   './assets/illustrations/training-menu-hero.png'
@@ -97,6 +99,27 @@ self.addEventListener('fetch', event => {
     'https://fonts.gstatic.com'
   ];
   if (!supportedOrigins.includes(url.origin)) return;
+
+  /* Les pages et le code doivent se mettre à jour immédiatement dès qu'une
+     connexion est disponible. Le cache reste le filet de sécurité hors ligne. */
+  const freshFirst = url.origin === self.location.origin && (
+    event.request.mode === 'navigate' ||
+    event.request.destination === 'script' ||
+    event.request.destination === 'style'
+  );
+  if (freshFirst) {
+    event.respondWith(
+      fetch(event.request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE_VERSION).then(cache => cache.put(event.request, copy));
+          return response;
+        })
+        .catch(() => caches.match(event.request)
+          .then(cached => cached || caches.match('./index.html')))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then(cached => {
