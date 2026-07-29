@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v31';
+const CACHE_VERSION = 'chessquest-v32';
 const APP_SHELL = [
   './',
   './index.html',
@@ -27,6 +27,7 @@ const APP_SHELL = [
   './assets/css/animations.css',
   './assets/css/polish.css',
   './assets/css/mockup-pages.css',
+  './assets/css/final-views.css',
   './assets/css/home.css',
   './assets/css/learn.css',
   './assets/css/entrainement.css',

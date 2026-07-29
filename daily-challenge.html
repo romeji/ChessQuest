@@ -138,7 +138,7 @@ function loadDailyPuzzle(){
   document.getElementById('daily-coach-text').textContent = puzzle.hint || 'Cherche d’abord les échecs, puis les prises et les menaces.';
   const solution = puzzle.solution.replace(/[!?]+$/,'');
   const moverColor = dailyGame.turn();
-  const options = buildMcqOptions(dailyGame,solution);
+  const options = buildMcqOptions(dailyGame,solution,4);
   const container = document.getElementById('daily-mcq-options');
   container.innerHTML = options.map((option,index) => `
     <button class="mcq-option" data-san="${escapeHtml(option)}">

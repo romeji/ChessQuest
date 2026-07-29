@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#7C6EF0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fffaf0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
@@ -13,7 +13,7 @@
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
 <title>ChessQuest — Accueil</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/layout.css">
@@ -21,120 +21,63 @@
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/home.css">
 <link rel="stylesheet" href="assets/css/polish.css">
+<link rel="stylesheet" href="assets/css/final-views.css">
 </head>
-<body data-page="home">
+<body data-page="home" class="final-shell-page home-final-page">
 <div id="toast-container"></div>
 
 <div id="onboarding-overlay" class="onboarding-overlay hidden">
   <div class="landing-card">
     <img class="landing-logo" src="assets/icons/chessquest-logo.svg" alt="Logo ChessQuest">
-    <h1 class="landing-title">Chess<span class="accent">y</span></h1>
+    <h1 class="landing-title">ChessQuest</h1>
     <p class="landing-tagline">Apprends. Progresse. Deviens un champion !</p>
-    <button class="btn landing-btn" id="onboarding-close-btn">Commencer l'aventure</button>
-    <button class="landing-skip" id="onboarding-skip-btn">J'ai déjà un compte</button>
+    <button class="btn landing-btn" id="onboarding-close-btn">Commencer l’aventure</button>
+    <button class="landing-skip" id="onboarding-skip-btn">J’ai déjà un compte</button>
   </div>
 </div>
 
-<div class="app">
+<main class="app">
   <section class="page">
-    <header class="home-maquette-head">
-      <a class="home-brand" href="index.html" aria-label="Accueil ChessQuest">Chess<span>Q</span>uest<i>♛</i></a>
-      <div class="home-hero-stats">
-        <div class="home-chip">
-          <svg viewBox="0 0 24 24" class="chip-icon flame"><path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c1 1 2 2.5 2 4.5A5 5 0 0 1 7 17c0-3 1.5-4 2-6-1 0-3 1-3 3.5A7.5 7.5 0 0 0 12 22a7.5 7.5 0 0 0 7.5-7.5C19.5 8 15 6 12 2Z"/></svg>
-          <span id="home-streak">0</span>
-        </div>
-        <div class="home-chip gem">
-          <svg viewBox="0 0 24 24" class="chip-icon gem-icon"><path d="M6 3h12l4 6-10 12L2 9Z"/><path d="M2 9h20M9 3l-2 6 5 12 5-12-2-6"/></svg>
-          <span id="home-xp">0</span>
-        </div>
-        <button class="home-bell" type="button" data-notification-button aria-label="Voir les notifications">♧</button>
+    <header class="home-final-head">
+      <a class="home-final-brand" href="index.html" aria-label="Accueil ChessQuest">Chess<b>Q</b>uest<i>♛</i></a>
+      <div class="home-final-tools">
+        <span class="home-fire-chip" id="home-streak">0</span>
+        <button class="home-final-bell" type="button" data-notification-button aria-label="Voir les notifications">
+          <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+        </button>
       </div>
     </header>
 
-    <section class="home-mascot-stage">
-      <div class="home-speech" id="home-greeting">Prêt pour<br>une nouvelle<br>quête ?</div>
-      <img class="home-mascot-art" src="assets/illustrations/mascot-knight-home.png" alt="Cavalier ChessQuest couronné">
-      <span class="home-confetti c1">◆</span><span class="home-confetti c2">◆</span><span class="home-confetti c3">◆</span>
+    <section class="home-final-stage">
+      <span class="home-final-confetti c1">◆</span>
+      <span class="home-final-confetti c2">◆</span>
+      <span class="home-final-confetti c3">◆</span>
+      <div class="home-final-speech" id="home-greeting">Prêt pour<br>une nouvelle<br>quête ?</div>
+      <img class="home-final-mascot" src="assets/illustrations/mascot-knight-home.png" alt="Cavalier ChessQuest couronné">
     </section>
 
-    <a class="home-goal-card" href="daily-challenge.html" style="text-decoration:none;">
-      <div class="home-goal-info">
-        <span class="home-goal-label"><b>◎</b> Défi du jour</span>
-        <div class="home-goal-text" id="home-goal-text">Chargement…</div>
-        <div class="track"><div class="track-fill" id="home-goal-fill"></div></div>
-        <div class="home-goal-rewards"><span>◉ +50</span><span>◆ +10 XP</span><span>🎁</span></div>
-      </div>
-      <span class="home-goal-treasure" aria-hidden="true">🎁</span>
+    <a class="home-final-daily" href="daily-challenge.html">
+      <span class="home-daily-label">Défi du jour</span>
+      <strong class="home-daily-title" id="home-goal-text">Résous 3 puzzles</strong>
+      <div class="track"><div class="track-fill" id="home-goal-fill"></div></div>
+      <span class="home-daily-count" id="home-goal-count">0/3</span>
+      <span class="home-final-rewards"><span>◉ +50</span><span>◆ +10 XP</span></span>
+      <span class="home-daily-chest" aria-hidden="true"></span>
     </a>
 
-    <a class="home-analysis-prompt" id="home-analysis-prompt" href="analysis.html">
-      <span class="home-analysis-icon">♟</span>
-      <span><strong>Ta dernière partie est prête à analyser</strong><small id="home-analysis-copy">Découvre tes forces et tes opportunités.</small></span>
-      <span class="home-analysis-arrow">›</span>
+    <a class="home-final-analysis" id="home-analysis-prompt" href="analysis.html">
+      <span class="home-analysis-visual" aria-hidden="true">🔍</span>
+      <span>
+        <strong>Ta dernière partie est prête à analyser</strong>
+        <small id="home-analysis-copy">Découvre tes forces et tes opportunités.</small>
+      </span>
+      <span class="home-analysis-next">›</span>
     </a>
 
-    <a class="home-continue-button" href="learn.html"><span>♜</span> Continuer <i>→</i></a>
-
-    <div class="home-tiles">
-      <a class="home-tile tile-green" href="entrainement.html">
-        <svg viewBox="0 0 24 24" class="home-tile-icon"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>
-        <span>S'entraîner</span>
-      </a>
-      <a class="home-tile tile-orange" href="puzzles.html">
-        <svg viewBox="0 0 24 24" class="home-tile-icon"><path d="M14 3v3a2 2 0 0 0 2 2h3M9 21H6a2 2 0 0 1-2-2v-3M4 9V6a2 2 0 0 1 2-2h3m7 17h3a2 2 0 0 0 2-2v-3"/><circle cx="12" cy="12" r="2.5"/></svg>
-        <span>Puzzles</span>
-      </a>
-      <a class="home-tile tile-blue" href="analysis.html">
-        <svg viewBox="0 0 24 24" class="home-tile-icon"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8"/></svg>
-        <span>Mes parties Chess.com</span>
-      </a>
-    </div>
-
-    <div class="home-section-head">
-      <h2 class="home-section-title">Ton parcours</h2>
-      <a class="link-btn" href="profile.html">Voir tout</a>
-    </div>
-    <a class="home-path-card" href="learn.html" style="text-decoration:none;">
-      <div class="home-path-icon">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#6C5CE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4a3 3 0 0 0 3 4M17 5h3a3 3 0 0 1-3 4"/><path d="M12 14v3M9 20h6l-1-3H10l-1 3Z"/></svg>
-      </div>
-      <div class="home-path-info">
-        <div class="home-path-title" id="home-path-title">Ouvertures : Débutant</div>
-        <div class="track"><div class="track-fill" id="home-path-fill"></div></div>
-      </div>
-      <div class="home-path-count" id="home-path-count">0/24</div>
-    </a>
-
-    <div class="home-week-card">
-      <div class="home-week-label">Série en cours <span id="home-week-streak">0 jours</span></div>
-      <div class="home-week-strip" id="home-week-strip"></div>
-    </div>
+    <a class="home-final-continue" href="learn.html"><span>♜</span>Continuer</a>
   </section>
-</div>
-
-<nav class="tabbar">
-  <button class="tabbar-item" data-tab="home" data-href="index.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>
-    <span>Accueil</span>
-  </button>
-  <button class="tabbar-item" data-tab="learn" data-href="learn.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="6" cy="19" r="2.5"/><circle cx="12" cy="11" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M6 16.5V13a2 2 0 0 1 2-2h1.5M14.5 9H16a2 2 0 0 0 2-2V5.5"/></svg>
-    <span>Parcours</span>
-  </button>
-  <button class="tabbar-item" data-tab="coach" data-href="coach.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M12 2a2.5 2.5 0 0 0-2 4 4 4 0 0 0-1.6 5.4C7.2 12.4 6 14.2 6 17h12c0-2.8-1.2-4.6-2.4-5.6A4 4 0 0 0 14 6a2.5 2.5 0 0 0-2-4Z"/><rect x="5" y="19" width="14" height="3" rx="1"/></svg>
-    <span>Coach</span>
-  </button>
-  <button class="tabbar-item" data-tab="progress" data-href="progress.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 15l4-5 3 3 5-7"/></svg>
-    <span>Progrès</span>
-  </button>
-  <button class="tabbar-item" data-tab="profile" data-href="profile.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg>
-    <span>Profil</span>
-  </button>
-</nav>
+</main>
+<nav class="tabbar"></nav>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 <script src="assets/js/progress.js"></script>
@@ -145,43 +88,24 @@
 <script>
 function renderHomeTab(){
   document.getElementById('home-streak').textContent = computeCurrentStreak();
-  document.getElementById('home-xp').textContent = PROGRESS.xp || 0;
-
   ensureDailyProgressFresh();
-  const challenge = todayChallenge();
-  const current = Math.min(challenge.target, PROGRESS.dailyProgress[challenge.type] || 0);
-  document.getElementById('home-goal-text').textContent = `${challenge.text} (${current}/${challenge.target})`;
-  document.getElementById('home-goal-fill').style.width = Math.round((current/challenge.target)*100) + '%';
+  const current = Math.min(3,PROGRESS.dailyProgress.puzzlesSolvedToday || 0);
+  document.getElementById('home-goal-text').textContent = 'Résous 3 puzzles';
+  document.getElementById('home-goal-count').textContent = `${current}/3`;
+  document.getElementById('home-goal-fill').style.width = `${Math.round((current / 3) * 100)}%`;
 
-  const latestGame = (chessComState().games || []).slice().sort((a,b)=>(b.end_time||0)-(a.end_time||0))[0];
-  const analysisPrompt = document.getElementById('home-analysis-prompt');
-  if(latestGame){
-    analysisPrompt.classList.remove('hidden');
-    const username = (chessComState().username || '').toLowerCase();
-    const opponent = latestGame.white && latestGame.white.username && latestGame.white.username.toLowerCase() === username ? latestGame.black?.username : latestGame.white?.username;
-    document.getElementById('home-analysis-copy').textContent = opponent ? `Reviens sur ta partie contre ${opponent}.` : 'Découvre tes forces et tes opportunités.';
+  const state = chessComState();
+  const latest = (state.games || []).slice().sort((a,b) => (b.end_time || 0) - (a.end_time || 0))[0];
+  if(latest){
+    const username = (state.username || '').toLowerCase();
+    const playerIsWhite = latest.white?.username?.toLowerCase() === username;
+    const opponent = playerIsWhite ? latest.black?.username : latest.white?.username;
+    document.getElementById('home-analysis-copy').textContent = opponent
+      ? `Reviens sur ta partie contre ${opponent}.`
+      : 'Découvre tes forces et tes opportunités.';
   }
-
-  const totalTrainable = 24;
-  const masteredCount = Object.keys(PROGRESS.mastered || {}).length;
-  document.getElementById('home-path-title').textContent = `Ouvertures : ${levelTitle(levelFromXp(PROGRESS.xp||0))}`;
-  document.getElementById('home-path-fill').style.width = Math.round((masteredCount/totalTrainable)*100) + '%';
-  document.getElementById('home-path-count').textContent = `${masteredCount}/${totalTrainable}`;
-
-  const streak = computeCurrentStreak();
-  document.getElementById('home-week-streak').textContent = `${streak} jour${streak>1?'s':''}`;
-  const dayLabels = ['L','M','M','J','V','S','D'];
-  const dates = new Set(PROGRESS.activityDates || []);
-  const todayDow = (new Date().getDay() + 6) % 7;
-  let html = '';
-  for(let i=0;i<7;i++){
-    const offset = todayDow - i;
-    const active = offset >= 0 ? dates.has(dateKeyOffset(offset)) : false;
-    html += `<div class="home-week-day ${active?'done':''} ${offset===0?'today':''}"><span class="wd-dot">${active?'<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l6 6L20 6"/></svg>':''}</span><span class="wd-label">${dayLabels[i]}</span></div>`;
-  }
-  document.getElementById('home-week-strip').innerHTML = html;
 }
-document.querySelectorAll('.home-tile, .link-btn, .home-path-card').forEach(el=>{});
+
 renderHomeTab();
 </script>
 </body>

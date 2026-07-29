@@ -2,18 +2,17 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#7C6EF0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fffaf0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
-<title>ChessQuest — S'entraîner</title>
+<title>ChessQuest — Leçon d’ouverture</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
@@ -21,95 +20,67 @@
 <link rel="stylesheet" href="assets/css/components.css">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/learn.css">
-<link rel="stylesheet" href="assets/css/opening-gamification.css">
 <link rel="stylesheet" href="assets/css/polish.css">
+<link rel="stylesheet" href="assets/css/final-views.css">
 </head>
-<body data-page="play" class="opening-lesson-page">
+<body data-page="play" class="final-shell-page opening-final-page">
 <div id="toast-container"></div>
-<div class="app">
+<main class="app">
   <section class="page">
-    <div class="lesson-header opening-immersive-header">
-      <a class="lesson-back" href="learn.html" aria-label="Retour aux ouvertures"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
-      <div class="opening-title-wrap">
-        <div class="lesson-title" id="line-name">Choisis une ouverture</div>
-        <div class="opening-rank"><span class="opening-rank-dot"></span><span id="opening-rank-label">En apprentissage</span></div>
-      </div>
-      <div class="opening-xp-chip" aria-label="Points d'expérience"><span class="xp-gem">◆</span><strong id="opening-xp">0</strong></div>
-    </div>
+    <header class="final-page-title">
+      <a class="subpage-back" href="learn.html" aria-label="Retour aux ouvertures">
+        <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <h1 id="line-name">Italienne</h1>
+      <button class="final-icon-button opening-final-bookmark" id="opening-bookmark" type="button" aria-label="Ajouter aux favoris" aria-pressed="false">
+        <svg viewBox="0 0 24 24"><path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v17l-6-4-6 4Z"/></svg>
+      </button>
+    </header>
 
-    <section class="opening-mission" aria-labelledby="mission-title">
-      <div class="mission-icon">♘</div>
-      <div class="mission-copy">
-        <span class="mission-eyebrow">MISSION DU JOUR</span>
-        <strong id="mission-title">Mémorise la ligne sans erreur</strong>
-        <span id="mission-reward">Récompense parfaite : +30 XP</span>
-      </div>
-      <div class="mission-stars" id="mission-stars" aria-label="Trois étoiles disponibles">★★★</div>
-    </section>
-
-    <div class="opening-stage">
-      <div class="stage-topline">
-        <span id="lesson-progress-label">Étape 1/1</span>
-        <strong id="stage-percent">0%</strong>
-      </div>
-      <div class="track opening-track"><div class="track-fill" id="lesson-track-fill"></div></div>
-      <div class="progress-dots" id="train-dots"></div>
-    </div>
-
-    <section class="opening-play-card">
-      <div class="turn-banner">
-        <span class="turn-pulse"></span>
-        <span id="turn-label">À toi de jouer</span>
-        <span class="opening-color-badge" id="opening-color-badge">Blancs</span>
-      </div>
-      <div class="board-frame opening-board-frame">
+    <div class="opening-final-board-wrap">
+      <div class="board-frame">
         <div class="coord-ranks" id="train-ranks"></div>
         <div id="train-board"></div>
         <div class="coord-files" id="train-files"></div>
       </div>
+    </div>
 
-      <div class="coach-panel">
-        <img class="coach-avatar opening-coach-art" src="assets/illustrations/mascot-knight-hint.png" alt="Coach cavalier ChessQuest">
-        <div class="coach-message">
-          <span>Coach Chessy</span>
-          <div class="feedback-box" id="train-feedback">Choisis une ouverture pour démarrer.</div>
-        </div>
-      </div>
-
-      <section class="opening-move-memory" aria-label="Coups mémorisés">
-        <div class="opening-memory-head"><strong>Coups mémorisés</strong><span id="train-memory-count">0 coup</span></div>
-        <ol class="move-list" id="train-move-list"><li class="empty">Les coups joués apparaîtront ici.</li></ol>
-      </section>
-
-      <div class="btn-row opening-actions">
-        <button class="opening-tool" id="hint-btn"><span>💡</span><strong>Indice</strong><small>-1 étoile</small></button>
-        <button class="opening-tool" id="reset-btn"><span>↻</span><strong>Recommencer</strong><small>À zéro</small></button>
-        <button class="opening-tool active" id="autohint-toggle"><span>✦</span><strong>Guide</strong><small>Activé</small></button>
+    <section class="final-card opening-final-theory">
+      <h2 class="opening-theory-title">
+        <span class="opening-theory-icon" aria-hidden="true">♜</span>
+        <span id="theory-title">Pourquoi jouer l’Italienne ?</span>
+      </h2>
+      <div class="opening-final-facts" id="opening-facts">
+        <span class="opening-final-fact"><i>♞</i>Développement rapide</span>
+        <span class="opening-final-fact"><i>◎</i>Pression sur f7</span>
+        <span class="opening-final-fact"><i>▤</i>Popularisée au XVIe siècle</span>
       </div>
     </section>
 
-    <section class="opening-reward hidden" id="opening-reward" aria-live="polite">
-      <div class="reward-crown">♛</div>
-      <span class="reward-kicker">LIGNE TERMINÉE</span>
-      <h2 id="reward-title">Ouverture maîtrisée !</h2>
-      <div class="reward-stars" id="reward-stars">★★★</div>
-      <p id="reward-summary">Sans erreur. Ta mémoire d’ouverture progresse.</p>
-      <div class="reward-loot"><strong id="reward-xp">+30 XP</strong><span>•</span><span id="reward-attempts">1 essai</span></div>
-      <button class="btn" id="replay-btn">Rejouer pour consolider</button>
+    <section class="final-card opening-final-memory">
+      <div>
+        <span>Mémorise les premiers coups</span>
+        <strong class="opening-memory-sequence" id="opening-memory-sequence">1. e4 e5&nbsp;&nbsp; 2. Cf3 Cc6</strong>
+      </div>
+      <button class="opening-copy-button" id="opening-copy" type="button" aria-label="Copier les coups">▣</button>
     </section>
 
-    <section class="opening-knowledge">
-      <div class="opening-theory-card">
-        <div class="theory-kicker">THÉORIE DE L’OUVERTURE</div>
-        <h2 id="theory-title">Comprendre avant de mémoriser</h2>
-        <p class="lesson-desc" id="line-intro">Sélectionne une ouverture pour découvrir son idée, son histoire et ses plans.</p>
-        <div class="theory-grid">
-          <div><span>Pourquoi elle est forte</span><p id="line-about"></p></div>
-          <div><span>Plan à retenir</span><p id="line-plan">Les premiers coups vont donner la direction de la partie.</p></div>
-        </div>
-      </div>
+    <section class="final-card opening-final-progress">
+      <span class="opening-progress-label" id="lesson-progress-label">Leçon 1 / 12</span>
+      <span class="opening-next-label">Suivante</span>
+      <div class="track"><div class="track-fill" id="lesson-track-fill"></div></div>
+      <button class="opening-next-button" id="opening-next" type="button" aria-label="Afficher le prochain coup">→</button>
     </section>
+
+    <div class="opening-final-hidden" aria-hidden="true">
+      <div id="train-dots"></div>
+      <div id="train-feedback"></div>
+      <p id="line-intro"></p>
+      <p id="line-about"></p>
+      <p id="line-plan"></p>
+    </div>
   </section>
+</main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
@@ -123,103 +94,98 @@
 <script src="assets/js/board.js"></script>
 <script src="assets/js/openings.js"></script>
 <script>
-function renderDots(){
-  const el = document.getElementById('train-dots');
-  if(!currentLine){ el.innerHTML = ''; return; }
-  el.innerHTML = currentLine.moves.map((_,i)=>`<span class="dot ${i<trainPly?'done':''} ${i===trainPly?'current':''}"></span>`).join('');
-  document.getElementById('lesson-progress-label').textContent = `Leçon ${Math.min(trainPly+1, currentLine.moves.length)}/${currentLine.moves.length}`;
-  const percent = Math.round((trainPly/currentLine.moves.length)*100);
-  document.getElementById('lesson-track-fill').style.width = percent + '%';
-  document.getElementById('stage-percent').textContent = percent + '%';
-  renderOpeningHud();
+const OPENING_FACTS = {
+  italienne: ['♞|Développement rapide', '◎|Pression sur f7', '▤|Popularisée au XVIe siècle'],
+  espagnole: ['♞|Pression durable sur e5', '◎|Une richesse stratégique immense', '▤|Étudiée depuis le XVIe siècle'],
+  qgd: ['♞|Centre solide et durable', '◎|Pression sur le pion d5', '▤|Un classique des champions du monde'],
+  qga: ['♞|Développement très rapide', '◎|Récupération naturelle du pion', '▤|Un centre libre pour les pièces'],
+  slav: ['♞|Structure noire très solide', '◎|Lutte immédiate pour d5', '▤|Une réponse moderne au Gambit Dame'],
+  najdorf: ['♞|Jeu dynamique et flexible', '◎|Contre-attaque à l’aile dame', '▤|Popularisée par Miguel Najdorf']
+};
+function shortOpeningName(line){
+  if(!line) return 'Ouverture';
+  if(currentLineKey === 'italienne') return 'Italienne';
+  return line.name.split('(')[0].split('—')[0].trim();
 }
-let openingCelebrationShown = false;
-let hintsUsed = 0;
-function openingStars(){
-  if(lineMistakes === 0 && hintsUsed === 0) return 3;
-  if(lineMistakes <= 1 && hintsUsed <= 1) return 2;
-  return 1;
+function openingArticle(name){
+  if(name.startsWith('Défense')) return `la ${name}`;
+  if(name.startsWith('Gambit') || name.startsWith('Système') || name.startsWith('Mat')) return `le ${name}`;
+  return `l’${name}`;
 }
-function renderOpeningHud(){
+function frenchSan(san){
+  const pieces = {N:'C',B:'F',R:'T',Q:'D',K:'R'};
+  return pieces[san.charAt(0)] ? pieces[san.charAt(0)] + san.slice(1) : san;
+}
+function firstMovesText(){
+  if(!currentLine) return '';
+  const moves = currentLine.moves.slice(0,4).map(move => frenchSan(move.san));
+  const pairs = [];
+  for(let i=0;i<moves.length;i+=2) pairs.push(`${Math.floor(i/2)+1}. ${moves[i] || ''} ${moves[i+1] || ''}`.trim());
+  return pairs.join('   ');
+}
+function renderTheory(){
   if(!currentLine) return;
-  const stars = openingStars();
-  document.getElementById('opening-xp').textContent = PROGRESS.xp || 0;
-  document.getElementById('mission-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3-stars);
-  document.getElementById('opening-rank-label').textContent = PROGRESS.mastered[currentLineKey] ? 'Déjà maîtrisée' : 'En apprentissage';
-  document.getElementById('opening-color-badge').textContent = currentLine.forColor === 'b' ? 'Noirs' : (currentLine.forColor === 'w' ? 'Blancs' : 'Démo');
-  document.getElementById('turn-label').textContent = trainPly >= currentLine.moves.length ? 'Mission accomplie' : 'Trouve le prochain coup';
-  if(trainPly >= currentLine.moves.length && !openingCelebrationShown){
-    openingCelebrationShown = true;
-    const reward = document.getElementById('opening-reward');
-    reward.classList.remove('hidden');
-    document.getElementById('reward-title').textContent = lineMistakes === 0 ? 'Ouverture maîtrisée !' : 'Ligne terminée !';
-    document.getElementById('reward-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3-stars);
-    document.getElementById('reward-summary').textContent = lineMistakes === 0 ? 'Sans erreur. Ta mémoire d’ouverture progresse.' : `${lineMistakes} erreur${lineMistakes>1?'s':''}. Rejoue-la pour obtenir les 3 étoiles.`;
-    document.getElementById('reward-xp').textContent = lineMistakes === 0 ? '+30 XP' : '+10 XP';
-    document.getElementById('reward-attempts').textContent = `${(PROGRESS.attempts[currentLineKey] || 0) + 1} essai${(PROGRESS.attempts[currentLineKey] || 0) ? 's' : ''}`;
-    setTimeout(()=>reward.scrollIntoView({behavior:'smooth',block:'center'}), 750);
-  }
+  const name = shortOpeningName(currentLine);
+  document.getElementById('line-name').textContent = name;
+  document.getElementById('theory-title').textContent = `Pourquoi jouer ${openingArticle(name)} ?`;
+  const facts = OPENING_FACTS[currentLineKey] || [
+    `♞|${currentLine.intro.split('.')[0]}`,
+    '◎|Comprendre le centre et le développement',
+    '▤|Une structure à mémoriser progressivement'
+  ];
+  document.getElementById('opening-facts').innerHTML = facts.map(fact => {
+    const [icon,label] = fact.split('|');
+    return `<span class="opening-final-fact"><i>${icon}</i>${escapeHtml(label)}</span>`;
+  }).join('');
+  document.getElementById('opening-memory-sequence').textContent = firstMovesText();
+}
+function renderDots(){
+  if(!currentLine) return;
+  const total = Math.max(12,currentLine.moves.length);
+  const step = Math.min(total,trainPly + 1);
+  document.getElementById('lesson-progress-label').textContent = `Leçon ${step} / ${total}`;
+  document.getElementById('lesson-track-fill').style.width = `${Math.round((trainPly / currentLine.moves.length) * 100)}%`;
+  renderTheory();
 }
 function renderTrainMoveList(){
-  const hist = trainGame.history();
-  const el = document.getElementById('train-move-list');
-  const count = document.getElementById('train-memory-count');
-  if(count) count.textContent = `${hist.length} coup${hist.length>1?'s':''}`;
-  if(hist.length === 0){ el.innerHTML = '<li class="empty">Les coups joués apparaîtront ici.</li>'; return; }
-  let html = '';
-  for(let i=0;i<hist.length;i+=2) html += `<li><span class="num">${Math.floor(i/2)+1}.</span><span>${hist[i]||''}</span><span>${hist[i+1]||''}</span></li>`;
-  el.innerHTML = html;
-  el.scrollTop = el.scrollHeight;
+  renderTheory();
 }
-document.getElementById('hint-btn').onclick = () => {
-  if(!currentLine) return;
-  hintsUsed++;
-  renderOpeningHud();
-  const expected = currentLine.moves[trainPly];
-  const expectedColor = (trainPly % 2 === 0) ? 'w' : 'b';
-  if(!expected || expectedColor !== currentLine.forColor) return;
-  const g = new Chess(trainGame.fen());
-  const match = g.moves({verbose:true}).find(m => m.san === expected.san.replace(/[!?]+$/,''));
-  if(match) flashSquares('#train-board', [match.from, match.to], 'hint-square', 900);
-};
-document.getElementById('reset-btn').onclick = () => {
-  if(currentLine){
-    openingCelebrationShown = false; hintsUsed = 0;
-    document.getElementById('opening-reward').classList.add('hidden');
-    loadLine(currentLine, currentLineKey);
-  }
-};
-document.getElementById('autohint-toggle').onclick = function(){
-  autoHintEnabled = !autoHintEnabled;
-  this.classList.toggle('active', autoHintEnabled);
-  this.querySelector('small').textContent = autoHintEnabled ? 'Activé' : 'Désactivé';
-  if(!autoHintEnabled) $('#train-board [data-square]').removeClass('suggest-from suggest-to');
-  else showExpectedMove();
-};
-document.getElementById('replay-btn').onclick = () => {
-  if(gambitDameCurriculum){
-    const next = GAMBIT_DAME_STEPS.find(key => !PROGRESS.mastered[key]);
-    if(next && next !== currentLineKey){ location.href = `openings.html?path=gambit_dame&opening=${next}`; return; }
-  }
-  document.getElementById('reset-btn').click();
-};
 
-/* Sélecteur rapide (favoris) */
-
-/* Charge l'ouverture depuis l'URL (?opening=najdorf), sinon Najdorf par défaut */
-const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(location.search);
 const GAMBIT_DAME_STEPS = ['qgd','qga','slav'];
 const gambitDameCurriculum = params.get('path') === 'gambit_dame';
 const requested = params.get('opening');
 const firstGambitStep = GAMBIT_DAME_STEPS.find(key => !PROGRESS.mastered[key]) || GAMBIT_DAME_STEPS[0];
-const startKey = gambitDameCurriculum ? ((requested && GAMBIT_DAME_STEPS.includes(requested)) ? requested : firstGambitStep) : ((requested && OPENINGS[requested]) ? requested : 'italienne');
-if(gambitDameCurriculum){
-  document.getElementById('mission-title').textContent = `Gambit Dame · étape ${GAMBIT_DAME_STEPS.indexOf(startKey)+1}/${GAMBIT_DAME_STEPS.length}`;
-  document.getElementById('replay-btn').textContent = 'Continuer le parcours';
-}
+const startKey = gambitDameCurriculum
+  ? ((requested && GAMBIT_DAME_STEPS.includes(requested)) ? requested : firstGambitStep)
+  : ((requested && OPENINGS[requested]) ? requested : 'italienne');
+
+document.getElementById('opening-bookmark').onclick = function(){
+  const saved = this.getAttribute('aria-pressed') !== 'true';
+  this.setAttribute('aria-pressed', String(saved));
+  this.classList.toggle('saved',saved);
+  showToast(saved ? 'Ouverture enregistrée' : 'Ouverture retirée', saved ? 'Tu la retrouveras dans tes favoris.' : 'Elle a été retirée de tes favoris.');
+};
+document.getElementById('opening-copy').onclick = async function(){
+  const text = firstMovesText();
+  try{ await navigator.clipboard.writeText(text); }catch(error){}
+  showToast('Coups copiés', text);
+};
+document.getElementById('opening-next').onclick = function(){
+  if(!currentLine) return;
+  if(trainPly >= currentLine.moves.length){
+    loadLine(currentLine,currentLineKey);
+    return;
+  }
+  const expected = currentLine.moves[trainPly];
+  const g = new Chess(trainGame.fen());
+  const move = g.moves({verbose:true}).find(item => item.san === expected.san.replace(/[!?]+$/,''));
+  if(move) flashSquares('#train-board',[move.from,move.to],'hint-square',1200);
+};
+
 ensureTrainBoard();
-loadLine(OPENINGS[startKey], startKey);
-watchBoardResize('train-board', () => trainBoard, '.page');
+loadLine(OPENINGS[startKey],startKey);
+watchBoardResize('train-board',() => trainBoard,'.opening-final-board-wrap');
 </script>
 </body>
 </html>

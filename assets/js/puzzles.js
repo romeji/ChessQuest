@@ -105,11 +105,11 @@ function toFigurine(san, color){
   return san;
 }
 
-/* ---- Génère 4 options QCM (1 bonne + 3 distracteurs pris parmi les coups légaux) ---- */
-function buildMcqOptions(game, solutionSan){
+/* ---- Génère un QCM à partir des coups légaux. ---- */
+function buildMcqOptions(game, solutionSan, optionCount = 3){
   const legal = game.moves({verbose:true}).map(m => m.san).filter(s => s !== solutionSan);
   const shuffled = legal.sort(() => Math.random() - 0.5);
-  const distractors = shuffled.slice(0, 3);
+  const distractors = shuffled.slice(0, Math.max(0, optionCount - 1));
   const options = [solutionSan, ...distractors].sort(() => Math.random() - 0.5);
   return options;
 }
@@ -211,7 +211,7 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   saveProgress();
   recordActivity();
   if(success){
-    addXP(12);
+    addXP(10);
     bumpDailyCounter('puzzlesSolvedToday');
   }
   refreshPuzzleHeader();
@@ -219,7 +219,7 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   if(success) fireConfetti('puzzle');
 
   showRatingDelta(delta);
-  setPuzzleFeedback(`${success ? 'Bravo !' : 'Pas cette fois.'} ${p.explanation || (solutionClean + ' était le coup gagnant.')}`, success ? 'good' : 'bad');
+  setPuzzleFeedback(`${success ? 'Excellent !' : 'Pas cette fois.'} ${p.explanation || (solutionClean + ' était le coup gagnant.')}`, success ? 'good' : 'bad');
 
   if(puzzleSource === 'mistakes'){
     // Une erreur reste dans le carnet de révision : on peut toujours y
@@ -255,8 +255,20 @@ function refreshPuzzleHeader(){
 function setPuzzleFeedback(text, kind){
   const el = document.getElementById('puzzle-feedback');
   if(!el) return;
-  el.textContent = text;
-  el.className = 'feedback-box ' + (kind || '');
+  if(kind === 'prompt'){
+    el.textContent = text;
+    el.className = 'puzzle-final-feedback prompt';
+  } else {
+    const success = kind === 'good';
+    const title = success ? 'Excellent !' : 'Pas cette fois.';
+    const copy = String(text || '').replace(/^(Excellent !|Bravo !|Pas cette fois\.)\s*/, '');
+    el.className = `puzzle-final-feedback ${success ? 'good' : 'bad'}`;
+    el.innerHTML = `
+      <span class="feedback-medal" aria-hidden="true">${success ? '✓' : '!'}</span>
+      <span><strong>${title}</strong><small>${escapeHtml(copy)}</small></span>
+      <b>${success ? '+10 XP' : 'Réessaie'}</b>
+    `;
+  }
   speak(text);
 }
 function setText(id, text){ const el = document.getElementById(id); if(el) el.textContent = text; }

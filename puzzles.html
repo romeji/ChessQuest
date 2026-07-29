@@ -2,18 +2,17 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#7C6EF0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fffaf0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
 <title>ChessQuest — Puzzles</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chessboard-js/1.0.0/chessboard-1.0.0.min.css">
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
@@ -22,77 +21,61 @@
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/puzzle.css">
 <link rel="stylesheet" href="assets/css/polish.css">
+<link rel="stylesheet" href="assets/css/final-views.css">
 </head>
-<body data-page="puzzles">
+<body data-page="puzzles" class="final-shell-page puzzle-final-page">
 <div id="toast-container"></div>
-<div class="app">
+<main class="app">
   <section class="page">
-    <a class="subpage-back" aria-label="Retour" href="index.html" style="margin-bottom:16px;">
-      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
-    </a>
-
-    <div class="puzzle-page-head">
-      <div>
-        <p class="eyebrow">Défi tactique</p>
-        <h1>Puzzles</h1>
+    <header class="final-page-title">
+      <a class="subpage-back" href="index.html" aria-label="Retour à l’accueil">
+        <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <h1>Puzzles</h1>
+      <div class="puzzle-final-rating" aria-label="Classement puzzle">
+        <strong id="puzzle-rating-value">800</strong>
+        <em id="puzzle-rating-delta"></em>
       </div>
-      <div class="puzzle-rating-card" aria-label="Classement puzzle">
-        <span>Classement</span><strong id="puzzle-rating-value">800</strong><em id="puzzle-rating-delta"></em>
-      </div>
-    </div>
+    </header>
 
-    <div class="puzzle-streak-row">
-      <span class="puzzle-streak-flame">🔥</span><span class="puzzle-streak-label">Série : <strong id="puzzle-streak-value">0</strong></span>
-      <span class="puzzle-rating-inline">Trouve le coup qui gagne.</span>
-    </div>
-
-    <div class="puzzle-source-row" aria-label="Source des puzzles">
-      <button class="puzzle-source" id="src-random" type="button">Aléatoire</button>
+    <div class="puzzle-final-tabs" aria-label="Type de puzzle">
+      <button class="puzzle-source active" id="src-random" type="button">Aléatoire</button>
       <button class="puzzle-source" id="src-mistakes" type="button">Mes erreurs <span id="mistakes-count-badge"></span></button>
     </div>
 
-    <div class="puzzle-card">
-      <div class="puzzle-card-head">
-        <div class="puzzle-question" id="puzzle-question">Trouve le meilleur coup !</div>
-        <div class="puzzle-kind" id="puzzle-kind"></div>
-      </div>
-
-      <div class="board-frame" style="margin:0 auto 16px;display:block;width:fit-content;">
+    <div class="puzzle-final-board-wrap">
+      <div class="board-frame">
         <div class="coord-ranks" id="puzzle-ranks"></div>
         <div id="puzzle-board"></div>
         <div class="coord-files" id="puzzle-files"></div>
       </div>
-      <div class="progress-dots" id="puzzle-dots" aria-label="Progression des puzzles"></div>
     </div>
 
-    <div class="puzzle-action-row">
-      <img class="puzzle-coach-art" src="assets/illustrations/mascot-knight-home.png" alt="Coach cavalier ChessQuest">
-      <div class="feedback-box prompt" id="puzzle-feedback">Observe la position puis choisis ton coup.</div>
-      <button class="puzzle-hint-btn" id="puzzle-hint-btn" type="button">Indice</button>
+    <div class="puzzle-final-turn">
+      <img class="puzzle-final-coach" src="assets/illustrations/mascot-knight-home.png" alt="Coach ChessQuest">
+      <span class="puzzle-final-turn-copy">
+        <strong>À toi de jouer</strong>
+        <small>Trouve le meilleur coup.</small>
+      </span>
+      <button class="puzzle-final-hint" id="puzzle-hint-btn" type="button">Indice</button>
     </div>
+
     <div class="mcq-options" id="mcq-options"></div>
-    <div class="puzzle-stats" id="puzzle-stats"></div>
-  </section>
-</div>
+    <div class="puzzle-final-feedback prompt" id="puzzle-feedback">Observe la position puis choisis ton coup.</div>
 
-<nav class="tabbar">
-  <button class="tabbar-item" data-tab="home" data-href="index.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg><span>Accueil</span>
-  </button>
-  <button class="tabbar-item" data-tab="learn" data-href="learn.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="6" cy="19" r="2.5"/><circle cx="12" cy="11" r="2.5"/><circle cx="18" cy="5" r="2.5"/><path d="M6 16.5V13a2 2 0 0 1 2-2h1.5M14.5 9H16a2 2 0 0 0 2-2V5.5"/></svg><span>Parcours</span>
-  </button>
-  <button class="tabbar-item" data-tab="coach" data-href="coach.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M12 2a2.5 2.5 0 0 0-2 4 4 4 0 0 0-1.6 5.4C7.2 12.4 6 14.2 6 17h12c0-2.8-1.2-4.6-2.4-5.6A4 4 0 0 0 14 6a2.5 2.5 0 0 0-2-4Z"/><rect x="5" y="19" width="14" height="3" rx="1"/></svg>
-    <span>Coach</span>
-  </button>
-  <button class="tabbar-item" data-tab="progress" data-href="progress.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 15l4-5 3 3 5-7"/></svg><span>Progrès</span>
-  </button>
-  <button class="tabbar-item" data-tab="profile" data-href="profile.html">
-    <svg viewBox="0 0 24 24" class="tabicon"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-7 8-7s8 3 8 7"/></svg><span>Profil</span>
-  </button>
-</nav>
+    <div class="final-card puzzle-final-streak">
+      <strong>🔥 Série : <span id="puzzle-streak-value">0</span></strong>
+      <div class="progress-dots" id="puzzle-dots" aria-label="Progression"></div>
+      <span class="puzzle-final-flag" aria-hidden="true">⚑</span>
+    </div>
+
+    <div class="puzzle-hidden-data" aria-hidden="true">
+      <span id="puzzle-question">Trouve le meilleur coup !</span>
+      <span id="puzzle-kind"></span>
+      <div id="puzzle-stats"></div>
+    </div>
+  </section>
+</main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
@@ -113,8 +96,7 @@ if(urlSource === 'mistakes') puzzleSource = urlSource;
 const urlTheme = urlParams.get('theme');
 if(urlTheme && CLASSIC_PUZZLES.some(puzzle => puzzle.theme === urlTheme)) puzzleTheme = urlTheme;
 ensurePuzzleBoard();
-watchBoardResize('puzzle-board', () => puzzleBoard, '.page');
-document.querySelectorAll('.puzzle-source').forEach(button => button.classList.toggle('active', button.id === `src-${puzzleSource}`));
+watchBoardResize('puzzle-board', () => puzzleBoard, '.puzzle-final-board-wrap');
 
 function selectPuzzleSource(source){
   puzzleSource = source;
@@ -124,6 +106,7 @@ function selectPuzzleSource(source){
   loadPuzzle(0);
   refreshPuzzleHeader();
 }
+document.querySelectorAll('.puzzle-source').forEach(button => button.classList.toggle('active', button.id === `src-${puzzleSource}`));
 document.getElementById('src-random').onclick = () => selectPuzzleSource('random');
 document.getElementById('src-mistakes').onclick = () => selectPuzzleSource('mistakes');
 document.getElementById('puzzle-hint-btn').onclick = showPuzzleHint;

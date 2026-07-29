@@ -57,13 +57,19 @@ function coachCommentFor(moveObj, gameAfter, plyIndex){
 
 function showCoach(text, icon){
   const bubble = document.getElementById('coach-bubble');
+  const visibleTip = document.getElementById('training-tip-text');
+  if(visibleTip) visibleTip.textContent = text;
   document.getElementById('coach-text').textContent = text;
   document.getElementById('coach-icon').textContent = icon || '👍';
   bubble.classList.remove('hidden');
   bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop');
   speak(text);
 }
-function hideCoach(){ document.getElementById('coach-bubble').classList.add('hidden'); }
+function hideCoach(){
+  document.getElementById('coach-bubble').classList.add('hidden');
+  const visibleTip = document.getElementById('training-tip-text');
+  if(visibleTip) visibleTip.textContent = 'Très bien ! Tu restes actif et tu mets ton adversaire sous pression. Continue comme ça !';
+}
 
 function setBotStatus(text){ document.getElementById('bot-status').textContent = text; }
 
@@ -126,7 +132,7 @@ function newTrainingGame(){
   document.getElementById('next-btn').disabled = true;
   document.getElementById('undo-btn').disabled = true;
   renderTgMoveLog();
-  fitBoards('tg-board', tgBoard, '.page');
+  fitBoards('tg-board', tgBoard, '.training-final-board-wrap');
 }
 
 function onTgDrop(source, target){
@@ -180,6 +186,7 @@ async function playBotMove(){
     highlightMove('#tg-board', moveObj.from, moveObj.to);
   }
   playSound('move');
+  renderTgMoveLog();
   setBotStatus("À toi de jouer");
   checkTgGameOver();
 }
@@ -261,4 +268,4 @@ document.getElementById('bot-elo-select').onchange = event => {
 
 renderBotElo();
 newTrainingGame();
-watchBoardResize('tg-board', () => tgBoard, '.page');
+watchBoardResize('tg-board', () => tgBoard, '.training-final-board-wrap');
