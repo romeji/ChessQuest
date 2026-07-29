@@ -105,7 +105,33 @@
   position:relative;
   isolation:isolate;
   overflow:hidden;
-  background:#063c34 url("../illustrations/opening-map-maquette-v2.png") center/cover no-repeat!important;
+  background-color:#063c34!important;
+  background-image:var(--opening-map-image,url("../illustrations/opening-map-maquette-v2.png"))!important;
+  background-position:center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+}
+.opening-map-page .teal-hero::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0;
+  pointer-events:none;
+  opacity:.3;
+  transition:background .35s ease,opacity .35s ease;
+}
+.opening-map-page .teal-hero[data-world-theme="sunrise"]::before{background:linear-gradient(160deg,rgba(255,176,68,.32),transparent 45%,rgba(97,40,143,.16))}
+.opening-map-page .teal-hero[data-world-theme="lagoon"]::before{background:linear-gradient(160deg,rgba(13,207,194,.2),transparent 52%,rgba(26,77,176,.18))}
+.opening-map-page .teal-hero[data-world-theme="cliff"]::before{background:linear-gradient(160deg,rgba(77,83,95,.18),transparent 45%,rgba(10,25,34,.3))}
+.opening-map-page .teal-hero[data-world-theme="royal"]::before{background:linear-gradient(160deg,rgba(112,58,179,.26),transparent 48%,rgba(255,194,56,.15))}
+.opening-map-page .teal-hero[data-world-theme="twilight"]::before{background:linear-gradient(160deg,rgba(41,38,118,.35),transparent 48%,rgba(154,77,181,.18))}
+.opening-map-page .teal-hero[data-world-theme="garden"]::before{background:linear-gradient(160deg,rgba(94,173,59,.18),transparent 50%,rgba(233,195,75,.12))}
+.opening-map-page .teal-hero[data-world-theme="aurora"]::before{background:linear-gradient(160deg,rgba(31,183,151,.24),transparent 40%,rgba(64,77,191,.25))}
+.opening-map-page .teal-hero[data-world-theme="ember"]::before{background:linear-gradient(160deg,rgba(255,112,31,.28),transparent 43%,rgba(119,22,34,.22))}
+.opening-map-page .teal-hero[data-world-theme="mythic"]::before{background:linear-gradient(160deg,rgba(255,208,74,.19),rgba(77,39,143,.2) 52%,rgba(1,18,18,.1))}
+.opening-map-page .teal-hero.world-locked::before{
+  background:rgba(16,27,27,.48);
+  opacity:1;
 }
 .opening-map-page .teal-hero::after{
   content:"";
@@ -123,7 +149,7 @@
   left:14px;
   right:14px;
   display:grid;
-  grid-template-columns:38px 1fr 62px;
+  grid-template-columns:38px 1fr 38px;
   align-items:center;
 }
 .opening-map-page .map-header h1{
@@ -139,6 +165,87 @@
   box-shadow:none;
 }
 .opening-map-page .map-header .subpage-back svg{stroke:#fff}
+.opening-map-page .map-header-spacer{width:34px;height:34px}
+.opening-map-page .quest-notification-toggle,
+.opening-map-page .quest-notification-panel{display:none!important}
+.opening-map-page .world-switcher{
+  position:absolute;
+  z-index:12;
+  top:calc(56px + env(safe-area-inset-top,0px));
+  left:50%;
+  width:min(294px,calc(100% - 92px));
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) 34px;
+  gap:7px;
+  align-items:center;
+  transform:translateX(-50%);
+}
+.opening-map-page .world-arrow{
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  padding:0;
+  border:1px solid rgba(244,216,143,.5);
+  border-radius:50%;
+  background:rgba(0,42,33,.72);
+  color:#fff7dd;
+  font:900 1.6rem/1 Nunito,sans-serif;
+  box-shadow:0 5px 14px rgba(0,0,0,.25);
+  backdrop-filter:blur(7px);
+}
+.opening-map-page .world-arrow:disabled{opacity:.3}
+.opening-map-page .world-chip{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  min-width:0;
+  min-height:44px;
+  padding:6px 12px;
+  border:1px solid rgba(244,216,143,.62);
+  border-radius:16px;
+  background:linear-gradient(180deg,rgba(0,68,52,.92),rgba(0,42,34,.9));
+  color:#fff9e9;
+  box-shadow:0 7px 18px rgba(0,0,0,.3);
+  backdrop-filter:blur(9px);
+  text-align:left;
+}
+.opening-map-page .world-chip small{
+  grid-column:1/-1;
+  color:#eedb9f;
+  font-size:.52rem;
+  font-weight:900;
+  letter-spacing:.08em;
+  line-height:1;
+  text-transform:uppercase;
+}
+.opening-map-page .world-chip strong{
+  overflow:hidden;
+  font:800 .8rem/1.1 Georgia,"Times New Roman",serif;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.opening-map-page .world-chip>span{
+  margin-left:8px;
+  padding:2px 6px;
+  border-radius:9px;
+  background:rgba(255,255,255,.12);
+  color:#f7da77;
+  font-size:.55rem;
+  font-weight:1000;
+}
+.opening-map-page .world-chip.locked::after{
+  content:"";
+  position:absolute;
+  right:-4px;
+  top:-5px;
+  width:13px;
+  height:13px;
+  border:2px solid #f3d783;
+  border-radius:50%;
+  background:#343a36;
+}
 .opening-map-page .skill-path{
   position:absolute!important;
   z-index:3;
@@ -154,6 +261,22 @@
   overflow:hidden!important;
 }
 .opening-map-page .map-nodes{position:absolute;inset:0}
+.opening-map-page .map-world-subtitle{
+  position:absolute;
+  z-index:3;
+  top:calc(108px + env(safe-area-inset-top,0px));
+  left:50%;
+  width:min(320px,82%);
+  margin:0;
+  transform:translateX(-50%);
+  color:rgba(255,249,229,.86);
+  font-size:.58rem;
+  font-weight:800;
+  line-height:1.2;
+  text-align:center;
+  text-shadow:0 2px 7px rgba(0,0,0,.7);
+  display:none;
+}
 .opening-map-page .map-island{
   position:absolute!important;
   top:var(--top)!important;
@@ -166,6 +289,13 @@
   align-items:center;
   text-decoration:none;
   z-index:4;
+  padding:0;
+  border:0;
+  background:none;
+  color:inherit;
+  font:inherit;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
 }
 .opening-map-page .map-hotspot{
   display:grid;
@@ -205,6 +335,7 @@
   font-size:.54rem;
   letter-spacing:1px;
 }
+.opening-map-page .island-stars b{color:#ffd04b}
 .opening-map-page .map-island.locked .map-hotspot{
   background:#303733;
   border-color:#8b948e;
@@ -241,6 +372,188 @@
 }
 .opening-map-page .map-treasure-label strong{font-size:.65rem}
 .opening-map-page .map-treasure-label small{font-size:.52rem;color:#f7d668}
+.opening-map-page .map-treasure-label.complete{
+  border-color:#ffe786;
+  background:linear-gradient(180deg,rgba(40,93,45,.94),rgba(11,55,36,.95));
+  box-shadow:0 0 22px rgba(255,221,82,.35),0 6px 16px rgba(0,0,0,.4);
+}
+
+/* ---- Curriculum multi-mondes : fiche d'île ---- */
+.opening-map-page.island-sheet-open{overflow:hidden}
+.map-sheet-backdrop{
+  position:fixed;
+  z-index:70;
+  inset:0;
+  background:rgba(0,21,17,.6);
+  opacity:0;
+  transition:opacity .22s ease;
+  backdrop-filter:blur(2px);
+}
+.island-sheet{
+  position:fixed;
+  z-index:71;
+  left:50%;
+  bottom:0;
+  width:min(100%,430px);
+  max-height:min(72dvh,640px);
+  padding:8px 18px calc(18px + env(safe-area-inset-bottom,0px));
+  overflow:hidden;
+  border:1px solid #e8d5ae;
+  border-bottom:0;
+  border-radius:26px 26px 0 0;
+  background:
+    radial-gradient(circle at 88% 4%,rgba(105,52,165,.1),transparent 28%),
+    linear-gradient(180deg,#fffdf7,#f8f0df);
+  color:#18162a;
+  box-shadow:0 -18px 46px rgba(0,20,15,.34);
+  transform:translate(-50%,105%);
+  transition:transform .26s cubic-bezier(.2,.8,.2,1);
+}
+.opening-map-page.island-sheet-open .map-sheet-backdrop{opacity:1}
+.opening-map-page.island-sheet-open .island-sheet{transform:translate(-50%,0)}
+.island-sheet-handle{
+  width:44px;
+  height:4px;
+  margin:1px auto 12px;
+  border-radius:4px;
+  background:#d6c5a5;
+}
+.island-sheet-header{
+  display:grid;
+  grid-template-columns:1fr 38px;
+  gap:12px;
+  align-items:start;
+}
+.island-sheet-kicker{
+  display:block;
+  margin-bottom:3px;
+  color:#087348;
+  font-size:.58rem;
+  font-weight:1000;
+  letter-spacing:.08em;
+}
+.island-sheet-header h2{
+  margin:0;
+  color:#19142b;
+  font:800 1.34rem/1.12 Georgia,"Times New Roman",serif;
+}
+.island-sheet-header p{
+  margin:5px 0 0;
+  color:#6f675b;
+  font-size:.72rem;
+  line-height:1.3;
+}
+.island-sheet-close{
+  display:grid;
+  place-items:center;
+  width:36px;
+  height:36px;
+  padding:0 0 2px;
+  border:1px solid #e3d3b4;
+  border-radius:50%;
+  background:#fffaf0;
+  color:#342b24;
+  font:600 1.5rem/1 sans-serif;
+  box-shadow:0 4px 10px rgba(49,34,15,.1);
+}
+.island-sheet-progress{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:10px;
+  align-items:center;
+  margin:14px 0 12px;
+}
+.island-sheet-progress>span{
+  color:#11673f;
+  font-size:.65rem;
+  font-weight:1000;
+}
+.island-sheet-progress .track{
+  height:7px;
+  overflow:hidden;
+  border-radius:8px;
+  background:#e7ddca;
+}
+.island-sheet-progress .track-fill{
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#5bc733,#07894d);
+  transition:width .3s ease;
+}
+.island-lessons{
+  display:grid;
+  gap:8px;
+  max-height:calc(72dvh - 170px);
+  padding:1px 2px 4px;
+  overflow:auto;
+  overscroll-behavior:contain;
+}
+.island-lesson{
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) 18px;
+  gap:10px;
+  align-items:center;
+  min-height:62px;
+  padding:9px 12px;
+  border:1px solid #e5d7bb;
+  border-radius:16px;
+  background:rgba(255,253,247,.9);
+  color:#231d31;
+  text-decoration:none;
+  box-shadow:0 3px 9px rgba(70,46,16,.07);
+}
+.island-lesson.current{
+  border-color:#1a985e;
+  background:linear-gradient(100deg,#effce9,#fffdf6 58%);
+  box-shadow:0 0 0 2px rgba(27,151,91,.09),0 5px 12px rgba(26,86,53,.1);
+}
+.island-lesson.complete{background:linear-gradient(100deg,#f1f8e6,#fffdf7)}
+.island-lesson.locked{filter:saturate(.35);opacity:.62}
+.island-lesson-index{
+  display:grid;
+  place-items:center;
+  width:36px;
+  height:36px;
+  border:2px solid #ead28e;
+  border-radius:12px;
+  background:linear-gradient(145deg,#7040b3,#3a176b);
+  color:#fff6c7;
+  font-size:.77rem;
+  font-weight:1000;
+  box-shadow:0 3px 8px rgba(64,28,105,.2);
+}
+.island-lesson.current .island-lesson-index{
+  border-color:#84d64a;
+  background:linear-gradient(145deg,#159860,#08633f);
+}
+.island-lesson.complete .island-lesson-index{
+  border-color:#d7b64f;
+  background:linear-gradient(145deg,#ecbd39,#a36b08);
+}
+.island-lesson-copy{min-width:0}
+.island-lesson-copy strong{
+  display:block;
+  overflow:hidden;
+  font-size:.77rem;
+  font-weight:900;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.island-lesson-copy small{
+  display:block;
+  margin-top:2px;
+  color:#7a7165;
+  font-size:.59rem;
+  font-weight:700;
+}
+.island-lesson-arrow{color:#137447;font-size:1.25rem;font-weight:1000}
+
+@media (max-height:740px){
+  .opening-map-page .map-world-subtitle{display:none}
+  .opening-map-page .world-switcher{top:calc(51px + env(safe-area-inset-top,0px))}
+  .island-sheet{max-height:78dvh}
+  .island-lessons{max-height:calc(78dvh - 170px)}
+}
 
 /* ---- Défi quotidien ---- */
 .daily-page{overflow:hidden}

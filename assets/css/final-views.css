@@ -21,6 +21,11 @@ body.final-shell-page{
   background:#f7f0e3!important;
   color:var(--final-ink);
 }
+html.opening-lesson-document,
+body.opening-final-page{
+  min-height:100%;
+  background:var(--final-cream)!important;
+}
 body.puzzle-final-page .quest-notification-toggle,
 body.opening-final-page .quest-notification-toggle,
 body.training-final-page .quest-notification-toggle,
@@ -315,7 +320,12 @@ body.home-final-page{overflow-x:hidden}
 
 /* -------------------- Puzzles -------------------- */
 .puzzle-final-page{overflow:hidden}
-.puzzle-final-page .app{height:100dvh;min-height:100dvh;padding:0 14px;overflow:hidden}
+.puzzle-final-page .app{
+  height:100dvh;
+  min-height:100dvh;
+  padding:0 14px calc(76px + env(safe-area-inset-bottom,0px));
+  overflow:hidden;
+}
 .puzzle-final-page .page{
   height:100%;
   display:flex;
@@ -350,9 +360,9 @@ body.home-final-page{overflow-x:hidden}
 }
 .puzzle-final-board-wrap{
   flex:0 1 auto;
-  width:min(100%,calc(100dvh - 470px));
-  min-width:min(100%,230px);
-  max-width:358px;
+  width:min(100%,calc(100dvh - 510px));
+  min-width:min(100%,200px);
+  max-width:340px;
   margin:0 auto 22px;
 }
 .puzzle-final-page .board-frame{
@@ -439,6 +449,17 @@ body.home-final-page{overflow-x:hidden}
   align-items:center;
   gap:14px;
   padding:0 14px;
+  transform:translateY(-16px);
+}
+.puzzle-final-page nav.tabbar{
+  left:50%;
+  right:auto;
+  width:min(402px,calc(100% - 24px));
+  transform:translateX(-50%);
+  padding:8px 5px calc(8px + env(safe-area-inset-bottom,0px));
+  border:1px solid #eadcc4;
+  border-radius:20px 20px 0 0;
+  background:#fffdf8;
 }
 .puzzle-final-streak strong{font-size:.75rem}
 .puzzle-final-page .progress-dots{display:flex;justify-content:center;gap:10px;margin:0}
@@ -449,7 +470,13 @@ body.home-final-page{overflow-x:hidden}
 
 /* -------------------- Leçon d'ouverture -------------------- */
 .opening-final-page{overflow:hidden}
-.opening-final-page .app{height:100dvh;min-height:100dvh;padding:0 14px;overflow:hidden}
+.opening-final-page .app{
+  height:100dvh;
+  min-height:100dvh;
+  padding:0 14px;
+  overflow:hidden;
+  background:linear-gradient(150deg,#fffdf7,#fffaf0);
+}
 .opening-final-page .page{
   height:100%;
   display:flex;
@@ -457,6 +484,10 @@ body.home-final-page{overflow-x:hidden}
   padding:6px 0 10px;
 }
 .opening-final-page .final-page-title{flex:0 0 auto}
+.opening-final-page .final-page-title h1{
+  font-size:clamp(.96rem,5vw,1.34rem);
+  line-height:1.06;
+}
 .opening-final-bookmark{justify-self:end}
 .opening-final-board-wrap{
   flex:0 1 auto;
@@ -659,12 +690,13 @@ body.home-final-page{overflow-x:hidden}
 @media(max-height:760px){
   .puzzle-final-page .final-page-title,.opening-final-page .final-page-title,.training-final-page .final-page-title{min-height:54px}
   .puzzle-final-tabs{margin-bottom:7px}
-  .puzzle-final-board-wrap{width:min(100%,calc(100dvh - 445px));min-width:195px;margin-bottom:21px}
+  .puzzle-final-board-wrap{width:min(100%,calc(100dvh - 470px));min-width:160px;margin-bottom:21px}
   .puzzle-final-turn{min-height:52px}
   .puzzle-final-coach{width:50px;height:50px}
   .puzzle-final-page .mcq-option{min-height:50px}
-  .puzzle-final-feedback{min-height:66px}
-  .puzzle-final-feedback.prompt{height:66px}
+  .puzzle-final-feedback{min-height:60px}
+  .puzzle-final-feedback.prompt{height:60px}
+  .puzzle-final-streak{min-height:48px}
   .opening-final-board-wrap{width:min(100%,calc(100dvh - 470px));min-width:180px;margin-bottom:22px}
   .opening-final-theory{min-height:156px;padding:12px 14px;margin-bottom:7px}
   .opening-theory-title{margin-bottom:8px}

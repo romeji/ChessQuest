@@ -156,7 +156,7 @@ function computeBadges(){
   const masteredCount = Object.keys(PROGRESS.mastered).length;
   const gamesCount = PROGRESS.games.length;
   const perfectGame = PROGRESS.games.some(g => g.totalBlunders === 0);
-  const totalTrainable = (typeof trainableKeys === 'function') ? trainableKeys().length : 24;
+  const totalTrainable = (typeof allCurriculumLessonKeys === 'function') ? allCurriculumLessonKeys().length : 122;
   const level = levelFromXp(PROGRESS.xp || 0);
   return [
     {icon:'medal', name:'Premier pas', desc:'Maîtriser 1 ouverture sans erreur', unlocked: masteredCount >= 1},

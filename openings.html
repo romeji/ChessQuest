@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="opening-lesson-document">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
@@ -7,6 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
@@ -21,14 +22,14 @@
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/learn.css">
 <link rel="stylesheet" href="assets/css/polish.css">
-<link rel="stylesheet" href="assets/css/final-views.css">
+<link rel="stylesheet" href="assets/css/final-views.css?v=39">
 </head>
 <body data-page="play" class="final-shell-page opening-final-page">
 <div id="toast-container"></div>
 <main class="app">
   <section class="page">
     <header class="final-page-title">
-      <a class="subpage-back" href="learn.html" aria-label="Retour aux ouvertures">
+      <a class="subpage-back" id="opening-back" href="learn.html" aria-label="Retour aux ouvertures">
         <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
       </a>
       <h1 id="line-name">Italienne</h1>
@@ -92,7 +93,8 @@
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
 <script src="assets/js/board.js"></script>
-<script src="assets/js/openings.js"></script>
+<script src="assets/js/openings.js?v=40"></script>
+<script src="assets/js/opening-curriculum.js?v=40"></script>
 <script>
 const OPENING_FACTS = {
   italienne: ['♞|Développement rapide', '◎|Pression sur f7', '▤|Popularisée au XVIe siècle'],
@@ -104,8 +106,7 @@ const OPENING_FACTS = {
 };
 function shortOpeningName(line){
   if(!line) return 'Ouverture';
-  if(currentLineKey === 'italienne') return 'Italienne';
-  return line.name.split('(')[0].split('—')[0].trim();
+  return line.name.replace(/\s*\([^)]*\)\s*/g,' ').trim();
 }
 function openingArticle(name){
   if(name.startsWith('Défense')) return `la ${name}`;
@@ -145,6 +146,9 @@ function renderDots(){
   const step = Math.min(total,trainPly + 1);
   document.getElementById('lesson-progress-label').textContent = `Leçon ${step} / ${total}`;
   document.getElementById('lesson-track-fill').style.width = `${Math.round((trainPly / currentLine.moves.length) * 100)}%`;
+  const lineComplete = trainPly >= currentLine.moves.length;
+  document.querySelector('.opening-next-label').textContent = lineComplete ? 'Leçon suivante' : 'Indice';
+  document.getElementById('opening-next').setAttribute('aria-label',lineComplete ? 'Continuer vers la prochaine leçon' : 'Afficher le prochain coup');
   renderTheory();
 }
 function renderTrainMoveList(){
@@ -155,10 +159,34 @@ const params = new URLSearchParams(location.search);
 const GAMBIT_DAME_STEPS = ['qgd','qga','slav'];
 const gambitDameCurriculum = params.get('path') === 'gambit_dame';
 const requested = params.get('opening');
+const requestedWorld = params.get('world');
+const requestedIsland = params.get('island');
 const firstGambitStep = GAMBIT_DAME_STEPS.find(key => !PROGRESS.mastered[key]) || GAMBIT_DAME_STEPS[0];
 const startKey = gambitDameCurriculum
   ? ((requested && GAMBIT_DAME_STEPS.includes(requested)) ? requested : firstGambitStep)
   : ((requested && OPENINGS[requested]) ? requested : 'italienne');
+const startLocation = findCurriculumLesson(startKey);
+const backWorld = requestedWorld || (startLocation && startLocation.world.id) || 'fondations';
+const backIsland = requestedIsland || (startLocation && startLocation.island.id) || '';
+document.getElementById('opening-back').href = `learn.html?world=${encodeURIComponent(backWorld)}${backIsland ? `&island=${encodeURIComponent(backIsland)}` : ''}`;
+
+function nextCurriculumUrl(key){
+  const locationData = findCurriculumLesson(key);
+  if(!locationData) return 'learn.html';
+  const {world,island,worldIndex,islandIndex,lessonIndex} = locationData;
+  if(lessonIndex + 1 < island.lessons.length){
+    const nextKey = island.lessons[lessonIndex + 1];
+    return `openings.html?opening=${encodeURIComponent(nextKey)}&world=${encodeURIComponent(world.id)}&island=${encodeURIComponent(island.id)}`;
+  }
+  if(islandIndex + 1 < world.islands.length){
+    return `learn.html?world=${encodeURIComponent(world.id)}&island=${encodeURIComponent(world.islands[islandIndex + 1].id)}`;
+  }
+  if(worldIndex + 1 < OPENING_WORLDS.length){
+    const nextWorld = OPENING_WORLDS[worldIndex + 1];
+    return `learn.html?world=${encodeURIComponent(nextWorld.id)}&island=${encodeURIComponent(nextWorld.islands[0].id)}`;
+  }
+  return `learn.html?world=${encodeURIComponent(world.id)}`;
+}
 
 document.getElementById('opening-bookmark').onclick = function(){
   const saved = this.getAttribute('aria-pressed') !== 'true';
@@ -174,7 +202,7 @@ document.getElementById('opening-copy').onclick = async function(){
 document.getElementById('opening-next').onclick = function(){
   if(!currentLine) return;
   if(trainPly >= currentLine.moves.length){
-    loadLine(currentLine,currentLineKey);
+    location.href = nextCurriculumUrl(currentLineKey);
     return;
   }
   const expected = currentLine.moves[trainPly];

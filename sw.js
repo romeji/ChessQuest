@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v32';
+const CACHE_VERSION = 'chessquest-v41';
 const APP_SHELL = [
   './',
   './index.html',
@@ -44,6 +44,7 @@ const APP_SHELL = [
   './assets/js/navigation.js',
   './assets/js/board.js',
   './assets/js/openings.js',
+  './assets/js/opening-curriculum.js',
   './assets/js/training.js',
   './assets/js/puzzles.js',
   './assets/js/firebase-sync.js',
@@ -68,6 +69,16 @@ const APP_SHELL = [
   './assets/illustrations/opening-islands-spritesheet.png',
   './assets/illustrations/opening-map-night.png',
   './assets/illustrations/opening-map-maquette-v2.png',
+  './assets/illustrations/opening-world-01-foundations-v1.webp',
+  './assets/illustrations/opening-world-02-open-play-v1.webp',
+  './assets/illustrations/opening-world-03-sicilian-v1.webp',
+  './assets/illustrations/opening-world-04-fortresses-v1.webp',
+  './assets/illustrations/opening-world-05-queen-v1.webp',
+  './assets/illustrations/opening-world-06-indian-v1.webp',
+  './assets/illustrations/opening-world-07-gardens-v1.webp',
+  './assets/illustrations/opening-world-08-frontiers-v1.webp',
+  './assets/illustrations/opening-world-09-gambits-v1.webp',
+  './assets/illustrations/opening-world-10-masters-v1.webp',
   './assets/illustrations/analysis-hero-chess.png',
   './assets/illustrations/rewards-spritesheet.png',
   './assets/illustrations/training-menu-hero.png'

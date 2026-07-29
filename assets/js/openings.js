@@ -1,6 +1,7 @@
 /* ============================================================
    ChessQuest — openings.js
-   Bibliothèque complète des 26 ouvertures + logique d'entraînement.
+   Bibliothèque historique + logique d'entraînement.
+   Le catalogue étendu est enregistré par opening-curriculum.js.
    ============================================================ */
 
 const OPENINGS = {
@@ -341,8 +342,6 @@ const OPENINGS = {
       {san:'d6', c:"Symétrie."},
       {san:'Nbd2', c:"Premier temps de la manœuvre."},
       {san:'O-O', c:"Noir roque."},
-      {san:'O-O', c:"Blanc roque à son tour."},
-      {san:'Re8', c:"Noir centralise sa tour."},
       {san:'Nf1', c:"Deuxième temps : le cavalier continue sa route vers l'aile roi."},
       {san:'h6', c:"Noir prend une case de retraite pour son fou."},
       {san:'Ng3', c:"Troisième temps : le cavalier termine son voyage de b1 à g3 en trois coups."}
@@ -358,6 +357,9 @@ const CATEGORIES = [
   {key:'techniques', title:'Pièges & techniques classiques', lines:['mat_berger','danse_cavaliers']}
 ];
 function trainableKeys(){
+  if(typeof allCurriculumLessonKeys === 'function'){
+    return [...new Set(allCurriculumLessonKeys())];
+  }
   return CATEGORIES.filter(c => c.key !== 'techniques').flatMap(c => c.lines);
 }
 
