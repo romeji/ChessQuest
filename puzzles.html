@@ -22,6 +22,8 @@
 <link rel="stylesheet" href="assets/css/puzzle.css">
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/final-views.css?v=39">
+<link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
+<link rel="stylesheet" href="assets/css/gamification.css?v=44">
 </head>
 <body data-page="puzzles" class="final-shell-page puzzle-final-page">
 <div id="toast-container"></div>
@@ -52,8 +54,8 @@
     </div>
 
     <div class="puzzle-final-turn">
-      <img class="puzzle-final-coach" src="assets/illustrations/mascot-knight-home.png" alt="Coach ChessQuest">
-      <span class="puzzle-final-turn-copy">
+      <img class="puzzle-final-coach" data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest">
+      <span class="puzzle-final-turn-copy" data-mascot-text>
         <strong>À toi de jouer</strong>
         <small>Trouve le meilleur coup.</small>
       </span>
@@ -86,12 +88,18 @@
 <script src="assets/js/chesscom.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/mascot-coach.js?v=44"></script>
 <script src="assets/js/navigation.js"></script>
 <script src="assets/js/board.js"></script>
 <script src="assets/js/openings.js"></script>
 <script src="assets/js/puzzles.js"></script>
 <script>
 const urlParams = new URLSearchParams(location.search);
+const secretLevel = urlParams.get('secret');
+if(secretLevel && !isSecretUnlocked(secretLevel)){
+  showMascotReaction('locked', "Tu pensais vraiment entrer sans clé ? La boutique, sujet.", {toast:true});
+  setTimeout(() => location.replace('secret-levels.html'), 900);
+}
 const urlSource = urlParams.get('source');
 if(urlSource === 'mistakes') puzzleSource = urlSource;
 const urlTheme = urlParams.get('theme');

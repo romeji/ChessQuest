@@ -22,6 +22,8 @@
 <link rel="stylesheet" href="assets/css/profile.css">
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/mockup-pages.css">
+    <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
+    <link rel="stylesheet" href="assets/css/gamification.css?v=44">
 </head>
 <body data-page="profile" class="quest-screen profile-page">
 <div id="toast-container"></div>
@@ -78,6 +80,9 @@
     <a class="quest-card profile-settings-row" href="settings.html">
       <span>⚙</span><span>Paramètres</span><span>›</span>
     </a>
+    <a class="quest-card profile-settings-row" href="shop.html">
+      <span>♛</span><span>Boutique royale</span><span>›</span>
+    </a>
   </section>
 </main>
 <nav class="tabbar"></nav>
@@ -87,6 +92,7 @@
 <script src="assets/js/chesscom.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/mascot-coach.js?v=44"></script>
 <script src="assets/js/navigation.js"></script>
 <script>
 function profileRank(rating){
@@ -138,7 +144,7 @@ function renderProfile(){
   const winrate = games.length ? Math.round((wins / games.length) * 100) : 0;
   const mastered = Object.keys(PROGRESS.mastered || {}).length;
   const badges = computeBadges().filter(badge => badge.unlocked).length;
-  document.getElementById('profile-gem-count').textContent = PROGRESS.xp || 0;
+  document.getElementById('profile-gem-count').textContent = crownBalance();
   document.getElementById('profile-name').textContent = username;
   document.getElementById('profile-elo').textContent = current;
   document.getElementById('profile-rank').textContent = profileRank(current);

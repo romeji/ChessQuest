@@ -1,0 +1,264 @@
+/*
+ * ChessQuest — dernière couche responsive.
+ * Cette feuille reste chargée en dernier afin que chaque vue partage les mêmes
+ * garde-fous, même lorsque ses styles historiques utilisent d'autres métriques.
+ */
+
+:root{
+  --cq-safe-top:max(8px,env(safe-area-inset-top,0px));
+  --cq-safe-right:max(10px,env(safe-area-inset-right,0px));
+  --cq-safe-bottom:max(8px,env(safe-area-inset-bottom,0px));
+  --cq-safe-left:max(10px,env(safe-area-inset-left,0px));
+}
+
+html{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+  background:#f6f0e5;
+  overscroll-behavior-x:none;
+}
+body{
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden!important;
+  overscroll-behavior-x:none;
+  -webkit-tap-highlight-color:transparent;
+}
+*,*::before,*::after{min-width:0}
+img,svg,canvas,video{max-width:100%}
+button,a,[role="button"]{touch-action:manipulation}
+
+/* Les plateaux ne peuvent jamais sortir du viewport, quelle que soit la page. */
+.board-frame,
+.board-shell,
+.board-wrap,
+.daily-board-wrap,
+.puzzle-final-board-wrap,
+.opening-final-board-wrap,
+.training-final-board-wrap{
+  max-width:calc(100vw - var(--cq-safe-left) - var(--cq-safe-right) - 8px)!important;
+}
+.chessboard-63f37,
+[id$="-board"].chessboard-63f37,
+.board-frame > [id$="-board"]{
+  max-width:100%!important;
+}
+
+/* La carte est une scène plein écran : le document ne bouge jamais. */
+html.opening-map-document,
+html.opening-map-document body{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  height:100dvh;
+  min-height:0!important;
+  overflow:hidden!important;
+  overscroll-behavior:none;
+  background:#063c34;
+}
+.opening-map-page .map-app,
+.opening-map-page .page,
+.opening-map-page .teal-hero{
+  width:100%;
+  height:100%;
+  height:100dvh;
+  min-height:0!important;
+  max-height:100dvh;
+  overflow:hidden!important;
+}
+.opening-map-page .teal-hero{
+  touch-action:none;
+  background-position:center center!important;
+}
+.opening-map-page .map-header{
+  top:0;
+  padding-top:var(--cq-safe-top);
+  padding-right:var(--cq-safe-right);
+  padding-left:var(--cq-safe-left);
+}
+.opening-map-page .world-switcher{
+  top:calc(var(--cq-safe-top) + 48px);
+  touch-action:manipulation;
+}
+.opening-map-page .map-island,
+.opening-map-page .world-switcher,
+.opening-map-page .subpage-back{touch-action:manipulation}
+.opening-map-page .island-sheet{
+  max-height:min(76dvh,690px);
+  padding-bottom:var(--cq-safe-bottom);
+  overscroll-behavior:contain;
+}
+.opening-map-page .island-lessons{
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+}
+
+/* Les pages de jeu sont des plateaux de contrôle, pas des documents à faire
+   défiler pendant un glisser-déposer. Seules les zones d'historique défilent. */
+.puzzle-final-page,
+.opening-final-page,
+.training-final-page,
+.daily-page{
+  height:100%;
+  height:100dvh;
+  overflow:hidden!important;
+  overscroll-behavior:none;
+}
+.puzzle-final-page .app,
+.opening-final-page .app,
+.training-final-page .app,
+.daily-page .app{
+  max-height:100dvh;
+  overflow:hidden!important;
+}
+.training-move-log,
+.island-lessons{scrollbar-width:thin}
+
+/* Entraînement ciblé : même coque sombre et premium que les écrans maquette. */
+body.training-target-page{
+  min-height:100dvh;
+  color:#fffdf1;
+  background:
+    radial-gradient(circle at 50% -10%,rgba(43,143,101,.45),transparent 42%),
+    linear-gradient(180deg,#073f31,#022d24)!important;
+}
+body.training-target-page .app{
+  width:min(100%,430px);
+  min-height:100dvh;
+  margin:0 auto;
+  background:linear-gradient(180deg,#07503d 0,#023b2e 44%,#022f27 100%)!important;
+  box-shadow:0 18px 55px rgba(0,24,18,.32);
+}
+body.training-target-page .page{
+  min-height:100dvh;
+  background:transparent!important;
+  color:#fffdf1!important;
+  padding:
+    calc(var(--cq-safe-top) + 4px)
+    max(14px,var(--cq-safe-right))
+    calc(22px + var(--cq-safe-bottom))
+    max(14px,var(--cq-safe-left));
+}
+.training-target-page .subpage-back{
+  position:sticky;
+  top:var(--cq-safe-top);
+  z-index:5;
+  margin:0 0 12px!important;
+  border-color:rgba(238,216,159,.45);
+  background:rgba(0,44,34,.76);
+  color:#fff;
+  backdrop-filter:blur(12px);
+}
+.training-target-page .section-title{
+  margin:0 0 4px!important;
+  padding:0!important;
+  border:0!important;
+  color:#fffdf1!important;
+  font:700 clamp(1.35rem,7vw,1.9rem)/1.08 Georgia,"Times New Roman",serif;
+}
+.training-target-page .section-sub{
+  max-width:35ch;
+  margin:0 0 18px!important;
+  color:#d7e9df!important;
+  font-size:.78rem;
+  line-height:1.45;
+}
+.training-target-page .theme-picker-grid{
+  display:grid;
+  gap:10px;
+}
+.training-target-page .entrainement-card{
+  min-height:82px;
+  padding:12px 13px;
+  border:1px solid rgba(225,197,128,.42);
+  border-radius:16px;
+  background:linear-gradient(145deg,#fffdf5,#f7efdf);
+  box-shadow:0 10px 22px rgba(0,24,18,.24);
+  color:#15251e;
+  text-decoration:none;
+}
+.training-target-page .entrainement-card:focus-visible{
+  outline:3px solid #f2ce5c;
+  outline-offset:2px;
+}
+.training-target-page .ec-icon{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  box-shadow:inset 0 1px rgba(255,255,255,.45),0 5px 10px rgba(24,28,23,.15);
+}
+.training-target-page .ec-title{color:#16231e;font-size:.9rem}
+.training-target-page .ec-desc{
+  color:#657068;
+  font-size:.7rem;
+  line-height:1.35;
+}
+
+/* Les vues longues gardent leur navigation accessible sans masquer la fin. */
+.home-final-page .app,
+.entrainement-page .app,
+.analysis-page .app,
+.progress-page .app,
+.profile-page .app,
+body[data-page="coach"] .app{
+  padding-bottom:calc(82px + env(safe-area-inset-bottom,0px));
+}
+.analysis-page .page,
+.progress-page .page,
+.profile-page .page,
+body[data-page="coach"] .page{
+  padding-right:max(10px,var(--cq-safe-right));
+  padding-left:max(10px,var(--cq-safe-left));
+}
+
+@media(max-width:359px){
+  .puzzle-final-page .app,
+  .opening-final-page .app,
+  .training-final-page .app{padding-right:9px;padding-left:9px}
+  .final-page-title{min-height:50px!important}
+  .final-page-title h1{font-size:.96rem!important}
+  .puzzle-final-tabs{gap:7px}
+  .puzzle-final-tabs button{font-size:.68rem}
+  .puzzle-final-turn{grid-template-columns:48px 1fr auto!important;gap:7px!important}
+  .puzzle-final-coach{width:48px!important;height:48px!important}
+  .puzzle-final-page .mcq-grid{gap:6px!important}
+  .puzzle-final-page .mcq-option{padding:5px!important;font-size:.66rem!important}
+  .opening-final-theory{padding-right:12px!important;padding-left:12px!important}
+  .opening-final-fact{font-size:.66rem!important}
+  .training-final-controls{gap:8px!important}
+  .training-final-controls button{font-size:.67rem!important}
+  .daily-page .page{padding-right:8px!important;padding-left:8px!important}
+  .daily-page .daily-board-wrap{max-width:calc(100vw - 16px)!important}
+  .profile-summary-main{grid-template-columns:92px 1fr!important}
+  .profile-page .profile-avatar{width:88px!important;height:88px!important}
+}
+
+@media(max-height:700px){
+  .opening-map-page .map-header h1{font-size:1rem}
+  .opening-map-page .world-switcher{transform:translateX(-50%) scale(.92);transform-origin:top center}
+  .puzzle-final-page .page,
+  .opening-final-page .page,
+  .training-final-page .page{padding-top:2px!important;padding-bottom:5px!important}
+  .puzzle-final-page .final-page-title,
+  .opening-final-page .final-page-title,
+  .training-final-page .final-page-title{min-height:46px!important}
+  .puzzle-final-feedback{display:none!important}
+  .opening-final-theory{min-height:132px!important}
+  .opening-final-memory{min-height:54px!important}
+  .training-final-history{min-height:76px!important}
+  .training-final-coach{display:none!important}
+}
+
+@media(min-width:720px){
+  body.training-target-page{padding:22px 0}
+  .training-target-page .app{
+    min-height:calc(100dvh - 44px);
+    border-radius:28px;
+    overflow:hidden;
+  }
+  html.opening-map-document body.opening-map-page{padding:0!important}
+}

@@ -22,6 +22,8 @@
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/analysis.css">
 <link rel="stylesheet" href="assets/css/polish.css">
+<link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
+<link rel="stylesheet" href="assets/css/gamification.css?v=44">
 </head>
 <body data-page="analyze">
 <div id="toast-container"></div>
@@ -100,6 +102,7 @@
 <script src="assets/js/firebase-sync.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/mascot-coach.js?v=44"></script>
 <script src="assets/js/navigation.js"></script>
 <script src="assets/js/board.js"></script>
 <script>
@@ -144,9 +147,9 @@ function updateEvalBar(r){
 }
 
 function adviceFor(r){
-  if(r.info.cls==='best') return `${r.san} était bien le meilleur coup ici.`;
-  if(r.info.cls==='good') return `${r.san} est un bon coup, proche de l'optimal (${r.bestSan}).`;
-  let txt = `${r.bestSan} était plus fort. `;
+  if(r.info.cls==='best') return `Évidemment : ${r.san} était le meilleur coup. Très royal.`;
+  if(r.info.cls==='good') return `${r.san} est solide. Pas tout à fait mon premier choix (${r.bestSan}), mais je valide.`;
+  let txt = `J’avais naturellement préféré ${r.bestSan}. `;
   if(r.mateMissed) txt += "Ce coup menait à un mat forcé et l'a laissé passer.";
   else if(r.mateAllowed) txt += "Ce coup permet à l'adversaire de forcer le mat.";
   else if(r.info.cls==='blunder') txt += "Ce coup laisse probablement une pièce en prise ou permet une attaque décisive.";
@@ -293,7 +296,10 @@ function goToPly(idx){
   highlightMove('#board', r.from, r.to);
   updateEvalBar(r);
   document.querySelectorAll('.move-chip').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.idx,10)===idx));
-  document.getElementById('move-comment-box').innerHTML = `<span class="tag tag-${r.info.cls}">${r.info.glyph} ${r.info.label}</span>${escapeHtml(r.advice)}`;
+  const mood = typeof mascotMoodFor === 'function' ? mascotMoodFor(r.info.cls,r.drop) : 'encourage';
+  const mascot = typeof MASCOT_ASSETS !== 'undefined' ? MASCOT_ASSETS[mood] : 'assets/illustrations/mascot-knight-home.png';
+  document.getElementById('move-comment-box').innerHTML = `<div class="analysis-mascot-comment"><img src="${mascot}" alt="Réaction du coach"><div><span class="tag tag-${r.info.cls}">${r.info.glyph} ${r.info.label}</span><p>${escapeHtml(r.advice)}</p></div></div>`;
+  if(typeof showMascotReaction === 'function') showMascotReaction(r.info.cls,'',{message:r.advice,severity:r.drop,imageSelector:'.analysis-mascot-comment img',textSelector:'.analysis-mascot-comment p',speak:false});
 }
 document.getElementById('nav-start').onclick = () => goToPly(0);
 document.getElementById('nav-prev').onclick = () => goToPly(analysisIndex-1);

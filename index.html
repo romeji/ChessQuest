@@ -22,6 +22,8 @@
 <link rel="stylesheet" href="assets/css/home.css">
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/final-views.css">
+<link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
+<link rel="stylesheet" href="assets/css/gamification.css?v=44">
 </head>
 <body data-page="home" class="final-shell-page home-final-page">
 <div id="toast-container"></div>
@@ -52,8 +54,8 @@
       <span class="home-final-confetti c1">◆</span>
       <span class="home-final-confetti c2">◆</span>
       <span class="home-final-confetti c3">◆</span>
-      <div class="home-final-speech" id="home-greeting">Prêt pour<br>une nouvelle<br>quête ?</div>
-      <img class="home-final-mascot" src="assets/illustrations/mascot-knight-home.png" alt="Cavalier ChessQuest couronné">
+      <div class="home-final-speech" id="home-greeting" data-mascot-text>Prêt pour une nouvelle quête ?</div>
+      <img class="home-final-mascot" src="assets/illustrations/mascot-coach-haughty.webp" alt="Cavalier ChessQuest couronné" data-mascot-image role="button" tabindex="0" aria-label="Écouter la mascotte">
     </section>
 
     <a class="home-final-daily" href="daily-challenge.html">
@@ -107,6 +109,19 @@ function renderHomeTab(){
 }
 
 renderHomeTab();
+</script>
+<script src="assets/js/mascot-coach.js?v=44"></script>
+<script>
+const homeMascot = document.querySelector('.home-final-mascot');
+function greetFromMascot(){
+  const solved = PROGRESS.dailyProgress?.puzzlesSolvedToday || 0;
+  showMascotReaction(solved >= 3 ? 'best' : 'inaccuracy', solved >= 3
+    ? 'Le défi quotidien est terminé. Je reconnais une certaine grandeur.'
+    : `Encore ${Math.max(0,3-solved)} puzzle${3-solved>1?'s':''}. Une couronne ne se mérite pas en la regardant.`,
+    {imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]'});
+}
+homeMascot.addEventListener('click',greetFromMascot);
+homeMascot.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();greetFromMascot();}});
 </script>
 </body>
 </html>

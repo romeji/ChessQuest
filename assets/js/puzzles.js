@@ -177,6 +177,7 @@ function showPuzzleHint(){
   puzzleHintUsed = true;
   flashSquares('#puzzle-board', [match.from, match.to], 'hint-square', 1800);
   setPuzzleFeedback(`Indice : regarde la pièce en ${match.from.toUpperCase()}.`, 'prompt');
+  if(typeof showMascotReaction === 'function') showMascotReaction('hint',`La pièce en ${match.from.toUpperCase()} mérite ton attention.`,{imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]'});
   const hintButton = document.getElementById('puzzle-hint-btn');
   if(hintButton){ hintButton.disabled = true; hintButton.textContent = 'Indice affiché'; }
 }
@@ -212,6 +213,7 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   recordActivity();
   if(success){
     addXP(10);
+    addCrowns(2,'Puzzle résolu');
     bumpDailyCounter('puzzlesSolvedToday');
   }
   refreshPuzzleHeader();
@@ -220,6 +222,11 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
 
   showRatingDelta(delta);
   setPuzzleFeedback(`${success ? 'Excellent !' : 'Pas cette fois.'} ${p.explanation || (solutionClean + ' était le coup gagnant.')}`, success ? 'good' : 'bad');
+  if(typeof showMascotReaction === 'function'){
+    showMascotReaction(success ? 'best' : 'mistake',p.explanation || `${solutionClean} était le coup gagnant.`,{
+      imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]',speak:false
+    });
+  }
 
   if(puzzleSource === 'mistakes'){
     // Une erreur reste dans le carnet de révision : on peut toujours y

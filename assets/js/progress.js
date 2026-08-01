@@ -15,6 +15,14 @@ function defaultProgress(){
     activityDates: [], viewedNotationGuide: false, viewedGlossary: false,
     xp: 0, lastKnownLevel: 1, unlockedBadges: [],
     dailyProgress: { date:null, puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false },
+    economy: {
+      crowns: 120,
+      owned: ['board-royal','pieces-classic'],
+      equippedBoard: 'board-royal',
+      equippedPieces: 'pieces-classic',
+      treasures: {},
+      secrets: []
+    },
     onboarded: false
   };
 }
@@ -28,6 +36,79 @@ function loadProgress(){
 }
 function saveProgress(){ try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(PROGRESS)); }catch(e){} }
 let PROGRESS = loadProgress();
+
+/* ============================================================
+   ÉCONOMIE, TRÉSORS ET PERSONNALISATION
+   ============================================================ */
+const QUEST_STORE = [
+  {id:'board-royal', type:'board', name:'Jardin royal', desc:'Le vert crème emblématique de ChessQuest.', price:0, colors:['#f2ecd8','#6f9a63']},
+  {id:'board-amethyst', type:'board', name:'Améthyste', desc:'Un plateau violet digne de la cour.', price:180, colors:['#eadffc','#7851a9']},
+  {id:'board-midnight', type:'board', name:'Minuit', desc:'Bleu nuit et or pour les longues batailles.', price:260, colors:['#d6dbe8','#263651']},
+  {id:'board-candy', type:'board', name:'Confiserie', desc:'Rose et vanille, étonnamment redoutable.', price:320, colors:['#fff0dc','#d77f9e']},
+  {id:'pieces-classic', type:'pieces', name:'Armée classique', desc:'Les pièces officielles de ton royaume.', price:0, icon:'♞'},
+  {id:'pieces-ivory', type:'pieces', name:'Ivoire enchanté', desc:'Un éclat doux et sculpté.', price:220, icon:'♘'},
+  {id:'pieces-gilded', type:'pieces', name:'Garde dorée', desc:'Une aura d’or autour de chaque pièce.', price:360, icon:'♛'},
+  {id:'pieces-arcane', type:'pieces', name:'Armée arcanique', desc:'Une lueur violette venue des archives.', price:420, icon:'♝'},
+  {id:'secret-tactics', type:'secret', name:'Le Cabinet des fourchettes', desc:'Une série secrète de tactiques sournoises.', price:300, icon:'🗝️'},
+  {id:'secret-endgame', type:'secret', name:'La Crypte des finales', desc:'Des positions où un seul tempo décide de tout.', price:450, icon:'🗝️'},
+  {id:'secret-crown', type:'secret', name:'Le Défi de la Couronne', desc:'Le niveau ultime réservé aux collectionneurs.', price:700, icon:'👑'}
+];
+
+function ensureEconomy(){
+  const defaults = defaultProgress().economy;
+  PROGRESS.economy = Object.assign({}, defaults, PROGRESS.economy || {});
+  PROGRESS.economy.owned = Array.from(new Set([...(defaults.owned || []), ...(PROGRESS.economy.owned || [])]));
+  PROGRESS.economy.treasures = PROGRESS.economy.treasures || {};
+  PROGRESS.economy.secrets = PROGRESS.economy.secrets || [];
+  return PROGRESS.economy;
+}
+ensureEconomy();
+function crownBalance(){ return Math.max(0, Number(ensureEconomy().crowns) || 0); }
+function addCrowns(amount, reason){
+  const value = Math.max(0, Math.round(Number(amount) || 0));
+  if(!value) return crownBalance();
+  ensureEconomy().crowns = crownBalance() + value;
+  saveProgress();
+  document.dispatchEvent(new CustomEvent('quest:currency',{detail:{amount:value,balance:crownBalance(),reason:reason || 'Récompense'}}));
+  return crownBalance();
+}
+function ownsStoreItem(id){ return ensureEconomy().owned.includes(id); }
+function purchaseStoreItem(id){
+  const item = QUEST_STORE.find(entry => entry.id === id);
+  if(!item) return {ok:false, reason:'unknown'};
+  if(ownsStoreItem(id)) return {ok:true, already:true, item};
+  if(crownBalance() < item.price) return {ok:false, reason:'funds', item};
+  PROGRESS.economy.crowns = crownBalance() - item.price;
+  PROGRESS.economy.owned.push(id);
+  if(item.type === 'secret' && !PROGRESS.economy.secrets.includes(id)) PROGRESS.economy.secrets.push(id);
+  saveProgress();
+  document.dispatchEvent(new CustomEvent('quest:purchase',{detail:{item,balance:crownBalance()}}));
+  return {ok:true, item};
+}
+function equipStoreItem(id){
+  const item = QUEST_STORE.find(entry => entry.id === id);
+  if(!item || !ownsStoreItem(id) || !['board','pieces'].includes(item.type)) return false;
+  if(item.type === 'board') PROGRESS.economy.equippedBoard = id;
+  if(item.type === 'pieces') PROGRESS.economy.equippedPieces = id;
+  saveProgress();
+  applyQuestCosmetics();
+  return true;
+}
+function applyQuestCosmetics(){
+  const economy = ensureEconomy();
+  document.documentElement.dataset.boardSkin = (economy.equippedBoard || 'board-royal').replace('board-','');
+  document.documentElement.dataset.pieceSkin = (economy.equippedPieces || 'pieces-classic').replace('pieces-','');
+}
+function claimWorldTreasure(worldId, worldNumber){
+  const economy = ensureEconomy();
+  if(economy.treasures[worldId]) return {ok:false, claimed:true, amount:economy.treasures[worldId]};
+  const amount = 80 + Math.max(0, Number(worldNumber || 1) - 1) * 20;
+  economy.treasures[worldId] = amount;
+  addCrowns(amount, `Trésor du monde ${worldNumber || ''}`.trim());
+  return {ok:true, amount};
+}
+function isSecretUnlocked(id){ return ensureEconomy().secrets.includes(id) || ownsStoreItem(id); }
+document.addEventListener('DOMContentLoaded', applyQuestCosmetics);
 
 /* ---- Vitesse moteur (partagée avec board.js) ---- */
 const ENGINE_SPEEDS = { fast:250, normal:450, deep:900 };
@@ -109,6 +190,7 @@ function addXP(amount){
   } else {
     saveProgress();
   }
+  if(amount >= 30) addCrowns(Math.max(2,Math.round(amount / 6)),'Progression');
 }
 
 /* ============================================================
@@ -143,6 +225,7 @@ function bumpDailyCounter(type){
   if(challenge.type === type && !PROGRESS.dailyProgress.rewardClaimed && PROGRESS.dailyProgress[type] >= challenge.target){
     PROGRESS.dailyProgress.rewardClaimed = true;
     addXP(challenge.xp);
+    addCrowns(35,'Défi quotidien');
     if(typeof fireConfetti === 'function') fireConfetti('badge');
     if(typeof showToast === 'function') showToast('Défi du jour terminé !', `+${challenge.xp} XP`);
   }
@@ -234,6 +317,7 @@ function recordLineCompletion(key, clean){
     const prevCount = PROGRESS.mastered[key] ? PROGRESS.mastered[key].cleanCount : 0;
     PROGRESS.mastered[key] = { cleanCount: prevCount + 1, lastDate: new Date().toISOString() };
     if(prevCount === 0 && typeof OPENINGS !== 'undefined' && OPENINGS[key]){
+      addCrowns(12,'Ouverture maîtrisée');
       if(typeof fireConfetti === 'function') fireConfetti('mastery');
       if(typeof showToast === 'function') showToast('Ouverture maîtrisée !', OPENINGS[key].name);
     }

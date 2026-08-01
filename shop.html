@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#064b39">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
+  <title>ChessQuest — Boutique royale</title>
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/gamification.css?v=44">
+</head>
+<body class="shop-page">
+<main class="app">
+  <header class="shop-header">
+    <a class="subpage-back" href="profile.html" aria-label="Retour au profil"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <h1>Boutique royale</h1>
+    <span class="shop-balance" id="shop-balance">♛ 0</span>
+  </header>
+  <section class="shop-content">
+    <div class="shop-hero">
+      <img src="assets/illustrations/mascot-coach-haughty.webp" data-mascot-image alt="Le coach royal">
+      <div><h2>Un peu de distinction</h2><p data-mascot-text>Utilise tes couronnes pour personnaliser ton royaume. Je jugerai tes choix avec une grande impartialité, évidemment.</p></div>
+    </div>
+    <h2 class="shop-section-title">Plateaux</h2><div class="shop-grid" id="shop-boards"></div>
+    <h2 class="shop-section-title">Armées</h2><div class="shop-grid" id="shop-pieces"></div>
+    <h2 class="shop-section-title">Passages secrets</h2><div class="shop-grid" id="shop-secrets"></div>
+  </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/mascot-coach.js?v=44"></script>
+<script>
+function shopCard(item){
+  const owned = ownsStoreItem(item.id);
+  const equipped = item.type === 'board'
+    ? ensureEconomy().equippedBoard === item.id
+    : item.type === 'pieces' && ensureEconomy().equippedPieces === item.id;
+  const colors = item.colors || [];
+  const previewStyle = colors.length ? `--preview-a:${colors[0]};--preview-b:${colors[1]}` : '';
+  const label = equipped ? 'Équipé' : (owned ? (item.type === 'secret' ? 'Explorer' : 'Équiper') : `${item.price}`);
+  return `<article class="shop-card ${owned?'owned':''} ${equipped?'equipped':''} ${item.type==='secret'?'secret-card':''}">
+    <div class="shop-preview" style="${previewStyle}">${item.type==='board'?'':(item.icon||'♞')}</div>
+    <h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.desc)}</p>
+    <button class="shop-action ${owned?'':'price'}" data-item="${item.id}" ${equipped?'disabled':''}>${label}</button>
+  </article>`;
+}
+function renderShop(){
+  document.getElementById('shop-balance').textContent = `♛ ${crownBalance()}`;
+  document.getElementById('shop-boards').innerHTML = QUEST_STORE.filter(x=>x.type==='board').map(shopCard).join('');
+  document.getElementById('shop-pieces').innerHTML = QUEST_STORE.filter(x=>x.type==='pieces').map(shopCard).join('');
+  document.getElementById('shop-secrets').innerHTML = QUEST_STORE.filter(x=>x.type==='secret').map(shopCard).join('');
+  document.querySelectorAll('.shop-action[data-item]').forEach(button => button.onclick = () => {
+    const item = QUEST_STORE.find(entry=>entry.id===button.dataset.item);
+    if(ownsStoreItem(item.id)){
+      if(item.type === 'secret'){ location.href='secret-levels.html'; return; }
+      equipStoreItem(item.id); showMascotReaction('purchase',`${item.name} est désormais équipé.`,{imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]'});
+      renderShop(); return;
+    }
+    const result = purchaseStoreItem(item.id);
+    if(!result.ok){
+      showMascotReaction('locked',`Il te manque ${item.price-crownBalance()} couronnes.`,{imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]'});
+      return;
+    }
+    if(item.type !== 'secret') equipStoreItem(item.id);
+    renderShop();
+  });
+}
+renderShop();
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v41';
+const CACHE_VERSION = 'chessquest-v44';
 const APP_SHELL = [
   './',
   './index.html',
@@ -15,6 +15,8 @@ const APP_SHELL = [
   './progress.html',
   './profile.html',
   './settings.html',
+  './shop.html',
+  './secret-levels.html',
   './manifest.webmanifest',
   './assets/icons/chessquest-app-icon.png',
   './assets/icons/icon-192.png',
@@ -28,6 +30,8 @@ const APP_SHELL = [
   './assets/css/polish.css',
   './assets/css/mockup-pages.css',
   './assets/css/final-views.css',
+  './assets/css/responsive-hardening.css',
+  './assets/css/gamification.css',
   './assets/css/home.css',
   './assets/css/learn.css',
   './assets/css/entrainement.css',
@@ -38,6 +42,7 @@ const APP_SHELL = [
   './assets/css/coach.css',
   './assets/css/opening-gamification.css',
   './assets/js/progress.js',
+  './assets/js/mascot-coach.js',
   './assets/js/chesscom.js',
   './assets/js/animations.js',
   './assets/js/app.js',
@@ -66,6 +71,11 @@ const APP_SHELL = [
   './assets/illustrations/opening-map-bg.svg',
   './assets/illustrations/mascot-knight-home.png',
   './assets/illustrations/mascot-knight-hint.png',
+  './assets/illustrations/mascot-coach-ecstatic.webp',
+  './assets/illustrations/mascot-coach-encourage.webp',
+  './assets/illustrations/mascot-coach-haughty.webp',
+  './assets/illustrations/mascot-coach-sad.webp',
+  './assets/illustrations/mascot-coach-rage.webp',
   './assets/illustrations/opening-islands-spritesheet.png',
   './assets/illustrations/opening-map-night.png',
   './assets/illustrations/opening-map-maquette-v2.png',
@@ -127,14 +137,14 @@ self.addEventListener('fetch', event => {
           caches.open(CACHE_VERSION).then(cache => cache.put(event.request, copy));
           return response;
         })
-        .catch(() => caches.match(event.request)
+        .catch(() => caches.match(event.request, { ignoreSearch: true })
           .then(cached => cached || caches.match('./index.html')))
     );
     return;
   }
 
   event.respondWith(
-    caches.match(event.request).then(cached => {
+    caches.match(event.request, { ignoreSearch: true }).then(cached => {
       if (cached) return cached;
       return fetch(event.request)
         .then(response => {

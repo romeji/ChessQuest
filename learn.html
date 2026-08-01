@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="opening-map-document">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
@@ -21,7 +21,9 @@
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/learn.css">
 <link rel="stylesheet" href="assets/css/polish.css">
-<link rel="stylesheet" href="assets/css/mockup-pages.css?v=40">
+    <link rel="stylesheet" href="assets/css/mockup-pages.css?v=40">
+    <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
+    <link rel="stylesheet" href="assets/css/gamification.css?v=44">
 </head>
 <body data-page="learn" class="opening-map-page">
 <div id="toast-container"></div>
@@ -71,6 +73,7 @@
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/mascot-coach.js?v=44"></script>
 <script>
 const LOCK_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
 const BASE_OPENING_NAMES = {
@@ -150,16 +153,29 @@ function renderSkillPath(){
     const style = `--top:${position.y}%;--left:${position.x}%;`;
     return `<button class="map-island ${status}" style="${style}" type="button" data-island="${island.id}" aria-label="${escapeHtml(island.title)}, ${islandProgress.completed} leçons sur ${islandProgress.total}${unlocked ? '' : ', verrouillée'}">${content}</button>`;
   }).join('');
-  const treasureTitle = progress.complete ? 'Royaume maîtrisé !' : (worldUnlocked ? 'Trésor du monde' : 'Monde verrouillé');
-  const treasureCopy = progress.complete
-    ? 'Le prochain archipel est ouvert.'
-    : (worldUnlocked ? `${progress.completed}/${progress.total} leçons terminées` : worldRequirement(currentWorldIndex));
+  const economy = ensureEconomy();
+  const treasureClaimed = !!economy.treasures[world.id];
+  const treasureReward = 80 + (world.number * 10);
+  const treasureTitle = treasureClaimed ? 'Trésor collecté' : (progress.complete ? 'Ouvrir le trésor' : (worldUnlocked ? 'Trésor du monde' : 'Monde verrouillé'));
+  const treasureCopy = treasureClaimed
+    ? `+${treasureReward} couronnes gagnées`
+    : (progress.complete ? `Réclame +${treasureReward} couronnes` : (worldUnlocked ? `${progress.completed}/${progress.total} leçons terminées` : worldRequirement(currentWorldIndex)));
   document.getElementById('skill-path').innerHTML = `
     <p class="map-world-subtitle">${escapeHtml(world.subtitle)}</p>
     <div class="map-nodes">${markup}</div>
-    <div class="map-treasure-label ${progress.complete ? 'complete' : ''}"><strong>${escapeHtml(treasureTitle)}</strong><small>${escapeHtml(treasureCopy)}</small></div>`;
+    ${progress.complete && !treasureClaimed
+      ? `<button class="map-treasure-label complete treasure-ready" id="map-world-treasure" type="button"><strong>${escapeHtml(treasureTitle)}</strong><small>${escapeHtml(treasureCopy)}</small></button>`
+      : `<div class="map-treasure-label ${progress.complete ? 'complete claimed' : ''}"><strong>${escapeHtml(treasureTitle)}</strong><small>${escapeHtml(treasureCopy)}</small></div>`}`;
   document.querySelectorAll('.map-island').forEach(button => {
     button.addEventListener('click', () => openIsland(button.dataset.island));
+  });
+  document.getElementById('map-world-treasure')?.addEventListener('click', event => {
+    const reward = claimWorldTreasure(world.id, world.number);
+    if(!reward.ok) return;
+    event.currentTarget.classList.add('reward-burst');
+    if(typeof fireConfetti === 'function') fireConfetti('badge');
+    showToast('Trésor royal ouvert', `+${reward.amount} couronnes. J'admets que tu les as presque méritées.`);
+    setTimeout(renderSkillPath, 520);
   });
 }
 function renderIslandLessons(world, island, worldIndex, islandIndex){

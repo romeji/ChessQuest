@@ -24,6 +24,8 @@
 <link rel="stylesheet" href="assets/css/entrainement.css">
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/mockup-pages.css">
+<link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
+<link rel="stylesheet" href="assets/css/gamification.css?v=44">
 </head>
 <body data-page="training" class="quest-screen daily-page">
 <div id="toast-container"></div>
@@ -56,10 +58,10 @@
       <p class="daily-question" id="daily-question">Quel est le meilleur coup ?</p>
       <div class="mcq-options" id="daily-mcq-options"></div>
       <aside class="daily-coach" aria-live="polite">
-        <img src="assets/illustrations/mascot-knight-home.png" alt="Le cavalier coach ChessQuest">
+        <img data-mascot-image src="assets/illustrations/mascot-coach-haughty.webp" alt="Le cavalier coach ChessQuest">
         <div class="daily-coach-copy">
           <strong>Conseil</strong>
-          <span id="daily-coach-text">Cherche un coup qui menace le roi adverse et gagne du matériel.</span>
+          <span id="daily-coach-text" data-mascot-text>Je te conseille de vérifier les échecs et les prises. Un réflexe royal.</span>
         </div>
       </aside>
     </div>
@@ -80,6 +82,7 @@
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
+<script src="assets/js/mascot-coach.js?v=44"></script>
 <script src="assets/js/board.js"></script>
 <script src="assets/js/puzzles.js"></script>
 <script>
@@ -160,9 +163,13 @@ function onDailyAnswer(button,solution){
     if(option.dataset.san === solution) option.classList.add('correct');
     else if(option === button) option.classList.add('wrong');
   });
-  document.getElementById('daily-coach-text').textContent = correct
-    ? 'Excellent ! Tu as vérifié les coups forcés avant de jouer.'
-    : 'Presque. Repars des échecs possibles : ils forcent souvent la réponse adverse.';
+  if(typeof showMascotReaction === 'function'){
+    showMascotReaction(correct ? 'best' : 'mistake',correct
+      ? 'Tu as vérifié les coups forcés avant de jouer.'
+      : 'Repars des échecs possibles : ils forcent souvent la réponse adverse.',{
+        imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]',speak:false
+      });
+  }
   if(typeof playSound === 'function') playSound(correct ? 'correct' : 'wrong');
   if(correct){
     bumpDailyCounter('puzzlesSolvedToday');
@@ -183,13 +190,14 @@ function updateDailyProgressUI(){
   const current = Math.min(challenge.target,PROGRESS.dailyProgress.puzzlesSolvedToday || 0);
   document.getElementById('daily-challenge-fill').style.width = `${Math.round((current / challenge.target) * 100)}%`;
   document.getElementById('daily-challenge-progress').textContent = `${current}/${challenge.target}`;
-  document.getElementById('daily-gem-count').textContent = PROGRESS.xp || 0;
+  document.getElementById('daily-gem-count').textContent = crownBalance();
 }
 
 function showDailyDone(){
   document.getElementById('daily-puzzle-mode').classList.add('hidden');
   document.getElementById('daily-done-banner').classList.remove('hidden');
   if(typeof fireConfetti === 'function') fireConfetti('badge');
+  if(typeof showMascotReaction === 'function') showMascotReaction('treasure','Le défi quotidien est accompli. La récompense est à nous.',{toast:true});
 }
 
 function initDailyChallenge(){

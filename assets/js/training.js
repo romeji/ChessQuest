@@ -63,12 +63,16 @@ function showCoach(text, icon){
   document.getElementById('coach-icon').textContent = icon || '👍';
   bubble.classList.remove('hidden');
   bubble.classList.remove('pop'); void bubble.offsetWidth; bubble.classList.add('pop');
-  speak(text);
+  if(typeof showMascotReaction === 'function'){
+    const positive = ['👍','✨','🎯','⚡','🛡️'].includes(icon);
+    const kind = positive ? 'good' : (icon === '🤝' ? 'mistake' : 'inaccuracy');
+    showMascotReaction(kind,'',{message:text,imageSelector:'#training-mascot',textSelector:'#training-tip-text'});
+  }else speak(text);
 }
 function hideCoach(){
   document.getElementById('coach-bubble').classList.add('hidden');
   const visibleTip = document.getElementById('training-tip-text');
-  if(visibleTip) visibleTip.textContent = 'Très bien ! Tu restes actif et tu mets ton adversaire sous pression. Continue comme ça !';
+  if(visibleTip) visibleTip.textContent = 'Solide. Pas tout à fait du génie, mais je valide.';
 }
 
 function setBotStatus(text){ document.getElementById('bot-status').textContent = text; }

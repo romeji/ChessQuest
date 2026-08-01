@@ -23,6 +23,8 @@
 <link rel="stylesheet" href="assets/css/analysis.css">
 <link rel="stylesheet" href="assets/css/coach.css">
 <link rel="stylesheet" href="assets/css/polish.css">
+<link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
+<link rel="stylesheet" href="assets/css/gamification.css?v=44">
 </head>
 <body data-page="coach">
 <div id="toast-container"></div>
@@ -117,6 +119,7 @@
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
 <script src="assets/js/board.js"></script>
+<script src="assets/js/mascot-coach.js?v=44"></script>
 <script>
 let coachBoard = null;
 let coachTurn = 'w';
@@ -269,6 +272,8 @@ document.getElementById('analyze-coach-btn').onclick = async () => {
     const whiteMate = rawMate !== null ? (coachTurn === 'w' ? rawMate : -rawMate) : null;
     updateCoachEvalBar(whiteScore, whiteMate);
     resultBox.textContent = explainPosition(coachTurn, res);
+    const reactionKind = rawMate !== null ? (rawMate > 0 ? 'best' : 'rage') : (res.scoreForMover > 100 ? 'good' : (res.scoreForMover < -150 ? 'mistake' : 'inaccuracy'));
+    showMascotReaction(reactionKind, `${resultBox.textContent} Oui, je l'avais évidemment vu avant Stockfish.`, {toast:true});
     if(res.bestMoveSan){
       try{
         const g = new Chess(fen);
@@ -278,6 +283,7 @@ document.getElementById('analyze-coach-btn').onclick = async () => {
     }
   }catch(e){
     resultBox.textContent = "Impossible d'analyser cette position (elle n'est peut-être pas valide).";
+    showMascotReaction('rage', "Cette position est invalide. Même mon génie a ses limites administratives.", {toast:true});
   }
   btn.disabled = false; btn.textContent = 'Analyser cette position';
 };
