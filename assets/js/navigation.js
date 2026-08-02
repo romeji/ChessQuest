@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     analyze: 'home',
     analysis: 'home',
     settings: 'profile',
+    coach: 'training',
     'training-hub': 'training',
     play: 'training',
     progress: 'profile'

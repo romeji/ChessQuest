@@ -8,8 +8,12 @@ service cloud.firestore {
     // au pire quelqu'un ajoute un pseudo public en trop.
     match /users/{username} {
       allow read: if true;
-      allow write: if request.resource.data.keys().hasOnly(['username', 'addedAt'])
-                   && request.resource.data.username == username;
+      allow create, update: if username.matches('^[a-z0-9_-]{2,25}$')
+                   && request.resource.data.keys().hasOnly(['username', 'addedAt'])
+                   && request.resource.data.username == username
+                   && request.resource.data.addedAt is string
+                   && request.resource.data.addedAt.size() <= 40;
+      allow delete: if false;
     }
 
     // Parties précalculées (par le job GitHub Actions) OU sauvegardées par l'app
@@ -19,7 +23,13 @@ service cloud.firestore {
     match /games/{gameId} {
       allow read: if true;
       allow create: if request.resource.data.keys().hasAll(['gameId', 'pgn', 'results'])
-                    && request.resource.data.gameId == gameId;
+                    && request.resource.data.keys().hasOnly(['gameId', 'username', 'url', 'white', 'black', 'end_time', 'pgn', 'headers', 'results', 'analyzedAt', 'source'])
+                    && request.resource.data.gameId == gameId
+                    && gameId.size() <= 60
+                    && request.resource.data.pgn is string
+                    && request.resource.data.pgn.size() <= 50000
+                    && request.resource.data.results is list
+                    && request.resource.data.results.size() <= 700;
       allow update: if false;
       allow delete: if false;
     }

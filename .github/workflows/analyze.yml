@@ -2,9 +2,9 @@ name: Analyse des parties en arrière-plan
 
 on:
   schedule:
-    # Toutes les 30 minutes. GitHub peut retarder légèrement les crons
+    # Toutes les 10 minutes. GitHub peut retarder légèrement les crons
     # sur les dépôts peu actifs — c'est normal et sans conséquence ici.
-    - cron: '*/30 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch: {}   # bouton "Run workflow" manuel dans l'onglet Actions
 
 jobs:

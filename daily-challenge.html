@@ -36,12 +36,12 @@
         <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
       </a>
       <h1>▣ Défi quotidien</h1>
-      <span class="quest-currency" id="daily-gem-count">0</span>
+      <a class="quest-currency" id="daily-gem-count" href="shop.html" aria-label="Ouvrir la boutique royale">0</a>
     </header>
 
     <section class="daily-hero" aria-label="Progression du défi">
       <div class="daily-hero-label">Résous 3 puzzles</div>
-      <div class="daily-hero-text">Gagne une récompense !</div>
+      <div class="daily-hero-text" id="daily-reward-copy">♛ +35 couronnes · +40 XP</div>
       <div class="track"><div class="track-fill" id="daily-challenge-fill"></div></div>
       <div class="daily-hero-progress" id="daily-challenge-progress">0/3</div>
       <div class="daily-hero-loot" aria-hidden="true"></div>
@@ -69,7 +69,7 @@
     <div id="daily-done-banner" class="daily-done-banner hidden">
       <div class="big-check">✓</div>
       <h2>Défi du jour terminé !</h2>
-      <p>Ta récompense est ajoutée. Reviens demain pour poursuivre ta série.</p>
+      <p id="daily-done-copy">Tes couronnes et ton XP ont été ajoutés. Reviens demain pour poursuivre ta série.</p>
       <a class="btn" href="entrainement.html">Continuer</a>
     </div>
   </section>
@@ -191,11 +191,14 @@ function updateDailyProgressUI(){
   document.getElementById('daily-challenge-fill').style.width = `${Math.round((current / challenge.target) * 100)}%`;
   document.getElementById('daily-challenge-progress').textContent = `${current}/${challenge.target}`;
   document.getElementById('daily-gem-count').textContent = crownBalance();
+  document.getElementById('daily-reward-copy').textContent = `${formatCrowns(challenge.crowns || QUEST_REWARDS.daily,true)} · +${challenge.xp} XP`;
 }
 
 function showDailyDone(){
   document.getElementById('daily-puzzle-mode').classList.add('hidden');
   document.getElementById('daily-done-banner').classList.remove('hidden');
+  const challenge = todayChallenge();
+  document.getElementById('daily-done-copy').textContent = `${formatCrowns(challenge.crowns || QUEST_REWARDS.daily,true)} et +${challenge.xp} XP ajoutés. Reviens demain pour poursuivre ta série.`;
   if(typeof fireConfetti === 'function') fireConfetti('badge');
   if(typeof showMascotReaction === 'function') showMascotReaction('treasure','Le défi quotidien est accompli. La récompense est à nous.',{toast:true});
 }

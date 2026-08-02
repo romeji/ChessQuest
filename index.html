@@ -43,10 +43,7 @@
     <header class="home-final-head">
       <a class="home-final-brand" href="index.html" aria-label="Accueil ChessQuest">Chess<b>Q</b>uest<i>♛</i></a>
       <div class="home-final-tools">
-        <span class="home-fire-chip" id="home-streak">0</span>
-        <button class="home-final-bell" type="button" data-notification-button aria-label="Voir les notifications">
-          <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
-        </button>
+        <a class="home-fire-chip" href="progress.html" aria-label="Voir ma série quotidienne"><span>Série</span><b id="home-streak">0 j</b></a>
       </div>
     </header>
 
@@ -63,7 +60,7 @@
       <strong class="home-daily-title" id="home-goal-text">Résous 3 puzzles</strong>
       <div class="track"><div class="track-fill" id="home-goal-fill"></div></div>
       <span class="home-daily-count" id="home-goal-count">0/3</span>
-      <span class="home-final-rewards"><span>◉ +50</span><span>◆ +10 XP</span></span>
+      <span class="home-final-rewards"><span id="home-crown-reward">♛ +35</span><span id="home-xp-reward">+40 XP</span></span>
       <span class="home-daily-chest" aria-hidden="true"></span>
     </a>
 
@@ -77,6 +74,16 @@
     </a>
 
     <a class="home-final-continue" href="learn.html"><span>♜</span>Continuer</a>
+
+    <a class="home-shop-entry" href="shop.html" aria-label="Ouvrir la boutique royale">
+      <span class="home-shop-entry-icon" aria-hidden="true">♛</span>
+      <span class="home-shop-entry-copy">
+        <strong>Boutique royale</strong>
+        <small>Plateaux, pièces et niveaux secrets</small>
+      </span>
+      <span class="home-shop-entry-balance" id="home-shop-balance">♛ 0</span>
+      <span class="home-shop-entry-next" aria-hidden="true">›</span>
+    </a>
   </section>
 </main>
 <nav class="tabbar"></nav>
@@ -89,12 +96,17 @@
 <script src="assets/js/navigation.js"></script>
 <script>
 function renderHomeTab(){
-  document.getElementById('home-streak').textContent = computeCurrentStreak();
+  const streak = computeCurrentStreak();
+  document.getElementById('home-streak').textContent = `${streak} j`;
+  document.getElementById('home-shop-balance').textContent = `${QUEST_CURRENCY.icon} ${crownBalance()}`;
   ensureDailyProgressFresh();
   const current = Math.min(3,PROGRESS.dailyProgress.puzzlesSolvedToday || 0);
   document.getElementById('home-goal-text').textContent = 'Résous 3 puzzles';
   document.getElementById('home-goal-count').textContent = `${current}/3`;
   document.getElementById('home-goal-fill').style.width = `${Math.round((current / 3) * 100)}%`;
+  const challenge = todayChallenge();
+  document.getElementById('home-crown-reward').textContent = `${QUEST_CURRENCY.icon} +${challenge.crowns || QUEST_REWARDS.daily}`;
+  document.getElementById('home-xp-reward').textContent = `+${challenge.xp} XP`;
 
   const state = chessComState();
   const latest = (state.games || []).slice().sort((a,b) => (b.end_time || 0) - (a.end_time || 0))[0];

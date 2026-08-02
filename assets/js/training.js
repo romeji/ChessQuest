@@ -199,12 +199,14 @@ function checkTgGameOver(){
   if(!tgGame.game_over()) return false;
   tgOver = true;
   document.getElementById('next-btn').disabled = false;
-  let result, won = false;
+  let result, won = false, crownReward = 0;
   if(tgGame.in_checkmate()){
     won = tgGame.turn() !== 'w';
     result = won ? 'Échec et mat — tu as gagné ! 🏆' : 'Échec et mat — le bot gagne cette fois.';
+    crownReward = won ? QUEST_REWARDS.trainingWin : 0;
   } else if(tgGame.in_draw() || tgGame.in_stalemate() || tgGame.in_threefold_repetition()){
     result = 'Partie nulle — bien joué quand même !';
+    crownReward = QUEST_REWARDS.trainingDraw;
   } else {
     result = 'Partie terminée.';
   }
@@ -213,6 +215,7 @@ function checkTgGameOver(){
   playSound('gameover');
   recordActivity();
   addXP(won ? 40 : 15);
+  if(crownReward) addCrowns(crownReward,won ? 'Victoire contre le bot' : 'Partie nulle');
   bumpDailyCounter('gamesPlayedToday');
   checkNewBadges();
   if(won && typeof fireConfetti === 'function') fireConfetti('mastery');

@@ -139,7 +139,8 @@ function questNotifications(){
     const games = chessComState().games || [];
     const latest = games.slice().sort((a,b) => (b.end_time||0) - (a.end_time||0))[0];
     if(latest && latest.url){
-      const opponent = latest.white && latest.black ? ((latest.white.username || '') === chessComState().username ? latest.black.username : latest.white.username) : 'ton adversaire';
+      const syncedName = String(chessComState().username || '').toLowerCase();
+      const opponent = latest.white && latest.black ? (String(latest.white.username || '').toLowerCase() === syncedName ? latest.black.username : latest.white.username) : 'ton adversaire';
       items.push({
         id:`game-${latest.url}`, icon:'♟', title:'Ta dernière partie est prête',
         text:`Analyse-la contre ${opponent || 'ton adversaire'} et découvre tes meilleurs coups.`, href:'analysis.html', priority:4
@@ -155,18 +156,17 @@ function questNotifications(){
 function initQuestNotifications(){
   if(document.getElementById('quest-notifications')) return;
   const items = questNotifications();
-  if(!items.length) return;
   const root = document.createElement('aside');
   root.id = 'quest-notifications';
   root.className = 'quest-notifications';
   const toggle = document.createElement('button');
   toggle.type = 'button'; toggle.className = 'quest-notification-toggle';
   toggle.setAttribute('aria-label', `${items.length} notification${items.length > 1 ? 's' : ''}`);
-  toggle.innerHTML = '<span aria-hidden="true">🔔</span><b></b>';
+  toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 6.5-2.7 7.2-2.7 9h17.4c0-1.8-2.7-2.5-2.7-9Z"/><path d="M9.7 20h4.6"/></svg><b></b>';
   const panel = document.createElement('div');
   panel.className = 'quest-notification-panel hidden';
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Notifications');
-  const heading = document.createElement('div'); heading.className = 'quest-notification-heading'; heading.textContent = 'À ne pas manquer'; panel.appendChild(heading);
+  const heading = document.createElement('div'); heading.className = 'quest-notification-heading'; heading.textContent = 'Notifications royales'; panel.appendChild(heading);
   function render(){
     const fresh = questNotifications();
     toggle.querySelector('b').textContent = fresh.length > 9 ? '9+' : fresh.length;
@@ -186,7 +186,27 @@ function initQuestNotifications(){
       row.append(go,close); panel.appendChild(row);
     });
   }
-  toggle.onclick=()=>panel.classList.toggle('hidden');
+  toggle.onclick=event=>{
+    event.stopPropagation();
+    const opening = panel.classList.contains('hidden');
+    panel.classList.toggle('hidden',!opening);
+    toggle.setAttribute('aria-expanded',String(opening));
+  };
+  panel.onclick=event=>event.stopPropagation();
+  if(!window.__questNotificationGlobalHandlers){
+    document.addEventListener('click',()=>{
+      const currentPanel=document.querySelector('.quest-notification-panel');
+      const currentToggle=document.querySelector('.quest-notification-toggle');
+      currentPanel?.classList.add('hidden'); currentToggle?.setAttribute('aria-expanded','false');
+    });
+    document.addEventListener('keydown',event=>{
+      if(event.key !== 'Escape') return;
+      document.querySelector('.quest-notification-panel')?.classList.add('hidden');
+      document.querySelector('.quest-notification-toggle')?.setAttribute('aria-expanded','false');
+    });
+    window.__questNotificationGlobalHandlers=true;
+  }
+  toggle.setAttribute('aria-expanded','false');
   root.append(toggle,panel); document.body.appendChild(root); render();
   const state = questNotificationState();
   if(document.body.dataset.page === 'home' && state.lastToastDate !== todayKey()){

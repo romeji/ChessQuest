@@ -155,7 +155,7 @@ function renderSkillPath(){
   }).join('');
   const economy = ensureEconomy();
   const treasureClaimed = !!economy.treasures[world.id];
-  const treasureReward = 80 + (world.number * 10);
+  const treasureReward = worldTreasureReward(world.number);
   const treasureTitle = treasureClaimed ? 'Trésor collecté' : (progress.complete ? 'Ouvrir le trésor' : (worldUnlocked ? 'Trésor du monde' : 'Monde verrouillé'));
   const treasureCopy = treasureClaimed
     ? `+${treasureReward} couronnes gagnées`

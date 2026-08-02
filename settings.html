@@ -100,14 +100,15 @@
 <script>
 const chessComInput = document.getElementById('chesscom-username');
 const chessComStatus = document.getElementById('chesscom-status');
-chessComInput.value = chessComState().username || (PROGRESS.settings||{}).chessComUsername || 'romeji';
+chessComInput.value = chessComState().username || (PROGRESS.settings||{}).chessComUsername || '';
 document.getElementById('save-chesscom').onclick = async () => {
   const username = chessComInput.value.trim();
+  if(!username){ chessComStatus.textContent = 'Entre ton pseudo Chess.com pour lancer la synchronisation.'; chessComInput.focus(); return; }
   chessComStatus.textContent = 'Synchronisation en cours…';
   registerChessComUsername(username); // best-effort, pour l'analyse en arrière-plan (voir SETUP-BACKEND.md)
   try {
     const games = await syncChessCom(username);
-    chessComStatus.textContent = `${games.length} parties publiques enregistrées. Les nouvelles parties seront recherchées toutes les 5 minutes tant que l’app est ouverte, et analysées en arrière-plan même app fermée si le backend est configuré (voir SETUP-BACKEND.md).`;
+    chessComStatus.textContent = `${games.length} parties publiques enregistrées. Les nouvelles parties seront recherchées toutes les 2 minutes tant que l’app est ouverte, et analysées en arrière-plan même app fermée si le backend est configuré.`;
   } catch(error) { chessComStatus.textContent = error.message || 'Synchronisation impossible.'; }
 };
 

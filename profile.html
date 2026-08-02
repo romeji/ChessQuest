@@ -32,7 +32,7 @@
     <header class="quest-page-title">
       <span></span>
       <h1>Profil</h1>
-      <span class="quest-currency" id="profile-gem-count">0</span>
+      <a class="quest-currency" id="profile-gem-count" href="shop.html" aria-label="Ouvrir la boutique royale">0</a>
     </header>
 
     <section class="quest-card profile-summary">
@@ -103,7 +103,7 @@ function profileRank(rating){
   return 'Apprenti';
 }
 
-function objectiveRow(icon,title,current,target,color){
+function objectiveRow(icon,title,current,target,color,reward){
   const progress = Math.min(100,Math.round((current / target) * 100));
   return `<div class="profile-objective">
     <span class="profile-row-icon">${icon}</span>
@@ -111,7 +111,7 @@ function objectiveRow(icon,title,current,target,color){
       <strong>${title}</strong>
       <span class="mini-track"><i style="width:${progress}%;background:${color}"></i></span>
     </span>
-    <span class="profile-objective-meta">${Math.min(current,target)}/${target}&nbsp;&nbsp; ♦ 20</span>
+    <span class="profile-objective-meta">${Math.min(current,target)}/${target}&nbsp;&nbsp; ${QUEST_CURRENCY.icon} ${reward}</span>
   </div>`;
 }
 
@@ -154,9 +154,9 @@ function renderProfile(){
   document.getElementById('profile-extra-badges').textContent = `+${Math.max(0,badges - 5)}`;
   const daily = PROGRESS.dailyProgress;
   document.getElementById('profile-objectives').innerHTML = [
-    objectiveRow('♟','Résoudre 3 puzzles',daily.puzzlesSolvedToday || 0,3,'#7337a3'),
-    objectiveRow('♞','Jouer 1 partie',daily.gamesPlayedToday || 0,1,'#4c9c5a'),
-    objectiveRow('◉','Analyser 1 partie',daily.gamesAnalyzedToday || 0,1,'#27645b')
+    objectiveRow('♟','Résoudre 3 puzzles',daily.puzzlesSolvedToday || 0,3,'#7337a3',QUEST_REWARDS.daily),
+    objectiveRow('♞','Jouer 1 partie',daily.gamesPlayedToday || 0,1,'#4c9c5a',DAILY_BONUS_GOALS.gamesPlayedToday.crowns),
+    objectiveRow('◉','Analyser 1 partie',daily.gamesAnalyzedToday || 0,1,'#27645b',DAILY_BONUS_GOALS.gamesAnalyzedToday.crowns)
   ].join('');
   const today = new Date().toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
   document.getElementById('profile-achievements').innerHTML = [

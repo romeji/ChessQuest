@@ -213,7 +213,7 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   recordActivity();
   if(success){
     addXP(10);
-    addCrowns(2,'Puzzle résolu');
+    addCrowns(QUEST_REWARDS.puzzle,'Puzzle résolu');
     bumpDailyCounter('puzzlesSolvedToday');
   }
   refreshPuzzleHeader();
@@ -273,7 +273,7 @@ function setPuzzleFeedback(text, kind){
     el.innerHTML = `
       <span class="feedback-medal" aria-hidden="true">${success ? '✓' : '!'}</span>
       <span><strong>${title}</strong><small>${escapeHtml(copy)}</small></span>
-      <b>${success ? '+10 XP' : 'Réessaie'}</b>
+      <b>${success ? `+10 XP · ${QUEST_CURRENCY.icon} +${QUEST_REWARDS.puzzle}` : 'Réessaie'}</b>
     `;
   }
   speak(text);

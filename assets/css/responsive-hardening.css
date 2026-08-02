@@ -45,6 +45,29 @@ button,a,[role="button"]{touch-action:manipulation}
   max-width:100%!important;
 }
 
+/* Coordonnées du défi quotidien : elles disposent de leur propre gouttière et
+   ne doivent jamais se concaténer au-dessus ou sous l'échiquier. */
+.daily-page .board-frame{
+  padding:0 0 18px 14px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.daily-page .board-frame .coord-ranks{
+  left:0!important;top:0!important;bottom:18px!important;width:12px!important;
+  color:#fff8e8!important;opacity:1!important;
+}
+.daily-page .board-frame .coord-files{
+  left:14px!important;right:0!important;bottom:0!important;height:16px!important;
+  color:#fff8e8!important;opacity:1!important;
+}
+.daily-page .daily-coach img{
+  object-fit:contain!important;
+  object-position:left bottom!important;
+  mix-blend-mode:normal!important;
+}
+#mistakes-count-badge:empty{display:none!important}
+.elo-chart-dates .elo-empty-copy{width:100%;text-align:center;color:#dceadf;font-size:.6rem}
+
 /* La carte est une scène plein écran : le document ne bouge jamais. */
 html.opening-map-document,
 html.opening-map-document body{

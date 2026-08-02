@@ -32,7 +32,7 @@
     <header class="quest-page-title">
       <span></span>
       <h1>Mes progrès</h1>
-      <span class="quest-currency" id="progress-gem-count">0</span>
+      <a class="quest-currency" id="progress-gem-count" href="shop.html" aria-label="Ouvrir la boutique royale">0</a>
     </header>
 
     <section class="quest-card progress-rank-card">
@@ -79,8 +79,8 @@
     </section>
 
     <section class="quest-card progress-xp-card">
-      <strong>XP cette semaine</strong>
-      <div class="progress-xp-value"><b id="weekly-xp">0</b> / 1000 XP</div>
+      <strong>Progression du niveau</strong>
+      <div class="progress-xp-value"><b id="weekly-xp">0</b> / <span id="level-xp-target">150</span> XP</div>
       <div class="track"><div class="track-fill" id="weekly-xp-fill"></div></div>
       <div class="progress-xp-chest" aria-hidden="true"></div>
     </section>
@@ -120,9 +120,13 @@ function ratingHistory(state,username){
 function drawProgressChart(points,current){
   const svg = document.getElementById('elo-chart-svg');
   const dates = document.getElementById('elo-chart-dates');
+  const hasHistory = points.length >= 2;
   if(points.length < 2){
     const baseline = Number(current) || 1200;
-    points = Array.from({length:10},(_,index) => ({rating:baseline - 35 + index * 4,date:Date.now()/1000 - (9-index)*86400}));
+    points = [
+      {rating:baseline,date:Date.now()/1000 - 86400},
+      {rating:baseline,date:Date.now()/1000}
+    ];
   }
   const ratings = points.map(point => point.rating);
   const min = Math.floor((Math.min(...ratings) - 60) / 100) * 100;
@@ -147,8 +151,12 @@ function drawProgressChart(points,current){
     <rect x="${last[0]-17}" y="${last[1]-23}" width="34" height="17" rx="4" fill="#fffced"/>
     <text x="${last[0]}" y="${last[1]-11}" fill="#173728" text-anchor="middle" font-size="9" font-weight="800">${ratings.at(-1)}</text>`;
   const formatDate = stamp => new Date(stamp * 1000).toLocaleDateString('fr-FR',{day:'numeric',month:'short'});
-  const indexes = [0,Math.floor((points.length-1)/2),points.length-1];
-  dates.innerHTML = indexes.map(index => `<span>${formatDate(points[index].date)}</span>`).join('');
+  if(hasHistory){
+    const indexes = [0,Math.floor((points.length-1)/2),points.length-1];
+    dates.innerHTML = indexes.map(index => `<span>${formatDate(points[index].date)}</span>`).join('');
+  }else{
+    dates.innerHTML = '<span class="elo-empty-copy">Joue une partie rapide sur Chess.com pour démarrer la courbe.</span>';
+  }
 }
 
 function renderProgress(){
@@ -160,7 +168,7 @@ function renderProgress(){
   const first = points[0]?.rating || current;
   const delta = current - first;
   const bracketMin = Math.floor(current / 200) * 200;
-  document.getElementById('progress-gem-count').textContent = PROGRESS.xp || 0;
+  document.getElementById('progress-gem-count').textContent = crownBalance();
   document.getElementById('progress-rank-title').textContent = rankTitle(current);
   document.getElementById('progress-rating').textContent = current;
   document.getElementById('progress-rating-delta').textContent = `${delta >= 0 ? '+' : ''}${delta}`;
@@ -170,9 +178,10 @@ function renderProgress(){
   document.getElementById('rank-max').textContent = bracketMin + 200;
   document.getElementById('current-streak').textContent = computeCurrentStreak();
   document.getElementById('best-streak').textContent = computeBestStreak();
-  const weeklyXp = Math.min(1000,PROGRESS.xp || 0);
-  document.getElementById('weekly-xp').textContent = weeklyXp;
-  document.getElementById('weekly-xp-fill').style.width = `${weeklyXp / 10}%`;
+  const levelXp = (PROGRESS.xp || 0) % XP_PER_LEVEL;
+  document.getElementById('weekly-xp').textContent = levelXp;
+  document.getElementById('level-xp-target').textContent = XP_PER_LEVEL;
+  document.getElementById('weekly-xp-fill').style.width = `${(levelXp / XP_PER_LEVEL) * 100}%`;
   drawProgressChart(points,current);
 }
 

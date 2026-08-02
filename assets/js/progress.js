@@ -5,16 +5,25 @@
    ============================================================ */
 
 const PROGRESS_KEY = 'chessQuestProgress';
+const QUEST_CURRENCY = Object.freeze({ name:'couronne', plural:'couronnes', icon:'♛' });
+const QUEST_REWARDS = Object.freeze({
+  puzzle:2,
+  daily:35,
+  openingMastery:12,
+  trainingWin:15,
+  trainingDraw:6,
+  analysis:5
+});
 
 function defaultProgress(){
   return {
-    mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal', voiceName:null, soundEnabled:true, chessComUsername:'romeji'},
-    chessCom:{ username:'romeji', games:[], lastSync:null, syncing:false },
+    mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal', voiceName:null, soundEnabled:true, chessComUsername:''},
+    chessCom:{ username:'', games:[], lastSync:null, syncing:false },
     mistakes: [], puzzleRating: 1000, puzzleRatingHistory: [], puzzlesSolved: 0, puzzlesFailed: 0,
     puzzleStreak: 0, puzzleBestStreak: 0,
     activityDates: [], viewedNotationGuide: false, viewedGlossary: false,
     xp: 0, lastKnownLevel: 1, unlockedBadges: [],
-    dailyProgress: { date:null, puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false },
+    dailyProgress: { date:null, puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false, bonusClaimed:{} },
     economy: {
       crowns: 120,
       owned: ['board-royal','pieces-classic'],
@@ -31,7 +40,25 @@ function loadProgress(){
     const raw = localStorage.getItem(PROGRESS_KEY);
     if(!raw) return defaultProgress();
     const parsed = JSON.parse(raw);
-    return Object.assign(defaultProgress(), parsed);
+    if(!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return defaultProgress();
+    const defaults = defaultProgress();
+    const progress = Object.assign(defaults, parsed);
+    progress.settings = Object.assign({}, defaults.settings, parsed.settings || {});
+    progress.chessCom = Object.assign({}, defaults.chessCom, parsed.chessCom || {});
+    progress.dailyProgress = Object.assign({}, defaults.dailyProgress, parsed.dailyProgress || {});
+    progress.dailyProgress.bonusClaimed = Object.assign({}, defaults.dailyProgress.bonusClaimed, progress.dailyProgress.bonusClaimed || {});
+    progress.economy = Object.assign({}, defaults.economy, parsed.economy || {});
+    progress.economy.owned = Array.isArray(progress.economy.owned) ? progress.economy.owned : defaults.economy.owned.slice();
+    progress.economy.treasures = progress.economy.treasures && typeof progress.economy.treasures === 'object' ? progress.economy.treasures : {};
+    progress.economy.secrets = Array.isArray(progress.economy.secrets) ? progress.economy.secrets : [];
+    ['games','mistakes','activityDates','unlockedBadges','puzzleRatingHistory'].forEach(key => {
+      if(!Array.isArray(progress[key])) progress[key] = defaults[key];
+    });
+    ['xp','puzzleRating','puzzlesSolved','puzzlesFailed','puzzleStreak','puzzleBestStreak'].forEach(key => {
+      const value = Number(progress[key]);
+      progress[key] = Number.isFinite(value) && value >= 0 ? value : defaults[key];
+    });
+    return progress;
   }catch(e){ return defaultProgress(); }
 }
 function saveProgress(){ try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(PROGRESS)); }catch(e){} }
@@ -56,18 +83,26 @@ const QUEST_STORE = [
 
 function ensureEconomy(){
   const defaults = defaultProgress().economy;
-  PROGRESS.economy = Object.assign({}, defaults, PROGRESS.economy || {});
-  PROGRESS.economy.owned = Array.from(new Set([...(defaults.owned || []), ...(PROGRESS.economy.owned || [])]));
-  PROGRESS.economy.treasures = PROGRESS.economy.treasures || {};
-  PROGRESS.economy.secrets = PROGRESS.economy.secrets || [];
-  return PROGRESS.economy;
+  const economy = PROGRESS.economy || (PROGRESS.economy = {});
+  for(const [key,value] of Object.entries(defaults)){
+    if(economy[key] === undefined) economy[key] = Array.isArray(value) ? value.slice() : (value && typeof value === 'object' ? Object.assign({},value) : value);
+  }
+  economy.owned = Array.from(new Set([...(defaults.owned || []), ...(economy.owned || [])]));
+  economy.treasures = economy.treasures || {};
+  economy.secrets = economy.secrets || [];
+  return economy;
 }
 ensureEconomy();
 function crownBalance(){ return Math.max(0, Number(ensureEconomy().crowns) || 0); }
+function formatCrowns(amount, withSign){
+  const value = Math.max(0, Math.round(Number(amount) || 0));
+  return `${QUEST_CURRENCY.icon} ${withSign && value ? '+' : ''}${value} ${value === 1 ? QUEST_CURRENCY.name : QUEST_CURRENCY.plural}`;
+}
 function addCrowns(amount, reason){
   const value = Math.max(0, Math.round(Number(amount) || 0));
   if(!value) return crownBalance();
-  ensureEconomy().crowns = crownBalance() + value;
+  const economy = ensureEconomy();
+  economy.crowns = Math.max(0,Number(economy.crowns) || 0) + value;
   saveProgress();
   document.dispatchEvent(new CustomEvent('quest:currency',{detail:{amount:value,balance:crownBalance(),reason:reason || 'Récompense'}}));
   return crownBalance();
@@ -78,9 +113,10 @@ function purchaseStoreItem(id){
   if(!item) return {ok:false, reason:'unknown'};
   if(ownsStoreItem(id)) return {ok:true, already:true, item};
   if(crownBalance() < item.price) return {ok:false, reason:'funds', item};
-  PROGRESS.economy.crowns = crownBalance() - item.price;
-  PROGRESS.economy.owned.push(id);
-  if(item.type === 'secret' && !PROGRESS.economy.secrets.includes(id)) PROGRESS.economy.secrets.push(id);
+  const economy = ensureEconomy();
+  economy.crowns = Math.max(0,Number(economy.crowns) || 0) - item.price;
+  economy.owned.push(id);
+  if(item.type === 'secret' && !economy.secrets.includes(id)) economy.secrets.push(id);
   saveProgress();
   document.dispatchEvent(new CustomEvent('quest:purchase',{detail:{item,balance:crownBalance()}}));
   return {ok:true, item};
@@ -99,10 +135,11 @@ function applyQuestCosmetics(){
   document.documentElement.dataset.boardSkin = (economy.equippedBoard || 'board-royal').replace('board-','');
   document.documentElement.dataset.pieceSkin = (economy.equippedPieces || 'pieces-classic').replace('pieces-','');
 }
+function worldTreasureReward(worldNumber){ return 80 + Math.max(0, Number(worldNumber || 1) - 1) * 20; }
 function claimWorldTreasure(worldId, worldNumber){
   const economy = ensureEconomy();
   if(economy.treasures[worldId]) return {ok:false, claimed:true, amount:economy.treasures[worldId]};
-  const amount = 80 + Math.max(0, Number(worldNumber || 1) - 1) * 20;
+  const amount = worldTreasureReward(worldNumber);
   economy.treasures[worldId] = amount;
   addCrowns(amount, `Trésor du monde ${worldNumber || ''}`.trim());
   return {ok:true, amount};
@@ -190,19 +227,18 @@ function addXP(amount){
   } else {
     saveProgress();
   }
-  if(amount >= 30) addCrowns(Math.max(2,Math.round(amount / 6)),'Progression');
 }
 
 /* ============================================================
    DÉFI DU JOUR
    ============================================================ */
 const DAILY_CHALLENGES = [
-  {id:'puzzles3', text:'Résous 3 puzzles aujourd\u2019hui', target:3, type:'puzzlesSolvedToday', xp:40},
-  {id:'train1', text:'Termine une ouverture aujourd\u2019hui', target:1, type:'linesCompletedToday', xp:30},
-  {id:'analyze1', text:'Analyse une partie aujourd\u2019hui', target:1, type:'gamesAnalyzedToday', xp:35},
-  {id:'play1', text:'Termine une partie contre l\u2019ordinateur', target:1, type:'gamesPlayedToday', xp:30},
-  {id:'puzzles5', text:'Résous 5 puzzles aujourd\u2019hui', target:5, type:'puzzlesSolvedToday', xp:60}
+  {id:'puzzles3', text:'Résous 3 puzzles aujourd\u2019hui', target:3, type:'puzzlesSolvedToday', xp:40, crowns:QUEST_REWARDS.daily}
 ];
+const DAILY_BONUS_GOALS = Object.freeze({
+  gamesPlayedToday:{target:1,crowns:20,label:'Partie du jour'},
+  gamesAnalyzedToday:{target:1,crowns:20,label:'Analyse du jour'}
+});
 function dayOfYear(){
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
@@ -215,8 +251,9 @@ function todayChallenge(){ return DAILY_CHALLENGES[0]; }
 function ensureDailyProgressFresh(){
   PROGRESS.dailyProgress = PROGRESS.dailyProgress || {};
   if(PROGRESS.dailyProgress.date !== todayKey()){
-    PROGRESS.dailyProgress = { date: todayKey(), puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false };
+    PROGRESS.dailyProgress = { date: todayKey(), puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false, bonusClaimed:{} };
   }
+  PROGRESS.dailyProgress.bonusClaimed = PROGRESS.dailyProgress.bonusClaimed || {};
 }
 function bumpDailyCounter(type){
   ensureDailyProgressFresh();
@@ -225,9 +262,15 @@ function bumpDailyCounter(type){
   if(challenge.type === type && !PROGRESS.dailyProgress.rewardClaimed && PROGRESS.dailyProgress[type] >= challenge.target){
     PROGRESS.dailyProgress.rewardClaimed = true;
     addXP(challenge.xp);
-    addCrowns(35,'Défi quotidien');
+    addCrowns(challenge.crowns || QUEST_REWARDS.daily,'Défi quotidien');
     if(typeof fireConfetti === 'function') fireConfetti('badge');
-    if(typeof showToast === 'function') showToast('Défi du jour terminé !', `+${challenge.xp} XP`);
+    if(typeof showToast === 'function') showToast('Défi du jour terminé !', `+${challenge.xp} XP · ${formatCrowns(challenge.crowns || QUEST_REWARDS.daily,true)}`);
+  }
+  const bonus = DAILY_BONUS_GOALS[type];
+  if(bonus && PROGRESS.dailyProgress[type] >= bonus.target && !PROGRESS.dailyProgress.bonusClaimed[type]){
+    PROGRESS.dailyProgress.bonusClaimed[type] = true;
+    addCrowns(bonus.crowns,bonus.label);
+    if(typeof showToast === 'function') showToast(`${bonus.label} terminé !`,formatCrowns(bonus.crowns,true));
   }
   saveProgress();
 }
@@ -280,16 +323,28 @@ function computeAccuracy(s){
 function recordAnalyzedGame(headers, sums){
   const accW = computeAccuracy(sums.w);
   const accB = computeAccuracy(sums.b);
-  PROGRESS.games.unshift({
+  const gameId = [headers.Site,headers.Date,headers.White,headers.Black,headers.Result].filter(Boolean).join('|');
+  const alreadyRecorded = gameId && PROGRESS.games.some(game => game.id === gameId);
+  const record = {
+    id:gameId || `analysis-${Date.now()}`,
     date: new Date().toISOString(), white: headers.White || 'Blancs', black: headers.Black || 'Noirs',
     whiteAcc: accW, blackAcc: accB, totalBlunders: sums.w.blunder + sums.b.blunder
-  });
+  };
+  if(alreadyRecorded){
+    const index = PROGRESS.games.findIndex(game => game.id === gameId);
+    PROGRESS.games[index] = Object.assign({},PROGRESS.games[index],record);
+    saveProgress();
+    return {newAnalysis:false,record};
+  }
+  PROGRESS.games.unshift(record);
   PROGRESS.games = PROGRESS.games.slice(0, 15);
   saveProgress();
   recordActivity();
   addXP(15);
+  addCrowns(QUEST_REWARDS.analysis,'Première analyse de partie');
   bumpDailyCounter('gamesAnalyzedToday');
   checkNewBadges();
+  return {newAnalysis:true,record};
 }
 function recordMistakesFromAnalysis(headers, analysisResults){
   const label = `${headers.White || 'Blancs'} vs ${headers.Black || 'Noirs'}`;
@@ -317,9 +372,9 @@ function recordLineCompletion(key, clean){
     const prevCount = PROGRESS.mastered[key] ? PROGRESS.mastered[key].cleanCount : 0;
     PROGRESS.mastered[key] = { cleanCount: prevCount + 1, lastDate: new Date().toISOString() };
     if(prevCount === 0 && typeof OPENINGS !== 'undefined' && OPENINGS[key]){
-      addCrowns(12,'Ouverture maîtrisée');
+      addCrowns(QUEST_REWARDS.openingMastery,'Ouverture maîtrisée');
       if(typeof fireConfetti === 'function') fireConfetti('mastery');
-      if(typeof showToast === 'function') showToast('Ouverture maîtrisée !', OPENINGS[key].name);
+      if(typeof showToast === 'function') showToast('Ouverture maîtrisée !', `${OPENINGS[key].name} · ${formatCrowns(QUEST_REWARDS.openingMastery,true)}`);
     }
   }
   saveProgress();

@@ -1,0 +1,3 @@
+# Artefacts locaux de l'audit visuel Chrome
+.chrome-*/
+audit-*.png

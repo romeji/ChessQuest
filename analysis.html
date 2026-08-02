@@ -32,7 +32,7 @@
     <header class="quest-page-title">
       <span></span>
       <h1>Analyse de partie</h1>
-      <span class="quest-currency" id="analysis-gem-count">0</span>
+      <a class="quest-currency" id="analysis-gem-count" href="shop.html" aria-label="Ouvrir la boutique royale">0</a>
     </header>
 
     <section class="analysis-hero">
@@ -116,7 +116,7 @@ function renderGamesList(games,username){
   fetchedGames = games || [];
   const list = document.getElementById('games-list');
   const latest = fetchedGames[0];
-  document.getElementById('analysis-gem-count').textContent = PROGRESS.xp || 0;
+  document.getElementById('analysis-gem-count').textContent = crownBalance();
   if(latest){
     const isWhite = latest.white?.username?.toLowerCase() === username.toLowerCase();
     const opponent = isWhite ? latest.black?.username : latest.white?.username;
