@@ -5,7 +5,7 @@
    ============================================================ */
 
 /* ---- Lecture vocale (français, sélection de la meilleure voix) ---- */
-let ttsEnabled = true;
+let ttsEnabled = false;
 let frenchVoice = null;
 
 function pickFrenchVoice(){
@@ -54,16 +54,7 @@ function frenchifyMoveNotation(text){
   });
 }
 function speak(text){
-  if(!ttsEnabled || !('speechSynthesis' in window)) return;
-  try{
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(frenchifyMoveNotation(text));
-    u.lang = 'fr-FR';
-    if(frenchVoice) u.voice = frenchVoice;
-    u.rate = 0.96;
-    u.pitch = 1.0;
-    window.speechSynthesis.speak(u);
-  }catch(e){}
+  return;
 }
 
 /* ---- Sons synthétisés (aucun fichier externe requis) ---- */
@@ -98,6 +89,7 @@ function playSound(type){
 
 /* ---- Écran de bienvenue (première visite uniquement, index.html) ---- */
 function initOnboarding(){
+  if(typeof initQuestAccountFlow === 'function') return;
   const overlay = document.getElementById('onboarding-overlay');
   if(!overlay) return;
   if(PROGRESS.onboarded){

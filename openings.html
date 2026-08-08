@@ -40,6 +40,11 @@
       </button>
     </header>
 
+    <div class="lesson-coach-strip">
+      <img data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest">
+      <p data-mascot-text>Observe le centre. Je te laisse trouver le coup, par pure générosité royale.</p>
+    </div>
+
     <div class="opening-final-board-wrap">
       <div class="board-frame">
         <div class="coord-ranks" id="train-ranks"></div>
@@ -48,17 +53,19 @@
       </div>
     </div>
 
-    <section class="final-card opening-final-theory">
-      <h2 class="opening-theory-title">
+    <details class="final-card opening-final-theory">
+      <summary class="opening-theory-title">
         <span class="opening-theory-icon" aria-hidden="true">♜</span>
         <span id="theory-title">Pourquoi jouer l’Italienne ?</span>
-      </h2>
+        <span class="theory-chevron">⌄</span>
+      </summary>
       <div class="opening-final-facts" id="opening-facts">
         <span class="opening-final-fact"><i>♞</i>Développement rapide</span>
         <span class="opening-final-fact"><i>◎</i>Pression sur f7</span>
         <span class="opening-final-fact"><i>▤</i>Popularisée au XVIe siècle</span>
       </div>
-    </section>
+      <div class="opening-history-copy" id="opening-history-copy"></div>
+    </details>
 
     <section class="final-card opening-final-memory">
       <div>
@@ -68,12 +75,7 @@
       <button class="opening-copy-button" id="opening-copy" type="button" aria-label="Copier les coups">▣</button>
     </section>
 
-    <section class="final-card opening-final-progress">
-      <span class="opening-progress-label" id="lesson-progress-label">Leçon 1 / 12</span>
-      <span class="opening-next-label">Suivante</span>
-      <div class="track"><div class="track-fill" id="lesson-track-fill"></div></div>
-      <button class="opening-next-button" id="opening-next" type="button" aria-label="Afficher le prochain coup">→</button>
-    </section>
+    <div class="opening-final-progress-data hidden"><span id="lesson-progress-label"></span><span class="opening-next-label"></span><div id="lesson-track-fill"></div></div>
 
     <div class="opening-final-hidden" aria-hidden="true">
       <div id="train-dots"></div>
@@ -84,6 +86,16 @@
     </div>
   </section>
 </main>
+<div class="mode-bottom-dock opening-bottom-dock">
+  <button class="mode-menu-button" id="opening-menu-button" type="button" aria-expanded="false">☷</button>
+  <button class="mode-primary-button" id="opening-next" type="button">Ouverture suivante</button>
+  <div class="mode-sheet hidden" id="opening-mode-sheet">
+    <strong>Apprendre les ouvertures</strong>
+    <a href="course-library.html#openings">📚 Bibliothèque de leçons</a>
+    <a href="learn.html">🗺 Carte des ouvertures</a>
+    <button type="button" id="opening-restart">↻ Recommencer cette ligne</button>
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
@@ -141,17 +153,21 @@ function renderTheory(){
     const [icon,label] = fact.split('|');
     return `<span class="opening-final-fact"><i>${icon}</i>${escapeHtml(label)}</span>`;
   }).join('');
+  const about = currentLine.about || currentLine.intro || `${name} aide à développer les pièces avec un plan clair.`;
+  const plan = currentLine.plan || 'Contrôle le centre, développe les pièces mineures et mets rapidement ton roi en sécurité.';
+  document.getElementById('opening-history-copy').innerHTML = `<h3>Histoire et idée générale</h3><p>${escapeHtml(about)}</p><h3>Le plan à retenir</h3><p>${escapeHtml(plan)}</p><h3>À surveiller</h3><p>Ne récite pas seulement les coups : vérifie les menaces, les cases faibles et le moment où la position quitte la théorie.</p>`;
   document.getElementById('opening-memory-sequence').textContent = firstMovesText();
 }
 function renderDots(){
   if(!currentLine) return;
-  const total = Math.max(12,currentLine.moves.length);
-  const step = Math.min(total,trainPly + 1);
-  document.getElementById('lesson-progress-label').textContent = `Leçon ${step} / ${total}`;
+  const total = currentLine.moves.length;
+  const step = Math.min(total,trainPly);
+  document.getElementById('lesson-progress-label').textContent = `${step} / ${total} coups`;
   document.getElementById('lesson-track-fill').style.width = `${Math.round((trainPly / currentLine.moves.length) * 100)}%`;
   const lineComplete = trainPly >= currentLine.moves.length;
-  document.querySelector('.opening-next-label').textContent = lineComplete ? 'Leçon suivante' : 'Indice';
-  document.getElementById('opening-next').setAttribute('aria-label',lineComplete ? 'Continuer vers la prochaine leçon' : 'Afficher le prochain coup');
+  document.querySelector('.opening-next-label').textContent = lineComplete ? 'Ouverture suivante' : 'Indice';
+  document.getElementById('opening-next').textContent = lineComplete ? 'Ouverture suivante' : 'Afficher un indice';
+  document.getElementById('opening-next').setAttribute('aria-label',lineComplete ? 'Continuer vers la prochaine ouverture' : 'Afficher le prochain coup');
   renderTheory();
 }
 function renderTrainMoveList(){
@@ -213,6 +229,10 @@ document.getElementById('opening-next').onclick = function(){
   const move = g.moves({verbose:true}).find(item => item.san === expected.san.replace(/[!?]+$/,''));
   if(move) flashSquares('#train-board',[move.from,move.to],'hint-square',1200);
 };
+const openingMenuButton=document.getElementById('opening-menu-button');
+const openingModeSheet=document.getElementById('opening-mode-sheet');
+openingMenuButton.onclick=()=>{const open=openingModeSheet.classList.toggle('hidden')===false;openingMenuButton.setAttribute('aria-expanded',String(open));};
+document.getElementById('opening-restart').onclick=()=>{openingModeSheet.classList.add('hidden');loadLine(currentLine,currentLineKey);};
 
 ensureTrainBoard();
 loadLine(OPENINGS[startKey],startKey);

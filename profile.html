@@ -80,9 +80,6 @@
     <a class="quest-card profile-settings-row" href="settings.html">
       <span>⚙</span><span>Paramètres</span><span>›</span>
     </a>
-    <a class="quest-card profile-settings-row" href="shop.html">
-      <span>♛</span><span>Boutique royale</span><span>›</span>
-    </a>
   </section>
 </main>
 <nav class="tabbar"></nav>
@@ -154,7 +151,7 @@ function renderProfile(){
   document.getElementById('profile-extra-badges').textContent = `+${Math.max(0,badges - 5)}`;
   const daily = PROGRESS.dailyProgress;
   document.getElementById('profile-objectives').innerHTML = [
-    objectiveRow('♟','Résoudre 3 puzzles',daily.puzzlesSolvedToday || 0,3,'#7337a3',QUEST_REWARDS.daily),
+    objectiveRow('♟','Résoudre 3 problèmes',daily.puzzlesSolvedToday || 0,3,'#7337a3',QUEST_REWARDS.daily),
     objectiveRow('♞','Jouer 1 partie',daily.gamesPlayedToday || 0,1,'#4c9c5a',DAILY_BONUS_GOALS.gamesPlayedToday.crowns),
     objectiveRow('◉','Analyser 1 partie',daily.gamesAnalyzedToday || 0,1,'#27645b',DAILY_BONUS_GOALS.gamesAnalyzedToday.crowns)
   ].join('');
@@ -162,7 +159,7 @@ function renderProfile(){
   document.getElementById('profile-achievements').innerHTML = [
     achievementRow('🏆','Maître des ouvertures',`${mastered} ouverture${mastered > 1 ? 's' : ''} maîtrisée${mastered > 1 ? 's' : ''}`,today),
     achievementRow('🔥',`Série de ${computeCurrentStreak()} jours`,'Continue ta régularité',today),
-    achievementRow('♛','Tacticien accompli',`${PROGRESS.puzzlesSolved || 0} puzzles résolus`,today)
+    achievementRow('♛','Tacticien accompli',`${PROGRESS.puzzlesSolved || 0} problèmes résolus`,today)
   ].join('');
 }
 

@@ -47,13 +47,15 @@ const CLASSIC_PUZZLES = [
 ];
 let puzzleBoard = null;
 let puzzleGame = null;
-let puzzleSource = 'random';
+let puzzleSource = 'daily';
 let puzzleTheme = '';
 let puzzleQueue = [];
 let puzzleIndex = 0;
 let puzzleHasFailed = false;
 let puzzleHintUsed = false;
 let mcqLocked = false;
+let puzzleBattleTimer = null;
+let puzzleBattleEndsAt = 0;
 
 function ratingStars(rating){
   const level = Math.min(5, Math.max(1, Math.round((rating - 300) / 130)));
@@ -63,8 +65,19 @@ function ratingStars(rating){
 }
 
 function buildPuzzleQueue(){
+  let migrated=false;
+  (PROGRESS.mistakes || []).forEach((item,index)=>{
+    if(!item.id){item.id=`legacy|${item.fen||''}|${item.solution||''}|${item.gameLabel||''}|${item.date||index}`;migrated=true;}
+  });
+  if(migrated) saveProgress();
   if(puzzleSource === 'mistakes'){
-    puzzleQueue = (PROGRESS.mistakes || []).slice();
+    const solved = new Set(PROGRESS.solvedMistakeIds || []);
+    puzzleQueue = (PROGRESS.mistakes || []).filter(item => !solved.has(item.id));
+  } else if(puzzleSource === 'review'){
+    puzzleQueue = (PROGRESS.mistakes || []).filter(item => (PROGRESS.solvedMistakeIds || []).includes(item.id));
+  } else if(puzzleSource === 'daily'){
+    const day = Math.floor(new Date().setHours(0,0,0,0) / 86400000);
+    puzzleQueue = [CLASSIC_PUZZLES[day % CLASSIC_PUZZLES.length]];
   } else {
     const candidates = puzzleTheme
       ? CLASSIC_PUZZLES.filter(puzzle => puzzle.theme === puzzleTheme)
@@ -120,11 +133,11 @@ function loadPuzzle(idx){
   if(puzzleQueue.length === 0){
     puzzleGame = new Chess();
     puzzleBoard.position('start');
-    setText('puzzle-question', puzzleSource === 'mistakes' ? "Pas encore d'erreur enregistrée" : "Aucun puzzle disponible");
+    setText('puzzle-question', puzzleSource === 'mistakes' ? "Toutes tes erreurs sont corrigées" : "Aucun problème disponible");
     setText('puzzle-kind', '');
     setHtml('puzzle-dots', '');
     if(container) container.innerHTML = '';
-    setPuzzleFeedback(puzzleSource === 'mistakes' ? "Analyse une partie dans Analyse : tes erreurs y apparaîtront ici." : "Reviens dans un instant.", 'prompt');
+    setPuzzleFeedback(puzzleSource === 'mistakes' ? "Bien joué. Joue une partie sur Chess.com puis analyse-la pour débloquer de nouvelles erreurs à corriger." : "Reviens dans un instant.", 'prompt');
     return;
   }
   puzzleIndex = ((idx % puzzleQueue.length) + puzzleQueue.length) % puzzleQueue.length;
@@ -142,7 +155,7 @@ function loadPuzzle(idx){
   renderCoords('puzzle-ranks', 'puzzle-files', orientation);
   clearHighlights('#puzzle-board');
 
-  const label = puzzleSource === 'mistakes' ? (p.gameLabel || 'Ta partie') : `Puzzle ${puzzleIndex+1}/${puzzleQueue.length}`;
+  const label = ['mistakes','review'].includes(puzzleSource) ? (p.gameLabel || 'Ta partie') : `Problème ${puzzleIndex+1}/${puzzleQueue.length}`;
   const solutionClean0 = p.solution.replace(/[!?]+$/, '');
   setText('puzzle-question', solutionClean0.includes('#') ? 'Trouve le mat !' : 'Trouve le meilleur coup !');
   setText('puzzle-kind', `${p.theme} · ${label}`);
@@ -215,6 +228,15 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
     addXP(10);
     addCrowns(QUEST_REWARDS.puzzle,'Puzzle résolu');
     bumpDailyCounter('puzzlesSolvedToday');
+    if(puzzleSource === 'mistakes' && p.id){
+      PROGRESS.solvedMistakeIds = Array.from(new Set([...(PROGRESS.solvedMistakeIds || []),p.id]));
+      PROGRESS.mistakeReviewHistory = [...(PROGRESS.mistakeReviewHistory || []),{id:p.id,solvedAt:new Date().toISOString()}].slice(-100);
+      saveProgress();
+    }
+    if(puzzleTheme){
+      PROGRESS.completedTargets = Array.from(new Set([...(PROGRESS.completedTargets || []),`theme:${puzzleTheme}`]));
+      saveProgress();
+    }
   }
   refreshPuzzleHeader();
   checkNewBadges();
@@ -229,9 +251,7 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   }
 
   if(puzzleSource === 'mistakes'){
-    // Une erreur reste dans le carnet de révision : on peut toujours y
-    // revenir, même après l'avoir résolue correctement une première fois.
-    setTimeout(()=> loadPuzzle(success ? puzzleIndex+1 : puzzleIndex), 1600);
+    setTimeout(()=>{ buildPuzzleQueue(); loadPuzzle(success ? 0 : puzzleIndex); refreshPuzzleHeader(); }, 1600);
   } else {
     setTimeout(()=> loadPuzzle(success ? puzzleIndex+1 : puzzleIndex), 1600);
   }
@@ -253,7 +273,7 @@ function refreshPuzzleHeader(){
   const count = (PROGRESS.mistakes || []).length;
   setText('mistakes-count-badge', count > 0 ? count : '');
   setHtml('puzzle-stats', `
-    <div class="stat-card"><div class="big">${PROGRESS.puzzlesSolved}</div><div class="label">Puzzles résolus</div></div>
+    <div class="stat-card"><div class="big">${PROGRESS.puzzlesSolved}</div><div class="label">Problèmes résolus</div></div>
     <div class="stat-card"><div class="big">${PROGRESS.puzzleStreak}</div><div class="label">Série en cours</div></div>
     <div class="stat-card"><div class="big">${PROGRESS.puzzleBestStreak}</div><div class="label">Meilleure série</div></div>
   `);
@@ -276,7 +296,22 @@ function setPuzzleFeedback(text, kind){
       <b>${success ? `+10 XP · ${QUEST_CURRENCY.icon} +${QUEST_REWARDS.puzzle}` : 'Réessaie'}</b>
     `;
   }
-  speak(text);
+}
+
+function stopPuzzleBattle(){
+  clearInterval(puzzleBattleTimer); puzzleBattleTimer = null; puzzleBattleEndsAt = 0;
+  const timer = document.getElementById('puzzle-battle-timer'); if(timer) timer.classList.add('hidden');
+}
+function startPuzzleBattle(seconds){
+  stopPuzzleBattle();
+  puzzleSource = 'battle'; puzzleTheme = ''; buildPuzzleQueue(); loadPuzzle(0);
+  puzzleBattleEndsAt = Date.now() + seconds * 1000;
+  const timer = document.getElementById('puzzle-battle-timer'); if(timer) timer.classList.remove('hidden');
+  puzzleBattleTimer = setInterval(()=>{
+    const left = Math.max(0,Math.ceil((puzzleBattleEndsAt-Date.now())/1000));
+    if(timer) timer.textContent = `${left}s`;
+    if(!left){ stopPuzzleBattle(); mcqLocked = true; setPuzzleFeedback(`Temps écoulé ! Série finale : ${PROGRESS.puzzleStreak || 0}.`,'prompt'); }
+  },250);
 }
 function setText(id, text){ const el = document.getElementById(id); if(el) el.textContent = text; }
 function setHtml(id, html){ const el = document.getElementById(id); if(el) el.innerHTML = html; }

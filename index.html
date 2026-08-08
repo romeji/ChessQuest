@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
@@ -28,13 +28,29 @@
 <body data-page="home" class="final-shell-page home-final-page">
 <div id="toast-container"></div>
 
-<div id="onboarding-overlay" class="onboarding-overlay hidden">
-  <div class="landing-card">
-    <img class="landing-logo" src="assets/icons/chessquest-logo.svg" alt="Logo ChessQuest">
-    <h1 class="landing-title">ChessQuest</h1>
-    <p class="landing-tagline">Apprends. Progresse. Deviens un champion !</p>
-    <button class="btn landing-btn" id="onboarding-close-btn">Commencer l’aventure</button>
-    <button class="landing-skip" id="onboarding-skip-btn">J’ai déjà un compte</button>
+<div id="onboarding-overlay" class="onboarding-overlay hidden" role="dialog" aria-modal="true" aria-label="Bienvenue dans ChessQuest">
+  <div class="quest-onboarding-card">
+    <img class="quest-onboarding-mascot" id="onboarding-mascot" src="assets/illustrations/mascot-coach-haughty.webp" alt="Mascotte ChessQuest">
+    <section class="onboarding-step" data-onboarding-step="account">
+      <span class="onboarding-kicker">Bienvenue au royaume</span><h1>Ton aventure commence ici</h1>
+      <p>Crée ton compte pour conserver ta progression. Oui, même les futurs champions ont besoin d’une sauvegarde.</p>
+      <button class="auth-google-button" id="auth-google-button" type="button"><b>G</b> Continuer avec Google</button>
+      <button class="auth-offline-button" id="auth-offline-button" type="button">Essayer hors connexion</button>
+      <small id="auth-status" aria-live="polite"></small>
+    </section>
+    <section class="onboarding-step hidden" data-onboarding-step="chesscom">
+      <span class="onboarding-kicker">Étape 2 sur 3</span><h1>Quel est ton pseudo Chess.com ?</h1>
+      <p>Je synchroniserai tes parties pour transformer tes vraies erreurs en exercices personnalisés.</p>
+      <input id="onboarding-chesscom" autocomplete="username" placeholder="Ton pseudo Chess.com" maxlength="25">
+      <button class="btn" id="onboarding-chesscom-next" type="button">Synchroniser mon royaume</button>
+      <small id="onboarding-chesscom-status" aria-live="polite"></small>
+    </section>
+    <section class="onboarding-step hidden" data-onboarding-step="tour">
+      <span class="onboarding-kicker" id="tour-counter">1 / 4</span><h1 id="tour-title">Apprends sans réciter bêtement</h1>
+      <p id="tour-copy">Les cours écrits expliquent les idées. Les ouvertures te font ensuite jouer les coups sur l’échiquier.</p>
+      <div class="tour-dots" id="tour-dots"></div>
+      <button class="btn" id="tour-next" type="button">Suivant</button>
+    </section>
   </div>
 </div>
 
@@ -57,7 +73,7 @@
 
     <a class="home-final-daily" href="daily-challenge.html">
       <span class="home-daily-label">Défi du jour</span>
-      <strong class="home-daily-title" id="home-goal-text">Résous 3 puzzles</strong>
+      <strong class="home-daily-title" id="home-goal-text">Résous 3 problèmes</strong>
       <div class="track"><div class="track-fill" id="home-goal-fill"></div></div>
       <span class="home-daily-count" id="home-goal-count">0/3</span>
       <span class="home-final-rewards"><span id="home-crown-reward">♛ +35</span><span id="home-xp-reward">+40 XP</span></span>
@@ -73,7 +89,12 @@
       <span class="home-analysis-next">›</span>
     </a>
 
-    <a class="home-final-continue" href="learn.html"><span>♜</span>Continuer</a>
+    <a class="home-final-continue" href="training-game.html"><span>♞</span>Partie d’entraînement</a>
+
+    <div class="home-quick-grid">
+      <a href="course-library.html"><span>📚</span><strong>Cours écrits</strong><small>Des bases au niveau expert</small></a>
+      <a href="secret-levels.html"><span>🗝</span><strong>Niveaux secrets</strong><small>Défis réservés aux curieux</small></a>
+    </div>
 
     <a class="home-shop-entry" href="shop.html" aria-label="Ouvrir la boutique royale">
       <span class="home-shop-entry-icon" aria-hidden="true">♛</span>
@@ -91,6 +112,7 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/chesscom.js"></script>
+<script src="assets/js/auth.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
@@ -101,7 +123,7 @@ function renderHomeTab(){
   document.getElementById('home-shop-balance').textContent = `${QUEST_CURRENCY.icon} ${crownBalance()}`;
   ensureDailyProgressFresh();
   const current = Math.min(3,PROGRESS.dailyProgress.puzzlesSolvedToday || 0);
-  document.getElementById('home-goal-text').textContent = 'Résous 3 puzzles';
+  document.getElementById('home-goal-text').textContent = 'Résous 3 problèmes';
   document.getElementById('home-goal-count').textContent = `${current}/3`;
   document.getElementById('home-goal-fill').style.width = `${Math.round((current / 3) * 100)}%`;
   const challenge = todayChallenge();
@@ -129,7 +151,7 @@ function greetFromMascot(){
   const solved = PROGRESS.dailyProgress?.puzzlesSolvedToday || 0;
   showMascotReaction(solved >= 3 ? 'best' : 'inaccuracy', solved >= 3
     ? 'Le défi quotidien est terminé. Je reconnais une certaine grandeur.'
-    : `Encore ${Math.max(0,3-solved)} puzzle${3-solved>1?'s':''}. Une couronne ne se mérite pas en la regardant.`,
+    : `Encore ${Math.max(0,3-solved)} problème${3-solved>1?'s':''}. Une couronne ne se mérite pas en la regardant.`,
     {imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]'});
 }
 homeMascot.addEventListener('click',greetFromMascot);

@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
@@ -28,7 +28,7 @@
 <div id="toast-container"></div>
 <div class="app">
   <section class="page">
-    <a class="subpage-back" aria-label="Retour" href="entrainement.html" style="margin-bottom:16px;">
+    <a class="subpage-back" aria-label="Retour aux problèmes" href="puzzles.html" style="margin-bottom:16px;">
       <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
     </a>
     <h1 class="section-title" style="border-top:none;padding-top:0;margin-bottom:2px;">Entraînement ciblé</h1>
@@ -61,7 +61,7 @@ const THEME_COLORS = ['ec-red','ec-dark','ec-orange','ec-gold'];
 function renderThemePicker(){
   const grid = document.getElementById('theme-picker-grid');
   const quickCards = [
-    {source:'random', label:'Puzzle aléatoire', count: CLASSIC_PUZZLES.length, desc:'Un défi différent à chaque partie'},
+    {source:'random', label:'Problème aléatoire', count: CLASSIC_PUZZLES.length, desc:'Un défi différent à chaque partie'},
     {source:'mistakes', label:'Corriger mes erreurs', count:(PROGRESS.mistakes || []).length, desc:'Revois les erreurs détectées dans tes parties'}
   ];
   const themes = [...new Set(CLASSIC_PUZZLES.map(puzzle => puzzle.theme))];
@@ -73,8 +73,10 @@ function renderThemePicker(){
   grid.innerHTML = cards.map((c, i) => {
     const query = new URLSearchParams({source:c.source});
     if(c.theme) query.set('theme', c.theme);
+    const completionKey = c.theme ? `theme:${c.theme}` : `source:${c.source}`;
+    const completed = (PROGRESS.completedTargets || []).includes(completionKey);
     return `
-    <a class="entrainement-card" href="puzzles.html?${query.toString()}">
+    <a class="entrainement-card ${completed?'target-completed':''}" href="puzzles.html?${query.toString()}">
       <div class="ec-icon ${THEME_COLORS[i % THEME_COLORS.length]}">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${i===0 ? '<path d="M12 2 9 9H4l4 3-1.5 7L12 15l5.5 4-1.5-7 4-3h-5z"/>' : '<path d="M4 12h16M12 4v16"/>'}</svg>
       </div>
@@ -82,7 +84,7 @@ function renderThemePicker(){
         <div class="ec-title">${escapeHtml(c.label)}</div>
         <div class="ec-desc">${escapeHtml(c.desc)} · ${c.count} puzzle${c.count>1?'s':''}</div>
       </div>
-      <svg class="ec-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+      ${completed?'<span class="target-complete-badge" title="Déjà réussi">✓</span>':'<svg class="ec-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>'}
     </a>`;
   }).join('');
 }

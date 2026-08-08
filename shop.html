@@ -33,6 +33,7 @@
     </aside>
     <h2 class="shop-section-title">Plateaux</h2><div class="shop-grid" id="shop-boards"></div>
     <h2 class="shop-section-title">Armées</h2><div class="shop-grid" id="shop-pieces"></div>
+    <h2 class="shop-section-title">Décors</h2><div class="shop-grid" id="shop-backgrounds"></div>
     <h2 class="shop-section-title">Passages secrets</h2><div class="shop-grid" id="shop-secrets"></div>
   </section>
 </main>
@@ -46,7 +47,8 @@ function shopCard(item){
   const owned = ownsStoreItem(item.id);
   const equipped = item.type === 'board'
     ? ensureEconomy().equippedBoard === item.id
-    : item.type === 'pieces' && ensureEconomy().equippedPieces === item.id;
+    : item.type === 'pieces' ? ensureEconomy().equippedPieces === item.id
+    : item.type === 'background' && ensureEconomy().equippedBackground === item.id;
   const colors = item.colors || [];
   const previewStyle = colors.length ? `--preview-a:${colors[0]};--preview-b:${colors[1]}` : '';
   const label = equipped ? 'Équipé' : (owned ? (item.type === 'secret' ? 'Explorer' : 'Équiper') : `${item.price}`);
@@ -60,6 +62,7 @@ function renderShop(){
   document.getElementById('shop-balance').textContent = `♛ ${crownBalance()}`;
   document.getElementById('shop-boards').innerHTML = QUEST_STORE.filter(x=>x.type==='board').map(shopCard).join('');
   document.getElementById('shop-pieces').innerHTML = QUEST_STORE.filter(x=>x.type==='pieces').map(shopCard).join('');
+  document.getElementById('shop-backgrounds').innerHTML = QUEST_STORE.filter(x=>x.type==='background').map(shopCard).join('');
   document.getElementById('shop-secrets').innerHTML = QUEST_STORE.filter(x=>x.type==='secret').map(shopCard).join('');
   document.querySelectorAll('.shop-action[data-item]').forEach(button => button.onclick = () => {
     const item = QUEST_STORE.find(entry=>entry.id===button.dataset.item);

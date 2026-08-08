@@ -18,6 +18,9 @@ html{
   background:#f6f0e5;
   overscroll-behavior-x:none;
 }
+html,body{min-height:100%;min-height:100dvh}
+body.final-shell-page .app{width:100%!important;max-width:min(100vw,430px)!important;box-sizing:border-box!important}
+@media(display-mode:standalone){body{padding-top:env(safe-area-inset-top,0px);padding-right:env(safe-area-inset-right,0px);padding-left:env(safe-area-inset-left,0px);background:#064b39}body.final-shell-page{padding-top:0}.final-page-title,.home-final-head,.quest-page-title{padding-top:max(10px,env(safe-area-inset-top,0px))}}
 body{
   width:100%;
   max-width:100%;
@@ -138,6 +141,13 @@ html.opening-map-document body{
   max-height:100dvh;
   overflow:hidden!important;
 }
+.puzzle-final-page .app{padding-bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+.puzzle-final-board-wrap,.opening-final-board-wrap,.training-final-board-wrap{width:100%!important;max-width:390px!important;min-width:0!important;box-sizing:border-box!important}
+.puzzle-final-page #puzzle-board,.opening-final-page #train-board,.training-final-page #tg-board{touch-action:none!important}
+.puzzle-final-page .mcq-options,.puzzle-final-page .mcq-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;width:100%!important}.puzzle-final-page .mcq-option{min-width:0!important;padding-left:6px!important;padding-right:6px!important;overflow:hidden}
+.puzzle-final-turn{order:0}.puzzle-final-board-wrap{order:1}.puzzle-final-page .mcq-options{order:2}.puzzle-final-feedback{order:3}.puzzle-final-streak{order:4}
+.opening-final-page .app{padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))}
+.opening-final-theory{min-height:0!important;max-height:180px;overflow:auto!important}.opening-final-theory:not([open]){padding-top:12px!important;padding-bottom:12px!important}.opening-final-theory:not([open]) .opening-final-facts,.opening-final-theory:not([open]) .opening-history-copy{display:none}
 .training-move-log,
 .island-lessons{scrollbar-width:thin}
 
@@ -220,6 +230,7 @@ body.training-target-page .page{
   font-size:.7rem;
   line-height:1.35;
 }
+.target-completed{border-color:#55a968!important}.target-complete-badge{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#278b4c;color:#fff;font-weight:1000;box-shadow:0 4px 9px rgba(18,112,61,.25)}
 
 /* Les vues longues gardent leur navigation accessible sans masquer la fin. */
 .home-final-page .app,
@@ -230,6 +241,7 @@ body.training-target-page .page{
 body[data-page="coach"] .app{
   padding-bottom:calc(82px + env(safe-area-inset-bottom,0px));
 }
+.home-final-page .app{overflow-y:auto!important;-webkit-overflow-scrolling:touch}
 .analysis-page .page,
 .progress-page .page,
 .profile-page .page,

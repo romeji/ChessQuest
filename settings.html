@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
@@ -57,13 +57,9 @@
     </section>
 
     <section class="settings-group">
-    <div class="settings-group-title"><span>🔊</span><div><strong>Coach vocal</strong><small>Lis les conseils à haute voix</small></div></div>
-    <label class="field-label">Voix de lecture</label>
-    <select id="voice-select" class="search-input" style="margin:10px 0;"></select>
-    <div class="btn-row" style="margin-bottom:6px;">
-      <button class="btn secondary" id="voice-test-btn">Tester la voix</button>
-    </div>
-    <p class="section-sub">La qualité dépend des voix françaises installées sur ton appareil.</p>
+      <div class="settings-group-title"><span>♙</span><div><strong>Compte ChessQuest</strong><small>Connexion et sauvegarde de ton identité</small></div></div>
+      <p class="section-sub" id="account-status">Vérification du compte…</p>
+      <button class="btn secondary" id="account-action" type="button">Se connecter avec Google</button>
     </section>
 
     <button class="btn settings-danger" id="reset-progress-btn" style="margin-top:10px;">Réinitialiser ma progression</button>
@@ -91,9 +87,11 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/chesscom.js"></script>
 <script src="assets/js/firebase-sync.js"></script>
+<script src="assets/js/auth.js"></script>
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/navigation.js"></script>
@@ -139,25 +137,17 @@ soundBtn.onclick = function(){
   this.textContent = soundEnabled ? 'Sons activés' : 'Sons coupés';
 };
 
-function populateVoiceSelect(){
-  const sel = document.getElementById('voice-select');
-  if(!('speechSynthesis' in window)) return;
-  const voices = window.speechSynthesis.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith('fr'));
-  if(voices.length === 0){ sel.innerHTML = '<option>Aucune voix française détectée</option>'; return; }
-  const currentName = frenchVoice ? frenchVoice.name : '';
-  sel.innerHTML = voices.map(v => `<option value="${escapeHtml(v.name)}" ${v.name===currentName?'selected':''}>${escapeHtml(v.name)}${v.localService?' (locale)':''}</option>`).join('');
-}
-if('speechSynthesis' in window){
-  populateVoiceSelect();
-  window.speechSynthesis.addEventListener('voiceschanged', populateVoiceSelect);
-}
-document.getElementById('voice-select').addEventListener('change', function(){
-  PROGRESS.settings.voiceName = this.value;
-  saveProgress();
-  refreshVoiceChoice();
-  speak("Voici comment sonne cette voix.");
+const accountStatus=document.getElementById('account-status');
+const accountAction=document.getElementById('account-action');
+if(!firebase.apps.length) firebase.initializeApp(QUEST_FIREBASE_CONFIG);
+firebase.auth().onAuthStateChanged(user=>{
+  accountStatus.textContent=user?`Connecté : ${user.displayName||user.email}`:'Aucun compte Google connecté. Ta progression reste seulement sur cet appareil.';
+  accountAction.textContent=user?'Se déconnecter':'Se connecter avec Google';
+  accountAction.onclick=async()=>{
+    if(firebase.auth().currentUser){await firebase.auth().signOut();PROGRESS.account=defaultProgress().account;saveProgress();return;}
+    try{const result=await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());storeQuestUser(result.user);}catch(error){accountStatus.textContent=error.message||'Connexion impossible.';}
+  };
 });
-document.getElementById('voice-test-btn').onclick = () => speak("Bien joué ! Cavalier d6, échec — la dame est maintenant attaquée.");
 
 document.getElementById('reset-progress-btn').onclick = function(){
   if(!confirm('Réinitialiser toute ta progression ? Cette action est irréversible.')) return;

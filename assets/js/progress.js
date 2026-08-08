@@ -19,7 +19,7 @@ function defaultProgress(){
   return {
     mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal', voiceName:null, soundEnabled:true, chessComUsername:''},
     chessCom:{ username:'', games:[], lastSync:null, syncing:false },
-    mistakes: [], puzzleRating: 1000, puzzleRatingHistory: [], puzzlesSolved: 0, puzzlesFailed: 0,
+    mistakes: [], solvedMistakeIds: [], mistakeReviewHistory: [], completedTargets: [], puzzleRating: 1000, puzzleRatingHistory: [], puzzlesSolved: 0, puzzlesFailed: 0,
     puzzleStreak: 0, puzzleBestStreak: 0,
     activityDates: [], viewedNotationGuide: false, viewedGlossary: false,
     xp: 0, lastKnownLevel: 1, unlockedBadges: [],
@@ -29,10 +29,11 @@ function defaultProgress(){
       owned: ['board-royal','pieces-classic'],
       equippedBoard: 'board-royal',
       equippedPieces: 'pieces-classic',
+      equippedBackground: 'background-ivory',
       treasures: {},
       secrets: []
     },
-    onboarded: false
+    account: {uid:null,email:null,displayName:null}, onboardingVersion:0, onboarded: false
   };
 }
 function loadProgress(){
@@ -51,7 +52,8 @@ function loadProgress(){
     progress.economy.owned = Array.isArray(progress.economy.owned) ? progress.economy.owned : defaults.economy.owned.slice();
     progress.economy.treasures = progress.economy.treasures && typeof progress.economy.treasures === 'object' ? progress.economy.treasures : {};
     progress.economy.secrets = Array.isArray(progress.economy.secrets) ? progress.economy.secrets : [];
-    ['games','mistakes','activityDates','unlockedBadges','puzzleRatingHistory'].forEach(key => {
+    progress.account = Object.assign({}, defaults.account, parsed.account || {});
+    ['games','mistakes','solvedMistakeIds','mistakeReviewHistory','completedTargets','activityDates','unlockedBadges','puzzleRatingHistory'].forEach(key => {
       if(!Array.isArray(progress[key])) progress[key] = defaults[key];
     });
     ['xp','puzzleRating','puzzlesSolved','puzzlesFailed','puzzleStreak','puzzleBestStreak'].forEach(key => {
@@ -76,6 +78,7 @@ const QUEST_STORE = [
   {id:'pieces-ivory', type:'pieces', name:'Ivoire enchanté', desc:'Un éclat doux et sculpté.', price:220, icon:'♘'},
   {id:'pieces-gilded', type:'pieces', name:'Garde dorée', desc:'Une aura d’or autour de chaque pièce.', price:360, icon:'♛'},
   {id:'pieces-arcane', type:'pieces', name:'Armée arcanique', desc:'Une lueur violette venue des archives.', price:420, icon:'♝'},
+  {id:'background-night', type:'background', name:'Arène nocturne', desc:'Un décor noir immersif inspiré des salles d’entraînement.', price:280, colors:['#211f1d','#080808']},
   {id:'secret-tactics', type:'secret', name:'Le Cabinet des fourchettes', desc:'Une série secrète de tactiques sournoises.', price:300, icon:'🗝️'},
   {id:'secret-endgame', type:'secret', name:'La Crypte des finales', desc:'Des positions où un seul tempo décide de tout.', price:450, icon:'🗝️'},
   {id:'secret-crown', type:'secret', name:'Le Défi de la Couronne', desc:'Le niveau ultime réservé aux collectionneurs.', price:700, icon:'👑'}
@@ -123,9 +126,10 @@ function purchaseStoreItem(id){
 }
 function equipStoreItem(id){
   const item = QUEST_STORE.find(entry => entry.id === id);
-  if(!item || !ownsStoreItem(id) || !['board','pieces'].includes(item.type)) return false;
+  if(!item || !ownsStoreItem(id) || !['board','pieces','background'].includes(item.type)) return false;
   if(item.type === 'board') PROGRESS.economy.equippedBoard = id;
   if(item.type === 'pieces') PROGRESS.economy.equippedPieces = id;
+  if(item.type === 'background') PROGRESS.economy.equippedBackground = id;
   saveProgress();
   applyQuestCosmetics();
   return true;
@@ -134,6 +138,7 @@ function applyQuestCosmetics(){
   const economy = ensureEconomy();
   document.documentElement.dataset.boardSkin = (economy.equippedBoard || 'board-royal').replace('board-','');
   document.documentElement.dataset.pieceSkin = (economy.equippedPieces || 'pieces-classic').replace('pieces-','');
+  document.documentElement.dataset.backgroundSkin = (economy.equippedBackground || 'background-ivory').replace('background-','');
 }
 function worldTreasureReward(worldNumber){ return 80 + Math.max(0, Number(worldNumber || 1) - 1) * 20; }
 function claimWorldTreasure(worldId, worldNumber){
@@ -233,7 +238,7 @@ function addXP(amount){
    DÉFI DU JOUR
    ============================================================ */
 const DAILY_CHALLENGES = [
-  {id:'puzzles3', text:'Résous 3 puzzles aujourd\u2019hui', target:3, type:'puzzlesSolvedToday', xp:40, crowns:QUEST_REWARDS.daily}
+  {id:'puzzles3', text:'Résous 3 problèmes aujourd\u2019hui', target:3, type:'puzzlesSolvedToday', xp:40, crowns:QUEST_REWARDS.daily}
 ];
 const DAILY_BONUS_GOALS = Object.freeze({
   gamesPlayedToday:{target:1,crowns:20,label:'Partie du jour'},
@@ -245,7 +250,7 @@ function dayOfYear(){
   return Math.floor((now - start) / 86400000);
 }
 /* Le défi quotidien est volontairement stable : trois puzzles aléatoires.
-   Les autres activités restent disponibles dans S'entraîner, sans remplacer
+   Les autres activités restent accessibles depuis l’accueil et les menus de mode, sans remplacer
    le rituel tactique que le joueur retrouve chaque jour. */
 function todayChallenge(){ return DAILY_CHALLENGES[0]; }
 function ensureDailyProgressFresh(){
@@ -291,7 +296,7 @@ function computeBadges(){
     {icon:'chart', name:'Analyste', desc:'Analyser 5 parties', unlocked: gamesCount >= 5},
     {icon:'target', name:'Sans-faute', desc:'Analyser une partie sans aucune gaffe', unlocked: perfectGame},
     {icon:'puzzle', name:'Tacticien', desc:'Résoudre 10 puzzles', unlocked: PROGRESS.puzzlesSolved >= 10},
-    {icon:'flame', name:'En feu', desc:'Une série de 5 puzzles résolus d\u2019affilée', unlocked: PROGRESS.puzzleBestStreak >= 5},
+    {icon:'flame', name:'En feu', desc:'Une série de 5 problèmes résolus d\u2019affilée', unlocked: PROGRESS.puzzleBestStreak >= 5},
     {icon:'star', name:'Niveau 5', desc:'Atteindre le niveau 5 (Apprenti)', unlocked: level >= 5},
     {icon:'trophy', name:'Niveau 10', desc:'Atteindre le niveau 10 (Stratège)', unlocked: level >= 10}
   ];
@@ -351,7 +356,10 @@ function recordMistakesFromAnalysis(headers, analysisResults){
   PROGRESS.mistakes = PROGRESS.mistakes || [];
   analysisResults.forEach(r => {
     if(r.info.cls === 'mistake' || r.info.cls === 'blunder'){
+      const id = [headers.Site,headers.Date,headers.White,headers.Black,r.ply,r.fenBefore,r.bestSan].filter(value => value !== undefined && value !== null).join('|');
+      if(PROGRESS.mistakes.some(item => item.id === id)) return;
       PROGRESS.mistakes.unshift({
+        id,
         fen: r.fenBefore, solution: r.bestSan, playedSan: r.san,
         theme: r.info.cls === 'blunder' ? 'Gaffe à corriger' : 'Erreur à corriger',
         gameLabel: label, date: new Date().toISOString()

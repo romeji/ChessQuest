@@ -75,7 +75,6 @@ function showMascotReaction(kind,detail,options){
     clearTimeout(window.__mascotToastTimer);
     window.__mascotToastTimer = setTimeout(()=>toast.classList.remove('show'),options.duration || 4200);
   }
-  if(options.speak !== false && typeof speak === 'function') speak(message);
   if(['best','treasure','purchase'].includes(kind) && typeof fireConfetti === 'function') fireConfetti(kind === 'treasure' ? 'badge' : 'puzzle');
   return {mood,message};
 }

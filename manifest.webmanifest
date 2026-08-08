@@ -1,7 +1,7 @@
 {
   "name": "ChessQuest",
   "short_name": "ChessQuest",
-  "description": "Apprends les echecs avec des parcours, puzzles, ouvertures et analyses gamifiees.",
+  "description": "Apprends les échecs avec des cours, problèmes, ouvertures et analyses gamifiées.",
   "lang": "fr-FR",
   "dir": "ltr",
   "start_url": "./index.html",
@@ -46,15 +46,15 @@
       "icons": [{ "src": "assets/icons/chessquest-app-icon.png", "sizes": "1024x1024", "type": "image/png" }]
     },
     {
-      "name": "S'entrainer",
-      "short_name": "Jouer",
-      "url": "./entrainement.html",
+      "name": "Problèmes",
+      "short_name": "Problèmes",
+      "url": "./puzzles.html",
       "icons": [{ "src": "assets/icons/chessquest-app-icon.png", "sizes": "1024x1024", "type": "image/png" }]
     },
     {
-      "name": "Puzzles",
-      "short_name": "Puzzles",
-      "url": "./puzzles.html",
+      "name": "Académie ChessQuest",
+      "short_name": "Cours",
+      "url": "./course-library.html",
       "icons": [{ "src": "assets/icons/chessquest-app-icon.png", "sizes": "1024x1024", "type": "image/png" }]
     },
     {
