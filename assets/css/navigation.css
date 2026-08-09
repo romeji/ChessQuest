@@ -106,20 +106,41 @@ body.cq-has-tabbar.puzzle-final-page .app{
 }
 body.cq-has-tabbar.puzzle-final-page .page{padding-bottom:2px!important}
 body.cq-has-tabbar.puzzle-final-page .puzzle-final-board-wrap{
-  width:min(calc(100% - 8px),calc(100dvh - 300px),406px)!important;
+  width:min(calc(100% - 8px),calc(100dvh - 340px),406px)!important;
   max-width:406px!important;
-  margin-bottom:15px!important;
+  margin-bottom:8px!important;
 }
-body.cq-has-tabbar.puzzle-final-page .puzzle-final-feedback:not(.prompt){
+body.cq-has-tabbar.puzzle-final-page .puzzle-final-feedback{
   position:static!important;
   order:4!important;
-  min-height:54px!important;
+  min-height:62px!important;
+  height:auto!important;
   margin:0!important;
+  visibility:visible!important;
+  grid-template-columns:40px minmax(0,1fr) auto!important;
+  padding:8px 10px!important;
 }
-body.cq-has-tabbar.puzzle-final-page .puzzle-final-streak{order:5!important}
+body.cq-has-tabbar.puzzle-final-page .puzzle-final-feedback.prompt{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+}
+body.cq-has-tabbar.puzzle-final-page .feedback-prompt-copy{font-size:.68rem;line-height:1.3;color:#4c473f}
+body.cq-has-tabbar.puzzle-final-page .puzzle-result-next{
+  grid-column:2/4;
+  min-height:34px;
+  margin-top:3px;
+  padding:6px 14px;
+  border:0;
+  border-radius:12px;
+  background:linear-gradient(180deg,#35a85b,#167643);
+  color:#fff;
+  font:900 .7rem Nunito,sans-serif;
+  box-shadow:0 4px 10px rgba(9,91,51,.2);
+}
+body.cq-has-tabbar.puzzle-final-page .puzzle-final-feedback.prompt .puzzle-result-next{grid-column:1}
 
 body.cq-has-tabbar.opening-map-page .opening-map-dock{
-  bottom:calc(var(--cq-tabbar-height) + 2px)!important;
+  bottom:var(--cq-tabbar-height)!important;
   padding:0 8px!important;
   border:0!important;
   border-radius:0!important;
@@ -138,11 +159,41 @@ body.cq-has-tabbar.problem-journey-page .problem-journey-menu{
 }
 
 body.analysis-review-page:not(.review-summary-active) .review-controls{
-  position:relative!important;
-  z-index:20!important;
-  margin-top:8px!important;
-  padding-top:10px!important;
+  position:static!important;
+  z-index:auto!important;
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:7px 12px 8px!important;
+  transform:none!important;
+  border-top:1px solid #e0d3bb!important;
 }
+body.analysis-review-page:not(.review-summary-active) #review-eval{display:none!important}
+body.analysis-review-page:not(.review-summary-active) #analysis-results{overflow:hidden!important}
+body.analysis-review-page:not(.review-summary-active) .analysis-review-board-row{overflow:hidden!important}
+body.analysis-review-page:not(.review-summary-active) .analysis-review-board-row>div{
+  width:100%!important;
+  min-height:0!important;
+  gap:6px!important;
+  justify-content:flex-start!important;
+  overflow:hidden!important;
+}
+body.analysis-review-page:not(.review-summary-active) .board-frame{
+  width:min(calc(100vw - 24px),calc(100dvh - 390px),390px)!important;
+}
+
+/* Le body fixe de la carte transformait la barre en enfant d'un faux viewport sur iOS. */
+html.opening-map-document{height:100%!important;min-height:100dvh!important;overflow:hidden!important}
+body.opening-map-page{
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  margin:0!important;
+  padding:0!important;
+  overflow:hidden!important;
+}
+body.opening-map-page nav.tabbar{bottom:0!important;margin-bottom:0!important}
 body.training-final-page #resign-btn.new-game{
   border-color:#3e9b54!important;
   background:linear-gradient(180deg,#35a85b,#167643)!important;
@@ -150,6 +201,6 @@ body.training-final-page #resign-btn.new-game{
 }
 @media(max-height:730px){
   body.analysis-review-page:not(.review-summary-active) .board-frame{
-    width:min(calc(100vw - 24px),calc(100dvh - 335px),340px)!important;
+    width:min(calc(100vw - 24px),calc(100dvh - 390px),320px)!important;
   }
 }

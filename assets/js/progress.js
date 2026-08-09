@@ -25,6 +25,7 @@ function defaultProgress(){
     learningJourney: { totalDays:0, step:1, chapter:1, visitedDates:[] },
     xp: 0, lastKnownLevel: 1, unlockedBadges: [],
     dailyProgress: { date:null, puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false, bonusClaimed:{} },
+    dailyPuzzleRun: { date:null, solvedIds:[] },
     economy: {
       crowns: 120,
       owned: ['board-royal','pieces-classic'],
@@ -49,6 +50,8 @@ function loadProgress(){
     progress.chessCom = Object.assign({}, defaults.chessCom, parsed.chessCom || {});
     progress.dailyProgress = Object.assign({}, defaults.dailyProgress, parsed.dailyProgress || {});
     progress.dailyProgress.bonusClaimed = Object.assign({}, defaults.dailyProgress.bonusClaimed, progress.dailyProgress.bonusClaimed || {});
+    progress.dailyPuzzleRun = Object.assign({}, defaults.dailyPuzzleRun, parsed.dailyPuzzleRun || {});
+    progress.dailyPuzzleRun.solvedIds = Array.isArray(progress.dailyPuzzleRun.solvedIds) ? progress.dailyPuzzleRun.solvedIds : [];
     progress.economy = Object.assign({}, defaults.economy, parsed.economy || {});
     progress.economy.owned = Array.isArray(progress.economy.owned) ? progress.economy.owned : defaults.economy.owned.slice();
     progress.economy.treasures = progress.economy.treasures && typeof progress.economy.treasures === 'object' ? progress.economy.treasures : {};

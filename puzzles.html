@@ -25,7 +25,7 @@
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
 <link rel="stylesheet" href="assets/css/ux-refinement.css?v=59">
-<link rel="stylesheet" href="assets/css/navigation.css?v=70">
+<link rel="stylesheet" href="assets/css/navigation.css?v=75" data-quest-navigation>
 </head>
 <body data-page="puzzles" class="final-shell-page puzzle-final-page">
 <div id="toast-container"></div>
@@ -65,11 +65,6 @@
     <div class="mcq-options" id="mcq-options"></div>
     <div class="puzzle-final-feedback prompt" id="puzzle-feedback">Observe la position puis choisis ton coup.</div>
 
-    <div class="final-card puzzle-final-streak">
-      <strong>🔥 Série : <span id="puzzle-streak-value">0</span></strong>
-      <div class="progress-dots" id="puzzle-dots" aria-label="Progression"></div>
-      <span class="puzzle-final-flag" aria-hidden="true">⚑</span>
-    </div>
     <div class="puzzle-review-nav hidden" id="puzzle-review-nav">
       <button type="button" id="mistake-prev" aria-label="Erreur précédente">←</button>
       <span>Erreurs déjà corrigées</span>
@@ -79,6 +74,8 @@
     <div class="puzzle-hidden-data" aria-hidden="true">
       <span id="puzzle-question">Trouve le meilleur coup !</span>
       <span id="puzzle-kind"></span>
+      <span id="puzzle-streak-value">0</span>
+      <div id="puzzle-dots"></div>
       <div id="puzzle-stats"></div>
     </div>
   </section>
@@ -94,7 +91,7 @@
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/mascot-coach.js?v=44"></script>
-<script src="assets/js/navigation.js?v=70"></script>
+<script src="assets/js/navigation.js?v=75"></script>
 <script src="assets/js/board.js"></script>
 <script src="assets/js/openings.js"></script>
 <script src="assets/js/puzzles.js"></script>
@@ -122,7 +119,6 @@ function selectPuzzleSource(source){
   const labels={daily:'Problème du jour',random:'Problème aléatoire',mistakes:'Corriger mes erreurs',review:'Erreurs corrigées'};
   document.getElementById('puzzle-page-title').textContent=labels[source]||'Problèmes';
   document.getElementById('puzzle-review-nav').classList.toggle('hidden',source!=='review');
-  if(source==='daily' && (PROGRESS.dailyProgress?.puzzlesSolvedToday||0)>0) setPuzzleFeedback('Problème du jour déjà réussi. Tu peux le rejouer ou choisir un autre mode dans le menu.','prompt');
 }
 document.getElementById('mistake-prev').onclick=()=>loadPuzzle(puzzleIndex-1);
 document.getElementById('mistake-next').onclick=()=>loadPuzzle(puzzleIndex+1);

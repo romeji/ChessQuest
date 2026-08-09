@@ -60,6 +60,27 @@ let puzzleBattleScore = 0;
 let puzzleBattleDuration = 0;
 let puzzleBattleActive = false;
 let puzzleBattleCountdown = null;
+let puzzleResultAction = null;
+
+function ensureDailyPuzzleRun(){
+  const date = todayKey();
+  if(!PROGRESS.dailyPuzzleRun || PROGRESS.dailyPuzzleRun.date !== date){
+    PROGRESS.dailyPuzzleRun = {date, solvedIds:[]};
+    saveProgress();
+  }
+  if(!Array.isArray(PROGRESS.dailyPuzzleRun.solvedIds)) PROGRESS.dailyPuzzleRun.solvedIds = [];
+  return PROGRESS.dailyPuzzleRun;
+}
+
+function dailyPuzzleSelection(){
+  const day = Math.floor(new Date().setHours(0,0,0,0) / 86400000);
+  return [0,1,2].map(offset => CLASSIC_PUZZLES[(day + offset) % CLASSIC_PUZZLES.length]);
+}
+
+function dailyPuzzleCompletedCount(){
+  const solved = new Set(ensureDailyPuzzleRun().solvedIds);
+  return dailyPuzzleSelection().filter(puzzle => solved.has(puzzle.id)).length;
+}
 
 function ratingStars(rating){
   const level = Math.min(5, Math.max(1, Math.round((rating - 300) / 130)));
@@ -80,8 +101,8 @@ function buildPuzzleQueue(){
   } else if(puzzleSource === 'review'){
     puzzleQueue = (PROGRESS.mistakes || []).filter(item => (PROGRESS.solvedMistakeIds || []).includes(item.id));
   } else if(puzzleSource === 'daily'){
-    const day = Math.floor(new Date().setHours(0,0,0,0) / 86400000);
-    puzzleQueue = [CLASSIC_PUZZLES[day % CLASSIC_PUZZLES.length]];
+    const solved = new Set(ensureDailyPuzzleRun().solvedIds);
+    puzzleQueue = dailyPuzzleSelection().filter(puzzle => !solved.has(puzzle.id));
   } else {
     const candidates = puzzleTheme
       ? CLASSIC_PUZZLES.filter(puzzle => puzzle.theme === puzzleTheme)
@@ -137,6 +158,17 @@ function loadPuzzle(idx){
   if(!puzzleBoard) return;
   const container = document.getElementById('mcq-options');
   if(puzzleQueue.length === 0){
+    if(puzzleSource === 'daily' && dailyPuzzleCompletedCount() >= 3){
+      puzzleGame = new Chess();
+      puzzleBoard.position('start');
+      setText('puzzle-question', 'Les trois problèmes du jour sont résolus');
+      setText('puzzle-kind', 'Mission quotidienne terminée');
+      setHtml('puzzle-dots', '');
+      if(container) container.innerHTML = '';
+      setPuzzleFeedback('Mission accomplie : 3 sur 3. Le coffre et les récompenses sont gagnés. Reviens demain pour une nouvelle série.', 'good');
+      setPuzzleResultAction('Retour à la carte', () => { location.href='problems.html'; });
+      return;
+    }
     puzzleGame = new Chess();
     puzzleBoard.position('start');
     setText('puzzle-question', puzzleSource === 'mistakes' ? "Toutes tes erreurs sont corrigées" : "Aucun problème disponible");
@@ -165,6 +197,7 @@ function loadPuzzle(idx){
   const solutionClean0 = p.solution.replace(/[!?]+$/, '');
   setText('puzzle-question', solutionClean0.includes('#') ? 'Trouve le mat !' : 'Trouve le meilleur coup !');
   setText('puzzle-kind', `${p.theme} · ${label}`);
+  if(puzzleSource === 'daily') setText('puzzle-kind', `${p.theme} · Problème ${dailyPuzzleCompletedCount()+1}/3`);
   setHtml('puzzle-dots', puzzleQueue.map((_,i)=>`<span class="dot ${i<puzzleIndex?'done':''} ${i===puzzleIndex?'current':''}"></span>`).join(''));
 
   const solutionClean = p.solution.replace(/[!?]+$/, '');
@@ -226,12 +259,16 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   } else {
     PROGRESS.puzzleStreak = 0;
   }
-  if(success) PROGRESS.puzzlesSolved++;
-  else PROGRESS.puzzlesFailed = (PROGRESS.puzzlesFailed || 0) + 1;
+  const dailyRun = puzzleSource === 'daily' ? ensureDailyPuzzleRun() : null;
+  const alreadySolvedToday = Boolean(dailyRun && dailyRun.solvedIds.includes(p.id));
+  const rewardEligible = success && !alreadySolvedToday;
+  if(success && dailyRun && !alreadySolvedToday) dailyRun.solvedIds.push(p.id);
+  if(rewardEligible) PROGRESS.puzzlesSolved++;
+  if(!success) PROGRESS.puzzlesFailed = (PROGRESS.puzzlesFailed || 0) + 1;
   const delta = applyPuzzleRatingChange(p.rating || 1000, success);
   saveProgress();
   recordActivity();
-  if(success){
+  if(rewardEligible){
     addXP(10);
     addCrowns(QUEST_REWARDS.puzzle,'Puzzle résolu');
     bumpDailyCounter('puzzlesSolvedToday');
@@ -260,10 +297,20 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
 
   if(puzzleSource === 'battle' && puzzleBattleActive){
     setTimeout(()=>loadPuzzle(puzzleIndex+1),420);
+  } else if(!success){
+    setPuzzleResultAction('Réessayer', () => loadPuzzle(puzzleIndex));
+  } else if(puzzleSource === 'daily'){
+    const completed = dailyPuzzleCompletedCount();
+    if(completed >= 3){
+      setPuzzleFeedback('Excellent ! Mission accomplie : 3 sur 3. Ton coffre, tes points et ton XP sont gagnés. Reviens demain pour une nouvelle série.', 'good');
+      setPuzzleResultAction('Retour à la carte', () => { location.href='problems.html'; });
+    } else {
+      setPuzzleResultAction('Problème suivant', () => { buildPuzzleQueue(); loadPuzzle(0); refreshPuzzleHeader(); });
+    }
   } else if(puzzleSource === 'mistakes'){
-    setTimeout(()=>{ buildPuzzleQueue(); loadPuzzle(success ? 0 : puzzleIndex); refreshPuzzleHeader(); }, 1600);
+    setPuzzleResultAction('Erreur suivante', () => { buildPuzzleQueue(); loadPuzzle(0); refreshPuzzleHeader(); });
   } else {
-    setTimeout(()=> loadPuzzle(success ? puzzleIndex+1 : puzzleIndex), 1600);
+    setPuzzleResultAction('Problème suivant', () => loadPuzzle(puzzleIndex+1));
   }
 }
 
@@ -292,9 +339,10 @@ function refreshPuzzleHeader(){
 function setPuzzleFeedback(text, kind){
   const el = document.getElementById('puzzle-feedback');
   if(!el) return;
+  puzzleResultAction = null;
   if(kind === 'prompt'){
-    el.textContent = text;
     el.className = 'puzzle-final-feedback prompt';
+    el.innerHTML = `<span class="feedback-prompt-copy">${escapeHtml(text)}</span><button class="puzzle-result-next hidden" type="button"></button>`;
   } else {
     const success = kind === 'good';
     const title = success ? 'Excellent !' : 'Pas cette fois.';
@@ -304,8 +352,22 @@ function setPuzzleFeedback(text, kind){
       <span class="feedback-medal" aria-hidden="true">${success ? '✓' : '!'}</span>
       <span><strong>${title}</strong><small>${escapeHtml(copy)}</small></span>
       <b>${success ? `+10 XP · ${QUEST_CURRENCY.icon} +${QUEST_REWARDS.puzzle}` : 'Réessaie'}</b>
+      <button class="puzzle-result-next hidden" type="button"></button>
     `;
   }
+}
+
+function setPuzzleResultAction(label, action){
+  const button = document.querySelector('#puzzle-feedback .puzzle-result-next');
+  puzzleResultAction = action;
+  if(!button) return;
+  button.textContent = label;
+  button.classList.remove('hidden');
+  button.onclick = () => {
+    const next = puzzleResultAction;
+    puzzleResultAction = null;
+    if(typeof next === 'function') next();
+  };
 }
 
 function stopPuzzleBattle(){
