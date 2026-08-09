@@ -1,8 +1,8 @@
 /* Barre basse unique de ChessQuest.
    Le fond couvre aussi la safe-area inférieure des PWA iOS. */
 :root{
-  --cq-tabbar-content-height:48px;
-  --cq-tabbar-controls-bottom:2px;
+  --cq-tabbar-content-height:51px;
+  --cq-tabbar-controls-bottom:5px;
   --cq-tabbar-height:var(--cq-tabbar-content-height);
   --tabbar-height:var(--cq-tabbar-height);
 }

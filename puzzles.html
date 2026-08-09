@@ -83,20 +83,6 @@
     </div>
   </section>
 </main>
-<div class="mode-bottom-dock">
-  <button class="mode-menu-button" id="puzzle-mode-button" type="button" aria-expanded="false" aria-controls="puzzle-mode-sheet">☷</button>
-  <button class="mode-primary-button" id="puzzle-primary-action" type="button">Résoudre le problème du jour</button>
-  <div class="mode-sheet hidden" id="puzzle-mode-sheet">
-    <strong>Choisir un mode</strong>
-    <button data-puzzle-mode="daily">🎯 Problème du jour</button>
-    <button data-puzzle-mode="random">🎲 Problème aléatoire</button>
-    <button data-puzzle-mode="mistakes">🧠 Corriger mes erreurs <span id="mistakes-count-badge"></span></button>
-    <button data-puzzle-mode="review">↩ Revoir mes erreurs corrigées</button>
-    <button data-puzzle-mode="battle">⚡ Bataille de problèmes</button>
-    <a href="training-target.html">⚙ Personnalisé</a>
-    <div class="battle-lengths hidden" id="battle-lengths"><button data-battle="30">30 s</button><button data-battle="45">45 s</button><button data-battle="60">60 s</button></div>
-  </div>
-</div>
 <nav class="tabbar" aria-label="Navigation principale"></nav>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -120,7 +106,7 @@ if(secretLevel && !isSecretUnlocked(secretLevel)){
   setTimeout(() => location.replace('secret-levels.html'), 900);
 }
 const urlSource = urlParams.get('source');
-if(['daily','random','mistakes','review'].includes(urlSource)) puzzleSource = urlSource;
+if(['daily','random','mistakes','review','battle'].includes(urlSource)) puzzleSource = urlSource;
 const urlTheme = urlParams.get('theme');
 if(urlTheme && CLASSIC_PUZZLES.some(puzzle => puzzle.theme === urlTheme)) puzzleTheme = urlTheme;
 ensurePuzzleBoard();
@@ -135,22 +121,16 @@ function selectPuzzleSource(source){
   refreshPuzzleHeader();
   const labels={daily:'Problème du jour',random:'Problème aléatoire',mistakes:'Corriger mes erreurs',review:'Erreurs corrigées'};
   document.getElementById('puzzle-page-title').textContent=labels[source]||'Problèmes';
-  document.getElementById('puzzle-primary-action').textContent=labels[source]||'Résoudre un problème';
   document.getElementById('puzzle-review-nav').classList.toggle('hidden',source!=='review');
   if(source==='daily' && (PROGRESS.dailyProgress?.puzzlesSolvedToday||0)>0) setPuzzleFeedback('Problème du jour déjà réussi. Tu peux le rejouer ou choisir un autre mode dans le menu.','prompt');
 }
-const modeButton=document.getElementById('puzzle-mode-button'), modeSheet=document.getElementById('puzzle-mode-sheet');
-modeButton.onclick=()=>{const open=modeSheet.classList.toggle('hidden')===false;modeButton.setAttribute('aria-expanded',String(open));};
-document.querySelectorAll('[data-puzzle-mode]').forEach(button=>button.onclick=()=>{
-  if(button.dataset.puzzleMode==='battle'){document.getElementById('battle-lengths').classList.remove('hidden');return;}
-  modeSheet.classList.add('hidden'); selectPuzzleSource(button.dataset.puzzleMode);
-});
-document.querySelectorAll('[data-battle]').forEach(button=>button.onclick=()=>{modeSheet.classList.add('hidden');document.getElementById('puzzle-page-title').textContent='Bataille de problèmes';startPuzzleBattle(Number(button.dataset.battle));});
 document.getElementById('mistake-prev').onclick=()=>loadPuzzle(puzzleIndex-1);
 document.getElementById('mistake-next').onclick=()=>loadPuzzle(puzzleIndex+1);
-document.getElementById('puzzle-primary-action').onclick=()=>{document.querySelector('.puzzle-final-board-wrap').scrollIntoView({behavior:'smooth',block:'center'});};
 document.getElementById('puzzle-hint-btn').onclick = showPuzzleHint;
-selectPuzzleSource(puzzleSource);
+if(puzzleSource==='battle'){
+  document.getElementById('puzzle-page-title').textContent='Bataille de problèmes';
+  startPuzzleBattle(Math.max(30,Math.min(60,Number(urlParams.get('seconds'))||30)));
+}else selectPuzzleSource(puzzleSource);
 </script>
 </body>
 </html>

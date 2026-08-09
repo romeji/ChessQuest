@@ -250,9 +250,10 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   if(success) fireConfetti('puzzle');
 
   showRatingDelta(delta);
-  setPuzzleFeedback(`${success ? 'Excellent !' : 'Pas cette fois.'} ${p.explanation || (solutionClean + ' était le coup gagnant.')}`, success ? 'good' : 'bad');
+  const coachExplanation = humanizeChessComment(p.explanation || `${describeSanMove(solutionClean)} était le coup gagnant.`);
+  setPuzzleFeedback(`${success ? 'Excellent !' : 'Pas cette fois.'} ${coachExplanation}`, success ? 'good' : 'bad');
   if(typeof showMascotReaction === 'function'){
-    showMascotReaction(success ? 'best' : 'mistake',p.explanation || `${solutionClean} était le coup gagnant.`,{
+    showMascotReaction(success ? 'best' : 'mistake',coachExplanation,{
       imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]',speak:false
     });
   }

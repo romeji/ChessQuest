@@ -508,7 +508,7 @@ function continueTrainLine(){
       trainBoard.position(trainGame.fen());
       if(mv) highlightMove('#train-board', mv.from, mv.to);
       const who = currentLine.forColor === null ? (nextColor === 'w' ? 'Blancs' : 'Noirs') : 'Adversaire';
-      setTrainFeedback(`${who} : ${next.san} — ${next.c}`, 'info');
+      setTrainFeedback(`${who} : ${describeSanMove(next.san)} — ${humanizeChessComment(next.c)}`, 'info');
       trainPly++;
       if(typeof renderTrainMoveList === 'function') renderTrainMoveList();
       continueTrainLine();
@@ -542,7 +542,7 @@ function attemptTrainMove(source, target){
   highlightMove('#train-board', moveObj.from, moveObj.to);
   flashSquares('#train-board', [moveObj.to], 'flash-good', 450);
   playSound('move');
-  setTrainFeedback(`${pickPhrase(CORRECT_MOVE_PREFIXES, goodRef)} ${expected.san} — ${expected.c}`, 'good');
+  setTrainFeedback(`${pickPhrase(CORRECT_MOVE_PREFIXES, goodRef)} ${describeSanMove(expected.san)} — ${humanizeChessComment(expected.c)}`, 'good');
   trainPly++;
   if(typeof renderTrainMoveList === 'function') renderTrainMoveList();
   trainBoard.position(trainGame.fen());

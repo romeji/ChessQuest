@@ -1,5 +1,5 @@
 /* Mise à jour PWA globale : ce fichier est aussi chargé par les mondes plein écran. */
-const QUEST_NAVIGATION_VERSION = '72';
+const QUEST_NAVIGATION_VERSION = '73';
 const QUEST_NAVIGATION_STYLESHEET = new URL(
   `../css/navigation.css?v=${QUEST_NAVIGATION_VERSION}`,
   document.currentScript?.src || document.baseURI
@@ -59,7 +59,6 @@ function renderQuestTabbar(){
     'puzzles.html': 'puzzles',
     'daily-challenge.html': 'puzzles',
     'training-target.html': 'puzzles',
-    'academy.html': 'learn',
     'learn.html': 'learn',
     'openings.html': 'learn',
     'course.html': 'learn',
@@ -87,7 +86,7 @@ function renderQuestTabbar(){
       <a class="tabbar-item" data-tab="puzzles" href="problems.html" aria-label="Problèmes">
         <svg viewBox="0 0 24 24" class="tabicon"><path d="M9 3h6v4a3 3 0 1 0 3 3h3v11h-6v-3a3 3 0 1 0-3 3H3v-7h4a3 3 0 1 0 0-6H3V3h6Z"/></svg><span>Problèmes</span>
       </a>
-      <a class="tabbar-item" data-tab="learn" href="academy.html" aria-label="Apprendre">
+      <a class="tabbar-item" data-tab="learn" href="learn.html" aria-label="Apprendre">
         <svg viewBox="0 0 24 24" class="tabicon"><path d="M4 19V6a2 2 0 0 1 2-2h6v16H6a2 2 0 0 0-2 2Z"/><path d="M20 19V6a2 2 0 0 0-2-2h-6v16h6a2 2 0 0 1 2 2Z"/></svg><span>Apprendre</span>
       </a>
       <a class="tabbar-item" data-tab="profile" href="profile.html" aria-label="Profil">

@@ -20,11 +20,11 @@
 .acc-sub{font-size:0.68rem;color:var(--text-dim);}
 .acc-vs{font-weight:700;color:var(--text-dim);font-size:0.82rem;}
 
-/* ---- Barre d'évaluation verticale ---- */
-.eval-bar-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
-.eval-bar{position:relative;width:20px;flex:1;min-height:220px;background:#F4F3FA;border-radius:8px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line);}
-.eval-bar-black{position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,#3a3550,var(--navy));transition:height .25s ease;}
-.eval-bar-mid{position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(36,31,61,0.15);}
+/* ---- Barre d'évaluation horizontale, directement sous l'échiquier ---- */
+.eval-bar-wrap{display:grid;grid-template-columns:42px minmax(0,1fr);align-items:center;gap:7px;width:100%;}
+.eval-bar{position:relative;width:100%;height:13px;background:#f8f5eb;border-radius:8px;overflow:hidden;box-shadow:inset 0 0 0 1px var(--line);}
+.eval-bar-black{position:absolute;inset:0 auto 0 0;width:50%;background:linear-gradient(90deg,#25252b,var(--navy));transition:width .25s ease;}
+.eval-bar-mid{position:absolute;top:0;bottom:0;left:50%;width:1px;background:rgba(36,31,61,0.2);}
 .eval-bar-label{font-family:var(--font-mono);font-size:0.7rem;font-weight:700;color:var(--navy);white-space:nowrap;}
 .game-row{
   display:grid;grid-template-columns:74px 1fr 64px 84px;gap:8px;align-items:center;
@@ -89,7 +89,7 @@ ol#move-list li:last-child{border-bottom:none;}
 .analysis-review-page{overflow:auto;background:#f5eddf}.analysis-review-page .app{min-height:100dvh;padding-bottom:max(16px,env(safe-area-inset-bottom));background:radial-gradient(circle at 50% 0,#fffdf7,#f8f0e2 76%)}
 .analysis-review-page .page{padding:8px 10px 18px}.analysis-review-page .final-page-title{position:sticky;z-index:20;top:0;margin:0 -2px 8px;padding-top:max(7px,env(safe-area-inset-top));background:rgba(255,250,240,.94);backdrop-filter:blur(14px)}
 .analysis-review-page .game-info-row{margin:0 0 5px}.analysis-review-page .accuracy-row{gap:7px;margin:0 0 7px}.analysis-review-page .acc-card{min-width:0;flex:1;padding:7px 8px;border-radius:14px;background:#fffaf0}.analysis-review-page .acc-value{font-size:1.25rem}
-.analysis-review-board-row{display:flex;gap:7px;align-items:stretch;justify-content:center;margin-bottom:8px}.analysis-review-page .eval-bar{width:18px;min-height:240px}.analysis-review-page .board-frame{max-width:calc(100vw - 51px)!important}.analysis-review-page #board{max-width:100%!important}
+.analysis-review-board-row{display:block;justify-content:center;margin-bottom:8px}.analysis-review-page .board-frame{max-width:calc(100vw - 24px)!important}.analysis-review-page #board{max-width:100%!important}
 .analysis-review-comment{position:relative;margin:4px 0 8px!important;padding:8px 10px!important;min-height:68px;border:1px solid #d9c8a7!important;border-radius:18px!important;background:#fffaf0!important;color:#25222a!important;box-shadow:0 6px 16px rgba(65,48,24,.09)}
 .analysis-mascot-comment{display:grid!important;grid-template-columns:62px 1fr;align-items:center;gap:8px}.analysis-mascot-comment img{width:62px!important;height:62px!important;object-fit:contain}.analysis-mascot-comment p{margin:4px 0 0;font-size:.66rem;line-height:1.35}
 .analysis-review-page .nav-controls{display:grid!important;grid-template-columns:repeat(4,1fr);width:100%;gap:6px}.analysis-review-page .nav-controls button{height:38px;border-radius:12px;background:#0b6848;color:#fff}.analysis-review-page .analysis-tabs{position:sticky;z-index:12;top:58px;margin:4px 0 10px;background:#fffaf0}.analysis-review-page .analysis-tabs button{flex:1;margin:0;padding:10px 2px;font-size:.72rem}.analysis-review-page .analysis-tabs button.active{color:#6b3193;border-color:#6b3193}

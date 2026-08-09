@@ -23,11 +23,41 @@ async function ensureQuestFirebaseAuth(){
   return firebase;
 }
 let questGoogleAuthPromise=null;
+let questGoogleRedirectPromise=null;
+function questRunsAsInstalledPwa(){
+  return window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+async function consumeQuestGoogleRedirect(){
+  if(questGoogleRedirectPromise)return questGoogleRedirectPromise;
+  questGoogleRedirectPromise=(async()=>{
+    await ensureQuestFirebaseAuth();
+    try{return await firebase.auth().getRedirectResult();}
+    catch(error){
+      console.warn('[ChessQuest] Retour Google incomplet',error);
+      return null;
+    }
+  })();
+  return questGoogleRedirectPromise;
+}
 async function signInToQuestWithGoogle(){
   if(questGoogleAuthPromise)return questGoogleAuthPromise;
   questGoogleAuthPromise=(async()=>{
     await ensureQuestFirebaseAuth();
-    return firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    const provider=new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({prompt:'select_account'});
+    if(questRunsAsInstalledPwa()){
+      await firebase.auth().signInWithRedirect(provider);
+      return null;
+    }
+    try{
+      return await firebase.auth().signInWithPopup(provider);
+    }catch(error){
+      if(['auth/popup-blocked','auth/cancelled-popup-request','auth/operation-not-supported-in-this-environment'].includes(error.code)){
+        await firebase.auth().signInWithRedirect(provider);
+        return null;
+      }
+      throw error;
+    }
   })();
   try{return await questGoogleAuthPromise;}finally{questGoogleAuthPromise=null;}
 }
@@ -39,12 +69,15 @@ function storeQuestUser(user){
   PROGRESS.account={uid:user?.uid||'offline',email:user?.email||null,displayName:user?.displayName||'Joueur'};
   saveProgress();
 }
-function initQuestAccountFlow(){
+async function initQuestAccountFlow(){
+  const redirectResult=await consumeQuestGoogleRedirect();
+  if(redirectResult?.user)storeQuestUser(redirectResult.user);
   const overlay=document.getElementById('onboarding-overlay');
   if(!overlay || Number(PROGRESS.onboardingVersion||0)>=QUEST_ONBOARDING_VERSION){overlay?.classList.add('hidden');return;}
   overlay.classList.remove('hidden'); showOnboardingStep('account');
   const status=document.getElementById('auth-status');
   const continueToChess=()=>showOnboardingStep('chesscom');
+  if(redirectResult?.user)continueToChess();
   document.getElementById('auth-offline-button').onclick=()=>{storeQuestUser(null);continueToChess();};
   document.getElementById('auth-google-button').onclick=async()=>{
     const button=document.getElementById('auth-google-button');
@@ -53,7 +86,7 @@ function initQuestAccountFlow(){
     status.textContent='Ouverture de Google…';
     try{
       const result=await signInToQuestWithGoogle();
-      storeQuestUser(result.user); continueToChess();
+      if(result?.user){storeQuestUser(result.user);continueToChess();}
     }catch(error){
       status.textContent=error.code==='auth/operation-not-allowed'
         ?'Active Google dans Firebase Authentication, puis réessaie.'

@@ -9,6 +9,29 @@
    un échiquier, y compris à la première ouverture de la PWA. */
 const PIECE_THEME = 'assets/chesspieces/{piece}.png';
 
+/* Transforme la notation compacte (Nh3, Bxg7+, e4, O-O...) en une phrase
+   compréhensible par un débutant. La notation reste disponible dans les
+   listes techniques, mais la mascotte parle toujours en français naturel. */
+const CHESS_PIECE_NAMES_FR = {K:'roi',Q:'dame',R:'tour',B:'fou',N:'cavalier'};
+function describeSanMove(san){
+  const raw = String(san || '').trim().replace(/[!?]+$/g,'');
+  if(!raw) return 'ce coup';
+  if(/^(O-O-O|0-0-0)/.test(raw)) return 'le grand roque';
+  if(/^(O-O|0-0)/.test(raw)) return 'le petit roque';
+  const piece = CHESS_PIECE_NAMES_FR[raw[0]] || 'pion';
+  const square = (raw.match(/[a-h][1-8](?=(?:=[QRBN])?[+#]?\s*$)/) || [])[0];
+  const action = raw.includes('x') ? 'prend en' : 'va en';
+  const promotion = raw.match(/=([QRBN])/);
+  const check = raw.includes('#') ? ' et fait mat' : raw.includes('+') ? ' avec échec' : '';
+  const promoted = promotion ? ` et devient ${CHESS_PIECE_NAMES_FR[promotion[1]]}` : '';
+  return `le ${piece}${square ? ` ${action} ${square}` : ''}${promoted}${check}`;
+}
+function humanizeChessComment(text){
+  return String(text || '').replace(/(^|[\s(])((?:O-O-O|O-O|0-0-0|0-0|[KQRBN]?[a-h]?[1-8]?x?[a-h][1-8](?:=[QRBN])?[+#]?))(?=\s|[.,;:!?)]|$)/g,(_,prefix,move)=>prefix+describeSanMove(move));
+}
+window.describeSanMove = describeSanMove;
+window.humanizeChessComment = humanizeChessComment;
+
 /* Sur mobile, un geste sur l'échiquier doit déplacer une pièce, jamais faire
    défiler la page. Le verrou est posé une seule fois par plateau et ne
    concerne pas les boutons/sections autour du plateau. */
