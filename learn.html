@@ -51,6 +51,15 @@
   </section>
 </main>
 
+<div class="mode-bottom-dock opening-bottom-dock opening-map-dock">
+  <button class="mode-menu-button" id="opening-map-menu-button" type="button" aria-expanded="false" aria-label="Ouvrir la bibliothèque">☷</button>
+  <a class="mode-primary-button opening-adventure-button" id="opening-continue-adventure" href="openings.html?opening=italienne">Continuer l’aventure</a>
+  <div class="mode-sheet hidden" id="opening-map-menu-sheet">
+    <strong>Apprendre les ouvertures</strong>
+    <a href="course-library.html#openings">📚 Bibliothèque de leçons</a>
+  </div>
+</div>
+
 <div class="map-sheet-backdrop" id="map-sheet-backdrop" hidden></div>
 <section class="island-sheet" id="island-sheet" role="dialog" aria-modal="true" aria-labelledby="island-sheet-title" hidden>
   <div class="island-sheet-handle" aria-hidden="true"></div>
@@ -107,6 +116,32 @@ function isLessonUnlocked(worldIndex, islandIndex, lessonIndex){
   if(!isIslandUnlocked(worldIndex, islandIndex)) return false;
   const lessons = OPENING_WORLDS[worldIndex].islands[islandIndex].lessons;
   return lessons.slice(0, lessonIndex).every(key => !!(PROGRESS.mastered || {})[key]);
+}
+function adventureTarget(){
+  let saved = null;
+  try{ saved = JSON.parse(localStorage.getItem('cq-opening-last') || 'null'); }catch(error){}
+  if(saved?.key && !(PROGRESS.mastered || {})[saved.key]){
+    const locationData = findCurriculumLesson(saved.key);
+    if(locationData && isLessonUnlocked(locationData.worldIndex,locationData.islandIndex,locationData.lessonIndex)){
+      return `openings.html?opening=${encodeURIComponent(saved.key)}&world=${encodeURIComponent(locationData.world.id)}&island=${encodeURIComponent(locationData.island.id)}`;
+    }
+  }
+  for(let worldIndex=0;worldIndex<OPENING_WORLDS.length;worldIndex++){
+    const world=OPENING_WORLDS[worldIndex];
+    for(let islandIndex=0;islandIndex<world.islands.length;islandIndex++){
+      const island=world.islands[islandIndex];
+      for(let lessonIndex=0;lessonIndex<island.lessons.length;lessonIndex++){
+        const key=island.lessons[lessonIndex];
+        if(!(PROGRESS.mastered || {})[key] && isLessonUnlocked(worldIndex,islandIndex,lessonIndex)){
+          return `openings.html?opening=${encodeURIComponent(key)}&world=${encodeURIComponent(world.id)}&island=${encodeURIComponent(island.id)}`;
+        }
+      }
+    }
+  }
+  const lastWorld=OPENING_WORLDS[OPENING_WORLDS.length-1];
+  const lastIsland=lastWorld.islands[lastWorld.islands.length-1];
+  const lastKey=lastIsland.lessons[lastIsland.lessons.length-1];
+  return `openings.html?opening=${encodeURIComponent(lastKey)}&world=${encodeURIComponent(lastWorld.id)}&island=${encodeURIComponent(lastIsland.id)}`;
 }
 function worldRequirement(index){
   if(index === 0) return '';
@@ -240,6 +275,10 @@ document.getElementById('world-chip').onclick = () => {
 document.getElementById('island-sheet-close').onclick = closeIsland;
 document.getElementById('map-sheet-backdrop').onclick = closeIsland;
 document.addEventListener('keydown', event => { if(event.key === 'Escape') closeIsland(); });
+const openingMapMenuButton=document.getElementById('opening-map-menu-button');
+const openingMapMenuSheet=document.getElementById('opening-map-menu-sheet');
+openingMapMenuButton.onclick=()=>{const open=openingMapMenuSheet.classList.toggle('hidden')===false;openingMapMenuButton.setAttribute('aria-expanded',String(open));};
+document.getElementById('opening-continue-adventure').href=adventureTarget();
 
 renderSkillPath();
 const requestedIsland = query.get('island');

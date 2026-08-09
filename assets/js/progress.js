@@ -21,7 +21,7 @@ function defaultProgress(){
     chessCom:{ username:'', games:[], lastSync:null, syncing:false },
     mistakes: [], solvedMistakeIds: [], mistakeReviewHistory: [], completedTargets: [], puzzleRating: 1000, puzzleRatingHistory: [], puzzlesSolved: 0, puzzlesFailed: 0,
     puzzleStreak: 0, puzzleBestStreak: 0,
-    activityDates: [], viewedNotationGuide: false, viewedGlossary: false,
+    activityDates: [], completedCourses: [], viewedNotationGuide: false, viewedGlossary: false,
     xp: 0, lastKnownLevel: 1, unlockedBadges: [],
     dailyProgress: { date:null, puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false, bonusClaimed:{} },
     economy: {
@@ -53,7 +53,7 @@ function loadProgress(){
     progress.economy.treasures = progress.economy.treasures && typeof progress.economy.treasures === 'object' ? progress.economy.treasures : {};
     progress.economy.secrets = Array.isArray(progress.economy.secrets) ? progress.economy.secrets : [];
     progress.account = Object.assign({}, defaults.account, parsed.account || {});
-    ['games','mistakes','solvedMistakeIds','mistakeReviewHistory','completedTargets','activityDates','unlockedBadges','puzzleRatingHistory'].forEach(key => {
+    ['games','mistakes','solvedMistakeIds','mistakeReviewHistory','completedTargets','completedCourses','activityDates','unlockedBadges','puzzleRatingHistory'].forEach(key => {
       if(!Array.isArray(progress[key])) progress[key] = defaults[key];
     });
     ['xp','puzzleRating','puzzlesSolved','puzzlesFailed','puzzleStreak','puzzleBestStreak'].forEach(key => {

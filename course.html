@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#064b39">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/chessquest-app-icon.png">
+<title>ChessQuest — Cours</title>
+<link rel="stylesheet" href="assets/css/variables.css">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/gamification.css?v=50">
+</head>
+<body class="written-course-page">
+<main class="written-course-shell">
+  <header class="written-course-header">
+    <a class="subpage-back" href="course-library.html" aria-label="Retour à l’académie"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div><span id="course-level">COURS</span><h1 id="course-title">Cours ChessQuest</h1></div>
+    <span class="course-complete-mark" id="course-complete-mark" aria-label="Cours terminé">✓</span>
+  </header>
+  <section class="written-course-hero">
+    <img src="assets/illustrations/mascot-coach-haughty.webp" alt="Coach ChessQuest">
+    <div><strong id="course-summary"></strong><p><span id="course-duration"></span> · Lis, retiens, puis prouve-moi que tu suivais.</p></div>
+  </section>
+  <div class="written-course-progress"><span id="course-progress-label">Chapitre 1</span><div><i id="course-progress-fill"></i></div></div>
+  <section class="written-course-content" id="course-content"></section>
+  <section class="course-quiz" id="course-quiz">
+    <span>QUESTION DU COACH</span>
+    <h2 id="quiz-question"></h2>
+    <div id="quiz-options"></div>
+    <p id="quiz-feedback" role="status"></p>
+  </section>
+  <nav class="written-course-actions">
+    <button id="course-previous" type="button">← Précédent</button>
+    <button id="course-next" type="button">Chapitre suivant →</button>
+  </nav>
+  <button class="course-finish hidden" id="course-finish" type="button">Terminer le cours · +20 XP</button>
+  <a class="course-follow-up hidden" id="course-follow-up" href="course-library.html">Cours suivant →</a>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/courses.js?v=50"></script>
+<script>
+const courseId=new URLSearchParams(location.search).get('id');
+const course=writtenCourseById(courseId)||WRITTEN_COURSES[0];
+let sectionIndex=0;
+let quizPassed=false;
+const completed=()=>Array.isArray(PROGRESS.completedCourses)&&PROGRESS.completedCourses.includes(course.id);
+function levelLabel(level){return level>=1800?'1800+ ELO':`${level}–${level===0?300:level===300?700:level===700?1200:1800} ELO`;}
+function renderSection(){
+  const section=course.sections[sectionIndex];
+  document.getElementById('course-content').innerHTML=`<article><span>CHAPITRE ${sectionIndex+1} / ${course.sections.length}</span><h2>${escapeHtml(section[0])}</h2><p>${escapeHtml(section[1])}</p><ul>${section[2].map(point=>`<li>${escapeHtml(point)}</li>`).join('')}</ul></article>`;
+  document.getElementById('course-progress-label').textContent=`Chapitre ${sectionIndex+1} sur ${course.sections.length}`;
+  document.getElementById('course-progress-fill').style.width=`${((sectionIndex+1)/course.sections.length)*100}%`;
+  document.getElementById('course-previous').disabled=sectionIndex===0;
+  const atEnd=sectionIndex===course.sections.length-1;
+  document.getElementById('course-next').classList.toggle('hidden',atEnd);
+  document.getElementById('course-quiz').classList.toggle('visible',atEnd);
+  scrollTo({top:0,behavior:'smooth'});
+}
+function renderQuiz(){
+  document.getElementById('quiz-question').textContent=course.quiz[0];
+  document.getElementById('quiz-options').innerHTML=course.quiz[1].map((option,index)=>`<button type="button" data-answer="${index}"><b>${String.fromCharCode(65+index)}</b>${escapeHtml(option)}</button>`).join('');
+  document.querySelectorAll('[data-answer]').forEach(button=>button.onclick=()=>{
+    document.querySelectorAll('[data-answer]').forEach(item=>item.classList.remove('correct','wrong'));
+    const correct=Number(button.dataset.answer)===course.quiz[2];
+    button.classList.add(correct?'correct':'wrong');
+    if(correct){
+      quizPassed=true;
+      document.querySelector(`[data-answer="${course.quiz[2]}"]`).classList.add('correct');
+      document.getElementById('quiz-feedback').textContent=course.quiz[3];
+      document.getElementById('course-finish').classList.remove('hidden');
+    }else{
+      document.getElementById('quiz-feedback').textContent='Non. Relis le dernier chapitre, je promets de ne presque pas juger.';
+    }
+  });
+}
+function finishCourse(){
+  if(!quizPassed&&!completed())return;
+  PROGRESS.completedCourses=Array.isArray(PROGRESS.completedCourses)?PROGRESS.completedCourses:[];
+  if(!PROGRESS.completedCourses.includes(course.id)){
+    PROGRESS.completedCourses.push(course.id);addXP(20);saveProgress();
+    if(typeof fireConfetti==='function')fireConfetti('badge');
+  }
+  document.getElementById('course-complete-mark').classList.add('visible');
+  document.getElementById('course-finish').classList.add('hidden');
+  document.getElementById('course-follow-up').classList.remove('hidden');
+  document.getElementById('quiz-feedback').textContent='Cours maîtrisé. +20 XP. Tu progresses dangereusement vite.';
+}
+document.title=`ChessQuest — ${course.title}`;
+document.getElementById('course-level').textContent=levelLabel(course.level);
+document.getElementById('course-title').textContent=course.title;
+document.getElementById('course-summary').textContent=course.summary;
+document.getElementById('course-duration').textContent=course.duration;
+document.getElementById('course-complete-mark').classList.toggle('visible',completed());
+const flatIndex=WRITTEN_COURSES.findIndex(item=>item.id===course.id);
+const nextCourse=WRITTEN_COURSES[flatIndex+1];
+document.getElementById('course-follow-up').href=nextCourse?`course.html?id=${encodeURIComponent(nextCourse.id)}`:'course-library.html';
+document.getElementById('course-follow-up').textContent=nextCourse?'Cours suivant →':'Retour à l’académie';
+document.getElementById('course-previous').onclick=()=>{if(sectionIndex>0){sectionIndex--;renderSection();}};
+document.getElementById('course-next').onclick=()=>{if(sectionIndex<course.sections.length-1){sectionIndex++;renderSection();}};
+document.getElementById('course-finish').onclick=finishCourse;
+renderQuiz();renderSection();
+if(completed()){quizPassed=true;document.getElementById('course-follow-up').classList.remove('hidden');}
+</script>
+</body>
+</html>

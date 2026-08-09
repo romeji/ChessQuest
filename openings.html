@@ -86,15 +86,8 @@
     </div>
   </section>
 </main>
-<div class="mode-bottom-dock opening-bottom-dock">
-  <button class="mode-menu-button" id="opening-menu-button" type="button" aria-expanded="false">☷</button>
+<div class="opening-lesson-cta">
   <button class="mode-primary-button" id="opening-next" type="button">Ouverture suivante</button>
-  <div class="mode-sheet hidden" id="opening-mode-sheet">
-    <strong>Apprendre les ouvertures</strong>
-    <a href="course-library.html#openings">📚 Bibliothèque de leçons</a>
-    <a href="learn.html">🗺 Carte des ouvertures</a>
-    <button type="button" id="opening-restart">↻ Recommencer cette ligne</button>
-  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -188,6 +181,7 @@ const startLocation = findCurriculumLesson(startKey);
 const backWorld = requestedWorld || (startLocation && startLocation.world.id) || 'fondations';
 const backIsland = requestedIsland || (startLocation && startLocation.island.id) || '';
 document.getElementById('opening-back').href = `learn.html?world=${encodeURIComponent(backWorld)}${backIsland ? `&island=${encodeURIComponent(backIsland)}` : ''}`;
+localStorage.setItem('cq-opening-last',JSON.stringify({key:startKey,world:backWorld,island:backIsland}));
 
 function nextCurriculumUrl(key){
   const locationData = findCurriculumLesson(key);
@@ -229,11 +223,6 @@ document.getElementById('opening-next').onclick = function(){
   const move = g.moves({verbose:true}).find(item => item.san === expected.san.replace(/[!?]+$/,''));
   if(move) flashSquares('#train-board',[move.from,move.to],'hint-square',1200);
 };
-const openingMenuButton=document.getElementById('opening-menu-button');
-const openingModeSheet=document.getElementById('opening-mode-sheet');
-openingMenuButton.onclick=()=>{const open=openingModeSheet.classList.toggle('hidden')===false;openingMenuButton.setAttribute('aria-expanded',String(open));};
-document.getElementById('opening-restart').onclick=()=>{openingModeSheet.classList.add('hidden');loadLine(currentLine,currentLineKey);};
-
 ensureTrainBoard();
 loadLine(OPENINGS[startKey],startKey);
 watchBoardResize('train-board',() => trainBoard,'.opening-final-board-wrap');

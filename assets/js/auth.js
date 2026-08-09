@@ -20,6 +20,16 @@ async function ensureQuestFirebaseAuth(){
   if(!firebase.auth) await loadQuestScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js');
   return firebase;
 }
+let questGoogleAuthPromise=null;
+async function signInToQuestWithGoogle(){
+  if(questGoogleAuthPromise)return questGoogleAuthPromise;
+  questGoogleAuthPromise=(async()=>{
+    await ensureQuestFirebaseAuth();
+    if(!firebase.apps.length)firebase.initializeApp(QUEST_FIREBASE_CONFIG);
+    return firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  })();
+  try{return await questGoogleAuthPromise;}finally{questGoogleAuthPromise=null;}
+}
 
 function showOnboardingStep(name){
   document.querySelectorAll('[data-onboarding-step]').forEach(step=>step.classList.toggle('hidden',step.dataset.onboardingStep!==name));
@@ -36,13 +46,20 @@ function initQuestAccountFlow(){
   const continueToChess=()=>showOnboardingStep('chesscom');
   document.getElementById('auth-offline-button').onclick=()=>{storeQuestUser(null);continueToChess();};
   document.getElementById('auth-google-button').onclick=async()=>{
+    const button=document.getElementById('auth-google-button');
+    if(button.disabled||questGoogleAuthPromise)return;
+    button.disabled=true;button.setAttribute('aria-busy','true');
     status.textContent='Ouverture de Google…';
     try{
-      await ensureQuestFirebaseAuth();
-      if(!firebase.apps.length) firebase.initializeApp(QUEST_FIREBASE_CONFIG);
-      const result=await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
+      const result=await signInToQuestWithGoogle();
       storeQuestUser(result.user); continueToChess();
-    }catch(error){status.textContent=error.code==='auth/operation-not-allowed'?'Active Google dans Firebase Authentication, puis réessaie.':(error.message||'Connexion impossible.');}
+    }catch(error){
+      status.textContent=error.code==='auth/operation-not-allowed'
+        ?'Active Google dans Firebase Authentication, puis réessaie.'
+        :error.code==='auth/cancelled-popup-request'
+          ?'Une connexion Google est déjà en cours. Termine-la dans la fenêtre ouverte.'
+          :(error.message||'Connexion impossible.');
+    }finally{button.disabled=false;button.removeAttribute('aria-busy');}
   };
   document.getElementById('onboarding-chesscom-next').onclick=async()=>{
     const input=document.getElementById('onboarding-chesscom');
@@ -52,8 +69,16 @@ function initQuestAccountFlow(){
       normalizeChessComUsername(username); chessStatus.textContent='Vérification du compte…';
       await chessComJson(`https://api.chess.com/pub/player/${encodeURIComponent(username)}`);
       const state=chessComState();state.username=username;PROGRESS.settings.chessComUsername=username;saveProgress();
-      let games=[];try{games=await syncChessCom(username,{force:true});}catch(error){if(!String(error.message).includes('Aucune archive'))throw error;}
-      chessStatus.textContent=games.length?`Compte trouvé · ${games.length} parties mémorisées.`:'Compte trouvé · joue ta première partie pour débloquer les analyses.';
+      let games=[];
+      try{
+        games=await syncChessCom(username,{force:true});
+        chessStatus.textContent=games.length?`Compte trouvé · ${games.length} parties mémorisées.`:'Compte trouvé · joue ta première partie pour débloquer les analyses.';
+      }catch(syncError){
+        // Le profil est déjà validé : une indisponibilité des archives ne doit pas
+        // bloquer le premier lancement. La synchronisation automatique réessaiera.
+        console.warn('[ChessQuest] Synchronisation Chess.com différée', syncError);
+        chessStatus.textContent='Compte trouvé · tes parties seront synchronisées en arrière-plan.';
+      }
       setTimeout(()=>startTour(),450);
     }catch(error){
       if(PROGRESS.account?.uid==='offline' && !navigator.onLine){const state=chessComState();state.username=username;PROGRESS.settings.chessComUsername=username;saveProgress();chessStatus.textContent='Pseudo enregistré hors connexion.';setTimeout(()=>startTour(),350);return;}
