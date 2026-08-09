@@ -27,6 +27,13 @@ let tgBoard = null;
 let tgOver = false;
 let tgBotThinking = false;
 let tgSelectedSquare = null;
+let tgSession = 0;
+
+function setTrainingRestartButton(isRestart){
+  const button=document.getElementById('resign-btn');
+  button.innerHTML=isRestart?'Nouvelle partie':'⚑&nbsp; Abandonner';
+  button.classList.toggle('new-game',isRestart);
+}
 
 /* ---- Messages du coach (choisis selon des indices simples, sans appel moteur) ---- */
 const COACH_DEV = ["Très bon coup ! Tu développes bien tes pièces.", "Bien vu, sortir cette pièce tôt est une bonne idée.", "Beau développement, continue comme ça !"];
@@ -123,6 +130,7 @@ function renderTgMoveLog(){
 }
 
 function newTrainingGame(){
+  tgSession++;
   tgGame = new Chess();
   tgOver = false;
   tgBotThinking = false;
@@ -136,6 +144,7 @@ function newTrainingGame(){
   setBotStatus("Ta partie contre l'ordinateur");
   document.getElementById('next-btn').disabled = true;
   document.getElementById('undo-btn').disabled = true;
+  setTrainingRestartButton(false);
   renderTgMoveLog();
   fitBoards('tg-board', tgBoard, '.training-final-board-wrap');
 }
@@ -158,7 +167,8 @@ function onTgDrop(source, target){
 
   tgBotThinking = true;
   setBotStatus('Le bot réfléchit…');
-  setTimeout(playBotMove, 550);
+  const session=tgSession;
+  setTimeout(()=>{if(session===tgSession)playBotMove();}, 550);
 }
 
 async function playBotMove(){
@@ -212,6 +222,7 @@ function checkTgGameOver(){
   if(!tgGame.game_over()) return false;
   tgOver = true;
   document.getElementById('next-btn').disabled = false;
+  setTrainingRestartButton(true);
   let result, won = false, crownReward = 0;
   if(tgGame.in_checkmate()){
     won = tgGame.turn() !== 'w';
@@ -236,12 +247,13 @@ function checkTgGameOver(){
 }
 
 document.getElementById('resign-btn').onclick = () => {
-  if(tgOver) return;
+  if(tgOver){newTrainingGame();return;}
   if(!confirm('Abandonner cette partie ?')) return;
   tgOver = true;
   setBotStatus('Partie abandonnée.');
   showCoach('Partie abandonnée — pas grave, la prochaine sera la bonne !', '🤝');
   document.getElementById('next-btn').disabled = false;
+  setTrainingRestartButton(true);
   recordActivity();
   addXP(5);
 };

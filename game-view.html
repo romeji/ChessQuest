@@ -47,7 +47,6 @@
         <div class="review-players"><article><span class="review-piece white">♙</span><div><strong id="review-white-name">Blancs</strong><small id="review-white-elo">—</small></div></article><span class="review-versus">VS</span><article><span class="review-piece black">♟</span><div><strong id="review-black-name">Noirs</strong><small id="review-black-elo">—</small></div></article></div>
         <div class="review-accuracy"><article><strong id="review-white-accuracy">—</strong><small>Blancs</small></article><div><span>Précision</span><small>Qualité globale des coups</small></div><article><strong id="review-black-accuracy">—</strong><small>Noirs</small></article></div>
         <section class="review-breakdown-card"><h2>Qualité des coups</h2><div id="review-breakdown-rows" class="review-breakdown"></div></section>
-        <section class="review-breakdown-card" id="review-issues-card"><h2>Erreurs à revoir</h2><div id="review-issue-buttons" class="review-issue-buttons"></div></section>
         <section class="review-breakdown-card"><h2>Les trois phases</h2><div id="review-phase-rows" class="review-phases"></div></section>
         <button id="review-start" class="review-start-button">Démarrer le bilan</button>
       </section>
@@ -246,13 +245,6 @@ function renderErrorsTab(){
   document.getElementById('error-cards').querySelectorAll('.error-view-btn').forEach(btn => {
     btn.onclick = () => openIssueReview(parseInt(btn.dataset.idx,10));
   });
-  const shortcutWrap=document.getElementById('review-issue-buttons');
-  const shortcutCard=document.getElementById('review-issues-card');
-  if(shortcutWrap && shortcutCard){
-    shortcutCard.classList.toggle('hidden',flat.length===0);
-    shortcutWrap.innerHTML=flat.map((r,i)=>`<button type="button" data-review-issue="${r.idx}"><span>${r.info.glyph}</span><strong>Erreur ${i+1}</strong><small>${describeSanMove(r.san)}</small></button>`).join('');
-    shortcutWrap.querySelectorAll('[data-review-issue]').forEach(button=>button.onclick=()=>openIssueReview(Number(button.dataset.reviewIssue)));
-  }
 }
 document.querySelectorAll('.analysis-tabs button').forEach(btn => {
   btn.onclick = function(){
@@ -301,7 +293,11 @@ function renderReviewOverview(headers, sums, whiteAcc, blackAcc){
   const rows = [
     ['best','Meilleurs','★','#72b944'],['good','Très bons','!','#5d9bd3'],['inaccuracy','Imprécisions','?!','#e8b846'],['mistake','Erreurs','?','#f59a4a'],['blunder','Gaffes','??','#ef5953']
   ];
-  document.getElementById('review-breakdown-rows').innerHTML = rows.map(([key,label,glyph,color])=>`<div><strong>${sums.w[key]||0}</strong><span><i style="--review-color:${color}">${glyph}</i>${label}</span><strong>${sums.b[key]||0}</strong></div>`).join('');
+  document.getElementById('review-breakdown-rows').innerHTML = rows.map(([key,label,glyph,color])=>{
+    const count=(sums.w[key]||0)+(sums.b[key]||0);
+    return `<button type="button" data-review-class="${key}" ${count?'':'disabled'}><strong>${sums.w[key]||0}</strong><span><i style="--review-color:${color}">${glyph}</i>${label}</span><strong>${sums.b[key]||0}</strong></button>`;
+  }).join('');
+  document.querySelectorAll('[data-review-class]').forEach(button=>button.onclick=()=>openClassReview(button.dataset.reviewClass));
   const third = Math.max(1,Math.ceil(analysisResults.length/3));
   const phases = [['Ouverture',0,third],['Milieu de jeu',third,third*2],['Finale',third*2,analysisResults.length]];
   document.getElementById('review-phase-rows').innerHTML = phases.map(([label,start,end])=>{
@@ -373,7 +369,7 @@ function goToPly(idx){
   if(currentLabel) currentLabel.textContent = `${r.info.glyph} ${r.info.label} · ${describeSanMove(r.bestSan)}`;
   ['nav-prev','review-prev'].forEach(id=>{ const el=document.getElementById(id); if(el) el.disabled=idx===0; });
   ['nav-next'].forEach(id=>{ const el=document.getElementById(id); if(el) el.disabled=idx===analysisResults.length-1; });
-  const issues = issueIndexes();
+  const issues = reviewIndexes();
   const issuePos = issues.indexOf(idx);
   const previousIssue = document.getElementById('review-prev');
   const nextIssue = document.getElementById('review-next');
@@ -387,17 +383,29 @@ function goToPly(idx){
   document.getElementById('move-comment-box').innerHTML = `<div class="analysis-mascot-comment"><img src="${mascot}" alt="Réaction du coach"><div><span class="tag tag-${r.info.cls}">${r.info.glyph} ${r.info.label}</span><p>${escapeHtml(naturalAdvice)}</p></div></div>`;
   if(typeof showMascotReaction === 'function') showMascotReaction(r.info.cls,'',{message:naturalAdvice,severity:r.drop,imageSelector:'.analysis-mascot-comment img',textSelector:'.analysis-mascot-comment p',speak:false});
 }
-function issueIndexes(){
-  return analysisResults.map((r,index)=>['inaccuracy','mistake','blunder'].includes(r.info.cls)?index:-1).filter(index=>index>=0);
+let activeReviewClass=null;
+function reviewIndexes(){
+  const allowed=activeReviewClass ? [activeReviewClass] : ['inaccuracy','mistake','blunder'];
+  return analysisResults.map((r,index)=>allowed.includes(r.info.cls)?index:-1).filter(index=>index>=0);
 }
 function openIssueReview(idx){
+  activeReviewClass=null;
   document.body.classList.remove('review-summary-active');
   document.getElementById('review-controls').classList.remove('hidden');
   goToPly(idx);
   setTimeout(()=>ensureAnalysisBoard(),80);
 }
-function stepIssue(direction){
-  const issues=issueIndexes();
+function openClassReview(className){
+  activeReviewClass=className;
+  const indexes=reviewIndexes();
+  if(!indexes.length)return;
+  document.body.classList.remove('review-summary-active');
+  document.getElementById('review-controls').classList.remove('hidden');
+  goToPly(indexes[0]);
+  setTimeout(()=>ensureAnalysisBoard(),80);
+}
+function stepReview(direction){
+  const issues=reviewIndexes();
   if(!issues.length)return;
   const current=issues.indexOf(analysisIndex);
   const target=current<0?(direction>0?0:issues.length-1):Math.max(0,Math.min(issues.length-1,current+direction));
@@ -416,9 +424,9 @@ document.getElementById('review-back').onclick = () => {
   document.getElementById('review-controls').classList.add('hidden');
   window.scrollTo({top:0,behavior:'smooth'});
 };
-document.getElementById('review-prev').onclick = () => stepIssue(-1);
-document.getElementById('review-next').onclick = () => stepIssue(1);
-document.getElementById('review-follow').onclick = () => stepIssue(1);
+document.getElementById('review-prev').onclick = () => stepReview(-1);
+document.getElementById('review-next').onclick = () => stepReview(1);
+document.getElementById('review-follow').onclick = () => stepReview(1);
 document.getElementById('review-explain').onclick = () => goToPly(analysisIndex);
 document.getElementById('review-best').onclick = () => {
   const r=analysisResults[analysisIndex]; if(!r) return;

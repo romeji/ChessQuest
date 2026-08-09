@@ -92,3 +92,64 @@ body.cq-has-tabbar .shop-content,
 body.cq-has-tabbar .secret-hub{
   padding-bottom:calc(var(--cq-tabbar-height) + 20px)!important;
 }
+
+/* Ajustements de composition communs aux vues plein écran. */
+body.home-final-page .app{padding-top:0!important}
+body.home-final-page .page{padding-top:0!important}
+body.home-final-page .home-final-head{
+  min-height:calc(48px + env(safe-area-inset-top,0px))!important;
+  padding-top:env(safe-area-inset-top,0px)!important;
+}
+
+body.cq-has-tabbar.puzzle-final-page .app{
+  padding-bottom:calc(var(--cq-tabbar-height) + 3px)!important;
+}
+body.cq-has-tabbar.puzzle-final-page .page{padding-bottom:2px!important}
+body.cq-has-tabbar.puzzle-final-page .puzzle-final-board-wrap{
+  width:min(calc(100% - 8px),calc(100dvh - 300px),406px)!important;
+  max-width:406px!important;
+  margin-bottom:15px!important;
+}
+body.cq-has-tabbar.puzzle-final-page .puzzle-final-feedback:not(.prompt){
+  position:static!important;
+  order:4!important;
+  min-height:54px!important;
+  margin:0!important;
+}
+body.cq-has-tabbar.puzzle-final-page .puzzle-final-streak{order:5!important}
+
+body.cq-has-tabbar.opening-map-page .opening-map-dock{
+  bottom:calc(var(--cq-tabbar-height) + 2px)!important;
+  padding:0 8px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+}
+body.cq-has-tabbar.problem-journey-page .problem-journey-actions{
+  bottom:2px!important;
+}
+body.cq-has-tabbar.problem-journey-page .problem-journey-progress{
+  bottom:64px!important;
+}
+body.cq-has-tabbar.problem-journey-page .problem-journey-menu{
+  bottom:62px!important;
+}
+
+body.analysis-review-page:not(.review-summary-active) .review-controls{
+  position:relative!important;
+  z-index:20!important;
+  margin-top:8px!important;
+  padding-top:10px!important;
+}
+body.training-final-page #resign-btn.new-game{
+  border-color:#3e9b54!important;
+  background:linear-gradient(180deg,#35a85b,#167643)!important;
+  color:#fff!important;
+}
+@media(max-height:730px){
+  body.analysis-review-page:not(.review-summary-active) .board-frame{
+    width:min(calc(100vw - 24px),calc(100dvh - 335px),340px)!important;
+  }
+}

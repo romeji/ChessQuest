@@ -1,5 +1,5 @@
 /* Mise à jour PWA globale : ce fichier est aussi chargé par les mondes plein écran. */
-const QUEST_NAVIGATION_VERSION = '73';
+const QUEST_NAVIGATION_VERSION = '74';
 const QUEST_NAVIGATION_STYLESHEET = new URL(
   `../css/navigation.css?v=${QUEST_NAVIGATION_VERSION}`,
   document.currentScript?.src || document.baseURI
