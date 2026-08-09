@@ -165,7 +165,9 @@ async function playBotMove(){
   const diff = currentBotLevel();
   const fen = tgGame.fen();
   let res;
-  const randomRate = botElo <= 400 ? .82 : botElo <= 600 ? .66 : botElo <= 800 ? .48 : botElo <= 1000 ? .30 : botElo <= 1200 ? .16 : .04;
+  /* Les premiers niveaux doivent vraiment laisser le temps d'apprendre :
+     le moteur reste présent, mais joue très souvent un coup calme sous 800 ELO. */
+  const randomRate = botElo <= 400 ? .96 : botElo <= 600 ? .84 : botElo <= 800 ? .64 : botElo <= 1000 ? .40 : botElo <= 1200 ? .20 : .04;
   if(Math.random() < randomRate){
     const legal = tgGame.moves({verbose:true});
     const quiet = legal.filter(move => !move.captured && !move.san.includes('+'));

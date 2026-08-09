@@ -41,6 +41,13 @@ function fitOneBoard(boardId, pageSelector, reserveSelector){
       - (parseFloat(parentStyle.paddingLeft)||0) - (parseFloat(parentStyle.paddingRight)||0);
     if(parentInner > 0) pageInner = Math.min(pageInner, parentInner);
   }
+  // Dernier garde-fou : la place réellement visible à droite du cadre. Cette
+  // mesure neutralise les anciens conteneurs centrés ou dimensionnés en
+  // content-box qui pouvaient encore rogner 8 à 20 px sur iPhone/PWA.
+  const frameRect = frameEl.getBoundingClientRect();
+  const viewportWidth = Math.min(window.innerWidth || Infinity, document.documentElement.clientWidth || Infinity);
+  const visibleFromFrame = viewportWidth - Math.max(0, frameRect.left) - 12;
+  if(Number.isFinite(visibleFromFrame) && visibleFromFrame > 96) pageInner = Math.min(pageInner, visibleFromFrame);
   // Si un élément voisin (ex. barre d'évaluation) partage la largeur disponible
   // avec l'échiquier, on retire sa largeur réelle + une petite marge (gap).
   if(reserveSelector){

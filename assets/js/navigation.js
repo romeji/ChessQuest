@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <a class="tabbar-item" data-tab="home" href="index.html" aria-label="Accueil">
         <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg><span>Accueil</span>
       </a>
-      <a class="tabbar-item" data-tab="puzzles" href="puzzles.html" aria-label="Problèmes">
+      <a class="tabbar-item" data-tab="puzzles" href="problems.html" aria-label="Problèmes">
         <svg viewBox="0 0 24 24" class="tabicon"><path d="M9 3h6v4a3 3 0 1 0 3 3h3v11h-6v-3a3 3 0 1 0-3 3H3v-7h4a3 3 0 1 0 0-6H3V3h6Z"/></svg><span>Problèmes</span>
       </a>
       <a class="tabbar-item" data-tab="learn" href="academy.html" aria-label="Apprendre">

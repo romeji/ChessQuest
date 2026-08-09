@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="assets/css/final-views.css">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=51">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=55">
 </head>
 <body data-page="home" class="final-shell-page home-final-page">
 <div id="toast-container"></div>
@@ -120,7 +121,11 @@
 <script src="assets/js/navigation.js"></script>
 <script>
 if('scrollRestoration' in history) history.scrollRestoration='manual';
-const resetHomeScroll=()=>requestAnimationFrame(()=>window.scrollTo({top:0,left:0,behavior:'auto'}));
+const resetHomeScroll=()=>requestAnimationFrame(()=>{
+  window.scrollTo({top:0,left:0,behavior:'auto'});
+  const app=document.querySelector('.app');if(app)app.scrollTop=0;
+  document.documentElement.scrollTop=0;document.body.scrollTop=0;
+});
 window.addEventListener('pageshow',resetHomeScroll);document.addEventListener('DOMContentLoaded',resetHomeScroll);
 function renderHomeTab(){
   const streak = computeCurrentStreak();

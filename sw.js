@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v54';
+const CACHE_VERSION = 'chessquest-v56';
 const APP_SHELL = [
   './',
   './index.html',
@@ -10,6 +10,7 @@ const APP_SHELL = [
   './daily-challenge.html',
   './coach.html',
   './puzzles.html',
+  './problems.html',
   './analysis.html',
   './game-view.html',
   './progress.html',
@@ -34,6 +35,8 @@ const APP_SHELL = [
   './assets/css/final-views.css',
   './assets/css/responsive-hardening.css',
   './assets/css/gamification.css',
+  './assets/css/ux-refinement.css',
+  './assets/css/problem-journey.css',
   './assets/css/home.css',
   './assets/css/learn.css',
   './assets/css/academy-journey.css',
@@ -55,6 +58,7 @@ const APP_SHELL = [
   './assets/js/opening-curriculum.js',
   './assets/js/training.js',
   './assets/js/puzzles.js',
+  './assets/js/problem-journey.js',
   './assets/js/firebase-sync.js',
   './assets/js/auth.js',
   './assets/js/courses.js',
@@ -98,7 +102,8 @@ const APP_SHELL = [
   './assets/illustrations/analysis-hero-chess.png',
   './assets/illustrations/rewards-spritesheet.png',
   './assets/illustrations/training-menu-hero.png',
-  './assets/images/academy/learning-journey-v1.png'
+  './assets/images/academy/learning-journey-v1.png',
+  './assets/images/puzzles/problem-journey-v1.png'
 ];
 
 self.addEventListener('install', event => {

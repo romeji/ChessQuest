@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/components.css">
 <link rel="stylesheet" href="assets/css/gamification.css?v=50">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=55">
 </head>
 <body class="academy-page">
 <main class="academy-shell">
@@ -51,7 +52,18 @@ document.querySelectorAll('[data-level]').forEach(button=>button.onclick=()=>{
 });
 const completedCount=(PROGRESS.completedCourses||[]).filter(id=>writtenCourseById(id)).length;
 document.getElementById('academy-total-progress').textContent=`${completedCount} cours maîtrisé${completedCount>1?'s':''} sur ${WRITTEN_COURSES.length}`;
-renderCourses(0);
+function recommendedAcademyLevel(){
+  const state=PROGRESS.chessCom||{};
+  const rapid=Number(state.stats?.chess_rapid?.last?.rating);
+  const games=Array.isArray(state.games)?state.games:[];
+  const username=String(state.username||PROGRESS.settings?.chessComUsername||'').toLowerCase();
+  const latest=games.map(game=>String(game.white?.username||'').toLowerCase()===username?Number(game.white?.rating):Number(game.black?.rating)).find(Number.isFinite);
+  const elo=Number.isFinite(rapid)?rapid:(Number.isFinite(latest)?latest:0);
+  if(elo>=1800)return 1800;if(elo>=1200)return 1200;if(elo>=700)return 700;if(elo>=300)return 300;return 0;
+}
+const initialLevel=recommendedAcademyLevel();
+document.querySelectorAll('[data-level]').forEach(button=>button.classList.toggle('active',Number(button.dataset.level)===initialLevel));
+renderCourses(initialLevel);
 const featured=['italienne','espagnole','qgd','qga','slav','najdorf','carokann','francaise'].filter(key=>OPENINGS[key]);
 document.getElementById('academy-openings').innerHTML=featured.map(key=>`<a href="openings.html?opening=${encodeURIComponent(key)}"><strong>${escapeHtml(OPENINGS[key].name)}</strong><small>${escapeHtml(OPENINGS[key].intro||'Comprendre les idées de cette ouverture.')}</small><span>Lire et pratiquer ›</span></a>`).join('');
 </script>

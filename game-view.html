@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=55">
 </head>
 <body data-page="analyze" class="final-shell-page analysis-review-page">
 <div id="toast-container"></div>
@@ -40,6 +41,16 @@
     </div>
 
     <div id="analysis-results" style="display:none;margin-top:4px;">
+      <section id="review-overview" class="review-overview">
+        <div class="review-hero-comment"><img src="assets/illustrations/mascot-knight-home.png" alt="Coach ChessQuest"><div><strong>Bilan royal</strong><p id="review-overview-copy">Je passe chaque coup au peigne fin. Oui, même celui que tu espérais oublier.</p></div></div>
+        <div class="review-chart-card"><div class="review-chart-heading"><strong>Évolution de la partie</strong><span id="review-result-label"></span></div><svg id="review-eval-chart" viewBox="0 0 640 150" preserveAspectRatio="none" role="img" aria-label="Évolution de l'évaluation"></svg></div>
+        <div class="review-players"><article><span class="review-piece white">♙</span><div><strong id="review-white-name">Blancs</strong><small id="review-white-elo">—</small></div></article><span class="review-versus">VS</span><article><span class="review-piece black">♟</span><div><strong id="review-black-name">Noirs</strong><small id="review-black-elo">—</small></div></article></div>
+        <div class="review-accuracy"><article><strong id="review-white-accuracy">—</strong><small>Blancs</small></article><div><span>Précision</span><small>Qualité globale des coups</small></div><article><strong id="review-black-accuracy">—</strong><small>Noirs</small></article></div>
+        <section class="review-breakdown-card"><h2>Qualité des coups</h2><div id="review-breakdown-rows" class="review-breakdown"></div></section>
+        <section class="review-breakdown-card"><h2>Les trois phases</h2><div id="review-phase-rows" class="review-phases"></div></section>
+        <button id="review-start" class="review-start-button">Démarrer le bilan</button>
+      </section>
+      <div id="review-eval" class="review-eval review-detail-only"><strong id="review-eval-label">+0.0</strong><div><i id="review-eval-fill"></i></div></div>
       <div class="game-info-row" id="game-info-row"></div>
       <div class="accuracy-row" id="accuracy-row"></div>
       <div class="feedback-box analysis-review-comment" id="move-comment-box">Sélectionne un coup pour voir le commentaire du coach.</div>
@@ -86,6 +97,11 @@
       <p class="section-sub">Analyse par Stockfish (WASM), ~0,45 s par position. Repli automatique sur un moteur maison si Stockfish ne charge pas.</p>
     </div>
 
+      <div id="review-controls" class="review-controls hidden">
+        <div class="review-move-strip"><button id="review-prev" aria-label="Coup précédent">‹</button><div><strong id="review-current-move">1. e4</strong><small id="review-current-label">Début de partie</small></div><button id="review-next" aria-label="Coup suivant">›</button></div>
+        <div class="review-actions"><button id="review-explain">💬 Afficher</button><button id="review-best">★ Meilleur</button><button id="review-retry">↻ Réessayer</button><button id="review-follow">Suivant →</button></div>
+        <button id="review-back" class="review-back-summary">← Retour au résumé</button>
+      </div>
     <div id="no-game-msg" class="hidden">
       <p class="section-sub">Aucune partie sélectionnée. Retourne à la liste de tes parties pour en choisir une.</p>
     </div>
@@ -138,6 +154,8 @@ function updateEvalBar(r){
   const whiteMate = r.whiteMate !== undefined ? r.whiteMate : null;
   const pct = winPercentFromCp(whiteScore, whiteMate);
   document.getElementById('eval-bar-black').style.height = (100 - pct) + '%';
+  const reviewFill = document.getElementById('review-eval-fill');
+  if(reviewFill) reviewFill.style.width = pct + '%';
   const label = document.getElementById('eval-bar-label');
   if(whiteMate !== null){
     label.textContent = 'M' + Math.abs(whiteMate);
@@ -145,6 +163,8 @@ function updateEvalBar(r){
     const pawns = whiteScore / 100;
     label.textContent = (pawns >= 0 ? '+' : '') + pawns.toFixed(1);
   }
+  const reviewLabel = document.getElementById('review-eval-label');
+  if(reviewLabel) reviewLabel.textContent = label.textContent;
 }
 
 function adviceFor(r){
@@ -242,6 +262,47 @@ function summaryLines(s){
     <div class="stat-line"><span>Erreurs</span><span>${s.mistake}</span></div>
     <div class="stat-line"><span>Gaffes</span><span>${s.blunder}</span></div>`;
 }
+function phaseScore(color, start, end){
+  const moves = analysisResults.slice(start,end).filter(r => r.color===color);
+  if(!moves.length) return 100;
+  return moves.reduce((sum,r)=>sum+moveAccuracy(r.drop),0)/moves.length;
+}
+function phaseMark(score){
+  if(score>=90) return ['★','Excellent'];
+  if(score>=78) return ['✓','Solide'];
+  if(score>=62) return ['!','À travailler'];
+  return ['?','Fragile'];
+}
+function renderReviewOverview(headers, sums, whiteAcc, blackAcc){
+  const white = headers.White || 'Blancs', black = headers.Black || 'Noirs';
+  document.getElementById('review-white-name').textContent = white;
+  document.getElementById('review-black-name').textContent = black;
+  document.getElementById('review-white-elo').textContent = headers.WhiteElo ? `${headers.WhiteElo} ELO` : 'Classement inconnu';
+  document.getElementById('review-black-elo').textContent = headers.BlackElo ? `${headers.BlackElo} ELO` : 'Classement inconnu';
+  document.getElementById('review-white-accuracy').textContent = whiteAcc.toFixed(1);
+  document.getElementById('review-black-accuracy').textContent = blackAcc.toFixed(1);
+  document.getElementById('review-result-label').textContent = headers.Result || '';
+  const gap = Math.abs(whiteAcc-blackAcc);
+  const copy = gap < 4 ? 'Partie très équilibrée. On regarde ensemble où elle a vraiment basculé ?' : (whiteAcc>blackAcc ? `${white} a été plus précis. Voyons les coups qui ont construit cet avantage.` : `${black} a été plus précis. Rien de tragique : les erreurs savent très bien enseigner.`);
+  document.getElementById('review-overview-copy').textContent = copy;
+  const chart = document.getElementById('review-eval-chart');
+  const values = analysisResults.map(r=>Math.max(-600,Math.min(600,r.whiteScore||0)));
+  const pts = values.map((v,i)=>`${(i/Math.max(1,values.length-1))*640},${75-(v/600)*65}`).join(' ');
+  const area = values.length ? `0,75 ${pts} 640,75` : '0,75 640,75';
+  chart.innerHTML = `<defs><linearGradient id="reviewGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#54bd72" stop-opacity=".8"/><stop offset="1" stop-color="#54bd72" stop-opacity=".08"/></linearGradient></defs><line x1="0" y1="75" x2="640" y2="75" stroke="#cabf9f" stroke-width="2"/><polygon points="${area}" fill="url(#reviewGreen)"/><polyline points="${pts}" fill="none" stroke="#16764a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const rows = [
+    ['best','Meilleurs','★','#72b944'],['good','Très bons','!','#5d9bd3'],['inaccuracy','Imprécisions','?!','#e8b846'],['mistake','Erreurs','?','#f59a4a'],['blunder','Gaffes','??','#ef5953']
+  ];
+  document.getElementById('review-breakdown-rows').innerHTML = rows.map(([key,label,glyph,color])=>`<div><strong>${sums.w[key]||0}</strong><span><i style="--review-color:${color}">${glyph}</i>${label}</span><strong>${sums.b[key]||0}</strong></div>`).join('');
+  const third = Math.max(1,Math.ceil(analysisResults.length/3));
+  const phases = [['Ouverture',0,third],['Milieu de jeu',third,third*2],['Finale',third*2,analysisResults.length]];
+  document.getElementById('review-phase-rows').innerHTML = phases.map(([label,start,end])=>{
+    const w=phaseScore('w',start,end), b=phaseScore('b',start,end), wm=phaseMark(w), bm=phaseMark(b);
+    return `<div><span><i>${wm[0]}</i><small>${Math.round(w)}%</small></span><strong>${label}</strong><span><i>${bm[0]}</i><small>${Math.round(b)}%</small></span></div>`;
+  }).join('');
+  document.body.classList.add('review-summary-active');
+  document.getElementById('review-controls').classList.add('hidden');
+}
 function renderAnalysis(headers){
   document.getElementById('analysis-results').style.display = 'block';
   document.querySelectorAll('.analysis-tabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab==='summary'));
@@ -267,6 +328,7 @@ function renderAnalysis(headers){
   analysisResults.forEach(r => accByColor[r.color].push(moveAccuracy(r.drop)));
   const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 100;
   const whiteAcc = avg(accByColor.w), blackAcc = avg(accByColor.b);
+  renderReviewOverview(headers, sums, whiteAcc, blackAcc);
   document.getElementById('accuracy-row').innerHTML = `
     <div class="acc-card"><div class="acc-label">${escapeHtml(white)}</div><div class="acc-value">${whiteAcc.toFixed(1)}%</div><div class="acc-sub">Précision</div></div>
     <div class="acc-vs">vs</div>
@@ -297,6 +359,12 @@ function goToPly(idx){
   highlightMove('#board', r.from, r.to);
   updateEvalBar(r);
   document.querySelectorAll('.move-chip').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.idx,10)===idx));
+  const currentMove = document.getElementById('review-current-move');
+  const currentLabel = document.getElementById('review-current-label');
+  if(currentMove) currentMove.textContent = `${r.moveNumber}${r.color==='b'?'…':'.'} ${r.san}`;
+  if(currentLabel) currentLabel.textContent = `${r.info.glyph} ${r.info.label} · meilleur : ${r.bestSan}`;
+  ['nav-prev','review-prev'].forEach(id=>{ const el=document.getElementById(id); if(el) el.disabled=idx===0; });
+  ['nav-next','review-next','review-follow'].forEach(id=>{ const el=document.getElementById(id); if(el) el.disabled=idx===analysisResults.length-1; });
   const mood = typeof mascotMoodFor === 'function' ? mascotMoodFor(r.info.cls,r.drop) : 'encourage';
   const mascot = typeof MASCOT_ASSETS !== 'undefined' ? MASCOT_ASSETS[mood] : 'assets/illustrations/mascot-knight-home.png';
   document.getElementById('move-comment-box').innerHTML = `<div class="analysis-mascot-comment"><img src="${mascot}" alt="Réaction du coach"><div><span class="tag tag-${r.info.cls}">${r.info.glyph} ${r.info.label}</span><p>${escapeHtml(r.advice)}</p></div></div>`;
@@ -306,6 +374,33 @@ document.getElementById('nav-start').onclick = () => goToPly(0);
 document.getElementById('nav-prev').onclick = () => goToPly(analysisIndex-1);
 document.getElementById('nav-next').onclick = () => goToPly(analysisIndex+1);
 document.getElementById('nav-end').onclick = () => goToPly(analysisResults.length-1);
+document.getElementById('review-start').onclick = () => {
+  document.body.classList.remove('review-summary-active');
+  document.getElementById('review-controls').classList.remove('hidden');
+  const firstIssue = analysisResults.findIndex(r => ['inaccuracy','mistake','blunder'].includes(r.info.cls));
+  goToPly(firstIssue >= 0 ? firstIssue : 0);
+  setTimeout(()=>ensureAnalysisBoard(),80);
+};
+document.getElementById('review-back').onclick = () => {
+  document.body.classList.add('review-summary-active');
+  document.getElementById('review-controls').classList.add('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+document.getElementById('review-prev').onclick = () => goToPly(analysisIndex-1);
+document.getElementById('review-next').onclick = () => goToPly(analysisIndex+1);
+document.getElementById('review-follow').onclick = () => goToPly(analysisIndex+1);
+document.getElementById('review-explain').onclick = () => goToPly(analysisIndex);
+document.getElementById('review-best').onclick = () => {
+  const r=analysisResults[analysisIndex]; if(!r) return;
+  const position=new Chess(r.fenBefore); const best=position.move(r.bestSan,{sloppy:true});
+  if(best){ analysisBoard.position(position.fen()); highlightMove('#board',best.from,best.to); }
+  document.getElementById('move-comment-box').innerHTML = `<div class="analysis-mascot-comment"><img src="assets/illustrations/mascot-knight-home.png" alt="Coach"><div><span class="tag tag-best">★ Meilleur coup</span><p>${escapeHtml(r.bestSan)} était la continuation la plus forte. Observe la pièce développée et les cases qu'elle contrôle.</p></div></div>`;
+};
+document.getElementById('review-retry').onclick = () => {
+  const r=analysisResults[analysisIndex]; if(!r) return;
+  analysisBoard.position(r.fenBefore); clearHighlights('#board');
+  document.getElementById('move-comment-box').innerHTML = `<div class="analysis-mascot-comment"><img src="assets/illustrations/mascot-knight-home.png" alt="Coach"><div><span class="tag">À toi</span><p>Retrouve le meilleur coup. Je juge en silence — enfin, j'essaie.</p></div></div>`;
+};
 document.addEventListener('keydown', (e) => {
   const active = document.activeElement;
   if(active && (active.tagName === 'TEXTAREA' || active.tagName === 'INPUT')) return;
