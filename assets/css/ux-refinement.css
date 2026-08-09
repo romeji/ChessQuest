@@ -11,6 +11,8 @@
 body nav.tabbar{box-sizing:border-box!important;left:50%!important;right:auto!important;bottom:-1px!important;width:min(100%,430px)!important;height:var(--tabbar-height)!important;min-height:0!important;transform:translate3d(-50%,0,0)!important;padding:2px 4px var(--tabbar-safe-bottom)!important;border-width:1px 0 0!important;border-color:#e6dcc2!important;border-radius:0!important;background:#fffdf8!important;background-clip:border-box!important;box-shadow:0 -8px 25px rgba(0,21,14,.35)!important}
 body nav.tabbar .tabbar-item{min-height:0!important;height:47px!important;gap:1px!important;padding:1px!important;border-radius:10px!important;color:#8d8999!important}
 body nav.tabbar .tabbar-item.active{background:#eaf5e6!important;color:#177b4e!important}
+body nav.tabbar::after{content:"";position:absolute;z-index:0;left:0;right:0;top:calc(100% - 1px);height:96px;background:#fffdf8;pointer-events:none}
+body nav.tabbar .tabbar-item{z-index:1}
 body nav.tabbar .tabbar-item .tabicon{width:20px!important;height:20px!important}
 body nav.tabbar .tabbar-item span{font-size:.56rem!important;line-height:1!important}
 .academy-journey-page .academy-actions{bottom:calc(var(--tabbar-height) + 5px)!important}.academy-journey-page .academy-progress-panel{bottom:calc(var(--tabbar-height) + 69px)!important}
@@ -21,8 +23,9 @@ body nav.tabbar .tabbar-item span{font-size:.56rem!important;line-height:1!impor
 @media (display-mode:standalone){html,body{min-height:100%;min-height:100dvh}body nav.tabbar{position:fixed!important;bottom:-1px!important;margin:0!important}}
 
 /* Sur iOS, un body lui-même fixed crée un faux viewport qui s'arrête avant la zone Home. */
-html.problem-journey-document,html.problem-journey-document body,html.academy-journey-document,html.academy-journey-document body{position:relative!important;inset:auto!important;width:100%!important;height:100dvh!important;min-height:100dvh!important;overflow:hidden!important}
+html.problem-journey-document,html.problem-journey-document body,html.academy-journey-document,html.academy-journey-document body{position:relative!important;inset:auto!important;width:100%!important;height:100dvh!important;min-height:100dvh!important;overflow:visible!important}
 html.problem-journey-document,html.problem-journey-document body,html.academy-journey-document,html.academy-journey-document body{background:#fffdf8!important}
+.problem-journey,.academy-journey{position:fixed!important;inset:0!important;height:auto!important;overflow:hidden!important}
 
 /* En-têtes de jeu stables : aucun titre ne peut passer sous un bouton. */
 .puzzle-final-page .final-page-title,.training-final-page .final-page-title,.opening-final-page .final-page-title{
