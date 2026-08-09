@@ -3,6 +3,7 @@
 :root{
   --cq-tabbar-content-height:48px;
   --cq-tabbar-safe-bottom:env(safe-area-inset-bottom,0px);
+  --cq-tabbar-controls-bottom:max(3px,calc(var(--cq-tabbar-safe-bottom) - 8px));
   --cq-tabbar-height:calc(var(--cq-tabbar-content-height) + var(--cq-tabbar-safe-bottom));
   --tabbar-height:var(--cq-tabbar-height);
 }
@@ -17,9 +18,9 @@ body nav.tabbar{
   height:var(--cq-tabbar-height)!important;
   min-height:var(--cq-tabbar-height)!important;
   margin:0!important;
-  padding:2px 4px var(--cq-tabbar-safe-bottom)!important;
+  padding:2px 4px var(--cq-tabbar-controls-bottom)!important;
   display:flex!important;
-  align-items:stretch!important;
+  align-items:flex-end!important;
   justify-content:space-around!important;
   transform:translateX(-50%)!important;
   border:0!important;
@@ -57,6 +58,6 @@ body nav.tabbar .tabbar-item span{font-size:.56rem!important;line-height:1!impor
 @media (display-mode:standalone){
   body nav.tabbar{
     bottom:0!important;
-    padding-bottom:env(safe-area-inset-bottom,0px)!important;
+    padding-bottom:var(--cq-tabbar-controls-bottom)!important;
   }
 }
