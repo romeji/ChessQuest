@@ -2,7 +2,7 @@
 (function initQuestPwaUpdate(){
   window.__CQ_PWA_UPDATE__ = true;
   if(!('serviceWorker' in navigator) || location.protocol === 'file:') return;
-  const version = '61';
+  const version = '62';
   let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if(refreshing || sessionStorage.getItem(`cq-sw-reload-${version}`)) return;
