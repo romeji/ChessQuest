@@ -23,7 +23,7 @@ body nav.tabbar .tabbar-item span{font-size:.56rem!important;line-height:1!impor
 @media (display-mode:standalone){html,body{min-height:100%;min-height:100dvh}body nav.tabbar{position:fixed!important;bottom:-1px!important;margin:0!important}}
 
 /* Sur iOS, un body lui-même fixed crée un faux viewport qui s'arrête avant la zone Home. */
-html.problem-journey-document,html.problem-journey-document body,html.academy-journey-document,html.academy-journey-document body{position:relative!important;inset:auto!important;width:100%!important;height:100dvh!important;min-height:100dvh!important;overflow:visible!important}
+html.problem-journey-document,html.problem-journey-document body,html.academy-journey-document,html.academy-journey-document body{position:static!important;inset:auto!important;width:auto!important;height:auto!important;min-height:0!important;overflow:visible!important}
 html.problem-journey-document,html.problem-journey-document body,html.academy-journey-document,html.academy-journey-document body{background:#fffdf8!important}
 .problem-journey,.academy-journey{position:fixed!important;inset:0!important;height:auto!important;overflow:hidden!important}
 
