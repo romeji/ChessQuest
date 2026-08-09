@@ -1,5 +1,5 @@
 /* ChessQuest — couche finale responsive. Cette feuille doit rester la dernière. */
-:root{--game-safe-top:max(8px,env(safe-area-inset-top,0px));--game-safe-bottom:max(8px,env(safe-area-inset-bottom,0px));--game-width:min(100%,430px)}
+:root{--game-safe-top:max(8px,env(safe-area-inset-top,0px));--game-safe-bottom:max(8px,env(safe-area-inset-bottom,0px));--game-width:min(100%,430px);--tabbar-safe-bottom:max(3px,calc(env(safe-area-inset-bottom,0px) - 16px));--tabbar-height:calc(50px + var(--tabbar-safe-bottom))}
 .home-final-page .app,.puzzle-final-page .app,.daily-final-page .app,.training-final-page .app,.opening-final-page .app,.analysis-review-page .app{box-sizing:border-box!important}
 
 /* Accueil : remettre aussi le vrai conteneur défilant en haut. */
@@ -7,12 +7,16 @@
 .home-quick-grid .home-progress-link{grid-column:auto!important}
 
 /* Barre basse unique : compacte, sans marge latérale et réellement collée au viewport. */
-body nav.tabbar{box-sizing:border-box!important;left:50%!important;right:auto!important;bottom:0!important;width:min(100%,430px)!important;height:calc(58px + env(safe-area-inset-bottom,0px))!important;min-height:0!important;transform:translateX(-50%)!important;padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px))!important;border-width:1px 0 0!important;border-radius:0!important}
-body nav.tabbar .tabbar-item{min-height:0!important;height:50px!important;gap:1px!important;padding:2px 1px!important;border-radius:11px!important}
+body nav.tabbar{box-sizing:border-box!important;left:50%!important;right:auto!important;bottom:-1px!important;width:min(100%,430px)!important;height:var(--tabbar-height)!important;min-height:0!important;transform:translate3d(-50%,0,0)!important;padding:2px 4px var(--tabbar-safe-bottom)!important;border-width:1px 0 0!important;border-radius:0!important;background-clip:border-box!important}
+body nav.tabbar .tabbar-item{min-height:0!important;height:47px!important;gap:1px!important;padding:1px!important;border-radius:10px!important}
 body nav.tabbar .tabbar-item .tabicon{width:20px!important;height:20px!important}
 body nav.tabbar .tabbar-item span{font-size:.56rem!important;line-height:1!important}
-.academy-journey-page .academy-actions{bottom:calc(60px + var(--academy-safe-bottom))!important}.academy-journey-page .academy-progress-panel{bottom:calc(124px + var(--academy-safe-bottom))!important}
-.puzzle-final-page .mode-bottom-dock{bottom:calc(58px + var(--game-safe-bottom))!important}
+.academy-journey-page .academy-actions{bottom:calc(var(--tabbar-height) + 5px)!important}.academy-journey-page .academy-progress-panel{bottom:calc(var(--tabbar-height) + 69px)!important}
+.problem-journey-page .problem-journey-actions{bottom:calc(var(--tabbar-height) + 4px)!important}.problem-journey-page .problem-journey-progress{bottom:calc(var(--tabbar-height) + 68px)!important}.problem-journey-page .problem-journey-menu{bottom:calc(var(--tabbar-height) + 66px)!important}
+.puzzle-final-page .mode-bottom-dock{bottom:calc(var(--tabbar-height) + 4px)!important}
+
+/* En mode installé, le fond de la barre couvre aussi le dernier pixel du viewport. */
+@media (display-mode:standalone){html,body{min-height:100%;min-height:100dvh}body nav.tabbar{position:fixed!important;bottom:-1px!important;margin:0!important}}
 
 /* En-têtes de jeu stables : aucun titre ne peut passer sous un bouton. */
 .puzzle-final-page .final-page-title,.training-final-page .final-page-title,.opening-final-page .final-page-title{
