@@ -402,7 +402,8 @@ function ensureTrainBoard(){
   if(trainBoard) return;
   trainBoard = Chessboard('train-board', {
     position:'start', draggable:true, pieceTheme: PIECE_THEME, showNotation:false,
-    onDrop: onDropTrain, onSnapEnd: () => { if(trainGame) trainBoard.position(trainGame.fen()); }
+    onDragStart:(source)=>{ if(trainGame) showLegalMoveDots('#train-board',trainGame,source); },
+    onDrop: onDropTrain, onSnapEnd: () => { clearLegalMoveDots('#train-board'); if(trainGame) trainBoard.position(trainGame.fen()); }
   });
   renderCoords('train-ranks', 'train-files', 'white');
   $('#train-board').on('click', '[data-square]', function(){ trainSquareClick(this.getAttribute('data-square')); });
@@ -416,7 +417,7 @@ function clearTrainSelection(){
   trainSelectedSquare = null;
 }
 function showTrainLegalDots(square){
-  trainGame.moves({square:square, verbose:true}).forEach(m => $(`#train-board [data-square="${m.to}"]`).append('<div class="move-dot"></div>'));
+  showLegalMoveDots('#train-board',trainGame,square);
 }
 function trainSquareClick(square){
   if(!currentLine) return;
@@ -513,7 +514,10 @@ function continueTrainLine(){
       continueTrainLine();
     }, 700);
   } else {
-    setTrainFeedback(`À toi de jouer. Objectif : "${currentLine.name}".`, 'prompt');
+    const probe=new Chess(trainGame.fen());
+    const expectedMove=probe.moves({verbose:true}).find(move=>move.san===next.san.replace(/[!?]+$/,''));
+    const guidance=expectedMove ? `Développe ton ${pieceNameFromSan(next.san)} depuis ${expectedMove.from.toUpperCase()}. Cherche sa meilleure case.` : `Trouve le prochain coup de ${currentLine.name}.`;
+    setTrainFeedback(guidance, 'prompt');
     if(autoHintEnabled) showExpectedMove();
   }
 }
@@ -548,8 +552,11 @@ function attemptTrainMove(source, target){
 
 function setTrainFeedback(text, kind){
   const el = document.getElementById('train-feedback');
-  if(!el) return;
-  el.textContent = text;
-  el.className = 'feedback-box ' + (kind || '');
-  speak(text);
+  if(el){el.textContent = text;el.className = 'feedback-box ' + (kind || '');}
+  const visible=document.querySelector('.lesson-coach-strip [data-mascot-text]');
+  if(visible) visible.textContent=text;
+  if(typeof showMascotReaction==='function'){
+    const mood=kind==='bad'?'mistake':kind==='done'?'best':kind==='good'?'good':'hint';
+    showMascotReaction(mood,text,{imageSelector:'.lesson-coach-strip [data-mascot-image]',textSelector:'.lesson-coach-strip [data-mascot-text]',speak:false});
+  }
 }

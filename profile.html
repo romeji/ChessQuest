@@ -77,6 +77,18 @@
       <div class="profile-achievements" id="profile-achievements"></div>
     </section>
 
+    <a class="quest-card profile-progress-entry" href="progress.html"><span>📈</span><span><strong>Mes progrès détaillés</strong><small>Évolution ELO, régularité et objectifs</small></span><b>›</b></a>
+
+    <section class="quest-card profile-section">
+      <div class="profile-section-head"><strong>Diagnostic du coach</strong><a href="training-target.html">M’entraîner</a></div>
+      <div class="profile-diagnostic" id="profile-diagnostic"></div>
+    </section>
+
+    <section class="quest-card profile-section">
+      <div class="profile-section-head"><strong>Records de bataille</strong><a href="puzzles.html?source=battle">Jouer</a></div>
+      <div class="battle-records" id="battle-records"></div>
+    </section>
+
     <a class="quest-card profile-settings-row" href="settings.html">
       <span>⚙</span><span>Paramètres</span><span>›</span>
     </a>
@@ -161,6 +173,17 @@ function renderProfile(){
     achievementRow('🔥',`Série de ${computeCurrentStreak()} jours`,'Continue ta régularité',today),
     achievementRow('♛','Tacticien accompli',`${PROGRESS.puzzlesSolved || 0} problèmes résolus`,today)
   ].join('');
+  const analyses=PROGRESS.games||[];
+  const accuracies=analyses.flatMap(game=>[Number(game.whiteAcc),Number(game.blackAcc)]).filter(Number.isFinite);
+  const accuracy=accuracies.length?Math.round(accuracies.reduce((sum,value)=>sum+value,0)/accuracies.length):0;
+  const pending=Math.max(0,(PROGRESS.mistakes||[]).length-(PROGRESS.solvedMistakeIds||[]).length);
+  const openingScore=Math.min(100,Math.round(mastered/12*100));
+  const tacticalScore=Math.min(100,Math.round((PROGRESS.puzzlesSolved||0)/50*100));
+  const regularityScore=Math.min(100,computeCurrentStreak()*12);
+  const diagnostics=[['Tactique',tacticalScore],['Ouvertures',openingScore],['Précision',accuracy],['Régularité',regularityScore]];
+  document.getElementById('profile-diagnostic').innerHTML=diagnostics.map(([label,value])=>`<div><span>${label}</span><i><b style="width:${value}%"></b></i><strong>${value}%</strong></div>`).join('')+`<a href="${pending?'puzzles.html?source=mistakes':'analysis.html'}">${pending?`${pending} erreur${pending>1?'s':''} à corriger`:'Analyse une nouvelle partie pour obtenir un plan personnalisé'} →</a>`;
+  const records=PROGRESS.puzzleBattleScores||{30:[],45:[],60:[]};
+  document.getElementById('battle-records').innerHTML=[30,45,60].map(duration=>`<div><span>${duration} s</span><strong>${records[duration]?.[0]?.score||0}</strong><small>problèmes</small></div>`).join('');
 }
 
 async function initProfile(){

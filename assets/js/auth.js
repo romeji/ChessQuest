@@ -18,6 +18,8 @@ function loadQuestScript(src){return new Promise((resolve,reject)=>{const existi
 async function ensureQuestFirebaseAuth(){
   if(typeof firebase==='undefined') await loadQuestScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
   if(!firebase.auth) await loadQuestScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js');
+  if(!firebase.apps.length) firebase.initializeApp(QUEST_FIREBASE_CONFIG);
+  try{await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);}catch(error){console.warn('[ChessQuest] Persistance Firebase indisponible',error);}
   return firebase;
 }
 let questGoogleAuthPromise=null;
@@ -25,7 +27,6 @@ async function signInToQuestWithGoogle(){
   if(questGoogleAuthPromise)return questGoogleAuthPromise;
   questGoogleAuthPromise=(async()=>{
     await ensureQuestFirebaseAuth();
-    if(!firebase.apps.length)firebase.initializeApp(QUEST_FIREBASE_CONFIG);
     return firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
   })();
   try{return await questGoogleAuthPromise;}finally{questGoogleAuthPromise=null;}

@@ -56,6 +56,10 @@ let puzzleHintUsed = false;
 let mcqLocked = false;
 let puzzleBattleTimer = null;
 let puzzleBattleEndsAt = 0;
+let puzzleBattleScore = 0;
+let puzzleBattleDuration = 0;
+let puzzleBattleActive = false;
+let puzzleBattleCountdown = null;
 
 function ratingStars(rating){
   const level = Math.min(5, Math.max(1, Math.round((rating - 300) / 130)));
@@ -90,7 +94,9 @@ function ensurePuzzleBoard(){
   if(puzzleBoard) return;
   puzzleBoard = Chessboard('puzzle-board', {
     position:'start', draggable:true, pieceTheme: PIECE_THEME, showNotation:false,
-    onDrop: onPuzzleBoardDrop
+    onDragStart:(source)=>{ if(!mcqLocked && puzzleGame) showLegalMoveDots('#puzzle-board',puzzleGame,source); },
+    onDrop: onPuzzleBoardDrop,
+    onSnapEnd:()=>clearLegalMoveDots('#puzzle-board')
   });
   renderCoords('puzzle-ranks', 'puzzle-files', 'white');
   buildPuzzleQueue();
@@ -216,6 +222,7 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   if(success){
     PROGRESS.puzzleStreak++;
     PROGRESS.puzzleBestStreak = Math.max(PROGRESS.puzzleBestStreak, PROGRESS.puzzleStreak);
+    if(puzzleBattleActive) puzzleBattleScore++;
   } else {
     PROGRESS.puzzleStreak = 0;
   }
@@ -250,7 +257,9 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
     });
   }
 
-  if(puzzleSource === 'mistakes'){
+  if(puzzleSource === 'battle' && puzzleBattleActive){
+    setTimeout(()=>loadPuzzle(puzzleIndex+1),420);
+  } else if(puzzleSource === 'mistakes'){
     setTimeout(()=>{ buildPuzzleQueue(); loadPuzzle(success ? 0 : puzzleIndex); refreshPuzzleHeader(); }, 1600);
   } else {
     setTimeout(()=> loadPuzzle(success ? puzzleIndex+1 : puzzleIndex), 1600);
@@ -299,19 +308,39 @@ function setPuzzleFeedback(text, kind){
 }
 
 function stopPuzzleBattle(){
-  clearInterval(puzzleBattleTimer); puzzleBattleTimer = null; puzzleBattleEndsAt = 0;
+  clearInterval(puzzleBattleTimer); clearInterval(puzzleBattleCountdown);
+  puzzleBattleTimer = null; puzzleBattleCountdown = null; puzzleBattleEndsAt = 0; puzzleBattleActive = false;
   const timer = document.getElementById('puzzle-battle-timer'); if(timer) timer.classList.add('hidden');
+  document.getElementById('puzzle-countdown')?.classList.add('hidden');
 }
 function startPuzzleBattle(seconds){
   stopPuzzleBattle();
-  puzzleSource = 'battle'; puzzleTheme = ''; buildPuzzleQueue(); loadPuzzle(0);
-  puzzleBattleEndsAt = Date.now() + seconds * 1000;
-  const timer = document.getElementById('puzzle-battle-timer'); if(timer) timer.classList.remove('hidden');
-  puzzleBattleTimer = setInterval(()=>{
-    const left = Math.max(0,Math.ceil((puzzleBattleEndsAt-Date.now())/1000));
-    if(timer) timer.textContent = `${left}s`;
-    if(!left){ stopPuzzleBattle(); mcqLocked = true; setPuzzleFeedback(`Temps écoulé ! Série finale : ${PROGRESS.puzzleStreak || 0}.`,'prompt'); }
-  },250);
+  puzzleSource = 'battle'; puzzleTheme = ''; puzzleBattleDuration=seconds; puzzleBattleScore=0; buildPuzzleQueue(); loadPuzzle(0); mcqLocked=true;
+  const overlay=document.getElementById('puzzle-countdown');
+  const value=overlay?.querySelector('strong');
+  overlay?.classList.remove('hidden');
+  let count=3; if(value)value.textContent=count;
+  puzzleBattleCountdown=setInterval(()=>{
+    count--;
+    if(count>0){if(value)value.textContent=count;return;}
+    if(count===0){if(value)value.textContent='GO !';return;}
+    clearInterval(puzzleBattleCountdown);puzzleBattleCountdown=null;overlay?.classList.add('hidden');mcqLocked=false;puzzleBattleActive=true;
+    puzzleBattleEndsAt = Date.now() + seconds * 1000;
+    const timer = document.getElementById('puzzle-battle-timer');
+    if(timer){timer.classList.remove('hidden');timer.textContent=`${seconds}s · 0`;}
+    puzzleBattleTimer = setInterval(()=>{
+      const left = Math.max(0,Math.ceil((puzzleBattleEndsAt-Date.now())/1000));
+      if(timer) timer.textContent = `${left}s · ${puzzleBattleScore}`;
+      if(!left){
+        const score=puzzleBattleScore, duration=puzzleBattleDuration;
+        stopPuzzleBattle(); mcqLocked = true;
+        PROGRESS.puzzleBattleScores=PROGRESS.puzzleBattleScores||{30:[],45:[],60:[]};
+        const scores=PROGRESS.puzzleBattleScores[duration]||(PROGRESS.puzzleBattleScores[duration]=[]);
+        scores.push({score,date:new Date().toISOString()});scores.sort((a,b)=>b.score-a.score);PROGRESS.puzzleBattleScores[duration]=scores.slice(0,10);saveProgress();
+        setPuzzleFeedback(`Temps écoulé ! ${score} problème${score>1?'s':''} résolu${score>1?'s':''}. Record : ${scores[0].score}.`,'prompt');
+      }
+    },250);
+  },850);
 }
 function setText(id, text){ const el = document.getElementById(id); if(el) el.textContent = text; }
 function setHtml(id, html){ const el = document.getElementById(id); if(el) el.innerHTML = html; }

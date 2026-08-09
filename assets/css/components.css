@@ -109,7 +109,8 @@ input[type="text"]:focus, textarea:focus{outline:none;border-color:var(--coral);
 .selected-square{box-shadow:inset 0 0 0 9999px rgba(76,134,201,0.38) !important;}
 .suggest-from{box-shadow:inset 0 0 0 9999px rgba(63,174,122,0.30) !important;animation:suggestPulse 1.3s ease-in-out infinite;}
 .suggest-to{box-shadow:inset 0 0 0 9999px rgba(63,174,122,0.5) !important;animation:suggestPulse 1.3s ease-in-out infinite;}
-.move-dot{position:absolute;top:50%;left:50%;width:26%;height:26%;border-radius:50%;background:rgba(63,174,122,0.75);transform:translate(-50%,-50%);pointer-events:none;}
+.move-dot{position:absolute;z-index:4;top:50%;left:50%;width:26%;height:26%;border-radius:50%;background:rgba(27,111,68,.62);transform:translate(-50%,-50%);pointer-events:none;}
+.move-dot.capture{width:72%;height:72%;background:transparent;border:4px solid rgba(27,91,58,.58);box-shadow:none}
 
 .nav-controls{display:flex;gap:6px;}
 .nav-controls button{background:var(--bg-panel-2);color:var(--navy);border:1px solid var(--line);border-radius:6px;width:36px;height:32px;cursor:pointer;font-size:0.92rem;}

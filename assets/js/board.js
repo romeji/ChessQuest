@@ -103,6 +103,21 @@ function highlightMove(containerSel, from, to){
   $(containerSel + ` [data-square="${from}"]`).addClass('highlight-from');
   $(containerSel + ` [data-square="${to}"]`).addClass('highlight-to');
 }
+function clearLegalMoveDots(containerSel){
+  $(containerSel + ' .move-dot').remove();
+}
+function showLegalMoveDots(containerSel, game, square){
+  clearLegalMoveDots(containerSel);
+  if(!game || !square) return;
+  game.moves({square,verbose:true}).forEach(move => {
+    const target = document.querySelector(`${containerSel} [data-square="${move.to}"]`);
+    if(!target) return;
+    const dot = document.createElement('span');
+    dot.className = `move-dot${move.captured ? ' capture' : ''}`;
+    dot.setAttribute('aria-hidden','true');
+    target.appendChild(dot);
+  });
+}
 function flashSquares(containerSel, squares, cls, duration){
   const $sqs = squares.map(sq => $(containerSel + ` [data-square="${sq}"]`));
   $sqs.forEach($sq => $sq.addClass(cls));

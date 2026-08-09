@@ -2,8 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#7C6EF0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#fffaf0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="ChessQuest">
@@ -25,13 +25,14 @@
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
 </head>
-<body data-page="analyze">
+<body data-page="analyze" class="final-shell-page analysis-review-page">
 <div id="toast-container"></div>
 <div class="app">
   <section class="page">
-    <a class="subpage-back" aria-label="Retour" href="analysis.html" style="margin-bottom:16px;">
-      <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
-    </a>
+    <header class="final-page-title">
+      <a class="subpage-back" aria-label="Retour" href="analysis.html"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+      <h1>Bilan de la partie</h1><span class="final-title-spacer" aria-hidden="true"></span>
+    </header>
 
     <div id="analysis-progress" class="hidden" style="margin-top:4px;font-size:0.86rem;color:var(--text-dim);">
       <span id="progress-label">Calcul en cours…</span>
@@ -41,8 +42,9 @@
     <div id="analysis-results" style="display:none;margin-top:4px;">
       <div class="game-info-row" id="game-info-row"></div>
       <div class="accuracy-row" id="accuracy-row"></div>
+      <div class="feedback-box analysis-review-comment" id="move-comment-box">Sélectionne un coup pour voir le commentaire du coach.</div>
 
-      <div style="display:flex;gap:10px;align-items:stretch;justify-content:center;margin-bottom:18px;">
+      <div class="analysis-review-board-row">
         <div class="eval-bar-wrap">
           <div class="eval-bar" id="eval-bar">
             <div class="eval-bar-black" id="eval-bar-black"></div>
@@ -59,7 +61,6 @@
           <div class="nav-controls">
             <button id="nav-start" aria-label="Premier coup">«</button><button id="nav-prev" aria-label="Coup précédent">‹</button><button id="nav-next" aria-label="Coup suivant">›</button><button id="nav-end" aria-label="Dernier coup">»</button>
           </div>
-          <div class="feedback-box" id="move-comment-box" style="width:100%;">Sélectionne un coup pour voir le commentaire.</div>
         </div>
       </div>
 

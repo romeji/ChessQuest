@@ -60,6 +60,73 @@ html[data-background-skin="night"] body:not(.opening-map-page){background:#17161
 .opening-map-page.island-sheet-open .opening-map-dock{opacity:0;pointer-events:none;transform:translateY(12px)!important}
 .opening-lesson-cta{position:fixed;z-index:65;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));bottom:calc(8px + env(safe-area-inset-bottom));max-width:390px;margin:0 auto;padding:8px;border:1px solid #d6c28b;border-radius:18px;background:rgba(248,241,220,.97);box-shadow:0 -8px 24px rgba(24,39,30,.18);backdrop-filter:blur(14px)}
 .opening-lesson-cta .mode-primary-button{width:100%}
+
+/* Passe mobile 2026 : les écrans de jeu restent entièrement visibles, sans
+   chevauchement avec la navigation ni les zones sûres des iPhone. */
+.final-title-spacer{width:40px;height:40px}
+.puzzle-final-page .final-page-title{grid-template-columns:40px minmax(0,1fr) 62px!important;gap:5px!important}
+.puzzle-final-page .final-page-title h1{min-width:0;font-size:clamp(.92rem,5.2vw,1.28rem)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.puzzle-final-page .puzzle-final-hint{padding:8px 10px!important;white-space:nowrap}
+.puzzle-final-page .puzzle-final-feedback.prompt{display:none!important}
+.puzzle-final-page .puzzle-final-streak{transform:none!important;margin:0!important;min-height:42px!important}
+.puzzle-final-page .page{gap:6px!important;padding-bottom:calc(148px + env(safe-area-inset-bottom))!important}
+.puzzle-final-page .mode-bottom-dock{bottom:calc(68px + env(safe-area-inset-bottom))!important}
+.puzzle-countdown{position:fixed;z-index:120;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;background:rgba(3,48,35,.86);color:#fff;backdrop-filter:blur(8px)}
+.puzzle-countdown strong{font:900 clamp(5rem,26vw,8rem)/1 Nunito,sans-serif;text-shadow:0 8px 30px rgba(0,0,0,.35);animation:puzzle-count-pop .85s ease infinite}
+.puzzle-countdown span{font-size:1rem;font-weight:900;text-transform:uppercase;letter-spacing:.12em}
+@keyframes puzzle-count-pop{0%{transform:scale(.72);opacity:.2}45%{transform:scale(1);opacity:1}100%{transform:scale(1.08);opacity:0}}
+
+.training-final-page .page{gap:6px!important;padding-bottom:max(10px,env(safe-area-inset-bottom))!important}
+.training-final-page .training-final-coach{display:grid!important;grid-template-columns:62px 1fr;min-height:62px!important;margin:0!important;order:0}
+.training-final-page .training-final-coach img{width:62px!important;height:62px!important}
+.training-final-page .bot-final-elo{margin:0 auto!important}
+.training-final-page .training-final-board-wrap{width:min(100%,calc(100dvh - 335px))!important;max-width:410px!important;min-width:255px!important;margin:0 auto!important}
+.training-final-page .training-final-history{max-height:76px;overflow:auto;margin:0!important}
+.training-final-page .training-final-controls{grid-template-columns:1fr 1fr 1fr!important;gap:6px!important;margin-top:0!important}
+.training-final-page .training-final-controls button{min-width:0;padding:9px 4px!important;font-size:.63rem!important}
+
+.daily-final-page{overflow:auto!important;background:#fff8ea!important;color:#17261f!important}
+.daily-final-page .app{min-height:100dvh!important;padding-bottom:max(12px,env(safe-area-inset-bottom))!important;background:radial-gradient(circle at 50% 0,#fffdf6,#f8f0df 78%)!important}
+.daily-final-page .page{display:flex!important;flex-direction:column;gap:7px;padding:8px max(8px,env(safe-area-inset-right)) 12px max(8px,env(safe-area-inset-left))!important}
+.daily-final-page .quest-page-title{min-height:48px;margin:0;color:#17261f}
+.daily-final-page .quest-page-title h1{color:#17261f;font-size:1.05rem}
+.daily-final-page .quest-page-title .subpage-back{background:#fffaf0;border:1px solid #eadbc0}
+.daily-final-page .quest-page-title .subpage-back svg{stroke:#17261f}
+.daily-final-page .daily-hero{min-height:58px!important;margin:0!important;padding:8px 72px 8px 12px!important;background:linear-gradient(145deg,#07533d,#0a7650)!important;border-color:#c69f45!important}
+.daily-final-page .daily-puzzle-shell{display:flex;flex-direction:column;gap:7px;align-items:center;padding:0!important;background:transparent!important}
+.daily-final-page .daily-coach{position:static!important;order:0;flex:none!important;width:100%;display:grid!important;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:7px;min-height:68px!important;margin:0!important;padding:3px 7px;border:1px solid #e6d5b5;border-radius:18px;background:#fffaf0;color:#1f2630}
+.daily-final-page .daily-coach img{position:static!important;left:auto!important;bottom:auto!important;width:64px!important;height:64px!important;object-fit:contain!important;border-radius:0!important;mix-blend-mode:normal!important}
+.daily-final-page .daily-coach-copy{position:relative!important;inset:auto!important;display:grid;gap:2px;min-width:0;min-height:0!important;padding:8px 9px!important;border:0!important;border-radius:13px!important;background:#eae2f2!important;color:#362742!important}.daily-final-page .daily-coach-copy::before{display:none!important}.daily-final-page .daily-coach-copy strong{font:900 .7rem Nunito,sans-serif!important;color:#0b6846}.daily-final-page .daily-coach-copy span{font-size:.58rem;line-height:1.25}
+.daily-final-page #daily-hint-button{min-height:38px;padding:0 9px;border:1px solid #e2cfaa;border-radius:13px;background:#fff;color:#4c286e;font-size:.62rem;font-weight:900}
+.daily-final-page .daily-board-wrap{order:1;width:min(100%,calc(100dvh - 390px))!important;max-width:410px!important;min-width:260px!important;margin:0 auto!important;padding:0!important;background:transparent!important}
+.daily-final-page .daily-question{order:2;margin:0!important;color:#17261f!important;font-weight:900}.daily-final-page .mcq-options{order:3;width:100%;gap:5px!important}.daily-final-page .mcq-option{min-height:36px!important;background:#fffaf0!important;color:#17261f!important;border-color:#dcc79e!important}
+
+.opening-map-page,.opening-map-page .map-app,.opening-map-page .page,.opening-map-page .teal-hero{height:100dvh!important;min-height:100dvh!important;overflow:hidden!important}
+.opening-map-page .map-header{top:0!important;min-height:58px!important;padding-top:max(8px,env(safe-area-inset-top))!important;background:linear-gradient(180deg,rgba(2,40,34,.88),rgba(2,40,34,.12))}
+.opening-map-page .world-switcher{top:calc(max(8px,env(safe-area-inset-top)) + 58px)!important;z-index:18!important}
+.opening-map-page .skill-path{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important;border-radius:0!important;background-size:cover!important;background-position:center!important}
+.opening-map-page .map-world-subtitle{top:118px!important}
+.opening-map-page .opening-map-dock{bottom:0!important;left:0!important;right:0!important;max-width:none!important;padding:9px max(9px,env(safe-area-inset-right)) calc(9px + env(safe-area-inset-bottom)) max(9px,env(safe-area-inset-left))!important;border-radius:22px 22px 0 0!important;border-width:1px 0 0!important;background:#f8f1dc!important}
+
+.opening-final-page .page{gap:7px!important;padding-bottom:calc(76px + env(safe-area-inset-bottom))!important}
+.opening-final-page .opening-final-board-wrap{width:min(100%,calc(100dvh - 315px))!important;max-width:410px!important;min-width:260px!important;margin:0 auto!important}
+.opening-final-page .opening-final-memory{margin:0!important;min-height:58px!important}
+.opening-final-page .opening-lesson-cta{bottom:0!important;left:0!important;right:0!important;max-width:none!important;padding:8px max(12px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))!important;border-radius:20px 20px 0 0!important}
+.opening-theory-modal{position:fixed;z-index:130;inset:0;display:grid;place-items:end center;padding:18px 10px calc(18px + env(safe-area-inset-bottom));background:rgba(4,33,25,.66);backdrop-filter:blur(7px)}
+.opening-theory-modal .opening-final-theory{position:relative;width:min(100%,410px);max-height:min(72dvh,620px);overflow:auto;padding:20px 16px!important;border-radius:24px!important}
+.opening-theory-close{position:absolute;right:10px;top:10px;width:36px;height:36px;border:0;border-radius:50%;background:#ece4d6;color:#273027;font-size:1.25rem;font-weight:900}
+.opening-theory-modal .opening-theory-title{padding-right:38px}
+
+@media(max-height:740px){
+  .puzzle-final-page .puzzle-final-turn{min-height:48px!important}.puzzle-final-page .puzzle-final-coach{height:48px!important}
+  .puzzle-final-page .puzzle-final-board-wrap{width:min(100%,calc(100dvh - 400px))!important;min-width:240px!important}
+  .training-final-page .training-final-history{display:none}.training-final-page .training-final-board-wrap{width:min(100%,calc(100dvh - 270px))!important}
+  .daily-final-page .daily-hero{display:none!important}.daily-final-page .daily-board-wrap{width:min(100%,calc(100dvh - 315px))!important}
+}
+.home-quick-grid .home-progress-link{grid-column:1/-1}
+.profile-progress-entry{display:grid!important;grid-template-columns:36px 1fr auto;align-items:center;gap:8px;color:#1f2924;text-decoration:none}.profile-progress-entry>span:first-child{font-size:1.45rem}.profile-progress-entry>span:nth-child(2){display:grid}.profile-progress-entry small{color:#766e66;font-size:.55rem}.profile-progress-entry b{font-size:1.4rem;color:#0d6546}
+.profile-diagnostic{display:grid;gap:7px}.profile-diagnostic>div{display:grid;grid-template-columns:72px 1fr 32px;align-items:center;gap:7px;font-size:.58rem}.profile-diagnostic i{height:7px;overflow:hidden;border-radius:8px;background:#e9e0cf}.profile-diagnostic i b{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#6e32a4,#159061)}.profile-diagnostic>a{margin-top:4px;padding:9px;border-radius:12px;background:#eee7f5;color:#582c7d;text-align:center;text-decoration:none;font-size:.6rem;font-weight:900}.battle-records{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.battle-records>div{display:grid;justify-items:center;padding:8px 4px;border-radius:12px;background:#f1eadb}.battle-records span,.battle-records small{font-size:.52rem;color:#71685e}.battle-records strong{font-size:1.15rem;color:#0c6848}
+.course-position{margin:14px auto;max-width:300px}.course-position>div{display:grid;grid-template-columns:repeat(8,1fr);overflow:hidden;aspect-ratio:1;border:2px solid #4f7148;border-radius:12px;box-shadow:0 8px 18px rgba(28,54,40,.16)}.course-position span{position:relative;display:grid;place-items:center}.course-position .light{background:#f3ecd8}.course-position .dark{background:#78a66d}.course-position img{width:90%;height:90%;object-fit:contain}.course-position figcaption{padding:7px 4px 0;color:#67615c;font-size:.62rem;text-align:center;font-weight:800}
 .academy-header .subpage-back{flex:0 0 40px;width:40px;height:40px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.35);border-radius:50%;color:#fff;background:rgba(0,0,0,.12)}.academy-header .subpage-back svg{width:22px;fill:none;stroke:currentColor;stroke-width:2}
 .written-course-page{min-height:100dvh;background:#f3ead9;color:#211d27}.written-course-shell{width:min(100%,520px);min-height:100dvh;margin:auto;padding:calc(14px + env(safe-area-inset-top)) 14px calc(28px + env(safe-area-inset-bottom));background:linear-gradient(180deg,#fffdf5,#f7edda)}
 .written-course-header{display:grid;grid-template-columns:42px minmax(0,1fr) 34px;align-items:center;gap:10px}.written-course-header .subpage-back{display:grid;place-items:center;width:40px;height:40px;border:1px solid #dccdad;border-radius:50%;background:#fffaf0;color:#173d30;box-shadow:0 5px 13px rgba(45,34,17,.1)}.written-course-header .subpage-back svg{width:22px;fill:none;stroke:currentColor;stroke-width:2}.written-course-header span{color:#7a672f;font-size:.56rem;font-weight:1000;letter-spacing:.08em}.written-course-header h1{margin:2px 0 0;color:#24163c;font:700 1.05rem Georgia,serif;line-height:1.08}.course-complete-mark{display:none!important;place-items:center;width:32px;height:32px;border-radius:50%;background:#21834e!important;color:#fff!important;font-size:1rem!important}.course-complete-mark.visible{display:grid!important}

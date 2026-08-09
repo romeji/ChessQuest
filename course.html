@@ -51,9 +51,33 @@ let sectionIndex=0;
 let quizPassed=false;
 const completed=()=>Array.isArray(PROGRESS.completedCourses)&&PROGRESS.completedCourses.includes(course.id);
 function levelLabel(level){return level>=1800?'1800+ ELO':`${level}–${level===0?300:level===300?700:level===700?1200:1800} ELO`;}
+const COURSE_POSITIONS={
+  'plateau-coordonnees':['8/8/8/3pP3/8/2N5/8/8','Repère e5, d5 et c3 avant de lire la suite.'],
+  'mouvement-pieces':['8/8/3p4/1p6/4N3/8/8/8','Depuis e4, le cavalier peut viser huit cases.'],
+  'echec-mat-pat':['7k/5Q2/6K1/8/8/8/8/8','Les Noirs n’ont aucune case : vérifie si le roi est en échec.'],
+  'regles-ouverture':['r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R','Une position italienne : centre, développement, puis roque.'],
+  'pieces-en-prise':['6k1/8/8/q7/8/2B5/8/K7','Le fou blanc peut-il gagner la dame ?'],
+  'mats-elementaires':['6k1/5ppp/8/3R4/8/8/8/6K1','Cherche le mat du couloir.'],
+  'fourchettes-clouages':['2q1k3/8/8/1N6/8/8/8/K7','Le cavalier peut attaquer roi et dame.'],
+  'calcul-trois-etapes':['6k1/5ppp/8/3R4/8/8/8/6K1','Commence par les échecs forcés.'],
+  'structures-pions':['8/4k3/3p4/2pPp3/2P1P3/4K3/8/8','La chaîne de pions indique de quel côté agir.'],
+  'finales-pions':['8/8/4k3/8/4K3/4P3/8/8','Qui possède l’opposition ?'],
+  'plans-positionnels':['2r3k1/5ppp/4p3/3p4/3P4/2P1P3/5PPP/2R3K1','Compare l’activité des deux tours.'],
+  'colonnes-avant-postes':['4r1k1/5ppp/4p3/3n4/3N4/4P3/5PPP/3R2K1','La colonne d et la case d5 structurent le plan.'],
+  'calcul-variantes':['4r1k1/5ppp/8/3q4/3N4/8/5PPP/3Q2K1','Liste les candidats avant de calculer.'],
+  'prophylaxie':['2r3k1/5ppp/4p3/3p4/3P4/2P1P3/5PPP/2R3K1','Demande-toi ce que l’adversaire jouerait si tu passais.'],
+  'finales-techniques':['8/4k3/3p4/8/3P4/4K3/8/4R3','L’activité de la tour compte plus qu’un pion.'],
+  'preparation-avancee':['r1bq1rk1/pp2bppp/2n1pn2/2pp4/3P4/2P1PN2/PP1NBPPP/R2Q1RK1','Reconnais la structure avant de mémoriser une variante.']
+};
+function courseDiagram(){
+  const [fen,caption]=COURSE_POSITIONS[course.id]||COURSE_POSITIONS['regles-ouverture'];
+  const pieces={p:'bP',r:'bR',n:'bN',b:'bB',q:'bQ',k:'bK',P:'wP',R:'wR',N:'wN',B:'wB',Q:'wQ',K:'wK'};
+  const cells=[];fen.split('/').forEach((rank,row)=>{let file=0;for(const char of rank){if(/\d/.test(char)){for(let n=0;n<Number(char);n++)cells.push(`<span class="${(row+file++)%2?'dark':'light'}"></span>`);}else{cells.push(`<span class="${(row+file)%2?'dark':'light'}"><img src="assets/chesspieces/${pieces[char]}.png" alt=""></span>`);file++;}}});
+  return `<figure class="course-position"><div>${cells.join('')}</div><figcaption>${escapeHtml(caption)}</figcaption></figure>`;
+}
 function renderSection(){
   const section=course.sections[sectionIndex];
-  document.getElementById('course-content').innerHTML=`<article><span>CHAPITRE ${sectionIndex+1} / ${course.sections.length}</span><h2>${escapeHtml(section[0])}</h2><p>${escapeHtml(section[1])}</p><ul>${section[2].map(point=>`<li>${escapeHtml(point)}</li>`).join('')}</ul></article>`;
+  document.getElementById('course-content').innerHTML=`<article><span>CHAPITRE ${sectionIndex+1} / ${course.sections.length}</span><h2>${escapeHtml(section[0])}</h2><p>${escapeHtml(section[1])}</p>${courseDiagram()}<ul>${section[2].map(point=>`<li>${escapeHtml(point)}</li>`).join('')}</ul></article>`;
   document.getElementById('course-progress-label').textContent=`Chapitre ${sectionIndex+1} sur ${course.sections.length}`;
   document.getElementById('course-progress-fill').style.width=`${((sectionIndex+1)/course.sections.length)*100}%`;
   document.getElementById('course-previous').disabled=sectionIndex===0;

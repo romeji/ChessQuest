@@ -1,8 +1,9 @@
-const CACHE_VERSION = 'chessquest-v51';
+const CACHE_VERSION = 'chessquest-v54';
 const APP_SHELL = [
   './',
   './index.html',
   './learn.html',
+  './academy.html',
   './openings.html',
   './training-game.html',
   './training-target.html',
@@ -35,6 +36,7 @@ const APP_SHELL = [
   './assets/css/gamification.css',
   './assets/css/home.css',
   './assets/css/learn.css',
+  './assets/css/academy-journey.css',
   './assets/css/entrainement.css',
   './assets/css/training.css',
   './assets/css/puzzle.css',
@@ -56,6 +58,7 @@ const APP_SHELL = [
   './assets/js/firebase-sync.js',
   './assets/js/auth.js',
   './assets/js/courses.js',
+  './assets/js/academy-journey.js',
   './assets/chesspieces/wK.png',
   './assets/chesspieces/wQ.png',
   './assets/chesspieces/wR.png',
@@ -94,7 +97,8 @@ const APP_SHELL = [
   './assets/illustrations/opening-world-10-masters-v1.webp',
   './assets/illustrations/analysis-hero-chess.png',
   './assets/illustrations/rewards-spritesheet.png',
-  './assets/illustrations/training-menu-hero.png'
+  './assets/illustrations/training-menu-hero.png',
+  './assets/images/academy/learning-journey-v1.png'
 ];
 
 self.addEventListener('install', event => {

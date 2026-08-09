@@ -27,7 +27,7 @@
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
 </head>
-<body data-page="training" class="quest-screen daily-page">
+<body data-page="training" class="final-shell-page daily-page daily-final-page">
 <div id="toast-container"></div>
 <main class="app">
   <section class="page">
@@ -48,6 +48,14 @@
     </section>
 
     <div id="daily-puzzle-mode" class="daily-puzzle-shell hidden">
+      <aside class="daily-coach" aria-live="polite">
+        <img data-mascot-image src="assets/illustrations/mascot-coach-haughty.webp" alt="Le cavalier coach ChessQuest">
+        <div class="daily-coach-copy">
+          <strong>À toi de jouer</strong>
+          <span id="daily-coach-text" data-mascot-text>Vérifie les échecs, les prises et les menaces. Dans cet ordre, sujet.</span>
+        </div>
+        <button id="daily-hint-button" type="button">Indice</button>
+      </aside>
       <div class="daily-board-wrap">
         <div class="board-frame">
           <div class="coord-ranks" id="daily-ranks"></div>
@@ -57,13 +65,6 @@
       </div>
       <p class="daily-question" id="daily-question">Quel est le meilleur coup ?</p>
       <div class="mcq-options" id="daily-mcq-options"></div>
-      <aside class="daily-coach" aria-live="polite">
-        <img data-mascot-image src="assets/illustrations/mascot-coach-haughty.webp" alt="Le cavalier coach ChessQuest">
-        <div class="daily-coach-copy">
-          <strong>Conseil</strong>
-          <span id="daily-coach-text" data-mascot-text>Je te conseille de vérifier les échecs et les prises. Un réflexe royal.</span>
-        </div>
-      </aside>
     </div>
 
     <div id="daily-done-banner" class="daily-done-banner hidden">
@@ -108,7 +109,9 @@ function ensureDailyBoard(){
     draggable:true,
     pieceTheme:PIECE_THEME,
     showNotation:false,
-    onDrop:onDailyBoardDrop
+    onDragStart:(source)=>{ if(!dailyLocked && dailyGame) showLegalMoveDots('#daily-board',dailyGame,source); },
+    onDrop:onDailyBoardDrop,
+    onSnapEnd:()=>clearLegalMoveDots('#daily-board')
   });
   renderCoords('daily-ranks','daily-files','white');
   requestAnimationFrame(() => fitBoards('daily-board',dailyBoard,'.daily-board-wrap'));
@@ -139,6 +142,7 @@ function loadDailyPuzzle(){
   const colorLabel = dailyGame.turn() === 'b' ? 'Noirs' : 'Blancs';
   document.getElementById('daily-question').textContent = `Quel est le meilleur coup pour les ${colorLabel} ?`;
   document.getElementById('daily-coach-text').textContent = puzzle.hint || 'Cherche d’abord les échecs, puis les prises et les menaces.';
+  const hintButton=document.getElementById('daily-hint-button'); if(hintButton){hintButton.disabled=false;hintButton.textContent='Indice';}
   const solution = puzzle.solution.replace(/[!?]+$/,'');
   const moverColor = dailyGame.turn();
   const options = buildMcqOptions(dailyGame,solution,4);
@@ -215,6 +219,16 @@ function initDailyChallenge(){
   loadDailyPuzzle();
   watchBoardResize('daily-board',() => dailyBoard,'.daily-board-wrap');
 }
+
+document.getElementById('daily-hint-button').onclick=()=>{
+  if(dailyLocked || !dailyGame || !dailyQueue[dailyIdx]) return;
+  const solution=(dailyQueue[dailyIdx].solution||'').replace(/[!?]+$/,'');
+  const move=dailyGame.moves({verbose:true}).find(candidate=>candidate.san===solution);
+  if(!move)return;
+  flashSquares('#daily-board',[move.from,move.to],'hint-square',1800);
+  document.getElementById('daily-coach-text').textContent=`Le ${pieceNameFromSan(solution)} en ${move.from.toUpperCase()} a quelque chose de royal à faire.`;
+  document.getElementById('daily-hint-button').disabled=true;
+};
 
 initDailyChallenge();
 </script>

@@ -67,7 +67,7 @@ function showCoach(text, icon){
     const positive = ['👍','✨','🎯','⚡','🛡️'].includes(icon);
     const kind = positive ? 'good' : (icon === '🤝' ? 'mistake' : 'inaccuracy');
     showMascotReaction(kind,'',{message:text,imageSelector:'#training-mascot',textSelector:'#training-tip-text'});
-  }else speak(text);
+  }
 }
 function hideCoach(){
   document.getElementById('coach-bubble').classList.add('hidden');
@@ -81,7 +81,8 @@ function ensureTgBoard(){
   if(tgBoard) return;
   tgBoard = Chessboard('tg-board', {
     position:'start', draggable:true, pieceTheme: PIECE_THEME, showNotation:false,
-    onDrop: onTgDrop, onSnapEnd: () => { if(tgGame) tgBoard.position(tgGame.fen()); }
+    onDragStart:(source)=>{ if(tgGame && !tgOver && !tgBotThinking && tgGame.turn()==='w') showLegalMoveDots('#tg-board',tgGame,source); },
+    onDrop: onTgDrop, onSnapEnd: () => { clearLegalMoveDots('#tg-board'); if(tgGame) tgBoard.position(tgGame.fen()); }
   });
   renderCoords('tg-ranks', 'tg-files', 'white');
   $('#tg-board').on('click', '[data-square]', function(){ tgSquareClick(this.getAttribute('data-square')); });
@@ -101,7 +102,7 @@ function tgSquareClick(square){
     if(piece && piece.color === 'w'){
       tgSelectedSquare = square;
       $(`#tg-board [data-square="${square}"]`).addClass('selected-square');
-      tgGame.moves({square, verbose:true}).forEach(move => $(`#tg-board [data-square="${move.to}"]`).append('<div class="move-dot"></div>'));
+      showLegalMoveDots('#tg-board',tgGame,square);
     }
     return;
   }
@@ -164,13 +165,23 @@ async function playBotMove(){
   const diff = currentBotLevel();
   const fen = tgGame.fen();
   let res;
+  const randomRate = botElo <= 400 ? .82 : botElo <= 600 ? .66 : botElo <= 800 ? .48 : botElo <= 1000 ? .30 : botElo <= 1200 ? .16 : .04;
+  if(Math.random() < randomRate){
+    const legal = tgGame.moves({verbose:true});
+    const quiet = legal.filter(move => !move.captured && !move.san.includes('+'));
+    const pool = quiet.length ? quiet : legal;
+    const casual = pool[Math.floor(Math.random()*pool.length)];
+    res = {bestMoveSan:casual && casual.san};
+  }
   try{
-    await waitForEngineReady();
-    if(sfState === 'ready'){
-      sfSetSkillLevel(diff.skill);
-      res = await sfAnalyzeFEN(fen, diff.movetime);
-    } else {
-      res = await homemadeAnalyzeFEN(fen);
+    if(!res){
+      await waitForEngineReady();
+      if(sfState === 'ready'){
+        sfSetSkillLevel(diff.skill);
+        res = await sfAnalyzeFEN(fen, diff.movetime);
+      } else {
+        res = await homemadeAnalyzeFEN(fen);
+      }
     }
   }catch(e){ res = await homemadeAnalyzeFEN(fen); }
   tgBotThinking = false;

@@ -34,14 +34,17 @@
         <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
       </a>
       <h1>Partie d’entraînement</h1>
-      <a class="final-icon-button training-final-settings" href="settings.html" aria-label="Paramètres">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>
-      </a>
+      <span class="final-title-spacer" aria-hidden="true"></span>
     </header>
 
     <label class="bot-final-elo" for="bot-elo-select">
       <select id="bot-elo-select" aria-label="Niveau ELO du bot"></select>
     </label>
+
+    <aside class="training-final-coach">
+      <img id="training-mascot" data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest">
+      <p class="training-final-tip" data-mascot-text id="training-tip-text">Je regarde. Essaie de ne pas faire honte au royaume.</p>
+    </aside>
 
     <div class="training-final-board-wrap">
       <div class="board-frame">
@@ -56,12 +59,8 @@
       <div class="training-move-log" id="tg-move-log" aria-live="polite"></div>
     </section>
 
-    <aside class="training-final-coach">
-      <img id="training-mascot" data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest">
-      <p class="training-final-tip" data-mascot-text id="training-tip-text">Solide. Pas tout à fait du génie, mais je valide.</p>
-    </aside>
-
     <div class="training-final-controls">
+      <button id="undo-btn" type="button">↶&nbsp; Revenir</button>
       <button id="resign-btn" type="button">⚑&nbsp; Abandonner</button>
       <button class="training-advice" id="hint-btn2" type="button">Conseil</button>
     </div>
@@ -70,7 +69,6 @@
       <span id="bot-difficulty-label">1200 ELO</span>
       <span id="bot-status">Ta partie contre l’ordinateur</span>
       <div id="coach-bubble" class="hidden"><span id="coach-icon">👍</span><span id="coach-text"></span></div>
-      <button id="undo-btn" type="button">Retour</button>
       <button id="next-btn" type="button" disabled>Suivant</button>
     </div>
   </section>

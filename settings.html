@@ -140,7 +140,14 @@ soundBtn.onclick = function(){
 const accountStatus=document.getElementById('account-status');
 const accountAction=document.getElementById('account-action');
 if(!firebase.apps.length) firebase.initializeApp(QUEST_FIREBASE_CONFIG);
+const cachedAccount=PROGRESS.account||{};
+if(cachedAccount.uid){
+  accountStatus.textContent=`Connecté : ${cachedAccount.displayName||cachedAccount.email||'compte ChessQuest'}`;
+  accountAction.textContent='Se déconnecter';
+}
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
 firebase.auth().onAuthStateChanged(user=>{
+  if(user) storeQuestUser(user);
   accountStatus.textContent=user?`Connecté : ${user.displayName||user.email}`:'Aucun compte Google connecté. Ta progression reste seulement sur cet appareil.';
   accountAction.textContent=user?'Se déconnecter':'Se connecter avec Google';
   accountAction.onclick=async()=>{

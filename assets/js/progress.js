@@ -20,8 +20,9 @@ function defaultProgress(){
     mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal', voiceName:null, soundEnabled:true, chessComUsername:''},
     chessCom:{ username:'', games:[], lastSync:null, syncing:false },
     mistakes: [], solvedMistakeIds: [], mistakeReviewHistory: [], completedTargets: [], puzzleRating: 1000, puzzleRatingHistory: [], puzzlesSolved: 0, puzzlesFailed: 0,
-    puzzleStreak: 0, puzzleBestStreak: 0,
+    puzzleStreak: 0, puzzleBestStreak: 0, puzzleBattleScores:{30:[],45:[],60:[]},
     activityDates: [], completedCourses: [], viewedNotationGuide: false, viewedGlossary: false,
+    learningJourney: { totalDays:0, step:1, chapter:1, visitedDates:[] },
     xp: 0, lastKnownLevel: 1, unlockedBadges: [],
     dailyProgress: { date:null, puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false, bonusClaimed:{} },
     economy: {
@@ -53,6 +54,10 @@ function loadProgress(){
     progress.economy.treasures = progress.economy.treasures && typeof progress.economy.treasures === 'object' ? progress.economy.treasures : {};
     progress.economy.secrets = Array.isArray(progress.economy.secrets) ? progress.economy.secrets : [];
     progress.account = Object.assign({}, defaults.account, parsed.account || {});
+    progress.learningJourney = Object.assign({}, defaults.learningJourney, parsed.learningJourney || {});
+    progress.learningJourney.visitedDates = Array.isArray(progress.learningJourney.visitedDates) ? progress.learningJourney.visitedDates : [];
+    progress.puzzleBattleScores = Object.assign({}, defaults.puzzleBattleScores, parsed.puzzleBattleScores || {});
+    [30,45,60].forEach(duration => { if(!Array.isArray(progress.puzzleBattleScores[duration])) progress.puzzleBattleScores[duration]=[]; });
     ['games','mistakes','solvedMistakeIds','mistakeReviewHistory','completedTargets','completedCourses','activityDates','unlockedBadges','puzzleRatingHistory'].forEach(key => {
       if(!Array.isArray(progress[key])) progress[key] = defaults[key];
     });
@@ -201,6 +206,34 @@ function computeBestStreak(){
     best = Math.max(best, cur);
   }
   return best;
+}
+
+/* ============================================================
+   PARCOURS QUOTIDIEN D'APPRENTISSAGE
+   Une visite par date fait avancer d'une seule case. Les chapitres de
+   vingt jours permettent de conserver une progression lisible à l'écran.
+   ============================================================ */
+function ensureLearningJourney(){
+  const defaults = defaultProgress().learningJourney;
+  PROGRESS.learningJourney = Object.assign({}, defaults, PROGRESS.learningJourney || {});
+  PROGRESS.learningJourney.visitedDates = Array.isArray(PROGRESS.learningJourney.visitedDates)
+    ? PROGRESS.learningJourney.visitedDates.slice(-400)
+    : [];
+  return PROGRESS.learningJourney;
+}
+function recordLearningJourneyVisit(){
+  const journey = ensureLearningJourney();
+  const key = todayKey();
+  if(journey.visitedDates.includes(key)) return { journey, advanced:false, reward:0 };
+  journey.visitedDates.push(key);
+  journey.totalDays = Math.max(Number(journey.totalDays) || 0, journey.visitedDates.length);
+  journey.step = ((journey.totalDays - 1) % 20) + 1;
+  journey.chapter = Math.floor((journey.totalDays - 1) / 20) + 1;
+  saveProgress();
+  recordActivity();
+  addXP(10);
+  addCrowns(5, 'Étape quotidienne d’apprentissage');
+  return { journey, advanced:true, reward:5 };
 }
 
 /* ============================================================

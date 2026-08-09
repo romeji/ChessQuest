@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr" class="academy-journey-document">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#244c35">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ChessQuest">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
+<title>ChessQuest — Apprendre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/variables.css">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/academy-journey.css?v=54">
+</head>
+<body data-page="learn" class="academy-journey-page">
+<div id="toast-container"></div>
+<main class="academy-journey" aria-label="Parcours quotidien d'apprentissage">
+  <div class="academy-art" aria-hidden="true"></div>
+  <header class="academy-topbar">
+    <div class="academy-title-group">
+      <span class="academy-level-medal" id="academy-level-medal">1</span>
+      <div><h1>Apprendre</h1><small id="academy-chapter">Chapitre 1 · Fondations</small></div>
+    </div>
+    <div class="academy-wallet" aria-label="Récompenses">
+      <a href="progress.html"><span>XP</span><b id="academy-xp">0</b></a>
+      <a href="shop.html"><span>♛</span><b id="academy-crowns">0</b></a>
+    </div>
+  </header>
+
+  <section class="academy-path" id="academy-path" aria-label="Étapes du parcours"></section>
+
+  <aside class="academy-coach" id="academy-coach" aria-live="polite">
+    <img src="assets/illustrations/mascot-coach-haughty.webp" alt="Mascotte ChessQuest">
+    <p id="academy-coach-copy">Une case aujourd'hui. Le génie, lui, viendra après le café.</p>
+    <button type="button" id="academy-coach-close" aria-label="Masquer le conseil">×</button>
+  </aside>
+
+  <section class="academy-progress-panel">
+    <div class="academy-progress-label"><strong id="academy-day-label">Jour 1</strong><span id="academy-next-label">Prochaine étape demain</span></div>
+    <div class="academy-progress-track"><i id="academy-progress-fill"></i></div>
+    <span class="academy-progress-step" id="academy-progress-step">1 / 20</span>
+  </section>
+
+  <div class="academy-actions">
+    <button class="academy-menu-button" id="academy-menu-button" type="button" aria-expanded="false" aria-label="Choisir un mode d'apprentissage">
+      <svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h14"/></svg>
+    </button>
+    <a class="academy-primary-button" id="academy-continue" href="course-library.html"><span>Continuer ma leçon</span><small id="academy-next-course">Parcours débutant</small></a>
+  </div>
+
+  <div class="academy-menu hidden" id="academy-menu" role="dialog" aria-label="Modes d'apprentissage">
+    <strong>Choisis ton terrain de jeu</strong>
+    <a href="course-library.html"><span>📚</span><div><b>Cours écrits</b><small>Comprendre avant de mémoriser</small></div></a>
+    <a href="learn.html"><span>🏝️</span><div><b>Carte des ouvertures</b><small>Explore les dix royaumes</small></div></a>
+    <a href="training-game.html"><span>♞</span><div><b>Apprendre avec l'entraîneur</b><small>Une vraie partie adaptée à ton niveau</small></div></a>
+    <a href="training-target.html"><span>🎯</span><div><b>Techniques ciblées</b><small>Travaille un motif précis</small></div></a>
+  </div>
+</main>
+<nav class="tabbar"></nav>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/animations.js"></script>
+<script src="assets/js/courses.js"></script>
+<script src="assets/js/navigation.js"></script>
+<script src="assets/js/academy-journey.js?v=54"></script>
+</body>
+</html>

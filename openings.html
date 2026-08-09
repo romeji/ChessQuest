@@ -35,8 +35,8 @@
         <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
       </a>
       <h1 id="line-name">Italienne</h1>
-      <button class="final-icon-button opening-final-bookmark" id="opening-bookmark" type="button" aria-label="Ajouter aux favoris" aria-pressed="false">
-        <svg viewBox="0 0 24 24"><path d="M6 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v17l-6-4-6 4Z"/></svg>
+      <button class="final-icon-button opening-final-bookmark" id="opening-theory-button" type="button" aria-label="Pourquoi jouer cette ouverture">
+        <strong aria-hidden="true">i</strong>
       </button>
     </header>
 
@@ -53,19 +53,21 @@
       </div>
     </div>
 
-    <details class="final-card opening-final-theory">
-      <summary class="opening-theory-title">
+    <div class="opening-theory-modal hidden" id="opening-theory-modal" role="dialog" aria-modal="true" aria-labelledby="theory-title">
+      <div class="final-card opening-final-theory">
+      <button class="opening-theory-close" id="opening-theory-close" type="button" aria-label="Fermer">×</button>
+      <div class="opening-theory-title">
         <span class="opening-theory-icon" aria-hidden="true">♜</span>
         <span id="theory-title">Pourquoi jouer l’Italienne ?</span>
-        <span class="theory-chevron">⌄</span>
-      </summary>
+      </div>
       <div class="opening-final-facts" id="opening-facts">
         <span class="opening-final-fact"><i>♞</i>Développement rapide</span>
         <span class="opening-final-fact"><i>◎</i>Pression sur f7</span>
         <span class="opening-final-fact"><i>▤</i>Popularisée au XVIe siècle</span>
       </div>
       <div class="opening-history-copy" id="opening-history-copy"></div>
-    </details>
+      </div>
+    </div>
 
     <section class="final-card opening-final-memory">
       <div>
@@ -181,6 +183,10 @@ const startLocation = findCurriculumLesson(startKey);
 const backWorld = requestedWorld || (startLocation && startLocation.world.id) || 'fondations';
 const backIsland = requestedIsland || (startLocation && startLocation.island.id) || '';
 document.getElementById('opening-back').href = `learn.html?world=${encodeURIComponent(backWorld)}${backIsland ? `&island=${encodeURIComponent(backIsland)}` : ''}`;
+const theoryModal=document.getElementById('opening-theory-modal');
+document.getElementById('opening-theory-button').onclick=()=>theoryModal.classList.remove('hidden');
+document.getElementById('opening-theory-close').onclick=()=>theoryModal.classList.add('hidden');
+theoryModal.onclick=event=>{if(event.target===theoryModal)theoryModal.classList.add('hidden');};
 localStorage.setItem('cq-opening-last',JSON.stringify({key:startKey,world:backWorld,island:backIsland}));
 
 function nextCurriculumUrl(key){
@@ -201,12 +207,6 @@ function nextCurriculumUrl(key){
   return `learn.html?world=${encodeURIComponent(world.id)}`;
 }
 
-document.getElementById('opening-bookmark').onclick = function(){
-  const saved = this.getAttribute('aria-pressed') !== 'true';
-  this.setAttribute('aria-pressed', String(saved));
-  this.classList.toggle('saved',saved);
-  showToast(saved ? 'Ouverture enregistrée' : 'Ouverture retirée', saved ? 'Tu la retrouveras dans tes favoris.' : 'Elle a été retirée de tes favoris.');
-};
 document.getElementById('opening-copy').onclick = async function(){
   const text = firstMovesText();
   try{ await navigator.clipboard.writeText(text); }catch(error){}
