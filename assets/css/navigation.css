@@ -2,9 +2,8 @@
    Le fond couvre aussi la safe-area inférieure des PWA iOS. */
 :root{
   --cq-tabbar-content-height:48px;
-  --cq-tabbar-safe-bottom:env(safe-area-inset-bottom,0px);
   --cq-tabbar-controls-bottom:2px;
-  --cq-tabbar-height:calc(var(--cq-tabbar-content-height) + var(--cq-tabbar-safe-bottom));
+  --cq-tabbar-height:var(--cq-tabbar-content-height);
   --tabbar-height:var(--cq-tabbar-height);
 }
 
