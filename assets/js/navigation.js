@@ -2,7 +2,7 @@
 (function initQuestPwaUpdate(){
   window.__CQ_PWA_UPDATE__ = true;
   if(!('serviceWorker' in navigator) || location.protocol === 'file:') return;
-  const version = '66';
+  const version = '68';
   let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if(refreshing || sessionStorage.getItem(`cq-sw-reload-${version}`)) return;
@@ -24,7 +24,7 @@
    Chaque page HTML doit poser <body data-page="home|learn|puzzles|play|profile">
    La navigation elle-même se fait via de vrais liens <a href="...">.
    ============================================================ */
-document.addEventListener('DOMContentLoaded', () => {
+function renderQuestTabbar(){
   const aliases = {
     analyze: 'home',
     analysis: 'home',
@@ -58,4 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
       item.addEventListener('click', () => window.location.assign(target));
     }
   });
-});
+}
+
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', renderQuestTabbar, { once:true });
+}else{
+  renderQuestTabbar();
+}
+
+/* Safari/iOS restaure parfois une page depuis son cache sans rejouer
+   DOMContentLoaded. pageshow garantit que la barre est recréée au retour. */
+window.addEventListener('pageshow', renderQuestTabbar);
