@@ -1,3 +1,23 @@
+/* Mise à jour PWA globale : ce fichier est aussi chargé par les mondes plein écran. */
+(function initQuestPwaUpdate(){
+  window.__CQ_PWA_UPDATE__ = true;
+  if(!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  const version = '59';
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if(refreshing || sessionStorage.getItem(`cq-sw-reload-${version}`)) return;
+    refreshing = true;
+    sessionStorage.setItem(`cq-sw-reload-${version}`, '1');
+    location.reload();
+  });
+  const update = () => navigator.serviceWorker
+    .register(`./sw.js?v=${version}`, { updateViaCache:'none' })
+    .then(registration => registration.update())
+    .catch(() => {});
+  if(document.readyState === 'complete') update();
+  else window.addEventListener('load', update, { once:true });
+})();
+
 /* ============================================================
    ChessQuest — navigation.js
    Marque l'onglet actif dans la barre de navigation basse.

@@ -216,11 +216,12 @@ window.addEventListener('cq:chesscom-sync', () => {
 
 /* ---- PWA : installation propre et navigation dans le scope de l'app ---- */
 function initPwa(){
+  if(window.__CQ_PWA_UPDATE__) return;
   if(!('serviceWorker' in navigator)) return;
   const isFile = window.location.protocol === 'file:';
   if(isFile) return;
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js?v=59', { updateViaCache:'none' }).then(registration => registration.update()).catch(() => {});
   });
 }
 initPwa();
