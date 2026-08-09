@@ -1,0 +1,62 @@
+/* Barre basse unique de ChessQuest.
+   Le fond couvre aussi la safe-area inférieure des PWA iOS. */
+:root{
+  --cq-tabbar-content-height:52px;
+  --cq-tabbar-safe-bottom:env(safe-area-inset-bottom,0px);
+  --cq-tabbar-height:calc(var(--cq-tabbar-content-height) + var(--cq-tabbar-safe-bottom));
+  --tabbar-height:var(--cq-tabbar-height);
+}
+
+body nav.tabbar{
+  position:fixed!important;
+  z-index:500!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:0!important;
+  width:min(100%,430px)!important;
+  height:var(--cq-tabbar-height)!important;
+  min-height:var(--cq-tabbar-height)!important;
+  margin:0!important;
+  padding:2px 4px var(--cq-tabbar-safe-bottom)!important;
+  display:flex!important;
+  align-items:stretch!important;
+  justify-content:space-around!important;
+  transform:translateX(-50%)!important;
+  border:0!important;
+  border-top:1px solid #e6dcc2!important;
+  border-radius:0!important;
+  background:#fffdf8!important;
+  box-shadow:0 -8px 25px rgba(0,21,14,.28)!important;
+  box-sizing:border-box!important;
+}
+
+body nav.tabbar::after{display:none!important}
+
+body nav.tabbar .tabbar-item{
+  position:relative!important;
+  z-index:1!important;
+  flex:1 1 0!important;
+  min-width:0!important;
+  min-height:0!important;
+  height:48px!important;
+  margin:0!important;
+  padding:2px 1px!important;
+  gap:1px!important;
+  border-radius:10px!important;
+  color:#8d8999!important;
+}
+
+body nav.tabbar .tabbar-item.active{
+  color:#177b4e!important;
+  background:#eaf5e6!important;
+}
+
+body nav.tabbar .tabbar-item .tabicon{width:20px!important;height:20px!important}
+body nav.tabbar .tabbar-item span{font-size:.56rem!important;line-height:1!important}
+
+@media (display-mode:standalone){
+  body nav.tabbar{
+    bottom:0!important;
+    padding-bottom:env(safe-area-inset-bottom,0px)!important;
+  }
+}

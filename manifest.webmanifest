@@ -9,8 +9,8 @@
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "orientation": "portrait-primary",
-  "background_color": "#063427",
-  "theme_color": "#063427",
+  "background_color": "#fffdf8",
+  "theme_color": "#fffdf8",
   "categories": ["education", "games"],
   "icons": [
     {

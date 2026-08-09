@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v65';
+const CACHE_VERSION = 'chessquest-v66';
 const APP_SHELL = [
   './',
   './index.html',
@@ -36,6 +36,7 @@ const APP_SHELL = [
   './assets/css/responsive-hardening.css',
   './assets/css/gamification.css',
   './assets/css/ux-refinement.css',
+  './assets/css/navigation.css',
   './assets/css/problem-journey.css',
   './assets/css/home.css',
   './assets/css/learn.css',
