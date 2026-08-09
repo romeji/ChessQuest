@@ -221,7 +221,7 @@ function initPwa(){
   const isFile = window.location.protocol === 'file:';
   if(isFile) return;
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js?v=69', { updateViaCache:'none' }).then(registration => registration.update()).catch(() => {});
+    navigator.serviceWorker.register('./sw.js?v=70', { updateViaCache:'none' }).then(registration => registration.update()).catch(() => {});
   });
 }
 initPwa();

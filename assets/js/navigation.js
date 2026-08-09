@@ -1,8 +1,14 @@
 /* Mise à jour PWA globale : ce fichier est aussi chargé par les mondes plein écran. */
+const QUEST_NAVIGATION_VERSION = '70';
+const QUEST_NAVIGATION_STYLESHEET = new URL(
+  `../css/navigation.css?v=${QUEST_NAVIGATION_VERSION}`,
+  document.currentScript?.src || document.baseURI
+).href;
+
 (function initQuestPwaUpdate(){
   window.__CQ_PWA_UPDATE__ = true;
   if(!('serviceWorker' in navigator) || location.protocol === 'file:') return;
-  const version = '69';
+  const version = QUEST_NAVIGATION_VERSION;
   let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if(refreshing || sessionStorage.getItem(`cq-sw-reload-${version}`)) return;
@@ -24,7 +30,19 @@
    Chaque page HTML doit poser <body data-page="home|learn|puzzles|play|profile">
    La navigation elle-même se fait via de vrais liens <a href="...">.
    ============================================================ */
+function ensureQuestNavigationStyles(){
+  let stylesheet = document.querySelector('link[data-quest-navigation],link[href*="assets/css/navigation.css"]');
+  if(!stylesheet){
+    stylesheet = document.createElement('link');
+    stylesheet.rel = 'stylesheet';
+    document.head.appendChild(stylesheet);
+  }
+  stylesheet.dataset.questNavigation = 'true';
+  if(stylesheet.href !== QUEST_NAVIGATION_STYLESHEET) stylesheet.href = QUEST_NAVIGATION_STYLESHEET;
+}
+
 function renderQuestTabbar(){
+  ensureQuestNavigationStyles();
   const aliases = {
     analyze: 'home',
     analysis: 'home',
@@ -34,10 +52,35 @@ function renderQuestTabbar(){
     play: 'home',
     progress: 'profile'
   };
-  const current = aliases[document.body.dataset.page] || document.body.dataset.page;
-  const tabbar = document.querySelector('.tabbar');
-  if(tabbar){
-    tabbar.innerHTML = `
+  const routeTabs = {
+    '': 'home',
+    'index.html': 'home',
+    'problems.html': 'puzzles',
+    'puzzles.html': 'puzzles',
+    'daily-challenge.html': 'puzzles',
+    'training-target.html': 'puzzles',
+    'academy.html': 'learn',
+    'learn.html': 'learn',
+    'openings.html': 'learn',
+    'course.html': 'learn',
+    'course-library.html': 'learn',
+    'profile.html': 'profile',
+    'progress.html': 'profile',
+    'settings.html': 'profile',
+    'shop.html': 'profile'
+  };
+  const route = location.pathname.split('/').pop().toLowerCase();
+  const declaredPage = document.body.dataset.page;
+  const current = routeTabs[route] || aliases[declaredPage] || declaredPage || 'home';
+  let tabbar = document.querySelector('nav.tabbar');
+  if(!tabbar){
+    tabbar = document.createElement('nav');
+    tabbar.className = 'tabbar';
+    document.body.appendChild(tabbar);
+  }
+  tabbar.setAttribute('aria-label', 'Navigation principale');
+  document.body.classList.add('cq-has-tabbar');
+  tabbar.innerHTML = `
       <a class="tabbar-item" data-tab="home" href="index.html" aria-label="Accueil">
         <svg viewBox="0 0 24 24" class="tabicon"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/></svg><span>Accueil</span>
       </a>
@@ -50,8 +93,7 @@ function renderQuestTabbar(){
       <a class="tabbar-item" data-tab="profile" href="profile.html" aria-label="Profil">
         <svg viewBox="0 0 24 24" class="tabicon"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Profil</span>
       </a>`;
-  }
-  document.querySelectorAll('.tabbar-item').forEach(item => {
+  tabbar.querySelectorAll('.tabbar-item').forEach(item => {
     item.classList.toggle('active', item.dataset.tab === current);
     const target = item.getAttribute('data-href');
     if(target){

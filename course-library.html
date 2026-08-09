@@ -67,5 +67,6 @@ renderCourses(initialLevel);
 const featured=['italienne','espagnole','qgd','qga','slav','najdorf','carokann','francaise'].filter(key=>OPENINGS[key]);
 document.getElementById('academy-openings').innerHTML=featured.map(key=>`<a href="openings.html?opening=${encodeURIComponent(key)}"><strong>${escapeHtml(OPENINGS[key].name)}</strong><small>${escapeHtml(OPENINGS[key].intro||'Comprendre les idées de cette ouverture.')}</small><span>Lire et pratiquer ›</span></a>`).join('');
 </script>
+<script src="assets/js/navigation.js?v=70"></script>
 </body>
 </html>

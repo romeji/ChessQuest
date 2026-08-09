@@ -3,7 +3,7 @@
 :root{
   --cq-tabbar-content-height:48px;
   --cq-tabbar-safe-bottom:env(safe-area-inset-bottom,0px);
-  --cq-tabbar-controls-bottom:max(3px,calc(var(--cq-tabbar-safe-bottom) - 8px));
+  --cq-tabbar-controls-bottom:0px;
   --cq-tabbar-height:calc(var(--cq-tabbar-content-height) + var(--cq-tabbar-safe-bottom));
   --tabbar-height:var(--cq-tabbar-height);
 }
@@ -60,4 +60,36 @@ body nav.tabbar .tabbar-item span{font-size:.56rem!important;line-height:1!impor
     bottom:0!important;
     padding-bottom:var(--cq-tabbar-controls-bottom)!important;
   }
+}
+
+/* Les vues plein écran nouvellement équipées réservent la place du composant. */
+body.cq-has-tabbar.daily-final-page .app,
+body.cq-has-tabbar.training-final-page .app,
+body.cq-has-tabbar.opening-final-page .app,
+body.cq-has-tabbar.analysis-review-page .app{
+  height:calc(100dvh - var(--cq-tabbar-height))!important;
+  min-height:0!important;
+}
+
+body.cq-has-tabbar.opening-final-page .opening-lesson-cta{
+  bottom:var(--cq-tabbar-height)!important;
+}
+
+body.cq-has-tabbar.opening-map-page .map-app,
+body.cq-has-tabbar.opening-map-page .page,
+body.cq-has-tabbar.opening-map-page .teal-hero{
+  bottom:var(--cq-tabbar-height)!important;
+  height:auto!important;
+  min-height:0!important;
+}
+
+body.cq-has-tabbar.opening-map-page .opening-map-dock{
+  bottom:var(--cq-tabbar-height)!important;
+}
+
+body.cq-has-tabbar .academy-shell,
+body.cq-has-tabbar .written-course-shell,
+body.cq-has-tabbar .shop-content,
+body.cq-has-tabbar .secret-hub{
+  padding-bottom:calc(var(--cq-tabbar-height) + 20px)!important;
 }
