@@ -21,9 +21,9 @@ body nav.tabbar .tabbar-item span{font-size:.56rem!important;line-height:1!impor
 
 /* Sur iOS, un body lui-même fixed crée un faux viewport qui s'arrête avant la zone Home. */
 html.problem-journey-document,html.problem-journey-document body,html.academy-journey-document,html.academy-journey-document body{position:relative!important;inset:auto!important;width:100%!important;height:100dvh!important;min-height:100dvh!important;overflow:hidden!important}
-.problem-journey-page nav.tabbar{position:fixed!important;bottom:-1px!important;background:#1f3d22!important;box-shadow:0 -7px 22px rgba(22,50,25,.24)!important}
-.academy-journey-page nav.tabbar{position:fixed!important;bottom:-1px!important;background:#133123!important;box-shadow:0 -10px 26px rgba(5,29,17,.24)!important}
-@media (display-mode:standalone){.problem-journey-page nav.tabbar,.academy-journey-page nav.tabbar{position:fixed!important;bottom:-1px!important}}
+.problem-journey-page nav.tabbar{position:fixed!important;bottom:calc(-1px - env(safe-area-inset-bottom,0px))!important;height:calc(var(--tabbar-height) + env(safe-area-inset-bottom,0px))!important;padding-bottom:calc(var(--tabbar-safe-bottom) + env(safe-area-inset-bottom,0px))!important;background:#1f3d22!important;box-shadow:0 -7px 22px rgba(22,50,25,.24)!important}
+.academy-journey-page nav.tabbar{position:fixed!important;bottom:calc(-1px - env(safe-area-inset-bottom,0px))!important;height:calc(var(--tabbar-height) + env(safe-area-inset-bottom,0px))!important;padding-bottom:calc(var(--tabbar-safe-bottom) + env(safe-area-inset-bottom,0px))!important;background:#133123!important;box-shadow:0 -10px 26px rgba(5,29,17,.24)!important}
+@media (display-mode:standalone){.problem-journey-page nav.tabbar,.academy-journey-page nav.tabbar{position:fixed!important;bottom:calc(-1px - env(safe-area-inset-bottom,0px))!important}}
 
 /* En-têtes de jeu stables : aucun titre ne peut passer sous un bouton. */
 .puzzle-final-page .final-page-title,.training-final-page .final-page-title,.opening-final-page .final-page-title{
