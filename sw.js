@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v84';
+const CACHE_VERSION = 'chessquest-v85';
 const APP_SHELL = [
   './',
   './index.html',
@@ -47,6 +47,7 @@ const APP_SHELL = [
   './assets/css/profile.css',
   './assets/css/coach.css',
   './assets/css/opening-gamification.css',
+  './assets/css/opening-swipe.css',
   './assets/js/progress.js',
   './assets/js/mascot-coach.js',
   './assets/js/chesscom.js',
@@ -56,6 +57,7 @@ const APP_SHELL = [
   './assets/js/board.js',
   './assets/js/openings.js',
   './assets/js/opening-curriculum.js',
+  './assets/js/opening-swipe.js',
   './assets/js/training.js',
   './assets/js/puzzles.js',
   './assets/js/problem-journey.js',
@@ -103,6 +105,7 @@ const APP_SHELL = [
   './assets/illustrations/rewards-spritesheet.png',
   './assets/illustrations/training-menu-hero.png',
   './assets/images/academy/learning-journey-v1.png',
+  './assets/images/openings/italian-swipe-card-v1.png',
   './assets/images/puzzles/problem-journey-v1.png',
   './assets/images/problem-worlds/player-pawn-3d.png',
   './assets/images/problem-worlds/world-1-sprites-3d.png',

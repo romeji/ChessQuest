@@ -1,294 +1,101 @@
 <!DOCTYPE html>
-<html lang="fr" class="opening-map-document">
+<html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#063c34">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="ChessQuest">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
-<link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
-<title>ChessQuest — Ouvertures</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/variables.css">
-<link rel="stylesheet" href="assets/css/reset.css">
-<link rel="stylesheet" href="assets/css/layout.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/animations.css">
-<link rel="stylesheet" href="assets/css/learn.css">
-<link rel="stylesheet" href="assets/css/polish.css">
-    <link rel="stylesheet" href="assets/css/mockup-pages.css?v=40">
-    <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
-    <link rel="stylesheet" href="assets/css/gamification.css?v=44">
-<link rel="stylesheet" href="assets/css/ux-refinement.css?v=59">
-<link rel="stylesheet" href="assets/css/navigation.css?v=75" data-quest-navigation>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#082f28">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ChessQuest">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
+  <title>ChessQuest — Ouvertures</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/reset.css">
+  <link rel="stylesheet" href="assets/css/components.css">
+  <link rel="stylesheet" href="assets/css/opening-swipe.css?v=85">
+  <link rel="stylesheet" href="assets/css/navigation.css?v=85" data-quest-navigation>
 </head>
-<body data-page="learn" class="opening-map-page">
-<div id="toast-container"></div>
-<main class="app map-app">
-  <section class="page">
-    <div class="teal-hero">
-      <header class="map-header">
-        <a class="subpage-back" aria-label="Retour à l'accueil" href="index.html">
-          <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
-        </a>
+<body data-page="learn" class="opening-swipe-page">
+  <div id="toast-container"></div>
+
+  <main class="opening-swipe-app">
+    <header class="opening-swipe-header">
+      <a href="index.html" class="opening-swipe-back" aria-label="Retour à l’accueil">‹</a>
+      <div>
+        <small>APPRENDRE</small>
         <h1>Ouvertures</h1>
-        <span class="map-header-spacer" aria-hidden="true"></span>
-      </header>
-      <nav class="world-switcher" aria-label="Choisir un monde">
-        <button class="world-arrow" id="world-prev" type="button" aria-label="Monde précédent">‹</button>
-        <button class="world-chip" id="world-chip" type="button" aria-label="Afficher la progression du monde">
-          <small id="world-number">Monde 1 / 10</small>
-          <strong id="world-title">Fondations</strong>
-          <span id="world-progress">0 / 14</span>
-        </button>
-        <button class="world-arrow" id="world-next" type="button" aria-label="Monde suivant">›</button>
-      </nav>
-      <div class="skill-path" id="skill-path" aria-label="Parcours des ouvertures"></div>
+      </div>
+      <button id="opening-match-button" class="opening-match-button" type="button" aria-label="Trouver mon ouverture">
+        <span>♞</span><b id="opening-match-score">Match</b>
+      </button>
+    </header>
+
+    <section class="opening-swipe-coach" id="opening-swipe-coach">
+      <img src="assets/illustrations/mascot-coach-haughty.webp" alt="Mascotte ChessQuest">
+      <p id="opening-coach-copy">Fais glisser les cartes. Promis, aucune ouverture ne prendra ça personnellement.</p>
+    </section>
+
+    <section class="opening-deck-shell" aria-label="Choisir une famille d’ouvertures">
+      <button class="opening-deck-arrow previous" id="opening-card-prev" type="button" aria-label="Ouverture précédente">‹</button>
+      <div class="opening-deck" id="opening-deck" aria-live="polite"></div>
+      <button class="opening-deck-arrow next" id="opening-card-next" type="button" aria-label="Ouverture suivante">›</button>
+      <div class="opening-deck-dots" id="opening-deck-dots"></div>
+      <p class="opening-swipe-hint"><span>↔</span> Glisse pour explorer les ouvertures</p>
+    </section>
+
+    <section class="opening-selection-panel">
+      <div class="opening-selection-copy">
+        <span id="opening-selection-kicker">MONDE 1 · FONDATIONS</span>
+        <h2 id="opening-selection-title">Italienne</h2>
+        <p id="opening-selection-description">Développe vite et mets immédiatement f7 sous pression.</p>
+      </div>
+      <div class="opening-selection-progress">
+        <div><span id="opening-selection-progress-label">0 / 2 maîtrisées</span><b id="opening-selection-match">Excellent match</b></div>
+        <div class="track"><i id="opening-selection-progress-fill"></i></div>
+      </div>
+    </section>
+
+    <div class="opening-swipe-actions">
+      <button class="opening-swipe-menu" id="opening-swipe-menu" type="button" aria-expanded="false" aria-label="Ouvrir le menu">☷</button>
+      <button class="opening-swipe-primary" id="opening-swipe-primary" type="button">
+        <span id="opening-primary-label">Commencer l’ouverture</span><small id="opening-primary-subtitle">Première leçon disponible</small>
+      </button>
+      <div class="opening-swipe-sheet hidden" id="opening-swipe-sheet">
+        <strong>Apprendre les ouvertures</strong>
+        <a href="course-library.html#openings">📚 Bibliothèque de leçons</a>
+        <a href="training-game.html">♞ Apprendre avec l’entraîneur</a>
+        <button type="button" id="opening-match-sheet-button">✨ Trouver mon ouverture idéale</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="opening-match-backdrop hidden" id="opening-match-backdrop"></div>
+  <section class="opening-match-modal hidden" id="opening-match-modal" role="dialog" aria-modal="true" aria-labelledby="opening-match-title">
+    <button class="opening-match-close" id="opening-match-close" type="button" aria-label="Fermer">×</button>
+    <span class="opening-match-crown">♛</span>
+    <small>TON STYLE DE JEU</small>
+    <h2 id="opening-match-title">Quelle victoire te ressemble ?</h2>
+    <p>Choisis ton tempérament. Je classerai les ouvertures sans juger tes ambitions. Enfin, presque.</p>
+    <div class="opening-match-choices">
+      <button type="button" data-style="attack"><span>⚔️</span><b>Attaquer</b><small>Initiative et roi adverse</small></button>
+      <button type="button" data-style="solid"><span>🛡️</span><b>Construire</b><small>Structure et sécurité</small></button>
+      <button type="button" data-style="positional"><span>♟️</span><b>Manœuvrer</b><small>Plans durables</small></button>
+      <button type="button" data-style="creative"><span>✨</span><b>Surprendre</b><small>Gambits et idées rares</small></button>
     </div>
   </section>
-</main>
 
-<div class="mode-bottom-dock opening-bottom-dock opening-map-dock">
-  <button class="mode-menu-button" id="opening-map-menu-button" type="button" aria-expanded="false" aria-label="Ouvrir la bibliothèque">☷</button>
-  <a class="mode-primary-button opening-adventure-button" id="opening-continue-adventure" href="openings.html?opening=italienne">Continuer l’aventure</a>
-  <div class="mode-sheet hidden" id="opening-map-menu-sheet">
-    <strong>Apprendre les ouvertures</strong>
-    <a href="course-library.html#openings">📚 Bibliothèque de leçons</a>
-    <a href="training-game.html">♞ Apprendre avec l’entraîneur</a>
-  </div>
-</div>
+  <nav class="tabbar" aria-label="Navigation principale"></nav>
 
-<div class="map-sheet-backdrop" id="map-sheet-backdrop" hidden></div>
-<section class="island-sheet" id="island-sheet" role="dialog" aria-modal="true" aria-labelledby="island-sheet-title" hidden>
-  <div class="island-sheet-handle" aria-hidden="true"></div>
-  <header class="island-sheet-header">
-    <div>
-      <span class="island-sheet-kicker" id="island-sheet-kicker">MONDE 1 · ÎLE 1</span>
-      <h2 id="island-sheet-title">Italienne</h2>
-      <p id="island-sheet-copy">Apprends les variantes dans l’ordre pour terminer cette île.</p>
-    </div>
-    <button class="island-sheet-close" id="island-sheet-close" type="button" aria-label="Fermer">×</button>
-  </header>
-  <div class="island-sheet-progress">
-    <span id="island-sheet-progress-label">0 / 2 leçons</span>
-    <div class="track"><div class="track-fill" id="island-sheet-progress-fill"></div></div>
-  </div>
-  <div class="island-lessons" id="island-lessons"></div>
-</section>
-
-<script src="assets/js/opening-curriculum.js?v=40"></script>
-<script src="assets/js/progress.js"></script>
-<script src="assets/js/animations.js"></script>
-<script src="assets/js/app.js"></script>
-<script src="assets/js/mascot-coach.js?v=44"></script>
-<script>
-const LOCK_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
-const BASE_OPENING_NAMES = {
-  najdorf:'Sicilienne — Najdorf', dragon:'Sicilienne — Dragon', sveshnikov:'Sicilienne — Sveshnikov',
-  qgd:'Gambit Dame refusé', qga:'Gambit Dame accepté', slav:'Défense Slave',
-  italienne:'Italienne — Giuoco Piano', espagnole:'Espagnole — Ruy Lopez', ecossaise:'Partie écossaise',
-  gambit_roi:'Gambit Roi', vienne:'Partie Vienne', quatre_cavaliers:'Quatre Cavaliers',
-  francaise:'Défense Française', carokann:'Défense Caro-Kann', scandinave:'Défense Scandinave',
-  pirc:'Défense Pirc', alekhine:'Défense Alekhine', londres:'Système Londres', colle:'Système Colle',
-  indienne_roi:'Défense Est-Indienne', nimzo_indienne:'Défense Nimzo-Indienne',
-  grunfeld:'Défense Grünfeld', anglaise:'Ouverture Anglaise', reti:'Ouverture Réti'
-};
-const query = new URLSearchParams(location.search);
-const requestedWorldId = query.get('world') || localStorage.getItem('cq-opening-world');
-let currentWorldIndex = Math.max(0, OPENING_WORLDS.findIndex(world => world.id === requestedWorldId));
-let activeIsland = null;
-
-function lessonName(key){
-  return BASE_OPENING_NAMES[key] || (OPENING_EXTRA_ROWS[key] && OPENING_EXTRA_ROWS[key][0]) || key.replaceAll('_',' ');
-}
-function isWorldUnlocked(index){
-  if(index === 0) return true;
-  return curriculumWorldProgress(OPENING_WORLDS[index - 1], PROGRESS.mastered || {}).complete;
-}
-function isIslandUnlocked(worldIndex, islandIndex){
-  if(!isWorldUnlocked(worldIndex)) return false;
-  if(islandIndex === 0) return true;
-  return curriculumIslandProgress(OPENING_WORLDS[worldIndex].islands[islandIndex - 1], PROGRESS.mastered || {}).complete;
-}
-function isLessonUnlocked(worldIndex, islandIndex, lessonIndex){
-  if(!isIslandUnlocked(worldIndex, islandIndex)) return false;
-  const lessons = OPENING_WORLDS[worldIndex].islands[islandIndex].lessons;
-  return lessons.slice(0, lessonIndex).every(key => !!(PROGRESS.mastered || {})[key]);
-}
-function adventureTarget(){
-  let saved = null;
-  try{ saved = JSON.parse(localStorage.getItem('cq-opening-last') || 'null'); }catch(error){}
-  if(saved?.key && !(PROGRESS.mastered || {})[saved.key]){
-    const locationData = findCurriculumLesson(saved.key);
-    if(locationData && isLessonUnlocked(locationData.worldIndex,locationData.islandIndex,locationData.lessonIndex)){
-      return `openings.html?opening=${encodeURIComponent(saved.key)}&world=${encodeURIComponent(locationData.world.id)}&island=${encodeURIComponent(locationData.island.id)}`;
-    }
-  }
-  for(let worldIndex=0;worldIndex<OPENING_WORLDS.length;worldIndex++){
-    const world=OPENING_WORLDS[worldIndex];
-    for(let islandIndex=0;islandIndex<world.islands.length;islandIndex++){
-      const island=world.islands[islandIndex];
-      for(let lessonIndex=0;lessonIndex<island.lessons.length;lessonIndex++){
-        const key=island.lessons[lessonIndex];
-        if(!(PROGRESS.mastered || {})[key] && isLessonUnlocked(worldIndex,islandIndex,lessonIndex)){
-          return `openings.html?opening=${encodeURIComponent(key)}&world=${encodeURIComponent(world.id)}&island=${encodeURIComponent(island.id)}`;
-        }
-      }
-    }
-  }
-  const lastWorld=OPENING_WORLDS[OPENING_WORLDS.length-1];
-  const lastIsland=lastWorld.islands[lastWorld.islands.length-1];
-  const lastKey=lastIsland.lessons[lastIsland.lessons.length-1];
-  return `openings.html?opening=${encodeURIComponent(lastKey)}&world=${encodeURIComponent(lastWorld.id)}&island=${encodeURIComponent(lastIsland.id)}`;
-}
-function worldRequirement(index){
-  if(index === 0) return '';
-  return `Termine « ${OPENING_WORLDS[index - 1].shortTitle} » pour ouvrir ce monde.`;
-}
-function islandRequirement(worldIndex, islandIndex){
-  if(!isWorldUnlocked(worldIndex)) return worldRequirement(worldIndex);
-  if(islandIndex === 0) return '';
-  return `Termine d’abord l’île « ${OPENING_WORLDS[worldIndex].islands[islandIndex - 1].title} ».`;
-}
-function replaceWorldQuery(){
-  const url = new URL(location.href);
-  url.searchParams.set('world', OPENING_WORLDS[currentWorldIndex].id);
-  url.searchParams.delete('island');
-  history.replaceState({},'',url);
-  localStorage.setItem('cq-opening-world', OPENING_WORLDS[currentWorldIndex].id);
-}
-function renderSkillPath(){
-  const world = OPENING_WORLDS[currentWorldIndex];
-  const mastered = PROGRESS.mastered || {};
-  const progress = curriculumWorldProgress(world, mastered);
-  const worldUnlocked = isWorldUnlocked(currentWorldIndex);
-  const hero = document.querySelector('.teal-hero');
-  hero.dataset.worldTheme = world.theme;
-  hero.style.setProperty('--opening-map-image', `url("${new URL(world.background, document.baseURI).href}")`);
-  hero.classList.toggle('world-locked', !worldUnlocked);
-
-  document.getElementById('world-number').textContent = `Monde ${world.number} / ${OPENING_WORLDS.length}`;
-  document.getElementById('world-title').textContent = world.shortTitle;
-  document.getElementById('world-progress').textContent = `${progress.completed} / ${progress.total}`;
-  document.getElementById('world-prev').disabled = currentWorldIndex === 0;
-  document.getElementById('world-next').disabled = currentWorldIndex === OPENING_WORLDS.length - 1;
-  document.getElementById('world-chip').classList.toggle('locked', !worldUnlocked);
-
-  const markup = world.islands.map((island, islandIndex) => {
-    const position = OPENING_WORLD_POSITIONS[islandIndex];
-    const islandProgress = curriculumIslandProgress(island, mastered);
-    const unlocked = isIslandUnlocked(currentWorldIndex, islandIndex);
-    const complete = islandProgress.complete;
-    const status = complete ? 'done' : (unlocked ? 'current' : 'locked');
-    const marker = complete ? '✓' : (unlocked ? '▶' : LOCK_ICON);
-    const stars = `<span class="island-stars">${islandProgress.completed}/${islandProgress.total} <b>★</b></span>`;
-    const content = `<span class="map-hotspot">${marker}</span><span class="map-label">${escapeHtml(island.title)}</span>${stars}`;
-    const style = `--top:${position.y}%;--left:${position.x}%;`;
-    return `<button class="map-island ${status}" style="${style}" type="button" data-island="${island.id}" aria-label="${escapeHtml(island.title)}, ${islandProgress.completed} leçons sur ${islandProgress.total}${unlocked ? '' : ', verrouillée'}">${content}</button>`;
-  }).join('');
-  const economy = ensureEconomy();
-  const treasureClaimed = !!economy.treasures[world.id];
-  const treasureReward = worldTreasureReward(world.number);
-  const treasureTitle = treasureClaimed ? 'Trésor collecté' : (progress.complete ? 'Ouvrir le trésor' : (worldUnlocked ? 'Trésor du monde' : 'Monde verrouillé'));
-  const treasureCopy = treasureClaimed
-    ? `+${treasureReward} couronnes gagnées`
-    : (progress.complete ? `Réclame +${treasureReward} couronnes` : (worldUnlocked ? `${progress.completed}/${progress.total} leçons terminées` : worldRequirement(currentWorldIndex)));
-  document.getElementById('skill-path').innerHTML = `
-    <p class="map-world-subtitle">${escapeHtml(world.subtitle)}</p>
-    <div class="map-nodes">${markup}</div>
-    ${progress.complete && !treasureClaimed
-      ? `<button class="map-treasure-label complete treasure-ready" id="map-world-treasure" type="button"><strong>${escapeHtml(treasureTitle)}</strong><small>${escapeHtml(treasureCopy)}</small></button>`
-      : `<div class="map-treasure-label ${progress.complete ? 'complete claimed' : ''}"><strong>${escapeHtml(treasureTitle)}</strong><small>${escapeHtml(treasureCopy)}</small></div>`}`;
-  document.querySelectorAll('.map-island').forEach(button => {
-    button.addEventListener('click', () => openIsland(button.dataset.island));
-  });
-  document.getElementById('map-world-treasure')?.addEventListener('click', event => {
-    const reward = claimWorldTreasure(world.id, world.number);
-    if(!reward.ok) return;
-    event.currentTarget.classList.add('reward-burst');
-    if(typeof fireConfetti === 'function') fireConfetti('badge');
-    showToast('Trésor royal ouvert', `+${reward.amount} couronnes. J'admets que tu les as presque méritées.`);
-    setTimeout(renderSkillPath, 520);
-  });
-}
-function renderIslandLessons(world, island, worldIndex, islandIndex){
-  const mastered = PROGRESS.mastered || {};
-  const islandUnlocked = isIslandUnlocked(worldIndex, islandIndex);
-  return island.lessons.map((key, lessonIndex) => {
-    const complete = !!mastered[key];
-    const unlocked = isLessonUnlocked(worldIndex, islandIndex, lessonIndex);
-    const state = complete ? 'complete' : (unlocked ? 'current' : 'locked');
-    const status = complete ? 'Maîtrisée' : (unlocked ? 'À apprendre' : 'Verrouillée');
-    const icon = complete ? '✓' : (unlocked ? (lessonIndex + 1) : LOCK_ICON);
-    const href = `openings.html?opening=${encodeURIComponent(key)}&world=${encodeURIComponent(world.id)}&island=${encodeURIComponent(island.id)}`;
-    const inner = `<span class="island-lesson-index">${icon}</span><span class="island-lesson-copy"><strong>${escapeHtml(lessonName(key))}</strong><small>Leçon ${lessonIndex + 1} · ${status}</small></span><span class="island-lesson-arrow">›</span>`;
-    return unlocked
-      ? `<a class="island-lesson ${state}" href="${href}">${inner}</a>`
-      : `<div class="island-lesson locked" aria-disabled="true">${inner}</div>`;
-  }).join('');
-}
-function openIsland(islandId){
-  const world = OPENING_WORLDS[currentWorldIndex];
-  const islandIndex = world.islands.findIndex(item => item.id === islandId);
-  if(islandIndex < 0) return;
-  const island = world.islands[islandIndex];
-  const progress = curriculumIslandProgress(island, PROGRESS.mastered || {});
-  const unlocked = isIslandUnlocked(currentWorldIndex, islandIndex);
-  activeIsland = island;
-  document.getElementById('island-sheet-kicker').textContent = `MONDE ${world.number} · ÎLE ${islandIndex + 1}`;
-  document.getElementById('island-sheet-title').textContent = island.title;
-  document.getElementById('island-sheet-copy').textContent = unlocked
-    ? 'Apprends les variantes dans l’ordre pour terminer cette île.'
-    : islandRequirement(currentWorldIndex, islandIndex);
-  document.getElementById('island-sheet-progress-label').textContent = `${progress.completed} / ${progress.total} leçons`;
-  document.getElementById('island-sheet-progress-fill').style.width = `${(progress.completed / progress.total) * 100}%`;
-  document.getElementById('island-lessons').innerHTML = renderIslandLessons(world, island, currentWorldIndex, islandIndex);
-  document.getElementById('island-sheet').hidden = false;
-  document.getElementById('map-sheet-backdrop').hidden = false;
-  requestAnimationFrame(() => document.body.classList.add('island-sheet-open'));
-}
-function closeIsland(){
-  document.body.classList.remove('island-sheet-open');
-  setTimeout(() => {
-    document.getElementById('island-sheet').hidden = true;
-    document.getElementById('map-sheet-backdrop').hidden = true;
-    activeIsland = null;
-  }, 220);
-}
-function changeWorld(delta){
-  const next = Math.max(0, Math.min(OPENING_WORLDS.length - 1, currentWorldIndex + delta));
-  if(next === currentWorldIndex) return;
-  closeIsland();
-  currentWorldIndex = next;
-  replaceWorldQuery();
-  renderSkillPath();
-}
-
-document.getElementById('world-prev').onclick = () => changeWorld(-1);
-document.getElementById('world-next').onclick = () => changeWorld(1);
-document.getElementById('world-chip').onclick = () => {
-  const world = OPENING_WORLDS[currentWorldIndex];
-  showToast(world.title, isWorldUnlocked(currentWorldIndex) ? world.subtitle : worldRequirement(currentWorldIndex));
-};
-document.getElementById('island-sheet-close').onclick = closeIsland;
-document.getElementById('map-sheet-backdrop').onclick = closeIsland;
-document.addEventListener('keydown', event => { if(event.key === 'Escape') closeIsland(); });
-const openingMapMenuButton=document.getElementById('opening-map-menu-button');
-const openingMapMenuSheet=document.getElementById('opening-map-menu-sheet');
-openingMapMenuButton.onclick=()=>{const open=openingMapMenuSheet.classList.toggle('hidden')===false;openingMapMenuButton.setAttribute('aria-expanded',String(open));};
-document.getElementById('opening-continue-adventure').href=adventureTarget();
-
-renderSkillPath();
-const requestedIsland = query.get('island');
-if(requestedIsland && findCurriculumIsland(OPENING_WORLDS[currentWorldIndex].id, requestedIsland)){
-  setTimeout(() => openIsland(requestedIsland), 120);
-}
-</script>
-<script src="assets/js/navigation.js?v=75"></script>
+  <script src="assets/js/opening-curriculum.js?v=40"></script>
+  <script src="assets/js/progress.js"></script>
+  <script src="assets/js/animations.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/opening-swipe.js?v=85"></script>
+  <script src="assets/js/navigation.js?v=85"></script>
 </body>
 </html>
