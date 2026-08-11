@@ -53,14 +53,17 @@
 .error-pill{display:inline-flex;flex-direction:column;gap:2px;border-radius:16px;padding:12px 18px;font-weight:800;margin-right:10px;margin-bottom:8px;}
 .error-pill.blunder{background:var(--accent-pink-bg);color:var(--blunder);}
 .error-pill.mistake{background:var(--accent-yellow-bg);color:var(--mistake);}
+.error-pill.missed{background:rgba(239,107,93,.16);color:#c54439;}
 .error-pill .ep-count{font-size:0.78rem;font-weight:700;}
 .error-pill .ep-val{font-family:var(--font-display);font-size:1.2rem;}
 
 .error-card{background:var(--bg-panel-2);border-left:5px solid var(--blunder);border-radius:14px;padding:16px 18px;margin-bottom:12px;}
 .error-card.mistake{border-left-color:var(--mistake);}
+.error-card.missed{border-left-color:#ef6b5d;}
 .error-card.inaccuracy{border-left-color:var(--inaccuracy);}
 .error-card .ec-title{font-family:var(--font-display);font-weight:700;color:var(--blunder);font-size:0.95rem;margin-bottom:5px;}
 .error-card.mistake .ec-title{color:var(--mistake);}
+.error-card.missed .ec-title{color:#cf493e;}
 .error-card.inaccuracy .ec-title{color:var(--inaccuracy);}
 .error-card .ec-desc{font-size:0.86rem;color:var(--text-dim);margin-bottom:9px;line-height:1.5;}
 .error-card .ec-best{font-size:0.86rem;color:var(--navy);font-weight:600;}
@@ -77,10 +80,12 @@ ol#move-list li:last-child{border-bottom:none;}
 .glyph{font-size:0.7rem;font-weight:700;}
 .glyph-best{color:var(--best);} .glyph-good{color:var(--good);} .glyph-inaccuracy{color:var(--inaccuracy);}
 .glyph-mistake{color:var(--mistake);} .glyph-blunder{color:var(--blunder);}
+.glyph-missed{color:#ef6b5d;}
 .tag-best{background:rgba(76,134,201,0.18);color:var(--best);}
 .tag-good{background:rgba(63,174,122,0.18);color:var(--good);}
 .tag-inaccuracy{background:rgba(232,169,58,0.18);color:var(--inaccuracy);}
 .tag-mistake{background:rgba(239,143,78,0.18);color:var(--mistake);}
+.tag-missed{background:rgba(239,107,93,.18);color:#c54439;}
 .tag-blunder{background:rgba(234,95,99,0.18);color:var(--blunder);}
 .tag{display:inline-block;font-family:var(--font-mono);font-weight:600;padding:1px 7px;border-radius:4px;margin-right:6px;font-size:0.76rem;}
 

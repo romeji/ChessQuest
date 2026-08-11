@@ -62,19 +62,113 @@ let puzzleBattleActive = false;
 let puzzleBattleCountdown = null;
 let puzzleResultAction = null;
 
+const PUZZLE_CURRICULUM_LEVELS = 180;
+const PUZZLES_PER_LEVEL = 3;
+const CURRICULUM_DIFFICULTIES = [
+  {max:20,label:'Intermédiaire'}, {max:40,label:'Intermédiaire +'},
+  {max:60,label:'Difficile'}, {max:80,label:'Très difficile'},
+  {max:100,label:'Expert'}, {max:120,label:'Maître'},
+  {max:140,label:'Maître +'}, {max:160,label:'Élite'},
+  {max:180,label:'Ultra difficile'}
+];
+
+function currentProblemLevel(){
+  return Math.max(1,Math.min(PUZZLE_CURRICULUM_LEVELS,Number(PROGRESS.problemJourney?.level)||1));
+}
+
+function puzzleDifficultyForLevel(level){
+  return CURRICULUM_DIFFICULTIES.find(tier=>level<=tier.max) || CURRICULUM_DIFFICULTIES.at(-1);
+}
+
+function expandFenRank(rank){
+  const cells=[];
+  for(const char of rank){
+    if(/\d/.test(char)) for(let i=0;i<Number(char);i++) cells.push('1');
+    else cells.push(char);
+  }
+  return cells;
+}
+
+function compressFenRank(cells){
+  let output='',empty=0;
+  cells.forEach(cell=>{
+    if(cell==='1'){empty++;return;}
+    if(empty){output+=empty;empty=0;}
+    output+=cell;
+  });
+  return output+(empty||'');
+}
+
+function seedFen(seed){
+  if(seed.fen) return seed.fen;
+  const game=new Chess();
+  (seed.setupMoves||[]).forEach(move=>game.move(move));
+  return game.fen();
+}
+
+function transformPuzzleSeed(seed,variant){
+  const parts=seedFen(seed).split(' '),mirror=variant%2===1,rotate=variant>=2;
+  let ranks=parts[0].split('/').map(expandFenRank);
+  if(mirror) ranks=ranks.map(rank=>rank.slice().reverse());
+  if(rotate){
+    ranks=ranks.slice().reverse().map(rank=>rank.slice().reverse().map(piece=>piece==='1'?piece:(piece===piece.toUpperCase()?piece.toLowerCase():piece.toUpperCase())));
+    parts[1]=parts[1]==='w'?'b':'w';
+  }
+  parts[0]=ranks.map(compressFenRank).join('/');
+  if(mirror||rotate) parts[2]='-';
+  const fileMap={a:'h',b:'g',c:'f',d:'e',e:'d',f:'c',g:'b',h:'a'};
+  const solution=String(seed.solution||'').replace(/[a-h1-8]/g,char=>{
+    if(/[a-h]/.test(char)){
+      let file=char;
+      if(mirror) file=fileMap[file];
+      if(rotate) file=fileMap[file];
+      return file;
+    }
+    return rotate?String(9-Number(char)):char;
+  });
+  const transformed={...seed,fen:parts.join(' '),solution};
+  delete transformed.setupMoves;
+  const check=new Chess(transformed.fen);
+  if(!check.moves().some(move=>move.replace(/[!?]+$/,'')===solution.replace(/[!?]+$/,''))) return {...seed,fen:seedFen(seed)};
+  return transformed;
+}
+
+function curriculumPuzzleSelection(level){
+  const safeLevel=Math.max(1,Math.min(PUZZLE_CURRICULUM_LEVELS,Number(level)||1));
+  const ordered=CLASSIC_PUZZLES.slice().sort((a,b)=>(a.rating||0)-(b.rating||0));
+  const progress=(safeLevel-1)/(PUZZLE_CURRICULUM_LEVELS-1);
+  const seedProgress=.45+progress*.55;
+  const centre=Math.round(seedProgress*(ordered.length-1));
+  const difficulty=puzzleDifficultyForLevel(safeLevel);
+  const targetRating=Math.round(900+progress*2300);
+  return Array.from({length:PUZZLES_PER_LEVEL},(_,slot)=>{
+    const seed=ordered[Math.max(0,Math.min(ordered.length-1,centre+slot-1))];
+    const globalIndex=(safeLevel-1)*PUZZLES_PER_LEVEL+slot;
+    const transformed=transformPuzzleSeed(seed,globalIndex%4);
+    return {...transformed,
+      id:`palier-${String(safeLevel).padStart(3,'0')}-${slot+1}`,
+      rating:targetRating+slot*25,
+      curriculumLevel:safeLevel,
+      curriculumSlot:slot+1,
+      difficulty:difficulty.label,
+      theme:`${transformed.theme} · ${difficulty.label}`
+    };
+  });
+}
+
 function ensureDailyPuzzleRun(){
   const date = todayKey();
   if(!PROGRESS.dailyPuzzleRun || PROGRESS.dailyPuzzleRun.date !== date){
-    PROGRESS.dailyPuzzleRun = {date, solvedIds:[]};
+    PROGRESS.dailyPuzzleRun = {date,level:currentProblemLevel(),solvedIds:[]};
     saveProgress();
   }
+  if(!Number(PROGRESS.dailyPuzzleRun.level)) PROGRESS.dailyPuzzleRun.level=currentProblemLevel();
   if(!Array.isArray(PROGRESS.dailyPuzzleRun.solvedIds)) PROGRESS.dailyPuzzleRun.solvedIds = [];
   return PROGRESS.dailyPuzzleRun;
 }
 
 function dailyPuzzleSelection(){
-  const day = Math.floor(new Date().setHours(0,0,0,0) / 86400000);
-  return [0,1,2].map(offset => CLASSIC_PUZZLES[(day + offset) % CLASSIC_PUZZLES.length]);
+  return curriculumPuzzleSelection(ensureDailyPuzzleRun().level);
 }
 
 function dailyPuzzleCompletedCount(){
@@ -197,7 +291,14 @@ function loadPuzzle(idx){
   const solutionClean0 = p.solution.replace(/[!?]+$/, '');
   setText('puzzle-question', solutionClean0.includes('#') ? 'Trouve le mat !' : 'Trouve le meilleur coup !');
   setText('puzzle-kind', `${p.theme} · ${label}`);
-  if(puzzleSource === 'daily') setText('puzzle-kind', `${p.theme} · Problème ${dailyPuzzleCompletedCount()+1}/3`);
+  const turnSubtitle=document.querySelector('.puzzle-final-turn-copy small');
+  if(puzzleSource === 'daily'){
+    const progressLabel=`Palier ${p.curriculumLevel} · ${p.difficulty} · Problème ${dailyPuzzleCompletedCount()+1}/3`;
+    setText('puzzle-kind', progressLabel);
+    if(turnSubtitle)turnSubtitle.textContent=progressLabel;
+  }else if(turnSubtitle){
+    turnSubtitle.textContent=solutionClean0.includes('#')?'Trouve le mat.':'Trouve le meilleur coup.';
+  }
   setHtml('puzzle-dots', puzzleQueue.map((_,i)=>`<span class="dot ${i<puzzleIndex?'done':''} ${i===puzzleIndex?'current':''}"></span>`).join(''));
 
   const solutionClean = p.solution.replace(/[!?]+$/, '');

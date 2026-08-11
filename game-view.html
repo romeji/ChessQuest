@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
-<link rel="stylesheet" href="assets/css/ux-refinement.css?v=59">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=83">
 <link rel="stylesheet" href="assets/css/navigation.css?v=75" data-quest-navigation>
 </head>
 <body data-page="analyze" class="final-shell-page analysis-review-page">
@@ -61,6 +61,10 @@
           <div class="board-frame">
             <div class="coord-ranks" id="board-ranks"></div>
             <div id="board"></div>
+            <svg id="review-best-arrow" class="review-best-arrow hidden" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <defs><marker id="review-arrow-head" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto"><path d="M0 0L6 3L0 6Z"/></marker></defs>
+              <line id="review-best-arrow-line" marker-end="url(#review-arrow-head)"/>
+            </svg>
             <div class="coord-files" id="board-files"></div>
           </div>
           <div class="eval-bar-wrap" aria-label="Évaluation de la position">
@@ -99,7 +103,7 @@
     </div>
 
       <div id="review-controls" class="review-controls hidden">
-        <div class="review-move-strip"><button id="review-prev" aria-label="Coup précédent">‹</button><div><strong id="review-current-move">1. e4</strong><small id="review-current-label">Début de partie</small></div><button id="review-next" aria-label="Coup suivant">›</button></div>
+        <div class="review-move-strip"><button id="review-prev" aria-label="Coup précédent"><b>‹</b><small id="review-prev-move"></small></button><div><strong id="review-current-move">1. e4</strong><small id="review-current-label">Début de partie</small></div><button id="review-next" aria-label="Coup suivant"><small id="review-next-move"></small><b>›</b></button></div>
         <div class="review-actions"><button id="review-explain">💬 Afficher</button><button id="review-best">★ Meilleur</button><button id="review-retry">↻ Réessayer</button><button id="review-follow">Suivant →</button></div>
         <button id="review-back" class="review-back-summary">← Retour au résumé</button>
       </div>
@@ -122,7 +126,7 @@
 <script src="assets/js/app.js"></script>
 <script src="assets/js/mascot-coach.js?v=44"></script>
 <script src="assets/js/navigation.js?v=75"></script>
-<script src="assets/js/board.js"></script>
+<script src="assets/js/board.js?v=83"></script>
 <script>
 let analysisBoard = null;
 let analysisResults = [];
@@ -203,13 +207,14 @@ async function runAnalysis(pgn, gameMeta){
     const actualScoreForMover = -evalAfter.scoreForMover;
     const drop = Math.max(0, bestScoreForMover - actualScoreForMover);
     const isBest = (bestSan === mv.san);
-    const info = classify(drop, isBest);
+    const mateMissed = evalBefore.mate !== null && evalBefore.mate > 0 && !isBest;
+    const info = mateMissed ? {label:'Coup manqué',cls:'missed',glyph:'×'} : classify(drop, isBest);
     const whiteScore = work.turn() === 'w' ? evalAfter.scoreForMover : -evalAfter.scoreForMover;
     const whiteMate = (evalAfter.mate !== null && evalAfter.mate !== undefined)
       ? (work.turn() === 'w' ? evalAfter.mate : -evalAfter.mate) : null;
     results.push({ ply:i, color:mv.color, san:mv.san, fen: work.fen(), fenBefore: fenBeforeMove, from: mv.from, to: mv.to,
       bestSan, drop: Math.round(drop), info, whiteScore, whiteMate,
-      mateMissed: evalBefore.mate !== null && evalBefore.mate > 0 && !isBest,
+      mateMissed,
       mateAllowed: evalAfter.mate !== null && evalAfter.mate > 0, moveNumber: Math.floor(i/2)+1 });
     evalBefore = evalAfter;
     progressLabel.textContent = `Analyse du coup ${i+1} / ${history.length}…`;
@@ -224,12 +229,12 @@ async function runAnalysis(pgn, gameMeta){
   if(gameMeta && gameMeta.url) saveAnalysisToFirestore(gameMeta, headers, results).catch(()=>{});
 }
 function renderErrorsTab(){
-  const flat = analysisResults.map((r,idx)=>({...r, idx})).filter(r => r.info.cls==='mistake' || r.info.cls==='blunder' || r.info.cls==='inaccuracy');
-  const counts = {blunder:{n:0,sum:0}, mistake:{n:0,sum:0}, inaccuracy:{n:0,sum:0}};
+  const flat = analysisResults.map((r,idx)=>({...r, idx})).filter(r => ['inaccuracy','mistake','missed','blunder'].includes(r.info.cls));
+  const counts = {blunder:{n:0,sum:0}, missed:{n:0,sum:0}, mistake:{n:0,sum:0}, inaccuracy:{n:0,sum:0}};
   flat.forEach(r => { counts[r.info.cls].n++; counts[r.info.cls].sum += r.drop/100; });
-  const pillLabel = {blunder:'gaffe', mistake:'erreur', inaccuracy:'imprécision'};
+  const pillLabel = {blunder:'gaffe', missed:'coup manqué', mistake:'erreur', inaccuracy:'imprécision'};
   let pillsHtml = '';
-  ['blunder','mistake','inaccuracy'].forEach(cls => {
+  ['blunder','missed','mistake','inaccuracy'].forEach(cls => {
     if(counts[cls].n === 0) return;
     const avg = (counts[cls].sum / counts[cls].n).toFixed(2);
     const cssCls = cls === 'inaccuracy' ? 'mistake' : cls;
@@ -261,6 +266,7 @@ function summaryLines(s){
     <div class="stat-line"><span>Bons coups</span><span>${s.good}</span></div>
     <div class="stat-line"><span>Imprécisions</span><span>${s.inaccuracy}</span></div>
     <div class="stat-line"><span>Erreurs</span><span>${s.mistake}</span></div>
+    <div class="stat-line"><span>Coups manqués</span><span>${s.missed}</span></div>
     <div class="stat-line"><span>Gaffes</span><span>${s.blunder}</span></div>`;
 }
 function phaseScore(color, start, end){
@@ -292,7 +298,7 @@ function renderReviewOverview(headers, sums, whiteAcc, blackAcc){
   const area = values.length ? `0,75 ${pts} 640,75` : '0,75 640,75';
   chart.innerHTML = `<defs><linearGradient id="reviewGreen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#54bd72" stop-opacity=".8"/><stop offset="1" stop-color="#54bd72" stop-opacity=".08"/></linearGradient></defs><line x1="0" y1="75" x2="640" y2="75" stroke="#cabf9f" stroke-width="2"/><polygon points="${area}" fill="url(#reviewGreen)"/><polyline points="${pts}" fill="none" stroke="#16764a" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
   const rows = [
-    ['best','Meilleurs','★','#72b944'],['good','Très bons','!','#5d9bd3'],['inaccuracy','Imprécisions','?!','#e8b846'],['mistake','Erreurs','?','#f59a4a'],['blunder','Gaffes','??','#ef5953']
+    ['best','Meilleurs','★','#72b944'],['good','Très bons','!','#5d9bd3'],['inaccuracy','Imprécisions','?!','#e8b846'],['mistake','Erreurs','?','#f59a4a'],['missed','Coups manqués','×','#ef6b5d'],['blunder','Gaffes','??','#e94038']
   ];
   document.getElementById('review-breakdown-rows').innerHTML = rows.map(([key,label,glyph,color])=>{
     const count=(sums.w[key]||0)+(sums.b[key]||0);
@@ -313,7 +319,8 @@ function renderAnalysis(headers){
   document.querySelectorAll('.analysis-tabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab==='summary'));
   document.querySelectorAll('.analysis-tab-panel').forEach(p=>p.classList.toggle('hidden', p.id!=='tab-summary'));
   ensureAnalysisBoard();
-  const sums = {w:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}, b:{best:0,good:0,inaccuracy:0,mistake:0,blunder:0}};
+  analysisResults.forEach(result=>{if(result.mateMissed&&result.info?.cls!=='missed')result.info={label:'Coup manqué',cls:'missed',glyph:'×'};});
+  const sums = {w:{best:0,good:0,inaccuracy:0,mistake:0,missed:0,blunder:0}, b:{best:0,good:0,inaccuracy:0,mistake:0,missed:0,blunder:0}};
   analysisResults.forEach(r => sums[r.color][r.info.cls]++);
   recordAnalyzedGame(headers, sums);
   recordMistakesFromAnalysis(headers, analysisResults);
@@ -356,28 +363,57 @@ function renderAnalysis(headers){
   renderErrorsTab();
   goToPly(analysisResults.length-1);
 }
+function reviewMoveText(index){
+  const move=analysisResults[index];
+  return move?`${move.moveNumber}${move.color==='b'?'…':'.'} ${move.san}`:'';
+}
+function clearReviewAnnotations(){
+  document.querySelectorAll('#board [data-square]').forEach(square=>square.classList.remove('review-mistake-from','review-mistake-to'));
+  document.getElementById('review-best-arrow')?.classList.add('hidden');
+}
+function squarePoint(square,orientation='white'){
+  let file=square.charCodeAt(0)-97,rank=Number(square[1])-1;
+  if(orientation==='black'){file=7-file;}else{rank=7-rank;}
+  if(orientation==='black') rank=Number(square[1])-1;
+  return {x:(file+.5)*12.5,y:(rank+.5)*12.5};
+}
+function drawBestMoveArrow(result){
+  clearReviewAnnotations();
+  if(!result || !['inaccuracy','mistake','missed','blunder'].includes(result.info.cls)) return;
+  const position=new Chess(result.fenBefore),best=position.move(result.bestSan,{sloppy:true});
+  if(!best)return;
+  document.querySelector(`#board [data-square="${result.from}"]`)?.classList.add('review-mistake-from');
+  document.querySelector(`#board [data-square="${result.to}"]`)?.classList.add('review-mistake-to');
+  const orientation=analysisBoard?.orientation?.()||'white';
+  const from=squarePoint(best.from,orientation),to=squarePoint(best.to,orientation),line=document.getElementById('review-best-arrow-line');
+  line.setAttribute('x1',from.x);line.setAttribute('y1',from.y);line.setAttribute('x2',to.x);line.setAttribute('y2',to.y);
+  document.getElementById('review-best-arrow').classList.remove('hidden');
+}
 function goToPly(idx){
   if(idx < 0 || idx >= analysisResults.length) return;
   analysisIndex = idx;
   const r = analysisResults[idx];
-  analysisBoard.position(r.fen);
+  const isIssue=['inaccuracy','mistake','missed','blunder'].includes(r.info.cls);
+  analysisBoard.position(isIssue?r.fenBefore:r.fen);
   highlightMove('#board', r.from, r.to);
+  requestAnimationFrame(()=>drawBestMoveArrow(r));
   updateEvalBar(r);
   document.querySelectorAll('.move-chip').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.idx,10)===idx));
   const currentMove = document.getElementById('review-current-move');
   const currentLabel = document.getElementById('review-current-label');
   if(currentMove) currentMove.textContent = `${r.moveNumber}${r.color==='b'?'…':'.'} ${r.san}`;
   if(currentLabel) currentLabel.textContent = `${r.info.glyph} ${r.info.label} · ${describeSanMove(r.bestSan)}`;
+  const previousMove=document.getElementById('review-prev-move'),nextMove=document.getElementById('review-next-move');
+  if(previousMove) previousMove.textContent=reviewMoveText(idx-1);
+  if(nextMove) nextMove.textContent=reviewMoveText(idx+1);
   ['nav-prev','review-prev'].forEach(id=>{ const el=document.getElementById(id); if(el) el.disabled=idx===0; });
   ['nav-next'].forEach(id=>{ const el=document.getElementById(id); if(el) el.disabled=idx===analysisResults.length-1; });
-  const issues = reviewIndexes();
-  const issuePos = issues.indexOf(idx);
   const previousIssue = document.getElementById('review-prev');
   const nextIssue = document.getElementById('review-next');
   const followIssue = document.getElementById('review-follow');
-  if(previousIssue) previousIssue.disabled = issuePos <= 0;
-  if(nextIssue) nextIssue.disabled = issuePos < 0 || issuePos >= issues.length-1;
-  if(followIssue) followIssue.disabled = issuePos < 0 || issuePos >= issues.length-1;
+  if(previousIssue) previousIssue.disabled = idx <= 0;
+  if(nextIssue) nextIssue.disabled = idx >= analysisResults.length-1;
+  if(followIssue) followIssue.disabled = !criticalIndexes().some(issue=>issue>idx);
   const mood = typeof mascotMoodFor === 'function' ? mascotMoodFor(r.info.cls,r.drop) : 'encourage';
   const mascot = typeof MASCOT_ASSETS !== 'undefined' ? MASCOT_ASSETS[mood] : 'assets/illustrations/mascot-knight-home.png';
   const naturalAdvice = humanizeChessComment(r.advice);
@@ -386,8 +422,11 @@ function goToPly(idx){
 }
 let activeReviewClass=null;
 function reviewIndexes(){
-  const allowed=activeReviewClass ? [activeReviewClass] : ['inaccuracy','mistake','blunder'];
+  const allowed=activeReviewClass ? [activeReviewClass] : ['inaccuracy','mistake','missed','blunder'];
   return analysisResults.map((r,index)=>allowed.includes(r.info.cls)?index:-1).filter(index=>index>=0);
+}
+function criticalIndexes(){
+  return analysisResults.map((result,index)=>['inaccuracy','mistake','missed','blunder'].includes(result.info.cls)?index:-1).filter(index=>index>=0);
 }
 function openIssueReview(idx){
   activeReviewClass=null;
@@ -406,18 +445,17 @@ function openClassReview(className){
   setTimeout(()=>ensureAnalysisBoard(),80);
 }
 function stepReview(direction){
-  const issues=reviewIndexes();
+  const issues=criticalIndexes();
   if(!issues.length)return;
-  const current=issues.indexOf(analysisIndex);
-  const target=current<0?(direction>0?0:issues.length-1):Math.max(0,Math.min(issues.length-1,current+direction));
-  goToPly(issues[target]);
+  const target=direction>0?issues.find(index=>index>analysisIndex):issues.slice().reverse().find(index=>index<analysisIndex);
+  if(Number.isInteger(target))goToPly(target);
 }
 document.getElementById('nav-start').onclick = () => goToPly(0);
 document.getElementById('nav-prev').onclick = () => goToPly(analysisIndex-1);
 document.getElementById('nav-next').onclick = () => goToPly(analysisIndex+1);
 document.getElementById('nav-end').onclick = () => goToPly(analysisResults.length-1);
 document.getElementById('review-start').onclick = () => {
-  const firstIssue = analysisResults.findIndex(r => ['inaccuracy','mistake','blunder'].includes(r.info.cls));
+  const firstIssue = analysisResults.findIndex(r => ['inaccuracy','mistake','missed','blunder'].includes(r.info.cls));
   openIssueReview(firstIssue >= 0 ? firstIssue : 0);
 };
 document.getElementById('review-back').onclick = () => {
@@ -425,19 +463,19 @@ document.getElementById('review-back').onclick = () => {
   document.getElementById('review-controls').classList.add('hidden');
   window.scrollTo({top:0,behavior:'smooth'});
 };
-document.getElementById('review-prev').onclick = () => stepReview(-1);
-document.getElementById('review-next').onclick = () => stepReview(1);
+document.getElementById('review-prev').onclick = () => goToPly(analysisIndex-1);
+document.getElementById('review-next').onclick = () => goToPly(analysisIndex+1);
 document.getElementById('review-follow').onclick = () => stepReview(1);
 document.getElementById('review-explain').onclick = () => goToPly(analysisIndex);
 document.getElementById('review-best').onclick = () => {
   const r=analysisResults[analysisIndex]; if(!r) return;
   const position=new Chess(r.fenBefore); const best=position.move(r.bestSan,{sloppy:true});
-  if(best){ analysisBoard.position(position.fen()); highlightMove('#board',best.from,best.to); }
+  if(best){ analysisBoard.position(r.fenBefore); highlightMove('#board',best.from,best.to); clearReviewAnnotations(); }
   document.getElementById('move-comment-box').innerHTML = `<div class="analysis-mascot-comment"><img src="assets/illustrations/mascot-knight-home.png" alt="Coach"><div><span class="tag tag-best">★ Meilleur coup</span><p>${escapeHtml(describeSanMove(r.bestSan))} était la continuation la plus forte. Observe la pièce développée et les cases qu'elle contrôle.</p></div></div>`;
 };
 document.getElementById('review-retry').onclick = () => {
   const r=analysisResults[analysisIndex]; if(!r) return;
-  analysisBoard.position(r.fenBefore); clearHighlights('#board');
+  analysisBoard.position(r.fenBefore); clearHighlights('#board'); clearReviewAnnotations();
   document.getElementById('move-comment-box').innerHTML = `<div class="analysis-mascot-comment"><img src="assets/illustrations/mascot-knight-home.png" alt="Coach"><div><span class="tag">À toi</span><p>Retrouve le meilleur coup. Je juge en silence — enfin, j'essaie.</p></div></div>`;
 };
 document.addEventListener('keydown', (e) => {

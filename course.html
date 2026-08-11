@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/gamification.css?v=50">
+<link rel="stylesheet" href="assets/css/gamification.css?v=83">
 <link rel="stylesheet" href="assets/css/ux-refinement.css?v=59">
 </head>
 <body class="written-course-page">
@@ -44,7 +44,7 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/animations.js"></script>
-<script src="assets/js/courses.js?v=50"></script>
+<script src="assets/js/courses.js?v=83"></script>
 <script>
 const courseId=new URLSearchParams(location.search).get('id');
 const course=writtenCourseById(courseId)||WRITTEN_COURSES[0];
@@ -70,11 +70,49 @@ const COURSE_POSITIONS={
   'finales-techniques':['8/4k3/3p4/8/3P4/4K3/8/4R3','L’activité de la tour compte plus qu’un pion.'],
   'preparation-avancee':['r1bq1rk1/pp2bppp/2n1pn2/2pp4/3P4/2P1PN2/PP1NBPPP/R2Q1RK1','Reconnais la structure avant de mémoriser une variante.']
 };
+const COURSE_FOCUS={
+  'plateau-coordonnees':[['d4','e5'],['c3','e4'],['d5','e5']],
+  'mouvement-pieces':[['e4','f6'],['e4','c5'],['e4','d2']],
+  'echec-mat-pat':[['f7','h7'],['f7','g8'],['g6','g7']],
+  'regles-ouverture':[['e2','e4'],['g1','f3'],['e1','g1']],
+  'pieces-en-prise':[['c3','a5'],['a5','a8'],['c3','g7']],
+  'mats-elementaires':[['d5','d8'],['g1','f2'],['d5','d8']],
+  'fourchettes-clouages':[['b5','d6'],['b5','c7'],['b5','d4']],
+  'calcul-trois-etapes':[['d5','d8'],['d5','g5'],['d5','d8']],
+  'structures-pions':[['c4','c5'],['d5','d6'],['e4','e5']],
+  'finales-pions':[['e4','d5'],['e6','d5'],['e3','e4']],
+  'plans-positionnels':[['c1','c8'],['c1','c7'],['d4','d5']],
+  'colonnes-avant-postes':[['d1','d5'],['d4','e6'],['d4','c6']],
+  'calcul-variantes':[['d1','d5'],['d4','e6'],['d4','b5']],
+  'prophylaxie':[['c1','c8'],['d4','d5'],['c3','c4']],
+  'finales-techniques':[['e1','e7'],['e3','d4'],['d4','d5']],
+  'preparation-avancee':[['d2','f3'],['c3','c4'],['f1','e1']]
+};
+const COURSE_SCENES={
+  'regles-ouverture':[
+    ['rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR','Occupe le centre avec e4 : ce pion contrôle d5 et f5.'],
+    ['r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR','Développe le cavalier en f3 avec tempo sur e5.'],
+    ['r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R','Le petit roque met le roi à l’abri et active la tour.']
+  ]
+};
+function squareCenter(square){
+  const file=square.charCodeAt(0)-97,rank=Number(square[1]);
+  return {x:(file+.5)*12.5,y:(8-rank+.5)*12.5};
+}
 function courseDiagram(){
-  const [fen,caption]=COURSE_POSITIONS[course.id]||COURSE_POSITIONS['regles-ouverture'];
+  const [fenSource,caption]=(COURSE_SCENES[course.id]?.[sectionIndex])||COURSE_POSITIONS[course.id]||COURSE_POSITIONS['regles-ouverture'];
+  const fen=fenSource.split(' ')[0];
   const pieces={p:'bP',r:'bR',n:'bN',b:'bB',q:'bQ',k:'bK',P:'wP',R:'wR',N:'wN',B:'wB',Q:'wQ',K:'wK'};
-  const cells=[];fen.split('/').forEach((rank,row)=>{let file=0;for(const char of rank){if(/\d/.test(char)){for(let n=0;n<Number(char);n++)cells.push(`<span class="${(row+file++)%2?'dark':'light'}"></span>`);}else{cells.push(`<span class="${(row+file)%2?'dark':'light'}"><img src="assets/chesspieces/${pieces[char]}.png" alt=""></span>`);file++;}}});
-  return `<figure class="course-position"><div>${cells.join('')}</div><figcaption>${escapeHtml(caption)}</figcaption></figure>`;
+  const focus=(COURSE_FOCUS[course.id]||[])[sectionIndex]||null;
+  const focused=new Set(focus||[]);
+  const cells=[];fen.split('/').forEach((rank,row)=>{let file=0;for(const char of rank){if(/\d/.test(char)){for(let n=0;n<Number(char);n++){const square=String.fromCharCode(97+file)+(8-row);cells.push(`<span data-square="${square}" class="${(row+file++)%2?'dark':'light'} ${focused.has(square)?'focus':''}"></span>`);}}else{const square=String.fromCharCode(97+file)+(8-row);cells.push(`<span data-square="${square}" class="${(row+file)%2?'dark':'light'} ${focused.has(square)?'focus':''}"><img src="assets/chesspieces/${pieces[char]}.png" alt=""></span>`);file++;}}});
+  let annotation='';
+  if(focus){
+    const from=squareCenter(focus[0]),to=squareCenter(focus[1]);
+    annotation=`<svg class="course-position-arrow" viewBox="0 0 100 100" aria-hidden="true"><defs><marker id="course-arrow-head" markerWidth="5" markerHeight="5" refX="3.8" refY="2.5" orient="auto"><path d="M0 0L5 2.5L0 5Z" fill="#ffcf42"/></marker></defs><line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" marker-end="url(#course-arrow-head)"/></svg>`;
+  }
+  const sceneCaption=`${course.sections[sectionIndex][0]} — ${caption}`;
+  return `<figure class="course-position"><div class="course-position-board">${cells.join('')}${annotation}</div><figcaption><b>Position guidée</b>${escapeHtml(sceneCaption)}</figcaption></figure>`;
 }
 function renderSection(){
   const section=course.sections[sectionIndex];

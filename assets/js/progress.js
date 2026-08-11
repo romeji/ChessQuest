@@ -25,7 +25,7 @@ function defaultProgress(){
     learningJourney: { totalDays:0, step:1, chapter:1, visitedDates:[] },
     xp: 0, lastKnownLevel: 1, unlockedBadges: [],
     dailyProgress: { date:null, puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false, bonusClaimed:{} },
-    dailyPuzzleRun: { date:null, solvedIds:[] },
+    dailyPuzzleRun: { date:null, level:1, solvedIds:[] },
     problemJourney: { level:1, lastAdvancedDate:null },
     economy: {
       crowns: 120,
@@ -59,6 +59,7 @@ function loadProgress(){
       if(progress.dailyPuzzleRun.solvedIds.length >= 3) progress.problemJourney.lastAdvancedDate = progress.dailyPuzzleRun.date;
     }
     progress.problemJourney.level = Math.max(1, Math.min(180, Number(progress.problemJourney.level) || 1));
+    if(!Number(parsed.dailyPuzzleRun?.level)) progress.dailyPuzzleRun.level = progress.problemJourney.level;
     progress.economy = Object.assign({}, defaults.economy, parsed.economy || {});
     progress.economy.owned = Array.isArray(progress.economy.owned) ? progress.economy.owned : defaults.economy.owned.slice();
     progress.economy.treasures = progress.economy.treasures && typeof progress.economy.treasures === 'object' ? progress.economy.treasures : {};
@@ -363,9 +364,9 @@ function checkNewBadges(){
    ANALYSE DE PARTIES : historique et précision
    ============================================================ */
 function computeAccuracy(s){
-  const total = s.best + s.good + s.inaccuracy + s.mistake + s.blunder;
+  const total = s.best + s.good + s.inaccuracy + s.mistake + (s.missed||0) + s.blunder;
   if(total === 0) return 100;
-  const penalty = s.inaccuracy*2 + s.mistake*6 + s.blunder*12;
+  const penalty = s.inaccuracy*2 + s.mistake*6 + (s.missed||0)*10 + s.blunder*12;
   return Math.max(0, Math.min(100, Math.round(100 - (penalty/total)*3.2)));
 }
 function recordAnalyzedGame(headers, sums){
@@ -398,13 +399,13 @@ function recordMistakesFromAnalysis(headers, analysisResults){
   const label = `${headers.White || 'Blancs'} vs ${headers.Black || 'Noirs'}`;
   PROGRESS.mistakes = PROGRESS.mistakes || [];
   analysisResults.forEach(r => {
-    if(r.info.cls === 'mistake' || r.info.cls === 'blunder'){
+    if(r.info.cls === 'mistake' || r.info.cls === 'missed' || r.info.cls === 'blunder'){
       const id = [headers.Site,headers.Date,headers.White,headers.Black,r.ply,r.fenBefore,r.bestSan].filter(value => value !== undefined && value !== null).join('|');
       if(PROGRESS.mistakes.some(item => item.id === id)) return;
       PROGRESS.mistakes.unshift({
         id,
         fen: r.fenBefore, solution: r.bestSan, playedSan: r.san,
-        theme: r.info.cls === 'blunder' ? 'Gaffe à corriger' : 'Erreur à corriger',
+        theme: r.info.cls === 'blunder' ? 'Gaffe à corriger' : (r.info.cls === 'missed' ? 'Coup manqué à retrouver' : 'Erreur à corriger'),
         gameLabel: label, date: new Date().toISOString()
       });
     }
