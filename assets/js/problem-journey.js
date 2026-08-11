@@ -31,7 +31,8 @@
   let currentLevel = 1;
   let boardWidth = 390;
 
-  const PAWN = `<svg viewBox="0 0 48 64" aria-hidden="true"><ellipse cx="24" cy="60" rx="16" ry="3.5" fill="#153f22" opacity=".42"/><path d="M10 50c0-2 2-4 6-5.5V42c-5 1-8 3.5-8 7.5 0 2 1.5 3.5 4 4h24c2.5-.5 4-2 4-4 0-4-3-6.5-8-7.5v2.5c4 1.5 6 3.5 6 5.5" fill="#267b39"/><path d="M16 44.5v-6c0-1.5.5-2.5 2-3h12c1.5.5 2 1.5 2 3v6" fill="#3daf50"/><path d="M18 38c-3-2-4-5-4-8 0-5.5 4.5-10 10-10s10 4.5 10 10c0 3-1 6-4 8" fill="#3daf50"/><circle cx="24" cy="22" r="9" fill="#4caf56"/><circle cx="24" cy="20.5" r="7" fill="#6bc96f"/><ellipse cx="24" cy="18" rx="3.5" ry="2" fill="rgba(255,255,255,.3)"/><path d="M20 38h8v3h-8z" fill="#267b39"/></svg>`;
+  const PAWN = '<img src="assets/images/problem-worlds/player-pawn-3d.png" alt="Pion actuel">';
+  const PORTRAIT_SPRITE_SHEETS = new Set([1,2,3,4,6]);
 
   function dailySolvedCount(){
     return PROGRESS.dailyPuzzleRun?.date === todayKey() ? Math.min(3,(PROGRESS.dailyPuzzleRun.solvedIds || []).length) : 0;
@@ -124,7 +125,7 @@
   function chessTotemSVG(symbol='&#9822;',stone='#d8d0b9',accent='#6e4c1f'){return `<svg width="82" height="102" viewBox="0 0 82 102"><ellipse cx="41" cy="94" rx="34" ry="7" fill="rgba(0,0,0,.22)"/><path d="M14 83h54l7 10H7z" fill="${accent}"/><path d="M20 72h42l7 12H13z" fill="${stone}"/><text x="41" y="68" text-anchor="middle" font-family="Georgia,serif" font-size="55" font-weight="700" fill="${stone}" stroke="${accent}" stroke-width="1.7">${symbol}</text></svg>`}
   function goldenFinaleSVG(){return `<svg class="problem-finale-glow" width="194" height="216" viewBox="0 0 194 216"><g fill="none" stroke="#fff1a0" stroke-width="3" opacity=".8"><path d="M97 1v25M25 34l18 18M169 34l-18 18M7 102h26M187 102h-26"/></g><ellipse cx="97" cy="204" rx="80" ry="11" fill="rgba(0,0,0,.25)"/><path d="M34 116h126v80H34z" fill="#c69520" stroke="#614206" stroke-width="6"/><path d="M22 120V78h25v22h32V72h36v28h32V78h25v42z" fill="#f4cb3c" stroke="#614206" stroke-width="6"/><path d="M70 196v-39c0-36 54-36 54 0v39" fill="#3f2b0a"/><path d="m48 62 12-34 26 24L97 9l13 43 26-24 11 34z" fill="#ffe052" stroke="#6f4705" stroke-width="5"/><g fill="#9b51d1"><circle cx="60" cy="31" r="7"/><circle cx="97" cy="14" r="8"/><circle cx="135" cy="31" r="7"/></g><path d="M84 117h26v-13H84z" fill="#fff0a0"/><path d="M86 104V89h7v8h8V87h8v10h8v-8h7v15z" fill="#251b08"/></svg>`}
 
-  function addDecorations(){
+  function addLegacyDecorations(){
     // Monde 1 : chaque grand élément repose désormais sur une case libre, de l'autre côté du chemin.
     addDecor(1,2,8,houseSVG(),.92,'landmark'); addDecor(1,-2,11,benchSVG(),.76); addDecor(1,2,14,pondSVG(),.76,'flat');
     [[1,-2,4,.62],[1,2,6,.55],[1,-2,9,.58],[1,2,17,.58],[1,-2,20,.52]].forEach(([w,x,r,s])=>addDecor(w,x,r,treeSVG(),s));
@@ -173,6 +174,37 @@
     addDecor(9,-2,19,goldenFinaleSVG(),.82,'landmark finale');
   }
 
+  function sprite(worldNumber,index,label){
+    const shapeClass=PORTRAIT_SPRITE_SHEETS.has(worldNumber)?'portrait-sheet':'square-sheet';
+    return `<span class="problem-sprite sprite-${index} ${shapeClass}" style="--sprite-image:url('../images/problem-worlds/world-${worldNumber}-sprites-3d.png')" role="img" aria-label="${label}"></span>`;
+  }
+
+  function addDecorations(){
+    const labels=[
+      ['Maison du pion','Arbre-tour aux pommes','Étang royal','Banc d’échecs','Topiaire pion','Tour de jardin'],
+      ['Tour bleue','Sapin de la citadelle','Cavalier de cristal','Feu de camp royal','Porte verrouillée','Statue du cavalier'],
+      ['Arbre enchanté','Échiquier champignon','Maison de la forêt','Cristaux magiques','Fou de pierre','Lanterne royale'],
+      ['Voilier royal','Phare-tour','Étang marin','Cavalier des mers','Fontaine pion','Coffre de l’archipel'],
+      ['Tour arcanique','Statue de la reine','Portail mystique','Cristaux violets','Bibliothèque royale','Coffre arcanique'],
+      ['Volcan-tour','Forteresse d’obsidienne','Lac de lave','Roi d’obsidienne','Cavalier de feu','Pont des brasiers'],
+      ['Pyramide-tour','Cactus cavalier','Sphinx cavalier','Oasis échiquéenne','Tour du désert','Coffre des sables'],
+      ['Monts de glace','Château de glace','Cavalier gelé','Sapins-pions','Lac échiquier','Coffre glacé'],
+      ['Palais doré','Reine d’or','Trône royal','Trésor ultime','Portail couronne','Citadelle finale']
+    ];
+    const placements=[
+      [2.2,7,'landmark'],[-2.2,10,'decor-sway'],[2.2,13,'decor-float'],[-2.2,16,''],[-2.2,19,'decor-sway'],[2.2,22,'landmark']
+    ];
+    for(let worldNumber=1;worldNumber<=TOTAL_WORLDS;worldNumber++){
+      placements.forEach(([x,row,className],index)=>{
+        const isFinalPortal=worldNumber===9&&index===4;
+        const isElemental=worldNumber===6&&(index===0||index===2)||worldNumber===8&&index===2;
+        const effects=`${className}${isFinalPortal?' finale decor-glow':''}${isElemental?' decor-glow':''}`.trim();
+        const scale=index===0||index===5?1.02:index===2?.92:.96;
+        addDecor(worldNumber,x,row,sprite(worldNumber,index+1,labels[worldNumber-1][index]),scale,effects);
+      });
+    }
+  }
+
   function createPad(level,worldNumber,x,row){
     const p=coordinateFor(worldNumber,x,row),button=document.createElement('button'); button.type='button'; button.className='problem-pad'; button.dataset.level=level; button.style.left=`${p.x}px`; button.style.top=`${p.y}px`;
     if(level<currentLevel){ button.classList.add('done'); button.innerHTML='<svg viewBox="0 0 24 24"><path d="m4 12 6 6L20 6"/></svg>'; button.setAttribute('aria-label',`Socle ${level} terminé`); }
@@ -215,9 +247,9 @@
     const start=coordinateFor(fromEntry[1],fromEntry[2],fromEntry[3]),end=coordinateFor(toEntry[1],toEntry[2],toEntry[3]); pawn.style.left=`${start.x}px`; pawn.style.top=`${start.y}px`; scrollToLevel(from,'auto');
     setTimeout(()=>{
       if(reduceMotion){pawn.style.left=`${end.x}px`;pawn.style.top=`${end.y}px`;}else pawn.animate([
-        {left:`${start.x}px`,top:`${start.y}px`,transform:'translate(-50%,-82%) scale(1)'},
-        {left:`${(start.x+end.x)/2}px`,top:`${(start.y+end.y)/2-58}px`,transform:'translate(-50%,-82%) scale(1.14) rotate(-5deg)',offset:.52},
-        {left:`${end.x}px`,top:`${end.y}px`,transform:'translate(-50%,-82%) scale(1)'}
+        {left:`${start.x}px`,top:`${start.y}px`,transform:'translate(-50%,-76%) scale(1)'},
+        {left:`${(start.x+end.x)/2}px`,top:`${(start.y+end.y)/2-58}px`,transform:'translate(-50%,-76%) scale(1.14) rotate(-5deg)',offset:.52},
+        {left:`${end.x}px`,top:`${end.y}px`,transform:'translate(-50%,-76%) scale(1)'}
       ],{duration:1050,easing:'cubic-bezier(.2,.72,.28,1)',fill:'forwards'}).onfinish=()=>{pawn.style.left=`${end.x}px`;pawn.style.top=`${end.y}px`;};
       const toast=document.getElementById('problem-level-toast'),newWorld=(to-1)%LEVELS_PER_WORLD===0;
       toast.textContent=newWorld?`Monde ${Math.ceil(to/LEVELS_PER_WORLD)} débloqué !`:'Socle suivant débloqué !'; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),2200); setTimeout(()=>scrollToLevel(to),650);

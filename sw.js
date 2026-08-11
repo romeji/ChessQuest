@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v77';
+const CACHE_VERSION = 'chessquest-v78';
 const APP_SHELL = [
   './',
   './index.html',
@@ -103,7 +103,17 @@ const APP_SHELL = [
   './assets/illustrations/rewards-spritesheet.png',
   './assets/illustrations/training-menu-hero.png',
   './assets/images/academy/learning-journey-v1.png',
-  './assets/images/puzzles/problem-journey-v1.png'
+  './assets/images/puzzles/problem-journey-v1.png',
+  './assets/images/problem-worlds/player-pawn-3d.png',
+  './assets/images/problem-worlds/world-1-sprites-3d.png',
+  './assets/images/problem-worlds/world-2-sprites-3d.png',
+  './assets/images/problem-worlds/world-3-sprites-3d.png',
+  './assets/images/problem-worlds/world-4-sprites-3d.png',
+  './assets/images/problem-worlds/world-5-sprites-3d.png',
+  './assets/images/problem-worlds/world-6-sprites-3d.png',
+  './assets/images/problem-worlds/world-7-sprites-3d.png',
+  './assets/images/problem-worlds/world-8-sprites-3d.png',
+  './assets/images/problem-worlds/world-9-sprites-3d.png'
 ];
 
 self.addEventListener('install', event => {
