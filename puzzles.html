@@ -25,7 +25,7 @@
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
 <link rel="stylesheet" href="assets/css/ux-refinement.css?v=59">
-<link rel="stylesheet" href="assets/css/navigation.css?v=75" data-quest-navigation>
+<link rel="stylesheet" href="assets/css/navigation.css?v=84" data-quest-navigation>
 </head>
 <body data-page="puzzles" class="final-shell-page puzzle-final-page">
 <div id="toast-container"></div>
@@ -64,6 +64,7 @@
 
     <div class="mcq-options" id="mcq-options"></div>
     <div class="puzzle-final-feedback prompt" id="puzzle-feedback">Observe la position puis choisis ton coup.</div>
+    <button class="puzzle-next-action hidden" id="puzzle-next-action" type="button">Problème suivant</button>
 
     <div class="puzzle-review-nav hidden" id="puzzle-review-nav">
       <button type="button" id="mistake-prev" aria-label="Erreur précédente">←</button>
@@ -91,10 +92,10 @@
 <script src="assets/js/animations.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/mascot-coach.js?v=44"></script>
-<script src="assets/js/navigation.js?v=75"></script>
+<script src="assets/js/navigation.js?v=84"></script>
 <script src="assets/js/board.js"></script>
 <script src="assets/js/openings.js"></script>
-<script src="assets/js/puzzles.js?v=83"></script>
+<script src="assets/js/puzzles.js?v=84"></script>
 <script>
 const urlParams = new URLSearchParams(location.search);
 const secretLevel = urlParams.get('secret');

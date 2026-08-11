@@ -441,6 +441,11 @@ function setPuzzleFeedback(text, kind){
   const el = document.getElementById('puzzle-feedback');
   if(!el) return;
   puzzleResultAction = null;
+  const nextButton = document.getElementById('puzzle-next-action');
+  if(nextButton){
+    nextButton.classList.add('hidden');
+    nextButton.onclick = null;
+  }
   if(kind === 'prompt'){
     el.className = 'puzzle-final-feedback prompt';
     el.innerHTML = `<span class="feedback-prompt-copy">${escapeHtml(text)}</span><button class="puzzle-result-next hidden" type="button"></button>`;
@@ -459,7 +464,7 @@ function setPuzzleFeedback(text, kind){
 }
 
 function setPuzzleResultAction(label, action){
-  const button = document.querySelector('#puzzle-feedback .puzzle-result-next');
+  const button = document.getElementById('puzzle-next-action');
   puzzleResultAction = action;
   if(!button) return;
   button.textContent = label;

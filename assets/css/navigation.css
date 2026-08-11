@@ -3,7 +3,8 @@
 :root{
   --cq-tabbar-content-height:58px;
   --cq-tabbar-controls-bottom:5px;
-  --cq-tabbar-height:var(--cq-tabbar-content-height);
+  --cq-tabbar-safe-bottom:env(safe-area-inset-bottom,0px);
+  --cq-tabbar-height:calc(var(--cq-tabbar-content-height) + var(--cq-tabbar-safe-bottom));
   --tabbar-height:var(--cq-tabbar-height);
 }
 
@@ -17,7 +18,7 @@ body nav.tabbar{
   height:var(--cq-tabbar-height)!important;
   min-height:var(--cq-tabbar-height)!important;
   margin:0!important;
-  padding:2px 4px var(--cq-tabbar-controls-bottom)!important;
+  padding:2px 4px calc(var(--cq-tabbar-controls-bottom) + var(--cq-tabbar-safe-bottom))!important;
   display:flex!important;
   align-items:flex-end!important;
   justify-content:space-around!important;
@@ -57,7 +58,7 @@ body nav.tabbar .tabbar-item span{font-size:.53rem!important;line-height:1!impor
 @media (display-mode:standalone){
   body nav.tabbar{
     bottom:0!important;
-    padding-bottom:var(--cq-tabbar-controls-bottom)!important;
+    padding-bottom:calc(var(--cq-tabbar-controls-bottom) + var(--cq-tabbar-safe-bottom))!important;
   }
 }
 
@@ -125,19 +126,27 @@ body.cq-has-tabbar.puzzle-final-page .puzzle-final-feedback.prompt{
   grid-template-columns:minmax(0,1fr)!important;
 }
 body.cq-has-tabbar.puzzle-final-page .feedback-prompt-copy{font-size:.68rem;line-height:1.3;color:#4c473f}
-body.cq-has-tabbar.puzzle-final-page .puzzle-result-next{
-  grid-column:2/4;
-  min-height:34px;
-  margin-top:3px;
-  padding:6px 14px;
+body.cq-has-tabbar.puzzle-final-page .puzzle-next-action{
+  order:5!important;
+  width:100%!important;
+  min-height:44px!important;
+  margin:0!important;
+  padding:9px 16px!important;
   border:0;
-  border-radius:12px;
+  border-radius:14px;
   background:linear-gradient(180deg,#35a85b,#167643);
   color:#fff;
-  font:900 .7rem Nunito,sans-serif;
-  box-shadow:0 4px 10px rgba(9,91,51,.2);
+  font:900 .78rem Nunito,sans-serif;
+  box-shadow:0 5px 0 #0d5932,0 8px 16px rgba(9,91,51,.22);
 }
-body.cq-has-tabbar.puzzle-final-page .puzzle-final-feedback.prompt .puzzle-result-next{grid-column:1}
+body.cq-has-tabbar.puzzle-final-page .puzzle-next-action:active{transform:translateY(2px);box-shadow:0 3px 0 #0d5932}
+body.cq-has-tabbar.puzzle-final-page .puzzle-next-action.hidden{display:none!important}
+
+/* Une ancienne optimisation masquait le résultat sur les petits iPhone. */
+@media(max-height:700px){
+  body.cq-has-tabbar.puzzle-final-page .puzzle-final-feedback{display:grid!important}
+  body.cq-has-tabbar.puzzle-final-page .puzzle-next-action:not(.hidden){display:block!important}
+}
 
 body.cq-has-tabbar.opening-map-page .opening-map-dock{
   bottom:var(--cq-tabbar-height)!important;
