@@ -72,7 +72,7 @@
         const xSlot=col*2+((row+1)%2),cx=width/2+xSlot*TILE,cy=bottom-row*TILE;
         const tile=document.createElementNS('http://www.w3.org/2000/svg','polygon');
         tile.setAttribute('points',`${cx},${cy-TILE} ${cx+TILE},${cy} ${cx},${cy+TILE} ${cx-TILE},${cy}`);
-        tile.setAttribute('fill',(row+col)%2===0?theme.dark:theme.light);
+        tile.setAttribute('fill',(row+col)%2===0?theme.light:theme.dark);
         tile.setAttribute('stroke',theme.line); tile.setAttribute('stroke-opacity','.1'); tile.setAttribute('stroke-width','1');
         svg.appendChild(tile);
       }
