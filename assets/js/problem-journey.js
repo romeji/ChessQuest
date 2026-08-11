@@ -3,7 +3,8 @@
   const TOTAL_WORLDS = 9;
   const TOTAL_LEVELS = LEVELS_PER_WORLD * TOTAL_WORLDS;
   const TILE = 62;
-  const WORLD_HEIGHT = 1440;
+  const WORLD_ROWS = 23;
+  const WORLD_HEIGHT = WORLD_ROWS * TILE;
   const BOARD_TOP_SPACE = 420;
   const BOARD_HEIGHT = WORLD_HEIGHT * TOTAL_WORLDS + BOARD_TOP_SPACE;
   const PATH_X = [2,1,0,-1,-2,-1,0,1,2,1,0,-1,-2,-1,0,1,2,1,0,-1];
@@ -62,35 +63,19 @@
     const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
     svg.classList.add('problem-floor');
     svg.setAttribute('width',width); svg.setAttribute('height',BOARD_HEIGHT); svg.setAttribute('viewBox',`0 0 ${width} ${BOARD_HEIGHT}`);
-    const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
-    svg.appendChild(defs);
-    for(let worldNumber=1;worldNumber<=TOTAL_WORLDS;worldNumber++){
-      const theme=WORLD_THEMES[worldNumber-1],bottom=worldBottom(worldNumber),top=worldNumber===TOTAL_WORLDS?0:bottom-WORLD_HEIGHT;
-      const zoneHeight=worldNumber===TOTAL_WORLDS?WORLD_HEIGHT+BOARD_TOP_SPACE:WORLD_HEIGHT;
-      const zone=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      zone.setAttribute('x','0'); zone.setAttribute('y',top); zone.setAttribute('width',width); zone.setAttribute('height',zoneHeight);
-      zone.setAttribute('fill',theme.dark); zone.setAttribute('class','problem-world-zone'); svg.appendChild(zone);
-      const clip=document.createElementNS('http://www.w3.org/2000/svg','clipPath');
-      clip.setAttribute('id',`problem-world-clip-${worldNumber}`);
-      const clipRect=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      clipRect.setAttribute('x','0'); clipRect.setAttribute('y',top); clipRect.setAttribute('width',width); clipRect.setAttribute('height',zoneHeight);
-      clip.appendChild(clipRect); defs.appendChild(clip);
-      const floorGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
-      floorGroup.setAttribute('clip-path',`url(#problem-world-clip-${worldNumber})`); svg.appendChild(floorGroup);
-      const floorRows=worldNumber===TOTAL_WORLDS?31:24;
-      for(let row=0;row<=floorRows;row++) for(let col=-3;col<=3;col++){
-        const xSlot=col*2+((row+1)%2),cx=width/2+xSlot*TILE,cy=bottom-row*TILE;
+    const backdrop=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    backdrop.setAttribute('width',width); backdrop.setAttribute('height',BOARD_HEIGHT); backdrop.setAttribute('fill',WORLD_THEMES[TOTAL_WORLDS-1].dark); svg.appendChild(backdrop);
+    const totalRows=TOTAL_WORLDS*WORLD_ROWS+Math.ceil(BOARD_TOP_SPACE/TILE)+2;
+    for(let row=0;row<=totalRows;row++){
+      const worldIndex=Math.min(TOTAL_WORLDS-1,Math.floor(row/WORLD_ROWS));
+      const theme=WORLD_THEMES[worldIndex];
+      for(let col=-3;col<=3;col++){
+        const xSlot=col*2+((row+1)%2),cx=width/2+xSlot*TILE,cy=BOARD_HEIGHT-row*TILE;
         const tile=document.createElementNS('http://www.w3.org/2000/svg','polygon');
         tile.setAttribute('points',`${cx},${cy-TILE} ${cx+TILE},${cy} ${cx},${cy+TILE} ${cx-TILE},${cy}`);
         tile.setAttribute('fill',row%2===0?theme.dark:theme.light);
         tile.setAttribute('stroke',theme.line); tile.setAttribute('stroke-opacity','.1'); tile.setAttribute('stroke-width','1');
-        floorGroup.appendChild(tile);
-      }
-      if(worldNumber>1){
-        const separator=document.createElementNS('http://www.w3.org/2000/svg','path');
-        separator.setAttribute('d',`M0 ${bottom} Q${width*.25} ${bottom-16} ${width*.5} ${bottom} T${width} ${bottom}`);
-        separator.setAttribute('fill','none'); separator.setAttribute('stroke','rgba(255,255,255,.2)'); separator.setAttribute('stroke-width','5');
-        svg.appendChild(separator);
+        svg.appendChild(tile);
       }
     }
     board.appendChild(svg);
