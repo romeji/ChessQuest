@@ -62,11 +62,21 @@
     const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
     svg.classList.add('problem-floor');
     svg.setAttribute('width',width); svg.setAttribute('height',BOARD_HEIGHT); svg.setAttribute('viewBox',`0 0 ${width} ${BOARD_HEIGHT}`);
+    const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+    svg.appendChild(defs);
     for(let worldNumber=1;worldNumber<=TOTAL_WORLDS;worldNumber++){
       const theme=WORLD_THEMES[worldNumber-1],bottom=worldBottom(worldNumber),top=worldNumber===TOTAL_WORLDS?0:bottom-WORLD_HEIGHT;
+      const zoneHeight=worldNumber===TOTAL_WORLDS?WORLD_HEIGHT+BOARD_TOP_SPACE:WORLD_HEIGHT;
       const zone=document.createElementNS('http://www.w3.org/2000/svg','rect');
-      zone.setAttribute('x','0'); zone.setAttribute('y',top); zone.setAttribute('width',width); zone.setAttribute('height',worldNumber===TOTAL_WORLDS?WORLD_HEIGHT+BOARD_TOP_SPACE:WORLD_HEIGHT);
+      zone.setAttribute('x','0'); zone.setAttribute('y',top); zone.setAttribute('width',width); zone.setAttribute('height',zoneHeight);
       zone.setAttribute('fill',theme.dark); zone.setAttribute('class','problem-world-zone'); svg.appendChild(zone);
+      const clip=document.createElementNS('http://www.w3.org/2000/svg','clipPath');
+      clip.setAttribute('id',`problem-world-clip-${worldNumber}`);
+      const clipRect=document.createElementNS('http://www.w3.org/2000/svg','rect');
+      clipRect.setAttribute('x','0'); clipRect.setAttribute('y',top); clipRect.setAttribute('width',width); clipRect.setAttribute('height',zoneHeight);
+      clip.appendChild(clipRect); defs.appendChild(clip);
+      const floorGroup=document.createElementNS('http://www.w3.org/2000/svg','g');
+      floorGroup.setAttribute('clip-path',`url(#problem-world-clip-${worldNumber})`); svg.appendChild(floorGroup);
       const floorRows=worldNumber===TOTAL_WORLDS?31:24;
       for(let row=0;row<=floorRows;row++) for(let col=-3;col<=3;col++){
         const xSlot=col*2+((row+1)%2),cx=width/2+xSlot*TILE,cy=bottom-row*TILE;
@@ -74,7 +84,7 @@
         tile.setAttribute('points',`${cx},${cy-TILE} ${cx+TILE},${cy} ${cx},${cy+TILE} ${cx-TILE},${cy}`);
         tile.setAttribute('fill',row%2===0?theme.dark:theme.light);
         tile.setAttribute('stroke',theme.line); tile.setAttribute('stroke-opacity','.1'); tile.setAttribute('stroke-width','1');
-        svg.appendChild(tile);
+        floorGroup.appendChild(tile);
       }
       if(worldNumber>1){
         const separator=document.createElementNS('http://www.w3.org/2000/svg','path');
