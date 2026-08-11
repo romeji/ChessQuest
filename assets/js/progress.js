@@ -55,10 +55,10 @@ function loadProgress(){
     progress.dailyPuzzleRun.solvedIds = Array.isArray(progress.dailyPuzzleRun.solvedIds) ? progress.dailyPuzzleRun.solvedIds : [];
     progress.problemJourney = Object.assign({}, defaults.problemJourney, parsed.problemJourney || {});
     if(!parsed.problemJourney){
-      progress.problemJourney.level = Math.max(1, Math.min(40, Math.floor((Number(parsed.puzzlesSolved) || 0) / 3) + 1));
+      progress.problemJourney.level = Math.max(1, Math.min(180, Math.floor((Number(parsed.puzzlesSolved) || 0) / 3) + 1));
       if(progress.dailyPuzzleRun.solvedIds.length >= 3) progress.problemJourney.lastAdvancedDate = progress.dailyPuzzleRun.date;
     }
-    progress.problemJourney.level = Math.max(1, Math.min(40, Number(progress.problemJourney.level) || 1));
+    progress.problemJourney.level = Math.max(1, Math.min(180, Number(progress.problemJourney.level) || 1));
     progress.economy = Object.assign({}, defaults.economy, parsed.economy || {});
     progress.economy.owned = Array.isArray(progress.economy.owned) ? progress.economy.owned : defaults.economy.owned.slice();
     progress.economy.treasures = progress.economy.treasures && typeof progress.economy.treasures === 'object' ? progress.economy.treasures : {};
