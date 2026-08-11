@@ -26,6 +26,7 @@ function defaultProgress(){
     xp: 0, lastKnownLevel: 1, unlockedBadges: [],
     dailyProgress: { date:null, puzzlesSolvedToday:0, linesCompletedToday:0, gamesAnalyzedToday:0, gamesPlayedToday:0, rewardClaimed:false, bonusClaimed:{} },
     dailyPuzzleRun: { date:null, solvedIds:[] },
+    problemJourney: { level:1, lastAdvancedDate:null },
     economy: {
       crowns: 120,
       owned: ['board-royal','pieces-classic'],
@@ -52,6 +53,12 @@ function loadProgress(){
     progress.dailyProgress.bonusClaimed = Object.assign({}, defaults.dailyProgress.bonusClaimed, progress.dailyProgress.bonusClaimed || {});
     progress.dailyPuzzleRun = Object.assign({}, defaults.dailyPuzzleRun, parsed.dailyPuzzleRun || {});
     progress.dailyPuzzleRun.solvedIds = Array.isArray(progress.dailyPuzzleRun.solvedIds) ? progress.dailyPuzzleRun.solvedIds : [];
+    progress.problemJourney = Object.assign({}, defaults.problemJourney, parsed.problemJourney || {});
+    if(!parsed.problemJourney){
+      progress.problemJourney.level = Math.max(1, Math.min(40, Math.floor((Number(parsed.puzzlesSolved) || 0) / 3) + 1));
+      if(progress.dailyPuzzleRun.solvedIds.length >= 3) progress.problemJourney.lastAdvancedDate = progress.dailyPuzzleRun.date;
+    }
+    progress.problemJourney.level = Math.max(1, Math.min(40, Number(progress.problemJourney.level) || 1));
     progress.economy = Object.assign({}, defaults.economy, parsed.economy || {});
     progress.economy.owned = Array.isArray(progress.economy.owned) ? progress.economy.owned : defaults.economy.owned.slice();
     progress.economy.treasures = progress.economy.treasures && typeof progress.economy.treasures === 'object' ? progress.economy.treasures : {};

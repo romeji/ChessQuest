@@ -1,7 +1,7 @@
 /* Barre basse unique de ChessQuest.
    Le fond couvre aussi la safe-area inférieure des PWA iOS. */
 :root{
-  --cq-tabbar-content-height:51px;
+  --cq-tabbar-content-height:58px;
   --cq-tabbar-controls-bottom:5px;
   --cq-tabbar-height:var(--cq-tabbar-content-height);
   --tabbar-height:var(--cq-tabbar-height);
@@ -23,9 +23,9 @@ body nav.tabbar{
   justify-content:space-around!important;
   transform:translateX(-50%)!important;
   border:0!important;
-  border-top:1px solid #e6dcc2!important;
+  border-top:1px solid rgba(255,255,255,.08)!important;
   border-radius:0!important;
-  background:#fffdf8!important;
+  background:linear-gradient(180deg,#19372d,#10291f)!important;
   box-shadow:0 -8px 25px rgba(0,21,14,.28)!important;
   box-sizing:border-box!important;
 }
@@ -38,21 +38,21 @@ body nav.tabbar .tabbar-item{
   flex:1 1 0!important;
   min-width:0!important;
   min-height:0!important;
-  height:44px!important;
+  height:49px!important;
   margin:0!important;
   padding:2px 1px!important;
   gap:1px!important;
   border-radius:10px!important;
-  color:#8d8999!important;
+  color:#91a79a!important;
 }
 
 body nav.tabbar .tabbar-item.active{
-  color:#177b4e!important;
-  background:#eaf5e6!important;
+  color:#fff!important;
+  background:rgba(111,190,91,.18)!important;
 }
 
-body nav.tabbar .tabbar-item .tabicon{width:20px!important;height:20px!important}
-body nav.tabbar .tabbar-item span{font-size:.56rem!important;line-height:1!important}
+body nav.tabbar .tabbar-item .tabicon{width:20px!important;height:20px!important;fill:none!important;stroke:currentColor!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+body nav.tabbar .tabbar-item span{font-size:.53rem!important;line-height:1!important;font-weight:800!important}
 
 @media (display-mode:standalone){
   body nav.tabbar{

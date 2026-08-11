@@ -1,5 +1,5 @@
 /* Mise à jour PWA globale : ce fichier est aussi chargé par les mondes plein écran. */
-const QUEST_NAVIGATION_VERSION = '75';
+const QUEST_NAVIGATION_VERSION = '76';
 const QUEST_NAVIGATION_STYLESHEET = new URL(
   `../css/navigation.css?v=${QUEST_NAVIGATION_VERSION}`,
   document.currentScript?.src || document.baseURI
@@ -44,13 +44,14 @@ function ensureQuestNavigationStyles(){
 function renderQuestTabbar(){
   ensureQuestNavigationStyles();
   const aliases = {
-    analyze: 'home',
-    analysis: 'home',
-    settings: 'profile',
+    analyze: 'observer',
+    analysis: 'observer',
+    settings: 'more',
     coach: 'home',
     'training-hub': 'home',
     play: 'home',
-    progress: 'profile'
+    progress: 'more',
+    profile: 'more'
   };
   const routeTabs = {
     '': 'home',
@@ -63,10 +64,12 @@ function renderQuestTabbar(){
     'openings.html': 'learn',
     'course.html': 'learn',
     'course-library.html': 'learn',
-    'profile.html': 'profile',
-    'progress.html': 'profile',
-    'settings.html': 'profile',
-    'shop.html': 'profile'
+    'analysis.html': 'observer',
+    'game-view.html': 'observer',
+    'profile.html': 'more',
+    'progress.html': 'more',
+    'settings.html': 'more',
+    'shop.html': 'more'
   };
   const route = location.pathname.split('/').pop().toLowerCase();
   const declaredPage = document.body.dataset.page;
@@ -89,8 +92,11 @@ function renderQuestTabbar(){
       <a class="tabbar-item" data-tab="learn" href="learn.html" aria-label="Apprendre">
         <svg viewBox="0 0 24 24" class="tabicon"><path d="M4 19V6a2 2 0 0 1 2-2h6v16H6a2 2 0 0 0-2 2Z"/><path d="M20 19V6a2 2 0 0 0-2-2h-6v16h6a2 2 0 0 1 2 2Z"/></svg><span>Apprendre</span>
       </a>
-      <a class="tabbar-item" data-tab="profile" href="profile.html" aria-label="Profil">
-        <svg viewBox="0 0 24 24" class="tabicon"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>Profil</span>
+      <a class="tabbar-item" data-tab="observer" href="analysis.html" aria-label="Observer et analyser">
+        <svg viewBox="0 0 24 24" class="tabicon"><circle cx="7.5" cy="14" r="4"/><circle cx="16.5" cy="14" r="4"/><path d="M11.5 14h1M4 13l1.5-7h4l2 8M20 13l-1.5-7h-4l-2 8"/></svg><span>Observer</span>
+      </a>
+      <a class="tabbar-item" data-tab="more" href="profile.html" aria-label="Plus">
+        <svg viewBox="0 0 24 24" class="tabicon"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Plus</span>
       </a>`;
   tabbar.querySelectorAll('.tabbar-item').forEach(item => {
     item.classList.toggle('active', item.dataset.tab === current);
