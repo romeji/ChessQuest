@@ -47,6 +47,8 @@ function loadProgress(){
     if(!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return defaultProgress();
     const defaults = defaultProgress();
     const progress = Object.assign(defaults, parsed);
+    progress.mastered = progress.mastered && typeof progress.mastered === 'object' && !Array.isArray(progress.mastered) ? progress.mastered : {};
+    progress.attempts = progress.attempts && typeof progress.attempts === 'object' && !Array.isArray(progress.attempts) ? progress.attempts : {};
     progress.settings = Object.assign({}, defaults.settings, parsed.settings || {});
     progress.chessCom = Object.assign({}, defaults.chessCom, parsed.chessCom || {});
     progress.dailyProgress = Object.assign({}, defaults.dailyProgress, parsed.dailyProgress || {});
@@ -434,6 +436,13 @@ function recordLineCompletion(key, clean){
   addXP(clean ? 30 : 10);
   bumpDailyCounter('linesCompletedToday');
   checkNewBadges();
+}
+
+/* Une ligne terminée débloque la suivante, même si elle n'a pas encore été
+   jouée sans faute. `mastered` reste réservé à la maîtrise parfaite. */
+function isOpeningLessonCompleted(key){
+  if(!key) return false;
+  return !!PROGRESS.mastered?.[key] || Number(PROGRESS.attempts?.[key]) > 0;
 }
 
 /* ============================================================

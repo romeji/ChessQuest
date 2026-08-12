@@ -30,12 +30,17 @@
 
   function escapeText(value){return String(value == null ? '' : value).replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));}
   function lessonName(key){return BASE_NAMES[key] || (window.OPENING_EXTRA_ROWS && OPENING_EXTRA_ROWS[key]?.[0]) || key.replaceAll('_',' ');}
-  function worldComplete(world){return world.islands.every(island=>island.lessons.every(key=>!!mastered[key]));}
+  function lessonCompleted(key){
+    return typeof isOpeningLessonCompleted === 'function'
+      ? isOpeningLessonCompleted(key)
+      : !!mastered[key];
+  }
+  function worldComplete(world){return world.islands.every(island=>island.lessons.every(lessonCompleted));}
   function worldUnlocked(index){return index===0 || worldComplete(OPENING_WORLDS[index-1]);}
-  function islandComplete(card){return card.island.lessons.every(key=>!!mastered[key]);}
-  function islandUnlocked(card){return worldUnlocked(card.worldIndex) && (card.islandIndex===0 || card.world.islands[card.islandIndex-1].lessons.every(key=>!!mastered[key]));}
-  function completedLessons(card){return card.island.lessons.filter(key=>!!mastered[key]).length;}
-  function firstAvailableLesson(card){return card.island.lessons.find(key=>!mastered[key]) || card.island.lessons[0];}
+  function islandComplete(card){return card.island.lessons.every(lessonCompleted);}
+  function islandUnlocked(card){return worldUnlocked(card.worldIndex) && (card.islandIndex===0 || card.world.islands[card.islandIndex-1].lessons.every(lessonCompleted));}
+  function completedLessons(card){return card.island.lessons.filter(lessonCompleted).length;}
+  function firstAvailableLesson(card){return card.island.lessons.find(key=>!lessonCompleted(key)) || card.island.lessons[0];}
   function cardHref(card){const key=firstAvailableLesson(card);return `openings.html?opening=${encodeURIComponent(key)}&world=${encodeURIComponent(card.world.id)}&island=${encodeURIComponent(card.island.id)}`;}
   function difficulty(worldIndex){return worldIndex<2?'Débutant':worldIndex<5?'Intermédiaire':worldIndex<8?'Avancé':'Expert';}
   function scoreFor(card){
@@ -63,9 +68,9 @@
   }
   function routeMarkup(card){
     const keys=card.island.lessons.slice(0,4);
-    const firstIncomplete=keys.findIndex(key=>!mastered[key]);
+    const firstIncomplete=keys.findIndex(key=>!lessonCompleted(key));
     return keys.map((key,index)=>{
-      const complete=!!mastered[key];
+      const complete=lessonCompleted(key);
       const current=!complete&&islandUnlocked(card)&&(firstIncomplete===index);
       const locked=!complete&&!current;
       return `<span class="opening-route-node ${complete?'complete':current?'current':locked?'locked':''}"><img src="assets/chesspieces/${PIECES[index%PIECES.length]}.png" alt=""><small>${escapeText(lessonName(key).split('—').pop().trim())}</small></span>`;
@@ -111,7 +116,7 @@
     document.getElementById('opening-selection-kicker').textContent=`MONDE ${card.world.number} · ${card.world.shortTitle.toUpperCase()}`;
     document.getElementById('opening-selection-title').textContent=card.island.title;
     document.getElementById('opening-selection-description').textContent=card.world.subtitle;
-    document.getElementById('opening-selection-progress-label').textContent=`${complete} / ${total} maîtrisée${total>1?'s':''}`;
+    document.getElementById('opening-selection-progress-label').textContent=`${complete} / ${total} terminée${total>1?'s':''}`;
     document.getElementById('opening-selection-progress-fill').style.width=`${total?complete/total*100:0}%`;
     document.getElementById('opening-selection-match').textContent=matchStyle?`${scoreFor(card)}% · ${STYLE_LABELS[matchStyle]}`:'Découverte conseillée';
     const primary=document.getElementById('opening-swipe-primary');
@@ -121,10 +126,10 @@
     document.getElementById('opening-coach-copy').textContent=!unlocked
       ? `Celle-ci est verrouillée. Oui, même mon charme royal a ses limites.`
       : done
-        ? `${card.island.title} est maîtrisée. Tu peux la revoir, histoire de rester insupportablement prêt.`
+        ? `${card.island.title} est terminée. Tu peux la revoir pour viser une maîtrise parfaite.`
         : matchStyle&&scoreFor(card)>=90
           ? `${scoreFor(card)}% de compatibilité. Cette ouverture partage visiblement tes mauvaises intentions.`
-          : `Découvre ${card.island.title}. ${complete}/${total} leçons maîtrisées.`;
+          : `Découvre ${card.island.title}. ${complete}/${total} leçons terminées.`;
   }
   function move(delta){
     const next=Math.max(0,Math.min(cards.length-1,activeIndex+delta));

@@ -106,7 +106,7 @@
 <nav class="tabbar" aria-label="Navigation principale"></nav>
 <script src="assets/js/navigation.js?v=90"></script>
 <script src="assets/js/board.js"></script>
-<script src="assets/js/openings.js?v=40"></script>
+<script src="assets/js/openings.js?v=91"></script>
 <script src="assets/js/opening-curriculum.js?v=40"></script>
 <script>
 const OPENING_FACTS = {
@@ -178,7 +178,7 @@ const gambitDameCurriculum = params.get('path') === 'gambit_dame';
 const requested = params.get('opening');
 const requestedWorld = params.get('world');
 const requestedIsland = params.get('island');
-const firstGambitStep = GAMBIT_DAME_STEPS.find(key => !PROGRESS.mastered[key]) || GAMBIT_DAME_STEPS[0];
+const firstGambitStep = GAMBIT_DAME_STEPS.find(key => !isOpeningLessonCompleted(key)) || GAMBIT_DAME_STEPS[0];
 const startKey = gambitDameCurriculum
   ? ((requested && GAMBIT_DAME_STEPS.includes(requested)) ? requested : firstGambitStep)
   : ((requested && OPENINGS[requested]) ? requested : 'italienne');

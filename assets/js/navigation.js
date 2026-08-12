@@ -1,4 +1,4 @@
-const QUEST_NAVIGATION_VERSION = '90';
+const QUEST_NAVIGATION_VERSION = '91';
 const QUEST_NAVIGATION_STYLESHEET = new URL(
   `../css/navigation.css?v=${QUEST_NAVIGATION_VERSION}`,
   document.currentScript?.src || document.baseURI

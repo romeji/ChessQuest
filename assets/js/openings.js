@@ -492,10 +492,7 @@ function continueTrainLine(){
   $('#train-board [data-square]').removeClass('suggest-from suggest-to');
   if(trainPly >= currentLine.moves.length){
     setTrainFeedback('Ligne terminée — bravo ! Recommence pour la mémoriser, ou choisis-en une autre.', 'done');
-    if(currentLine.forColor !== null && !lineCompletionRecorded){
-      lineCompletionRecorded = true;
-      recordLineCompletion(currentLineKey, lineMistakes === 0);
-    }
+    recordFinishedLineNow();
     return;
   }
   const nextColor = (trainPly % 2 === 0) ? 'w' : 'b';
@@ -522,6 +519,13 @@ function continueTrainLine(){
   }
 }
 
+function recordFinishedLineNow(){
+  if(!currentLine || trainPly < currentLine.moves.length || currentLine.forColor === null || lineCompletionRecorded) return false;
+  lineCompletionRecorded = true;
+  recordLineCompletion(currentLineKey,lineMistakes === 0);
+  return true;
+}
+
 function attemptTrainMove(source, target){
   if(!currentLine) return false;
   const expected = currentLine.moves[trainPly];
@@ -544,6 +548,7 @@ function attemptTrainMove(source, target){
   playSound('move');
   setTrainFeedback(`${pickPhrase(CORRECT_MOVE_PREFIXES, goodRef)} ${describeSanMove(expected.san)} — ${humanizeChessComment(expected.c)}`, 'good');
   trainPly++;
+  recordFinishedLineNow();
   if(typeof renderTrainMoveList === 'function') renderTrainMoveList();
   trainBoard.position(trainGame.fen());
   setTimeout(()=> continueTrainLine(), 500);
