@@ -549,6 +549,7 @@ function attemptTrainMove(source, target){
   setTrainFeedback(`${pickPhrase(CORRECT_MOVE_PREFIXES, goodRef)} ${describeSanMove(expected.san)} — ${humanizeChessComment(expected.c)}`, 'good');
   trainPly++;
   recordFinishedLineNow();
+  if(typeof renderDots === 'function') renderDots();
   if(typeof renderTrainMoveList === 'function') renderTrainMoveList();
   trainBoard.position(trainGame.fen());
   setTimeout(()=> continueTrainLine(), 500);

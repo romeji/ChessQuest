@@ -6,6 +6,7 @@
   --cq-tabbar-safe-bottom:env(safe-area-inset-bottom,0px);
   --cq-tabbar-height:calc(var(--cq-tabbar-content-height) + var(--cq-tabbar-safe-bottom));
   --tabbar-height:var(--cq-tabbar-height);
+  --cq-viewport-height:100dvh;
 }
 
 html.cq-has-tabbar,
@@ -43,7 +44,20 @@ body nav.tabbar{
   box-sizing:border-box!important;
 }
 
-body nav.tabbar::after{display:none!important}
+/* Le prolongement couvre les derniers pixels du viewport PWA iOS avec la
+   couleur de la barre, au lieu de laisser apparaître le fond de la page. */
+body nav.tabbar::after{
+  content:""!important;
+  position:absolute!important;
+  z-index:-1!important;
+  top:calc(100% - 1px)!important;
+  left:0!important;
+  right:0!important;
+  display:block!important;
+  height:max(36px,var(--cq-tabbar-safe-bottom))!important;
+  background:#10291f!important;
+  pointer-events:none!important;
+}
 
 body nav.tabbar .tabbar-item{
   position:relative!important;
@@ -83,22 +97,44 @@ body.cq-has-tabbar.daily-final-page .app,
 body.cq-has-tabbar.training-final-page .app,
 body.cq-has-tabbar.opening-final-page .app,
 body.cq-has-tabbar.analysis-review-page .app{
-  height:calc(100dvh - var(--cq-tabbar-height))!important;
+  height:calc(var(--cq-viewport-height) - var(--cq-tabbar-height))!important;
+  max-height:calc(var(--cq-viewport-height) - var(--cq-tabbar-height))!important;
   min-height:0!important;
+  padding-bottom:0!important;
 }
 
 body.cq-has-tabbar.opening-final-page .opening-lesson-cta{
   bottom:var(--cq-tabbar-height)!important;
+  z-index:450!important;
 }
 
 body.cq-has-tabbar.puzzle-final-page .app{
   width:min(100%,430px)!important;
-  height:calc(100dvh - var(--cq-tabbar-height))!important;
+  height:calc(var(--cq-viewport-height) - var(--cq-tabbar-height))!important;
+  max-height:calc(var(--cq-viewport-height) - var(--cq-tabbar-height))!important;
   min-height:0!important;
   margin:0 auto!important;
-  padding-bottom:3px!important;
+  padding-bottom:0!important;
   overflow:hidden!important;
 }
+
+/* Une seule réservation verticale : la barre commune. Les anciennes feuilles
+   ajoutaient encore la safe-area une deuxième fois dans ces écrans. */
+body.cq-has-tabbar.puzzle-final-page .page,
+body.cq-has-tabbar.opening-final-page .page,
+body.cq-has-tabbar.analysis-review-page .page{
+  height:100%!important;
+  max-height:100%!important;
+  box-sizing:border-box!important;
+}
+body.cq-has-tabbar.puzzle-final-page .page{padding-bottom:0!important}
+body.cq-has-tabbar.opening-final-page .page{padding-bottom:64px!important}
+body.cq-has-tabbar.analysis-review-page .page{padding-bottom:0!important}
+body.cq-has-tabbar.puzzle-final-page .mode-bottom-dock{
+  bottom:calc(var(--cq-tabbar-height) + 4px)!important;
+}
+body.cq-has-tabbar.analysis-review-page .review-controls{padding-bottom:7px!important}
+body.cq-has-tabbar.analysis-review-page .review-overview{padding-bottom:12px!important}
 
 body.cq-has-tabbar.training-target-page .app,
 body.cq-has-tabbar.training-hub .app,
@@ -175,13 +211,13 @@ body.cq-has-tabbar.puzzle-final-page .puzzle-next-action.hidden{display:none!imp
 }
 
 body.cq-has-tabbar.problem-journey-page .problem-journey-actions{
-  bottom:2px!important;
+  bottom:0!important;
 }
 body.cq-has-tabbar.problem-journey-page .problem-journey-progress{
-  bottom:64px!important;
+  bottom:52px!important;
 }
 body.cq-has-tabbar.problem-journey-page .problem-journey-menu{
-  bottom:62px!important;
+  bottom:calc(var(--problem-hud,84px) + 8px)!important;
 }
 
 body.analysis-review-page:not(.review-summary-active) .review-controls{

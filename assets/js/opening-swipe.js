@@ -172,4 +172,14 @@
 
   document.getElementById('opening-match-score').textContent=matchStyle?STYLE_LABELS[matchStyle]:'Match';
   renderCards();
+
+  /* Safari restaure souvent la carte depuis son back/forward cache. Recharge
+     alors la progression écrite par la leçon, sinon la carte peut continuer à
+     croire que l'Italienne n'est pas terminée et relancer la même ligne. */
+  function refreshOpeningProgress(){
+    if(typeof loadProgress === 'function') PROGRESS = loadProgress();
+    renderCards();
+  }
+  window.addEventListener('pageshow', refreshOpeningProgress);
+  window.addEventListener('storage', event=>{if(event.key==='chessQuestProgress') refreshOpeningProgress();});
 })();

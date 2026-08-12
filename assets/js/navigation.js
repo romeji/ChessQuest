@@ -1,4 +1,5 @@
-const QUEST_NAVIGATION_VERSION = '91';
+const QUEST_NAVIGATION_VERSION = '93';
+window.QUEST_NAVIGATION_VERSION = QUEST_NAVIGATION_VERSION;
 const QUEST_NAVIGATION_STYLESHEET = new URL(
   `../css/navigation.css?v=${QUEST_NAVIGATION_VERSION}`,
   document.currentScript?.src || document.baseURI
@@ -38,7 +39,13 @@ function currentQuestTab(){
   return QUEST_ROUTE_TABS[route] || 'home';
 }
 
+function syncQuestViewport(){
+  const height = Math.round(window.visualViewport?.height || window.innerHeight || 0);
+  if(height > 0) document.documentElement.style.setProperty('--cq-viewport-height', `${height}px`);
+}
+
 function renderQuestTabbar(){
+  syncQuestViewport();
   ensureQuestNavigationStyles();
   const tabbars = [...document.querySelectorAll('nav.tabbar')];
   const tabbar = tabbars.shift() || document.body.appendChild(document.createElement('nav'));
@@ -62,10 +69,11 @@ function registerQuestServiceWorker(){
     .catch(() => {});
 }
 
-if(document.readyState === 'loading'){
-  document.addEventListener('DOMContentLoaded', renderQuestTabbar, { once:true });
-}else{
-  renderQuestTabbar();
-}
+/* Affiche la barre dès que le script est rencontré. Ainsi, un CDN lent ou
+   indisponible ne peut plus laisser une navigation vide sur les échiquiers. */
+if(document.body) renderQuestTabbar();
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderQuestTabbar, { once:true });
 window.addEventListener('pageshow', renderQuestTabbar);
+window.addEventListener('resize', syncQuestViewport, { passive:true });
+window.visualViewport?.addEventListener('resize', syncQuestViewport, { passive:true });
 window.addEventListener('load', registerQuestServiceWorker, { once:true });

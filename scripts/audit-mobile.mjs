@@ -8,7 +8,7 @@ const profile = join(output, 'chrome-profile');
 const baseUrl = process.argv[2] || 'http://localhost:4173';
 const width = Number(process.argv[3] || 393);
 const height = Number(process.argv[4] || 852);
-const port = 9337;
+const port = Number(process.env.CQ_AUDIT_PORT || 9337);
 const chromePath = process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const defaultPages = [
   'index.html', 'problems.html', 'puzzles.html', 'daily-challenge.html',
