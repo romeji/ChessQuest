@@ -1,3 +1,6 @@
 # Artefacts locaux de l'audit visuel Chrome
 .chrome-*/
 audit-*.png
+.audit-mobile/
+.tmp-chrome-profile*/
+.tmp-*-mobile*.png

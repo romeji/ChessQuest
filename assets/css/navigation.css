@@ -8,6 +8,18 @@
   --tabbar-height:var(--cq-tabbar-height);
 }
 
+html.cq-has-tabbar,
+html.cq-has-tabbar body{
+  margin:0!important;
+  min-width:0!important;
+  width:100%!important;
+}
+
+html.cq-has-tabbar body{
+  padding-left:0!important;
+  padding-right:0!important;
+}
+
 body nav.tabbar{
   position:fixed!important;
   z-index:500!important;
@@ -79,6 +91,23 @@ body.cq-has-tabbar.opening-final-page .opening-lesson-cta{
   bottom:var(--cq-tabbar-height)!important;
 }
 
+body.cq-has-tabbar.puzzle-final-page .app{
+  width:min(100%,430px)!important;
+  height:calc(100dvh - var(--cq-tabbar-height))!important;
+  min-height:0!important;
+  margin:0 auto!important;
+  padding-bottom:3px!important;
+  overflow:hidden!important;
+}
+
+body.cq-has-tabbar.training-target-page .app,
+body.cq-has-tabbar.training-hub .app,
+body.cq-has-tabbar[data-page="coach"] .app{
+  width:min(100%,430px)!important;
+  margin:0 auto!important;
+  padding-bottom:calc(var(--cq-tabbar-height) + 14px)!important;
+}
+
 body.cq-has-tabbar .academy-shell,
 body.cq-has-tabbar .written-course-shell,
 body.cq-has-tabbar .shop-content,
@@ -93,10 +122,15 @@ body.home-final-page .home-final-head{
   min-height:calc(48px + env(safe-area-inset-top,0px))!important;
   padding-top:env(safe-area-inset-top,0px)!important;
 }
+body.home-final-page .home-final-mascot{right:0!important;max-width:63%!important}
 
-body.cq-has-tabbar.puzzle-final-page .app{
-  padding-bottom:calc(var(--cq-tabbar-height) + 3px)!important;
+body.cq-has-tabbar .academy-levels{
+  max-width:100%!important;
+  overscroll-behavior-inline:contain;
+  scrollbar-width:none;
 }
+body.cq-has-tabbar .academy-levels::-webkit-scrollbar{display:none}
+
 body.cq-has-tabbar.puzzle-final-page .page{padding-bottom:2px!important}
 body.cq-has-tabbar.puzzle-final-page .puzzle-final-board-wrap{
   width:min(calc(100% - 8px),calc(100dvh - 340px),406px)!important;

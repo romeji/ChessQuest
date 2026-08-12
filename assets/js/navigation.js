@@ -1,4 +1,4 @@
-const QUEST_NAVIGATION_VERSION = '86';
+const QUEST_NAVIGATION_VERSION = '90';
 const QUEST_NAVIGATION_STYLESHEET = new URL(
   `../css/navigation.css?v=${QUEST_NAVIGATION_VERSION}`,
   document.currentScript?.src || document.baseURI
@@ -46,6 +46,7 @@ function renderQuestTabbar(){
   tabbar.className = 'tabbar';
   tabbar.setAttribute('aria-label', 'Navigation principale');
   document.body.classList.add('cq-has-tabbar');
+  document.documentElement.classList.add('cq-has-tabbar');
   const activeTab = currentQuestTab();
   tabbar.innerHTML = QUEST_TABS.map(tab => `
     <a class="tabbar-item${tab.id === activeTab ? ' active' : ''}" data-tab="${tab.id}" href="${tab.href}"${tab.id === activeTab ? ' aria-current="page"' : ''}>

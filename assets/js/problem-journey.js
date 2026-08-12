@@ -123,7 +123,7 @@
       ['Palais doré','Reine d’or','Trône royal','Trésor ultime','Portail couronne','Citadelle finale']
     ];
     const placements=[
-      [2.2,7,'landmark'],[-2.2,10,'decor-sway'],[2.2,13,'decor-float'],[-2.2,16,''],[-2.2,19,'decor-sway'],[2.2,22,'landmark']
+      [2,7,'landmark'],[-1,10,'decor-sway'],[2,13,'decor-float'],[1,16,''],[-2,19,'decor-sway'],[1,22,'landmark']
     ];
     for(let worldNumber=1;worldNumber<=TOTAL_WORLDS;worldNumber++){
       placements.forEach(([x,row,className],index)=>{
@@ -134,6 +134,32 @@
         addDecor(worldNumber,x,row,sprite(worldNumber,index+1,labels[worldNumber-1][index]),scale,effects);
       });
     }
+  }
+
+  const WORLD_LIFE=[
+    ['butterfly','butterfly','firefly','butterfly','firefly','butterfly'],
+    ['banner','sparkle','firefly','banner','sparkle','firefly'],
+    ['wisp','butterfly','wisp','firefly','wisp','butterfly'],
+    ['bubble','fish','bubble','fish','bubble','sparkle'],
+    ['orb','wisp','orb','sparkle','wisp','orb'],
+    ['ember','lava-bubble','ember','sparkle','lava-bubble','ember'],
+    ['dust','cactus','tumbleweed','dust','cactus','tumbleweed'],
+    ['snowflake','snowman','snowflake','snowflake','snowman','sparkle'],
+    ['gold-spark','crown-spark','gold-spark','sparkle','crown-spark','gold-spark']
+  ];
+  const LIFE_CELLS=[[1,6],[2,9],[-1,12],[2,15],[-1,18],[2,21]];
+
+  function addWorldLife(){
+    WORLD_LIFE.forEach((lifeTypes,worldIndex)=>{
+      lifeTypes.forEach((lifeType,index)=>{
+        const [xSlot,rowFromBottom]=LIFE_CELLS[index],point=coordinateFor(worldIndex+1,xSlot,rowFromBottom),actor=document.createElement('span');
+        actor.className=`world-life world-life-${lifeType}`; actor.setAttribute('aria-hidden','true');
+        actor.style.left=`${point.x}px`; actor.style.top=`${point.y}px`;
+        actor.style.setProperty('--life-delay',`${-((worldIndex*.41)+(index*.73)).toFixed(2)}s`);
+        actor.style.setProperty('--life-scale',`${(.84+((index%3)*.1)).toFixed(2)}`);
+        board.appendChild(actor);
+      });
+    });
   }
 
   function createPad(level,worldNumber,x,row){
@@ -190,7 +216,7 @@
   function build(animation){
     const width=world.clientWidth||innerWidth||390; board.style.height=`${BOARD_HEIGHT}px`; board.innerHTML=''; makeFloor(width);
     for(let worldNumber=1;worldNumber<=TOTAL_WORLDS;worldNumber++) addBanner(worldNumber);
-    addDecorations(); PATH.forEach(entry=>createPad(...entry)); placePawn(currentLevel); updateHud();
+    addDecorations(); addWorldLife(); PATH.forEach(entry=>createPad(...entry)); placePawn(currentLevel); updateHud();
     requestAnimationFrame(()=>animation?animatePawn(animation):scrollToLevel(currentLevel,'auto'));
   }
 

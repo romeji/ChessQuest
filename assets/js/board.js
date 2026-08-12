@@ -62,7 +62,10 @@ function fitOneBoard(boardId, pageSelector, reserveSelector){
     const parentStyle = getComputedStyle(parentEl);
     const parentInner = parentEl.clientWidth
       - (parseFloat(parentStyle.paddingLeft)||0) - (parseFloat(parentStyle.paddingRight)||0);
-    if(parentInner > 0) pageInner = Math.min(pageInner, parentInner);
+    // Un conteneur flex dont la largeur est encore calculée à partir de son
+    // enfant (cas du Coach au premier rendu) ne doit pas réduire le plateau à
+    // une vignette. On ne le retient que s'il occupe une largeur crédible.
+    if(parentInner >= Math.min(240,pageInner*.7)) pageInner = Math.min(pageInner,parentInner);
   }
   // Dernier garde-fou : la place réellement visible à droite du cadre. Cette
   // mesure neutralise les anciens conteneurs centrés ou dimensionnés en
