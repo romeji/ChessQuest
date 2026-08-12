@@ -3,7 +3,10 @@
   const TOTAL_WORLDS = 9;
   const TOTAL_LEVELS = LEVELS_PER_WORLD * TOTAL_WORLDS;
   const TILE = 62;
-  const WORLD_ROWS = 23;
+  /* Les coordonnées d'origine répètent chaque monde par une translation
+     (-11, -11) sur la grille avant rotation. Après rotation, cela représente
+     exactement 22 rangées verticales, sans raccord artificiel. */
+  const WORLD_ROWS = 22;
   const WORLD_HEIGHT = WORLD_ROWS * TILE;
   const BOARD_TOP_SPACE = 420;
   const BOARD_HEIGHT = WORLD_HEIGHT * TOTAL_WORLDS + BOARD_TOP_SPACE;
@@ -55,13 +58,9 @@
 
   function worldBottom(worldNumber){ return BOARD_HEIGHT - (worldNumber - 1) * WORLD_HEIGHT; }
   function coordinateFor(worldNumber,xSlot,rowFromBottom){
-    /* Le tracé horizontal est identique dans chaque monde. Une rangée est
-       récupérée à chaque transition afin de reproduire sans dérive le raccord
-       exact entre les mondes 1 et 2 fourni dans la maquette d'origine. */
-    const continuationRow = worldNumber - 1;
     return {
       x:boardWidth / 2 + xSlot * TILE,
-      y:worldBottom(worldNumber) - (rowFromBottom - continuationRow) * TILE
+      y:worldBottom(worldNumber) - rowFromBottom * TILE
     };
   }
 
@@ -74,7 +73,10 @@
     backdrop.setAttribute('width',width); backdrop.setAttribute('height',BOARD_HEIGHT); backdrop.setAttribute('fill',WORLD_THEMES[TOTAL_WORLDS-1].dark); svg.appendChild(backdrop);
     const totalRows=TOTAL_WORLDS*WORLD_ROWS+Math.ceil(BOARD_TOP_SPACE/TILE)+2;
     for(let row=0;row<=totalRows;row++){
-      const worldIndex=Math.min(TOTAL_WORLDS-1,Math.floor(row/WORLD_ROWS));
+      /* La rangée 22 appartient encore au monde 1, la 44 au monde 2, etc.
+         Le changement de palette se produit donc entre deux mondes et jamais
+         sous leur dernier pilier. */
+      const worldIndex=Math.min(TOTAL_WORLDS-1,Math.floor(Math.max(0,row-1)/WORLD_ROWS));
       const theme=WORLD_THEMES[worldIndex];
       for(let col=-3;col<=3;col++){
         const xSlot=col*2+((row+1)%2),cx=width/2+xSlot*TILE,cy=BOARD_HEIGHT-row*TILE;
