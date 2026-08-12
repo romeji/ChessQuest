@@ -55,14 +55,13 @@
 
   function worldBottom(worldNumber){ return BOARD_HEIGHT - (worldNumber - 1) * WORLD_HEIGHT; }
   function coordinateFor(worldNumber,xSlot,rowFromBottom){
-    /* Le sol est un damier isométrique continu. WORLD_ROWS est impair : la
-       colonne visible se décale donc d'une demi-case dans les mondes pairs.
-       Le chemin, lui, est défini localement dans chaque monde. On compense
-       ici cette parité sans modifier le tracé ni la taille des socles. */
+    /* Le sol reste continu. La parité suit ses rangées et, à partir du monde
+       2, toute la scène locale repart une case plus bas à gauche. */
     const worldParity = ((worldNumber - 1) * WORLD_ROWS) % 2;
+    const continuationOffset = worldNumber > 1 ? 1 : 0;
     return {
-      x:boardWidth / 2 + (xSlot + worldParity) * TILE,
-      y:worldBottom(worldNumber) - rowFromBottom * TILE
+      x:boardWidth / 2 + (xSlot + worldParity - continuationOffset) * TILE,
+      y:worldBottom(worldNumber) - (rowFromBottom - continuationOffset) * TILE
     };
   }
 
