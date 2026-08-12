@@ -9,6 +9,7 @@ const baseUrl = process.argv[2] || 'http://localhost:4173';
 const width = Number(process.argv[3] || 393);
 const height = Number(process.argv[4] || 852);
 const port = Number(process.env.CQ_AUDIT_PORT || 9337);
+const safeBottom = Number(process.env.CQ_SAFE_BOTTOM || 0);
 const chromePath = process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const defaultPages = [
   'index.html', 'problems.html', 'puzzles.html', 'daily-challenge.html',
@@ -86,6 +87,14 @@ async function inspectPage(page) {
     await delay(100);
   }
   await delay(900);
+  if (safeBottom > 0) {
+    await command('Runtime.evaluate', { expression: `(() => {
+      document.documentElement.style.setProperty('--cq-tabbar-safe-bottom','${safeBottom}px');
+      document.documentElement.style.setProperty('--game-safe-bottom','${safeBottom}px');
+      window.dispatchEvent(new Event('resize'));
+    })()` });
+    await delay(150);
+  }
 
   const expression = `(() => {
     const rect = element => {
@@ -104,6 +113,10 @@ async function inspectPage(page) {
     const nav = document.querySelector('nav.tabbar');
     const navBox = rect(nav);
     const roots = [...document.body.children].filter(element => element !== nav && visible(element)).slice(0,8).map(element => ({ tag:element.tagName, id:element.id, cls:element.className?.toString().slice(0,90), box:rect(element) }));
+    const tracked = ['.app','.page','.problem-journey','.problem-hud','.mode-bottom-dock','.opening-lesson-cta','.review-controls']
+      .map(selector => ({ selector, element:document.querySelector(selector) })).filter(item => item.element && visible(item.element))
+      .map(item => ({ selector:item.selector, box:rect(item.element), paddingBottom:getComputedStyle(item.element).paddingBottom, bottom:getComputedStyle(item.element).bottom }));
+    const navItems = nav ? [...nav.querySelectorAll('.tabbar-item')].map(item => rect(item)) : [];
     return {
       viewport:{ width:innerWidth, height:innerHeight, visualWidth:visualViewport?.width, visualHeight:visualViewport?.height, scale:visualViewport?.scale },
       document:{ clientWidth:document.documentElement.clientWidth, scrollWidth:document.documentElement.scrollWidth, scrollHeight:document.documentElement.scrollHeight, bodyWidth:document.body.getBoundingClientRect().width, bodyScrollWidth:document.body.scrollWidth, bodyScrollHeight:document.body.scrollHeight },
@@ -111,7 +124,7 @@ async function inspectPage(page) {
       navigation:{ script:[...document.scripts].find(script=>script.src.includes('navigation.js'))?.src||null, stylesheet:[...document.styleSheets].map(sheet=>sheet.href).find(href=>href?.includes('navigation.css'))||null, version:window.QUEST_NAVIGATION_VERSION||null },
       errors:window.__cqAuditErrors||[],
       nav:navBox && { ...navBox, gapBottom:+(innerHeight-navBox.bottom).toFixed(1), safe:getComputedStyle(document.documentElement).getPropertyValue('--cq-tabbar-safe-bottom').trim() },
-      roots, outside
+      navItems, tracked, roots, outside
     };
   })()`;
   const evaluated = await command('Runtime.evaluate', { expression, returnByValue: true });

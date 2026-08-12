@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="assets/css/components.css">
 <link rel="stylesheet" href="assets/css/gamification.css?v=50">
 <link rel="stylesheet" href="assets/css/ux-refinement.css?v=59">
-<link rel="stylesheet" href="assets/css/navigation.css?v=93" data-quest-navigation>
+<link rel="stylesheet" href="assets/css/navigation.css?v=94" data-quest-navigation>
 </head>
 <body class="academy-page">
 <main class="academy-shell">
@@ -69,6 +69,6 @@ const featured=['italienne','espagnole','qgd','qga','slav','najdorf','carokann',
 document.getElementById('academy-openings').innerHTML=featured.map(key=>`<a href="openings.html?opening=${encodeURIComponent(key)}"><strong>${escapeHtml(OPENINGS[key].name)}</strong><small>${escapeHtml(OPENINGS[key].intro||'Comprendre les idées de cette ouverture.')}</small><span>Lire et pratiquer ›</span></a>`).join('');
 </script>
 <nav class="tabbar" aria-label="Navigation principale"></nav>
-<script src="assets/js/navigation.js?v=93"></script>
+<script src="assets/js/navigation.js?v=94"></script>
 </body>
 </html>
