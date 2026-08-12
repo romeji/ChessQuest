@@ -79,18 +79,6 @@ body.cq-has-tabbar.opening-final-page .opening-lesson-cta{
   bottom:var(--cq-tabbar-height)!important;
 }
 
-body.cq-has-tabbar.opening-map-page .map-app,
-body.cq-has-tabbar.opening-map-page .page,
-body.cq-has-tabbar.opening-map-page .teal-hero{
-  bottom:var(--cq-tabbar-height)!important;
-  height:auto!important;
-  min-height:0!important;
-}
-
-body.cq-has-tabbar.opening-map-page .opening-map-dock{
-  bottom:var(--cq-tabbar-height)!important;
-}
-
 body.cq-has-tabbar .academy-shell,
 body.cq-has-tabbar .written-course-shell,
 body.cq-has-tabbar .shop-content,
@@ -152,15 +140,6 @@ body.cq-has-tabbar.puzzle-final-page .puzzle-next-action.hidden{display:none!imp
   body.cq-has-tabbar.puzzle-final-page .puzzle-next-action:not(.hidden){display:block!important}
 }
 
-body.cq-has-tabbar.opening-map-page .opening-map-dock{
-  bottom:var(--cq-tabbar-height)!important;
-  padding:0 8px!important;
-  border:0!important;
-  border-radius:0!important;
-  background:transparent!important;
-  box-shadow:none!important;
-  backdrop-filter:none!important;
-}
 body.cq-has-tabbar.problem-journey-page .problem-journey-actions{
   bottom:2px!important;
 }
@@ -194,19 +173,6 @@ body.analysis-review-page:not(.review-summary-active) .board-frame{
   width:min(calc(100vw - 24px),calc(100dvh - 390px),390px)!important;
 }
 
-/* Le body fixe de la carte transformait la barre en enfant d'un faux viewport sur iOS. */
-html.opening-map-document{height:100%!important;min-height:100dvh!important;overflow:hidden!important}
-body.opening-map-page{
-  position:relative!important;
-  inset:auto!important;
-  width:100%!important;
-  height:100dvh!important;
-  min-height:100dvh!important;
-  margin:0!important;
-  padding:0!important;
-  overflow:hidden!important;
-}
-body.opening-map-page nav.tabbar{bottom:0!important;margin-bottom:0!important}
 body.training-final-page #resign-btn.new-game{
   border-color:#3e9b54!important;
   background:linear-gradient(180deg,#35a85b,#167643)!important;

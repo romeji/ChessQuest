@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v85';
+const CACHE_VERSION = 'chessquest-v86';
 const APP_SHELL = [
   './',
   './index.html',
@@ -39,14 +39,12 @@ const APP_SHELL = [
   './assets/css/problem-journey.css',
   './assets/css/home.css',
   './assets/css/learn.css',
-  './assets/css/academy-journey.css',
   './assets/css/entrainement.css',
   './assets/css/training.css',
   './assets/css/puzzle.css',
   './assets/css/analysis.css',
   './assets/css/profile.css',
   './assets/css/coach.css',
-  './assets/css/opening-gamification.css',
   './assets/css/opening-swipe.css',
   './assets/js/progress.js',
   './assets/js/mascot-coach.js',
@@ -64,7 +62,6 @@ const APP_SHELL = [
   './assets/js/firebase-sync.js',
   './assets/js/auth.js',
   './assets/js/courses.js',
-  './assets/js/academy-journey.js',
   './assets/chesspieces/wK.png',
   './assets/chesspieces/wQ.png',
   './assets/chesspieces/wR.png',

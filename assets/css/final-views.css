@@ -329,16 +329,6 @@ body.home-final-page{overflow-x:hidden}
 .home-shop-entry-copy{min-width:0}.home-shop-entry-copy strong{display:block;font-size:.88rem}.home-shop-entry-copy small{display:block;margin-top:3px;color:#695b68;font-size:.66rem;line-height:1.25}
 .home-shop-entry-balance{white-space:nowrap;padding:6px 8px;border-radius:12px;background:#fff8df;color:#805a09;font-size:.72rem;font-weight:900}
 .home-shop-entry-next{font-size:1.3rem;color:#715c70}
-.home-final-page nav.tabbar{
-  left:50%;right:auto;
-  width:min(400px,calc(100% - 24px));
-  transform:translateX(-50%);
-  padding:9px 5px calc(9px + env(safe-area-inset-bottom,0px));
-  border:1px solid #eadcc4;
-  border-radius:20px 20px 0 0;
-  background:#fffdf8;
-}
-
 /* -------------------- Puzzles -------------------- */
 .puzzle-final-page{overflow:hidden}
 .puzzle-final-page .app{
@@ -471,16 +461,6 @@ body.home-final-page{overflow-x:hidden}
   gap:14px;
   padding:0 14px;
   transform:translateY(-16px);
-}
-.puzzle-final-page nav.tabbar{
-  left:50%;
-  right:auto;
-  width:min(402px,calc(100% - 24px));
-  transform:translateX(-50%);
-  padding:8px 5px calc(8px + env(safe-area-inset-bottom,0px));
-  border:1px solid #eadcc4;
-  border-radius:20px 20px 0 0;
-  background:#fffdf8;
 }
 .puzzle-final-streak strong{font-size:.75rem}
 .puzzle-final-page .progress-dots{display:flex;justify-content:center;gap:10px;margin:0}

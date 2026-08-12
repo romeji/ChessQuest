@@ -8,7 +8,6 @@
 .home-quick-grid .home-progress-link{grid-column:auto!important}
 
 /* Barre basse unique : compacte, sans marge latérale et réellement collée au viewport. */
-.academy-journey-page .academy-actions{bottom:calc(var(--tabbar-height) + 5px)!important}.academy-journey-page .academy-progress-panel{bottom:calc(var(--tabbar-height) + 69px)!important}
 .problem-journey-page .problem-journey-actions{bottom:calc(var(--tabbar-height) + 4px)!important}.problem-journey-page .problem-journey-progress{bottom:calc(var(--tabbar-height) + 68px)!important}.problem-journey-page .problem-journey-menu{bottom:calc(var(--tabbar-height) + 66px)!important}
 .puzzle-final-page .mode-bottom-dock{bottom:calc(var(--tabbar-height) + 4px)!important}
 
@@ -40,7 +39,6 @@ html:has(body.puzzle-final-page),body.puzzle-final-page{height:100%;height:100dv
 .puzzle-final-page .puzzle-final-feedback.prompt{display:none!important}.puzzle-final-page .puzzle-final-feedback:not(.prompt){position:absolute!important;z-index:75!important;left:10px!important;right:10px!important;bottom:calc(143px + var(--game-safe-bottom))!important;min-height:60px!important;margin:0!important;box-shadow:0 10px 28px rgba(24,31,25,.25)!important}
 .puzzle-final-page .puzzle-final-streak{order:4!important;display:grid!important;min-height:42px!important;margin:0!important;padding:0 12px!important;transform:none!important}.puzzle-final-page .puzzle-review-nav{order:5!important}
 .puzzle-final-page .mode-bottom-dock{left:50%!important;right:auto!important;bottom:calc(67px + var(--game-safe-bottom))!important;width:min(414px,calc(100% - 16px))!important;transform:translateX(-50%)!important}
-.puzzle-final-page nav.tabbar{height:auto!important;z-index:60!important}
 .puzzle-countdown{position:fixed!important;z-index:120!important;inset:0!important;display:grid!important;place-content:center!important;text-align:center!important;color:#fff!important;background:rgba(3,45,32,.88)!important;backdrop-filter:blur(8px)!important}.puzzle-countdown.hidden{display:none!important}.puzzle-countdown strong{font-size:6rem!important;line-height:1!important}.puzzle-countdown span{font-size:1rem!important;font-weight:900!important}
 
 /* Défi quotidien : même plateau ivoire/vert, coach puis échiquier, réponses 2 × 2. */
