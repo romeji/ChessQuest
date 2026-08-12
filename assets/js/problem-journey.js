@@ -55,13 +55,13 @@
 
   function worldBottom(worldNumber){ return BOARD_HEIGHT - (worldNumber - 1) * WORLD_HEIGHT; }
   function coordinateFor(worldNumber,xSlot,rowFromBottom){
-    /* Le sol reste continu. La parité suit ses rangées et, à partir du monde
-       2, toute la scène locale repart une case plus bas à gauche. */
-    const worldParity = ((worldNumber - 1) * WORLD_ROWS) % 2;
-    const continuationOffset = worldNumber > 1 ? 1 : 0;
+    /* Le tracé horizontal est identique dans chaque monde. Une rangée est
+       récupérée à chaque transition afin de reproduire sans dérive le raccord
+       exact entre les mondes 1 et 2 fourni dans la maquette d'origine. */
+    const continuationRow = worldNumber - 1;
     return {
-      x:boardWidth / 2 + (xSlot + worldParity - continuationOffset) * TILE,
-      y:worldBottom(worldNumber) - (rowFromBottom - continuationOffset) * TILE
+      x:boardWidth / 2 + xSlot * TILE,
+      y:worldBottom(worldNumber) - (rowFromBottom - continuationRow) * TILE
     };
   }
 
