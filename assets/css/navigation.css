@@ -106,13 +106,19 @@ body nav.tabbar .tabbar-item span{font-size:.53rem!important;line-height:1!impor
   }
 }
 
-/* Les vues plein écran nouvellement équipées réservent la place du composant. */
+/* Les vues plein écran nouvellement équipées réservent la place du composant.
+   On utilise dvh natif plutôt que --cq-viewport-height (calculée en JS et
+   figée en pixels au moment du script) : sur iOS, cette valeur JS peut se
+   figer légèrement en dessous de la vraie hauteur visible, ce qui laissait
+   un vide entre le bas de .app et le haut de la tabbar. dvh est la même
+   mécanique native que la tabbar utilise déjà pour rester calée en bas,
+   donc les deux restent toujours parfaitement synchronisés. */
 body.cq-has-tabbar.daily-final-page .app,
 body.cq-has-tabbar.training-final-page .app,
 body.cq-has-tabbar.opening-final-page .app,
 body.cq-has-tabbar.analysis-review-page .app{
-  height:calc(var(--cq-viewport-height) - var(--cq-tabbar-height))!important;
-  max-height:calc(var(--cq-viewport-height) - var(--cq-tabbar-height))!important;
+  height:calc(100dvh - var(--cq-tabbar-height))!important;
+  max-height:calc(100dvh - var(--cq-tabbar-height))!important;
   min-height:0!important;
   padding-bottom:0!important;
 }
@@ -124,8 +130,8 @@ body.cq-has-tabbar.opening-final-page .opening-lesson-cta{
 
 body.cq-has-tabbar.puzzle-final-page .app{
   width:min(100%,430px)!important;
-  height:calc(var(--cq-viewport-height) - var(--cq-tabbar-height))!important;
-  max-height:calc(var(--cq-viewport-height) - var(--cq-tabbar-height))!important;
+  height:calc(100dvh - var(--cq-tabbar-height))!important;
+  max-height:calc(100dvh - var(--cq-tabbar-height))!important;
   min-height:0!important;
   margin:0 auto!important;
   padding-bottom:0!important;
@@ -277,6 +283,18 @@ body.training-final-page #resign-btn.new-game{
 body.problem-journey-page nav.tabbar{
   border-top:1px solid rgba(255,255,255,.22)!important;
   box-shadow:0 -1px 0 rgba(0,0,0,.35),0 -8px 25px rgba(0,21,14,.28)!important;
+}
+
+/* problem-journey.css fixe html/body en height:100% (jamais mis à niveau
+   vers dvh comme les autres pages plein écran), une unité qui peut ne pas
+   correspondre à la hauteur visible réelle sur mobile et laisser un vide
+   entre le bas de la carte et le haut de la tabbar. On corrige ici sans
+   toucher au fichier d'origine. */
+html.cq-has-tabbar:has(body.problem-journey-page),
+body.problem-journey-page,
+html.cq-has-tabbar:has(body.opening-swipe-page),
+body.opening-swipe-page{
+  height:100dvh!important;
 }
 
 /* ------------------------------------------------------------------
