@@ -1,4 +1,4 @@
-const QUEST_NAVIGATION_VERSION = '94';
+const QUEST_NAVIGATION_VERSION = '96';
 window.QUEST_NAVIGATION_VERSION = QUEST_NAVIGATION_VERSION;
 const QUEST_NAVIGATION_STYLESHEET = new URL(
   `../css/navigation.css?v=${QUEST_NAVIGATION_VERSION}`,
@@ -73,7 +73,22 @@ function registerQuestServiceWorker(){
    indisponible ne peut plus laisser une navigation vide sur les échiquiers. */
 if(document.body) renderQuestTabbar();
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderQuestTabbar, { once:true });
-window.addEventListener('pageshow', renderQuestTabbar);
+window.addEventListener('pageshow', event => {
+  renderQuestTabbar();
+  if(event.persisted){
+    // Restauration depuis le bfcache : les dimensions rapportées à cet
+    // instant précis peuvent être transitoires sur iOS. On remesure sur
+    // quelques frames suivantes pour être sûr d'avoir la vraie valeur.
+    requestAnimationFrame(syncQuestViewport);
+    setTimeout(syncQuestViewport, 60);
+    setTimeout(syncQuestViewport, 300);
+  }
+});
+// Un handler 'unload', même vide, suffit à rendre la page inéligible au
+// bfcache sur la plupart des moteurs : chaque navigation redevient un
+// chargement complet et frais, ce qui élimine la classe entière de bugs
+// « ça dépend de la page d'où je viens ».
+window.addEventListener('unload', () => {});
 window.addEventListener('resize', syncQuestViewport, { passive:true });
 window.visualViewport?.addEventListener('resize', syncQuestViewport, { passive:true });
 window.addEventListener('load', registerQuestServiceWorker, { once:true });
