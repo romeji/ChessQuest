@@ -14,11 +14,13 @@ html.cq-has-tabbar body{
   margin:0!important;
   min-width:0!important;
   width:100%!important;
+  min-height:100dvh!important;
 }
 
 /* iOS peint parfois la zone du geste d'accueil avec le fond du document
    plutôt qu'avec celui d'un élément fixed. Le canevas racine reprend donc
-   exactement la couleur basse de la navigation. */
+   exactement la couleur basse de la navigation, sur toutes les pages,
+   même celles qui ne chargent pas responsive-hardening.css. */
 html.cq-has-tabbar{
   background:#10291f!important;
 }
@@ -26,6 +28,8 @@ html.cq-has-tabbar{
 html.cq-has-tabbar body{
   padding-left:0!important;
   padding-right:0!important;
+  background:#10291f!important;
+  overscroll-behavior-y:none!important;
 }
 
 body nav.tabbar{
@@ -63,7 +67,7 @@ body nav.tabbar::before{
   top:0!important;
   left:0!important;
   right:0!important;
-  bottom:-128px!important;
+  bottom:-50vh!important;
   display:block!important;
   background:linear-gradient(180deg,#19372d 0,#10291f var(--cq-tabbar-height),#10291f 100%)!important;
   pointer-events:none!important;
@@ -262,4 +266,33 @@ body.training-final-page #resign-btn.new-game{
   body.analysis-review-page:not(.review-summary-active) .board-frame{
     width:min(calc(100vw - 24px),calc(100dvh - 390px),320px)!important;
   }
+}
+
+/* Le pied de la carte des problèmes (.problem-hud) partage presque la même
+   teinte de vert sombre que la tabbar : sans séparation nette, les deux
+   fusionnent visuellement en une seule barre qui paraît plus haute que sur
+   les autres pages, alors que la tabbar fait exactement la même taille
+   partout. On renforce donc uniquement la démarcation, sans toucher à la
+   mise en page de la carte elle-même. */
+body.problem-journey-page nav.tabbar{
+  border-top:1px solid rgba(255,255,255,.22)!important;
+  box-shadow:0 -1px 0 rgba(0,0,0,.35),0 -8px 25px rgba(0,21,14,.28)!important;
+}
+
+/* ------------------------------------------------------------------
+   Filet de sécurité responsive commun.
+   navigation.css est le seul fichier chargé sur TOUTES les pages ;
+   plusieurs (course.html, course-library.html, learn.html,
+   secret-levels.html, shop.html) ne chargent pas responsive-hardening.css
+   et n'avaient donc aucune de ces garanties de base.
+   ------------------------------------------------------------------ */
+html.cq-has-tabbar,
+html.cq-has-tabbar body{
+  overflow-x:hidden!important;
+}
+html.cq-has-tabbar img,
+html.cq-has-tabbar svg,
+html.cq-has-tabbar canvas,
+html.cq-has-tabbar video{
+  max-width:100%;
 }
