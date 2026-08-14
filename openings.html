@@ -18,14 +18,14 @@
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/layout.css">
-<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/components.css?v=102">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/learn.css">
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/final-views.css?v=39">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
-<link rel="stylesheet" href="assets/css/ux-refinement.css?v=59">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=105">
 <link rel="stylesheet" href="assets/css/navigation.css?v=101" data-quest-navigation>
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
@@ -82,6 +82,12 @@
       <button class="opening-copy-button" id="opening-copy" type="button" aria-label="Copier les coups">▣</button>
     </section>
 
+    <section class="final-card opening-hint-card" aria-live="polite">
+      <span class="opening-hint-card-icon" aria-hidden="true">♞</span>
+      <span><strong>Besoin d’un coup de pouce ?</strong><small>Le coach indiquera la pièce et sa case d’arrivée.</small></span>
+      <button class="mode-primary-button" id="opening-next" type="button">Afficher un indice</button>
+    </section>
+
     <div class="opening-final-progress-data hidden"><span id="lesson-progress-label"></span><span class="opening-next-label"></span><div id="lesson-track-fill"></div></div>
 
     <div class="opening-final-hidden" aria-hidden="true">
@@ -93,9 +99,6 @@
     </div>
   </section>
 </main>
-<div class="opening-lesson-cta">
-  <button class="mode-primary-button" id="opening-next" type="button">Ouverture suivante</button>
-</div>
 <nav class="tabbar" aria-label="Navigation principale"></nav>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -105,7 +108,7 @@
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/chesscom.js"></script>
 <script src="assets/js/animations.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/app.js?v=103"></script>
 <script src="assets/js/mascot-coach.js?v=44"></script>
 <script src="assets/js/board.js"></script>
 <script src="assets/js/openings.js?v=93"></script>
@@ -139,6 +142,19 @@ function firstMovesText(){
   for(let i=0;i<moves.length;i+=2) pairs.push(`${Math.floor(i/2)+1}. ${moves[i] || ''} ${moves[i+1] || ''}`.trim());
   return pairs.join('   ');
 }
+function openingMoveSymbol(san){
+  return ({N:'♘',B:'♗',R:'♖',Q:'♕',K:'♔'})[String(san||'').charAt(0)] || '♙';
+}
+function firstMovesMarkup(){
+  if(!currentLine) return '';
+  const moves=currentLine.moves.slice(0,4);
+  const pairs=[];
+  for(let i=0;i<moves.length;i+=2){
+    const rendered=moves.slice(i,i+2).map(move=>`<span class="opening-memory-move"><i aria-hidden="true">${openingMoveSymbol(move.san)}</i><b>${escapeHtml(frenchSan(move.san))}</b></span>`).join('');
+    pairs.push(`<span class="opening-memory-pair"><em>${Math.floor(i/2)+1}.</em>${rendered}</span>`);
+  }
+  return pairs.join('');
+}
 function renderTheory(){
   if(!currentLine) return;
   const name = shortOpeningName(currentLine);
@@ -156,7 +172,7 @@ function renderTheory(){
   const about = currentLine.about || currentLine.intro || `${name} aide à développer les pièces avec un plan clair.`;
   const plan = currentLine.plan || 'Contrôle le centre, développe les pièces mineures et mets rapidement ton roi en sécurité.';
   document.getElementById('opening-history-copy').innerHTML = `<h3>Histoire et idée générale</h3><p>${escapeHtml(about)}</p><h3>Le plan à retenir</h3><p>${escapeHtml(plan)}</p><h3>À surveiller</h3><p>Ne récite pas seulement les coups : vérifie les menaces, les cases faibles et le moment où la position quitte la théorie.</p>`;
-  document.getElementById('opening-memory-sequence').textContent = firstMovesText();
+  document.getElementById('opening-memory-sequence').innerHTML = firstMovesMarkup();
 }
 function renderDots(){
   if(!currentLine) return;

@@ -85,13 +85,11 @@ GitHub Actions (cron, gratuit)  →  Stockfish natif  →  Firestore (gratuit)
 
 ## Limites à connaître
 
-- Pas d'authentification utilisateur dans ce montage : les règles
-  Firestore permettent à n'importe qui d'ajouter un pseudo à la liste
-  surveillée, et de lire les parties déjà analysées. Comme il s'agit de
-  pseudos et parties Chess.com **déjà publics**, le risque est surtout
-  qu'un inconnu fasse consommer un peu de quota gratuit — pas une fuite
-  de données sensibles. Si l'app grandit, ajouter une vraie
-  authentification (Firebase Auth) sera l'étape suivante logique.
+- Les sauvegardes `players/{uid}` sont privées et protégées par Firebase
+  Authentication. La collection technique `users`, utilisée par le job pour
+  surveiller les pseudos Chess.com publics, reste volontairement accessible
+  en création avec un schéma strict. Les analyses de parties Chess.com sont
+  également lisibles publiquement car ces parties sont déjà publiques.
 - GitHub peut retarder légèrement les crons sur les dépôts peu actifs
   (quelques minutes) — sans conséquence ici.
 - Le job analyse les **5 parties les plus récentes** de chaque pseudo

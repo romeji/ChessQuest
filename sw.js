@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v101';
+const CACHE_VERSION = 'chessquest-v102';
 const APP_SHELL = [
   './',
   './index.html',
@@ -101,7 +101,8 @@ self.addEventListener('fetch', event => {
     'https://cdnjs.cloudflare.com',
     'https://cdn.jsdelivr.net',
     'https://fonts.googleapis.com',
-    'https://fonts.gstatic.com'
+    'https://fonts.gstatic.com',
+    'https://www.gstatic.com'
   ];
   if (!supportedOrigins.includes(url.origin)) return;
 

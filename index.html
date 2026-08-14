@@ -17,14 +17,14 @@
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/layout.css">
-<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/components.css?v=102">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/home.css">
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/final-views.css">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=51">
-<link rel="stylesheet" href="assets/css/ux-refinement.css?v=66">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=102">
 <link rel="stylesheet" href="assets/css/navigation.css?v=101">
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
@@ -38,9 +38,8 @@
     <img class="quest-onboarding-mascot" id="onboarding-mascot" src="assets/illustrations/mascot-coach-haughty.webp" alt="Mascotte ChessQuest">
     <section class="onboarding-step" data-onboarding-step="account">
       <span class="onboarding-kicker">Bienvenue au royaume</span><h1>Ton aventure commence ici</h1>
-      <p>Crée ton compte pour conserver ta progression. Oui, même les futurs champions ont besoin d’une sauvegarde.</p>
+      <p>Connecte-toi pour sauvegarder tes ouvertures, ton XP, ton ELO, tes couronnes, tes problèmes et tes parties sur tous tes appareils.</p>
       <button class="auth-google-button" id="auth-google-button" type="button"><b>G</b> Continuer avec Google</button>
-      <button class="auth-offline-button" id="auth-offline-button" type="button">Essayer hors connexion</button>
       <small id="auth-status" aria-live="polite"></small>
     </section>
     <section class="onboarding-step hidden" data-onboarding-step="chesscom">
@@ -51,8 +50,8 @@
       <small id="onboarding-chesscom-status" aria-live="polite"></small>
     </section>
     <section class="onboarding-step hidden" data-onboarding-step="tour">
-      <span class="onboarding-kicker" id="tour-counter">1 / 4</span><h1 id="tour-title">Apprends sans réciter bêtement</h1>
-      <p id="tour-copy">Les cours écrits expliquent les idées. Les ouvertures te font ensuite jouer les coups sur l’échiquier.</p>
+      <span class="onboarding-kicker" id="tour-counter">1 / 5</span><h1 id="tour-title">Résous, gagne de l’XP</h1>
+      <p id="tour-copy">Chaque problème réussi te rapporte de l’XP et fait progresser ton pion sur la carte.</p>
       <div class="tour-dots" id="tour-dots"></div>
       <button class="btn" id="tour-next" type="button">Suivant</button>
     </section>
@@ -119,9 +118,9 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/chesscom.js"></script>
-<script src="assets/js/auth.js?v=51"></script>
+<script src="assets/js/auth.js?v=103"></script>
 <script src="assets/js/animations.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/app.js?v=103"></script>
 <script>
 if('scrollRestoration' in history) history.scrollRestoration='manual';
 const resetHomeScroll=()=>requestAnimationFrame(()=>{

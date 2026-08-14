@@ -36,7 +36,8 @@ function defaultProgress(){
       treasures: {},
       secrets: []
     },
-    account: {uid:null,email:null,displayName:null}, onboardingVersion:0, onboarded: false
+    account: {uid:null,email:null,displayName:null}, onboardingVersion:0, onboarded: false,
+    updatedAt: null
   };
 }
 function loadProgress(){
@@ -81,7 +82,31 @@ function loadProgress(){
     return progress;
   }catch(e){ return defaultProgress(); }
 }
-function saveProgress(){ try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(PROGRESS)); }catch(e){} }
+function saveProgress(options){
+  options = options || {};
+  if(!options.preserveTimestamp) PROGRESS.updatedAt = new Date().toISOString();
+  try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(PROGRESS)); }catch(e){}
+  if(!options.localOnly){
+    document.dispatchEvent(new CustomEvent('quest:progress-saved',{detail:{updatedAt:PROGRESS.updatedAt}}));
+  }
+}
+
+/* Remplace le cache local par une sauvegarde cloud déjà validée. Les pages
+   peuvent écouter l'événement pour se rafraîchir sans créer un second modèle
+   de progression concurrent. */
+function replaceProgressSnapshot(snapshot){
+  if(!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot)) return false;
+  try{
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(snapshot));
+    PROGRESS = loadProgress();
+    applyQuestCosmetics?.();
+    document.dispatchEvent(new CustomEvent('quest:progress-hydrated',{detail:{progress:PROGRESS}}));
+    return true;
+  }catch(error){
+    console.warn('[ChessQuest] Sauvegarde cloud illisible',error);
+    return false;
+  }
+}
 let PROGRESS = loadProgress();
 
 /* ============================================================

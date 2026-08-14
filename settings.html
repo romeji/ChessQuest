@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/layout.css">
-<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/components.css?v=102">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
@@ -78,9 +78,9 @@
 <script src="assets/js/progress.js"></script>
 <script src="assets/js/chesscom.js"></script>
 <script src="assets/js/firebase-sync.js"></script>
-<script src="assets/js/auth.js?v=51"></script>
+<script src="assets/js/auth.js?v=103"></script>
 <script src="assets/js/animations.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/app.js?v=103"></script>
 <script>
 const chessComInput = document.getElementById('chesscom-username');
 const chessComStatus = document.getElementById('chesscom-status');
@@ -133,11 +133,18 @@ if(cachedAccount.uid){
 }
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{});
 firebase.auth().onAuthStateChanged(user=>{
-  if(user) storeQuestUser(user);
-  accountStatus.textContent=user?`Connecté : ${user.displayName||user.email}`:'Aucun compte Google connecté. Ta progression reste seulement sur cet appareil.';
+  accountStatus.textContent=user?`Connecté et sauvegardé : ${user.displayName||user.email}`:'Connexion requise pour utiliser ChessQuest.';
   accountAction.textContent=user?'Se déconnecter':'Se connecter avec Google';
   accountAction.onclick=async()=>{
-    if(firebase.auth().currentUser){await firebase.auth().signOut();PROGRESS.account=defaultProgress().account;saveProgress();return;}
+    if(firebase.auth().currentUser){
+      await uploadQuestProgress();
+      await firebase.auth().signOut();
+      PROGRESS=defaultProgress();
+      saveProgress({localOnly:true});
+      sessionStorage.removeItem('cq-cloud-hydrated');
+      location.href='index.html?auth=required';
+      return;
+    }
     try{const result=await signInToQuestWithGoogle();if(result?.user)storeQuestUser(result.user);}catch(error){accountStatus.textContent=error.message||'Connexion impossible.';}
   };
 });

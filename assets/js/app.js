@@ -4,6 +4,21 @@
    Charger après progress.js et animations.js.
    ============================================================ */
 
+/* L'authentification est commune à toute l'application. Les pages historiques
+   ne chargeaient auth.js que depuis l'accueil et les réglages : on le monte ici
+   une seule fois afin que chaque route PWA soit réellement protégée. */
+function bootMandatoryQuestAuth(){
+  if(typeof initQuestAccountFlow==='function'){initQuestAccountFlow();return;}
+  if(document.querySelector('script[data-quest-auth-loader]')) return;
+  const script=document.createElement('script');
+  script.src='assets/js/auth.js?v=103';
+  script.dataset.questAuthLoader='true';
+  script.onload=()=>{if(typeof initQuestAccountFlow==='function')initQuestAccountFlow();};
+  script.onerror=()=>console.warn('[ChessQuest] Module de connexion indisponible.');
+  document.head.appendChild(script);
+}
+bootMandatoryQuestAuth();
+
 /* ---- Lecture vocale (français, sélection de la meilleure voix) ---- */
 let ttsEnabled = false;
 let frenchVoice = null;
@@ -221,7 +236,7 @@ function initPwa(){
   const isFile = window.location.protocol === 'file:';
   if(isFile) return;
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js?v=74', { updateViaCache:'none' }).then(registration => registration.update()).catch(() => {});
+    navigator.serviceWorker.register('./sw.js?v=102', { updateViaCache:'none' }).then(registration => registration.update()).catch(() => {});
   });
 }
 initPwa();

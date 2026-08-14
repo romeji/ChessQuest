@@ -2,6 +2,17 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Sauvegarde privée ChessQuest. Chaque joueur ne peut lire et modifier que
+    // son propre document Firebase Auth (progression, boutique et cache des
+    // dernières parties Chess.com).
+    match /players/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+    }
+
     // Liste des pseudos Chess.com à surveiller. N'importe qui peut
     // s'ajouter (pas d'authentification dans ce projet), mais seuls
     // les champs attendus sont acceptés — pas de quoi faire de dégâts,
