@@ -187,7 +187,7 @@
     const worldNumber=Math.ceil(currentLevel/LEVELS_PER_WORLD),within=((currentLevel-1)%LEVELS_PER_WORLD)+1,solved=dailySolvedCount(),theme=WORLD_THEMES[worldNumber-1];
     document.getElementById('problem-level').textContent=currentLevel;
     document.getElementById('problem-subtitle').textContent=`Monde ${worldNumber} · Socle ${within}`;
-    document.getElementById('problem-rating').textContent=PROGRESS.puzzleRating||1000;
+    document.getElementById('problem-rating').textContent=PROGRESS.puzzleRating||300;
     document.getElementById('problem-score').textContent=`Socle ${currentLevel}`;
     document.getElementById('problem-step-label').textContent=`Monde ${worldNumber} · ${within} / 20`;
     document.getElementById('problem-progress-fill').style.width=`${Math.round((within-1)/19*100)}%`;

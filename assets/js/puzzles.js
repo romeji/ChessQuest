@@ -137,10 +137,12 @@ function curriculumPuzzleSelection(level){
   const safeLevel=Math.max(1,Math.min(PUZZLE_CURRICULUM_LEVELS,Number(level)||1));
   const ordered=CLASSIC_PUZZLES.slice().sort((a,b)=>(a.rating||0)-(b.rating||0));
   const progress=(safeLevel-1)/(PUZZLE_CURRICULUM_LEVELS-1);
-  const seedProgress=.45+progress*.55;
+  const seedProgress=progress;
   const centre=Math.round(seedProgress*(ordered.length-1));
   const difficulty=puzzleDifficultyForLevel(safeLevel);
-  const targetRating=Math.round(900+progress*2300);
+  /* Le palier 1 correspond à un débutant autour de 300 Elo tactique. La
+     difficulté monte ensuite régulièrement jusqu'aux positions expertes. */
+  const targetRating=Math.round(300+progress*2500);
   return Array.from({length:PUZZLES_PER_LEVEL},(_,slot)=>{
     const seed=ordered[Math.max(0,Math.min(ordered.length-1,centre+slot-1))];
     const globalIndex=(safeLevel-1)*PUZZLES_PER_LEVEL+slot;

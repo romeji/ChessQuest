@@ -19,7 +19,7 @@ function defaultProgress(){
   return {
     mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal', voiceName:null, soundEnabled:true, chessComUsername:''},
     chessCom:{ username:'', games:[], lastSync:null, syncing:false },
-    mistakes: [], solvedMistakeIds: [], mistakeReviewHistory: [], completedTargets: [], puzzleRating: 1000, puzzleRatingHistory: [], puzzlesSolved: 0, puzzlesFailed: 0,
+    mistakes: [], solvedMistakeIds: [], mistakeReviewHistory: [], completedTargets: [], puzzleRating: 300, puzzleRatingVersion: 2, puzzleRatingHistory: [], puzzlesSolved: 0, puzzlesFailed: 0,
     puzzleStreak: 0, puzzleBestStreak: 0, puzzleBattleScores:{30:[],45:[],60:[]},
     activityDates: [], completedCourses: [], viewedNotationGuide: false, viewedGlossary: false,
     learningJourney: { totalDays:0, step:1, chapter:1, visitedDates:[] },
@@ -63,6 +63,14 @@ function loadProgress(){
     }
     progress.problemJourney.level = Math.max(1, Math.min(180, Number(progress.problemJourney.level) || 1));
     if(!Number(parsed.dailyPuzzleRun?.level)) progress.dailyPuzzleRun.level = progress.problemJourney.level;
+    /* L'ancien classement commençait artificiellement à 1000. La version 2
+       repart de 300 au premier palier et conserve une avance proportionnelle
+       pour les joueurs ayant déjà progressé sur la carte. */
+    if(Number(parsed.puzzleRatingVersion || 0) < 2){
+      progress.puzzleRating = Math.min(2800, 300 + (progress.problemJourney.level - 1) * 14);
+      progress.puzzleRatingVersion = 2;
+      progress.puzzleRatingHistory = [{date:new Date().toISOString(),rating:progress.puzzleRating,reason:'recalibration-v2'}];
+    }
     progress.economy = Object.assign({}, defaults.economy, parsed.economy || {});
     progress.economy.owned = Array.isArray(progress.economy.owned) ? progress.economy.owned : defaults.economy.owned.slice();
     progress.economy.treasures = progress.economy.treasures && typeof progress.economy.treasures === 'object' ? progress.economy.treasures : {};
@@ -99,6 +107,9 @@ function replaceProgressSnapshot(snapshot){
   try{
     localStorage.setItem(PROGRESS_KEY, JSON.stringify(snapshot));
     PROGRESS = loadProgress();
+    /* Réécrit immédiatement le modèle normalisé afin que les migrations
+       (dont le nouvel Elo tactique) ne soient pas rejouées à chaque page. */
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(PROGRESS));
     applyQuestCosmetics?.();
     document.dispatchEvent(new CustomEvent('quest:progress-hydrated',{detail:{progress:PROGRESS}}));
     return true;
@@ -108,6 +119,7 @@ function replaceProgressSnapshot(snapshot){
   }
 }
 let PROGRESS = loadProgress();
+try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(PROGRESS)); }catch(error){}
 
 /* ============================================================
    ÉCONOMIE, TRÉSORS ET PERSONNALISATION
@@ -474,11 +486,12 @@ function isOpeningLessonCompleted(key){
    PUZZLES : classement Elo simplifié
    ============================================================ */
 function applyPuzzleRatingChange(puzzleRating, success){
-  const userRating = PROGRESS.puzzleRating;
+  const userRating = Math.max(300, Number(PROGRESS.puzzleRating) || 300);
   const expected = 1 / (1 + Math.pow(10, (puzzleRating - userRating) / 400));
   const K = 24;
   const delta = Math.round(K * ((success ? 1 : 0) - expected));
-  PROGRESS.puzzleRating = Math.max(100, userRating + delta);
+  PROGRESS.puzzleRating = Math.max(300, userRating + delta);
+  PROGRESS.puzzleRatingVersion = 2;
   PROGRESS.puzzleRatingHistory = PROGRESS.puzzleRatingHistory || [];
   PROGRESS.puzzleRatingHistory.push({date: new Date().toISOString(), rating: PROGRESS.puzzleRating});
   PROGRESS.puzzleRatingHistory = PROGRESS.puzzleRatingHistory.slice(-50);
