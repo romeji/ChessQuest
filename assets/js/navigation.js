@@ -1,4 +1,4 @@
-const QUEST_NAVIGATION_VERSION = '100';
+const QUEST_NAVIGATION_VERSION = '101';
 window.QUEST_NAVIGATION_VERSION = QUEST_NAVIGATION_VERSION;
 const QUEST_TABBAR_HEIGHT = '58px';
 const QUEST_TABBAR_PADDING = '2px 4px 5px';
@@ -54,27 +54,30 @@ function lockQuestTabbarGeometry(tabbar){
   tabbar.style.setProperty('height', QUEST_TABBAR_HEIGHT, 'important');
   tabbar.style.setProperty('min-height', QUEST_TABBAR_HEIGHT, 'important');
   tabbar.style.setProperty('padding', QUEST_TABBAR_PADDING, 'important');
-  tabbar.style.setProperty('bottom', '0px', 'important');
-  tabbar.style.setProperty('box-sizing', 'border-box', 'important');
-}
-
-/* Les vues plein écran contraignent leur body à la hauteur disponible. Sur
-   WebKit en mode PWA, un élément fixed qui reste dans ce body peut alors être
-   ancré 58 px trop haut. La navigation est portée directement par la racine du
-   document : son bottom:0 dépend ainsi toujours du viewport, jamais du layout
-   particulier d'Apprendre, Problèmes ou des échiquiers. */
-function mountQuestTabbarAtViewportRoot(tabbar){
-  if(tabbar.parentElement !== document.documentElement){
-    document.documentElement.appendChild(tabbar);
+  const isIOSStandalone = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    && (navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches);
+  if(isIOSStandalone){
+    /* Dans une PWA iOS, innerHeight peut momentanément perdre exactement la
+       hauteur de la tabbar sur les vues overflow:hidden. screen.height reste
+       la hauteur CSS stable de l'écran installé. */
+    const viewportHeight = Math.max(window.screen?.height || 0, window.innerHeight || 0);
+    document.documentElement.style.setProperty('min-height', `${viewportHeight}px`, 'important');
+    document.body?.style.setProperty('min-height', `${viewportHeight}px`, 'important');
+    tabbar.style.setProperty('top', `${Math.max(0, viewportHeight - 58)}px`, 'important');
+    tabbar.style.setProperty('bottom', 'auto', 'important');
+  }else{
+    tabbar.style.setProperty('top', 'auto', 'important');
+    tabbar.style.setProperty('bottom', '0px', 'important');
   }
+  tabbar.style.setProperty('box-sizing', 'border-box', 'important');
 }
 
 function renderQuestTabbar(){
   ensureQuestNavigationStyles();
   const tabbars = [...document.querySelectorAll('nav.tabbar')];
-  const tabbar = tabbars.shift() || document.createElement('nav');
+  const tabbar = tabbars.shift() || document.body.appendChild(document.createElement('nav'));
   tabbars.forEach(duplicate => duplicate.remove());
-  mountQuestTabbarAtViewportRoot(tabbar);
+  if(tabbar.parentElement !== document.body) document.body.appendChild(tabbar);
   tabbar.className = 'tabbar';
   tabbar.setAttribute('aria-label', 'Navigation principale');
   lockQuestTabbarGeometry(tabbar);
