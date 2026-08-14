@@ -162,6 +162,18 @@ function questNotifications(){
 }
 function initQuestNotifications(){
   if(document.getElementById('quest-notifications')) return;
+  /* La cloche appartient aux hubs de l'application. Sur un échiquier, un
+     cours ou une partie immersive, elle masquerait forcément une commande. */
+  const stableNotificationSurface = document.body.matches([
+    '[data-page="home"]',
+    '.problem-journey-page',
+    '.opening-swipe-page',
+    '.profile-page',
+    '.progress-page',
+    '.analysis-page',
+    '.shop-page'
+  ].join(','));
+  if(!stableNotificationSurface) return;
   const items = questNotifications();
   const root = document.createElement('aside');
   root.id = 'quest-notifications';
@@ -255,6 +267,8 @@ function positionQuestNotifications(root=document.getElementById('quest-notifica
 if(!window.__questNotificationPositionListener){
   window.addEventListener('resize',()=>requestAnimationFrame(()=>positionQuestNotifications()),{passive:true});
   window.addEventListener('orientationchange',()=>setTimeout(()=>positionQuestNotifications(),160),{passive:true});
+  window.addEventListener('load',()=>positionQuestNotifications(),{once:true});
+  document.fonts?.ready?.then(()=>positionQuestNotifications());
   window.__questNotificationPositionListener=true;
 }
 document.addEventListener('DOMContentLoaded', initQuestNotifications);
@@ -271,7 +285,7 @@ function initPwa(){
   const isFile = window.location.protocol === 'file:';
   if(isFile) return;
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js?v=104', { updateViaCache:'none' }).then(registration => registration.update()).catch(() => {});
+    navigator.serviceWorker.register('./sw.js?v=105', { updateViaCache:'none' }).then(registration => registration.update()).catch(() => {});
   });
 }
 initPwa();
