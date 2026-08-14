@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
-<link rel="stylesheet" href="assets/css/ux-refinement.css?v=107">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=108">
 <link rel="stylesheet" href="assets/css/navigation.css?v=101" data-quest-navigation>
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
@@ -136,6 +136,7 @@ let analysisBoard = null;
 let analysisResults = [];
 let analysisIndex = -1;
 let analysisBoardWatching = false;
+let analysisOrientation = 'white';
 function ensureAnalysisBoard(){
   if(analysisBoard){ fitBoards('board', analysisBoard, '.page'); return; }
   analysisBoard = Chessboard('board', { position:'start', draggable:false, pieceTheme: PIECE_THEME, showNotation:false });
@@ -349,6 +350,10 @@ function renderAnalysis(headers){
   document.querySelectorAll('.analysis-tabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab==='summary'));
   document.querySelectorAll('.analysis-tab-panel').forEach(p=>p.classList.toggle('hidden', p.id!=='tab-summary'));
   ensureAnalysisBoard();
+  const linkedUsername = String((typeof chessComState === 'function' ? chessComState().username : '') || PROGRESS.settings?.chessComUsername || '').trim().toLowerCase();
+  analysisOrientation = linkedUsername && String(headers.Black || '').trim().toLowerCase() === linkedUsername ? 'black' : 'white';
+  analysisBoard.orientation(analysisOrientation);
+  renderCoords('board-ranks', 'board-files', analysisOrientation);
   analysisResults.forEach(result=>{if(result.mateMissed&&result.info?.cls!=='missed')result.info={label:'Coup manqué',cls:'missed',glyph:'×'};});
   const sums = {w:{best:0,good:0,inaccuracy:0,mistake:0,missed:0,blunder:0}, b:{best:0,good:0,inaccuracy:0,mistake:0,missed:0,blunder:0}};
   analysisResults.forEach(r => sums[r.color][r.info.cls]++);

@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="assets/css/final-views.css?v=106">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=51">
-<link rel="stylesheet" href="assets/css/ux-refinement.css?v=107">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=108">
 <link rel="stylesheet" href="assets/css/navigation.css?v=101">
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
@@ -76,8 +76,8 @@
     </section>
 
     <a class="home-final-daily" href="daily-challenge.html">
-      <span class="home-daily-label">Défi du jour</span>
-      <strong class="home-daily-title" id="home-goal-text">Résous 3 problèmes</strong>
+      <span class="home-daily-label">Problème du jour</span>
+      <strong class="home-daily-title" id="home-goal-text">Découvre la combinaison du jour</strong>
       <div class="track"><div class="track-fill" id="home-goal-fill"></div></div>
       <span class="home-daily-count" id="home-goal-count">0/3</span>
       <span class="home-final-rewards"><span id="home-crown-reward">♛ +35</span><span id="home-xp-reward">+40 XP</span></span>
@@ -93,13 +93,14 @@
       <span class="home-analysis-next">›</span>
     </a>
 
-    <a class="home-final-continue" href="training-game.html"><span>♞</span>Partie d’entraînement</a>
+    <a class="home-final-continue" href="problems.html"><span>♟</span>Reprendre la quête</a>
 
     <div class="home-quick-grid">
       <a href="learn.html"><span>🏰</span><strong>Apprendre</strong><small>Explore la carte des ouvertures</small></a>
       <a href="course-library.html"><span>📚</span><strong>Cours écrits</strong><small>Des bases au niveau expert</small></a>
       <a href="secret-levels.html"><span>🗝</span><strong>Niveaux secrets</strong><small>Défis réservés aux curieux</small></a>
       <a class="home-progress-link" href="progress.html"><span>📈</span><strong>Mes progrès</strong><small>ELO, séries et conseils du coach</small></a>
+      <a href="training-game.html"><span>♞</span><strong>Jouer l’entraîneur</strong><small>Une partie adaptée à ton ELO</small></a>
     </div>
 
     <a class="home-shop-entry" href="shop.html" aria-label="Ouvrir la boutique royale">
@@ -134,13 +135,13 @@ function renderHomeTab(){
   document.getElementById('home-streak').textContent = `${streak} j`;
   document.getElementById('home-shop-balance').textContent = `${QUEST_CURRENCY.icon} ${crownBalance()}`;
   ensureDailyProgressFresh();
-  const current = Math.min(3,PROGRESS.dailyProgress.puzzlesSolvedToday || 0);
-  document.getElementById('home-goal-text').textContent = 'Résous 3 problèmes';
-  document.getElementById('home-goal-count').textContent = `${current}/3`;
-  document.getElementById('home-goal-fill').style.width = `${Math.round((current / 3) * 100)}%`;
-  const challenge = todayChallenge();
-  document.getElementById('home-crown-reward').textContent = `${QUEST_CURRENCY.icon} +${challenge.crowns || QUEST_REWARDS.daily}`;
-  document.getElementById('home-xp-reward').textContent = `+${challenge.xp} XP`;
+  const featuredKey = todayKey();
+  const featuredDone = (PROGRESS.featuredProblemsSolved || []).includes(featuredKey);
+  document.getElementById('home-goal-text').textContent = featuredDone ? 'Problème du jour maîtrisé' : 'Découvre la combinaison du jour';
+  document.getElementById('home-goal-count').textContent = featuredDone ? '✓' : 'Nouveau';
+  document.getElementById('home-goal-fill').style.width = featuredDone ? '100%' : '8%';
+  document.getElementById('home-crown-reward').textContent = `${QUEST_CURRENCY.icon} +10`;
+  document.getElementById('home-xp-reward').textContent = '+25 XP';
 
   const state = chessComState();
   const latest = (state.games || []).slice().sort((a,b) => (b.end_time || 0) - (a.end_time || 0))[0];

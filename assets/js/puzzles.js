@@ -63,6 +63,9 @@ let puzzleBattleCountdown = null;
 let puzzleResultAction = null;
 let dailyCompletionModalShown = false;
 let emptyMistakesModalShown = false;
+let questPuzzlePositions = [];
+let questPuzzlePositionIndex = 0;
+let puzzleLastSuccess = false;
 
 const PUZZLE_CURRICULUM_LEVELS = 180;
 const PUZZLES_PER_LEVEL = 3;
@@ -281,6 +284,7 @@ function loadPuzzle(idx){
   puzzleIndex = ((idx % puzzleQueue.length) + puzzleQueue.length) % puzzleQueue.length;
   const p = puzzleQueue[puzzleIndex];
   puzzleHasFailed = false;
+  puzzleLastSuccess = false;
   puzzleHintUsed = false;
   mcqLocked = false;
 
@@ -290,6 +294,7 @@ function loadPuzzle(idx){
   const orientation = puzzleGame.turn() === 'b' ? 'black' : 'white';
   puzzleBoard.orientation(orientation);
   puzzleBoard.position(puzzleGame.fen());
+  questPuzzlePositions=[puzzleGame.fen()];questPuzzlePositionIndex=0;
   renderCoords('puzzle-ranks', 'puzzle-files', orientation);
   clearHighlights('#puzzle-board');
 
@@ -326,6 +331,7 @@ function loadPuzzle(idx){
   if(typeof fitBoards === 'function') fitBoards('puzzle-board', puzzleBoard);
   const hintButton = document.getElementById('puzzle-hint-btn');
   if(hintButton){ hintButton.disabled = false; hintButton.textContent = 'Indice'; }
+  refreshQuestPuzzleTools();
 }
 
 function showPuzzleHint(){
@@ -354,10 +360,12 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   const moveObj = puzzleGame.move(solutionClean);
   if(moveObj){
     puzzleBoard.position(puzzleGame.fen());
+    questPuzzlePositions=[questPuzzlePositions[0],puzzleGame.fen()];questPuzzlePositionIndex=1;
     highlightMove('#puzzle-board', moveObj.from, moveObj.to);
   }
 
   const success = isCorrect;
+  puzzleLastSuccess = success;
   playSound(success ? 'move' : 'capture');
   if(success){
     PROGRESS.puzzleStreak++;
@@ -420,6 +428,19 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   } else {
     setPuzzleResultAction('Problème suivant', () => loadPuzzle(puzzleIndex+1));
   }
+  refreshQuestPuzzleTools();
+}
+
+function refreshQuestPuzzleTools(){
+  const tools=document.getElementById('quest-puzzle-tools'),daily=puzzleSource==='daily';if(!tools)return;
+  tools.classList.toggle('hidden',!daily);document.body.classList.toggle('quest-puzzle-mode',daily);
+  if(!daily)return;
+  const fill=document.getElementById('quest-xp-fill');if(fill)fill.style.width=`${Math.round(dailyPuzzleCompletedCount()/3*100)}%`;
+  const prev=document.getElementById('quest-prev'),next=document.getElementById('quest-next');if(prev)prev.disabled=questPuzzlePositionIndex===0;if(next)next.disabled=questPuzzlePositionIndex>=questPuzzlePositions.length-1;
+  const retry=document.getElementById('puzzle-retry-action');if(retry){retry.classList.toggle('hidden',!puzzleLastSuccess);retry.onclick=()=>loadPuzzle(puzzleIndex);}
+}
+function browseQuestPuzzle(delta){
+  if(!questPuzzlePositions.length)return;questPuzzlePositionIndex=Math.max(0,Math.min(questPuzzlePositions.length-1,questPuzzlePositionIndex+delta));puzzleBoard.position(questPuzzlePositions[questPuzzlePositionIndex],false);clearHighlights('#puzzle-board');refreshQuestPuzzleTools();
 }
 
 function showDailyPuzzleCompletion(){

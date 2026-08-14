@@ -26,7 +26,7 @@
 <link rel="stylesheet" href="assets/css/mockup-pages.css">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
-<link rel="stylesheet" href="assets/css/ux-refinement.css?v=107">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=108">
 <link rel="stylesheet" href="assets/css/navigation.css?v=101" data-quest-navigation>
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
@@ -37,19 +37,17 @@
 <main class="app">
   <section class="page">
     <header class="quest-page-title">
-      <a class="subpage-back" aria-label="Retour" href="puzzles.html">
+      <a class="subpage-back" aria-label="Retour" href="problems.html">
         <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
       </a>
-      <h1>Défi quotidien</h1>
+      <h1>Problème du jour</h1>
       <a class="quest-currency" id="daily-gem-count" href="shop.html" aria-label="Ouvrir la boutique royale">0</a>
     </header>
 
-    <section class="daily-hero" aria-label="Progression du défi">
-      <div class="daily-hero-label">Résous 3 puzzles</div>
-      <div class="daily-hero-text" id="daily-reward-copy">♛ +35 couronnes · +40 XP</div>
-      <div class="track"><div class="track-fill" id="daily-challenge-fill"></div></div>
-      <div class="daily-hero-progress" id="daily-challenge-progress">0/3</div>
-      <div class="daily-hero-loot" aria-hidden="true"></div>
+    <section class="featured-problem-heading">
+      <button id="featured-prev" type="button" aria-label="Problème de la veille">‹</button>
+      <div><small id="featured-date">Aujourd’hui</small><h2 id="featured-title">Le piège du royaume</h2></div>
+      <button id="featured-next" type="button" aria-label="Problème suivant">›</button>
     </section>
 
     <div id="daily-puzzle-mode" class="daily-puzzle-shell hidden">
@@ -59,7 +57,7 @@
           <strong>À toi de jouer</strong>
           <span id="daily-coach-text" data-mascot-text>Vérifie les échecs, les prises et les menaces. Dans cet ordre, sujet.</span>
         </div>
-        <button id="daily-hint-button" type="button">Indice</button>
+        <span id="featured-step">Coup 1 / 2</span>
       </aside>
       <div class="daily-board-wrap">
         <div class="board-frame">
@@ -68,15 +66,20 @@
           <div class="coord-files" id="daily-files"></div>
         </div>
       </div>
-      <p class="daily-question" id="daily-question">Quel est le meilleur coup ?</p>
-      <div class="mcq-options" id="daily-mcq-options"></div>
+      <p class="daily-question" id="daily-question">Trouve la combinaison gagnante.</p>
+      <div class="featured-problem-controls">
+        <button id="featured-history-prev" type="button" aria-label="Coup précédent">‹</button>
+        <button class="featured-hint" id="daily-hint-button" type="button"><b>?</b><span>Indication</span></button>
+        <button id="featured-history-next" type="button" aria-label="Coup suivant">›</button>
+      </div>
+      <div class="featured-result-actions hidden" id="featured-result-actions"><button id="featured-today" type="button">Aujourd’hui</button><button id="featured-retry" type="button">Réessayer</button></div>
     </div>
 
     <div id="daily-done-banner" class="daily-done-banner hidden">
       <div class="big-check">✓</div>
-      <h2>Défi du jour terminé !</h2>
-      <p id="daily-done-copy">Tes couronnes et ton XP ont été ajoutés. Reviens demain pour poursuivre ta série.</p>
-      <a class="btn" href="puzzles.html">Continuer</a>
+      <h2>Problème résolu !</h2>
+      <p id="daily-done-copy">La combinaison complète est désormais maîtrisée.</p>
+      <button class="btn" id="featured-done-back" type="button">Revoir la position</button>
     </div>
   </section>
 </main>
@@ -91,8 +94,7 @@
 <script src="assets/js/app.js?v=107"></script>
 <script src="assets/js/mascot-coach.js?v=44"></script>
 <script src="assets/js/board.js"></script>
-<script src="assets/js/puzzles.js"></script>
-<script>
+<script type="text/plain" id="legacy-daily-challenge">
 let dailyQueue = [];
 let dailyIdx = 0;
 let dailyBoard = null;
@@ -238,5 +240,6 @@ document.getElementById('daily-hint-button').onclick=()=>{
 
 initDailyChallenge();
 </script>
+<script src="assets/js/daily-featured.js?v=108"></script>
 </body>
 </html>

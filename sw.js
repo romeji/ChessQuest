@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v107';
+const CACHE_VERSION = 'chessquest-v108';
 const APP_SHELL = [
   './',
   './index.html',
@@ -59,6 +59,7 @@ const APP_SHELL = [
   './assets/js/opening-swipe.js',
   './assets/js/training.js',
   './assets/js/puzzles.js',
+  './assets/js/daily-featured.js',
   './assets/js/problem-journey.js',
   './assets/js/firebase-sync.js',
   './assets/js/auth.js',

@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="assets/css/final-views.css?v=106">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
-<link rel="stylesheet" href="assets/css/ux-refinement.css?v=107">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=108">
 <link rel="stylesheet" href="assets/css/navigation.css?v=101" data-quest-navigation>
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
@@ -38,7 +38,7 @@
       <a class="subpage-back" href="index.html" aria-label="Retour à l’accueil">
         <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
       </a>
-      <h1 id="puzzle-page-title">Problème du jour</h1>
+      <h1 id="puzzle-page-title">Quête des problèmes</h1>
       <div class="puzzle-final-rating" aria-label="Classement puzzle">
         <strong id="puzzle-rating-value">800</strong>
         <em id="puzzle-rating-delta"></em>
@@ -65,9 +65,14 @@
       </div>
     </div>
 
+    <div class="quest-puzzle-tools hidden" id="quest-puzzle-tools">
+      <div class="quest-xp-track"><i id="quest-xp-fill"></i></div>
+      <div class="quest-puzzle-buttons"><button id="quest-hint" type="button">? <small>Indication</small></button><span></span><button id="quest-prev" type="button" aria-label="Position précédente">‹</button><button id="quest-next" type="button" aria-label="Position suivante">›</button></div>
+    </div>
+
     <div class="mcq-options" id="mcq-options"></div>
     <div class="puzzle-final-feedback prompt" id="puzzle-feedback">Observe la position puis choisis ton coup.</div>
-    <button class="puzzle-next-action hidden" id="puzzle-next-action" type="button">Problème suivant</button>
+    <div class="puzzle-result-actions"><button class="puzzle-next-action hidden" id="puzzle-next-action" type="button">Problème suivant</button><button class="puzzle-retry-action hidden" id="puzzle-retry-action" type="button">Réessayer</button></div>
 
     <div class="puzzle-review-nav hidden" id="puzzle-review-nav">
       <button type="button" id="mistake-prev" aria-label="Erreur précédente">←</button>
@@ -97,7 +102,7 @@
 <script src="assets/js/mascot-coach.js?v=44"></script>
 <script src="assets/js/board.js"></script>
 <script src="assets/js/openings.js"></script>
-<script src="assets/js/puzzles.js?v=107"></script>
+<script src="assets/js/puzzles.js?v=108"></script>
 <script>
 const urlParams = new URLSearchParams(location.search);
 const secretLevel = urlParams.get('secret');
@@ -119,13 +124,16 @@ function selectPuzzleSource(source){
   buildPuzzleQueue();
   loadPuzzle(0);
   refreshPuzzleHeader();
-  const labels={daily:'Problème du jour',random:'Problème aléatoire',mistakes:'Corriger mes erreurs',review:'Erreurs corrigées'};
+  const labels={daily:'Quête des problèmes',random:'Problème aléatoire',mistakes:'Corriger mes erreurs',review:'Erreurs corrigées'};
   document.getElementById('puzzle-page-title').textContent=labels[source]||'Problèmes';
   document.getElementById('puzzle-review-nav').classList.toggle('hidden',source!=='review');
 }
 document.getElementById('mistake-prev').onclick=()=>loadPuzzle(puzzleIndex-1);
 document.getElementById('mistake-next').onclick=()=>loadPuzzle(puzzleIndex+1);
 document.getElementById('puzzle-hint-btn').onclick = showPuzzleHint;
+document.getElementById('quest-hint').onclick = showPuzzleHint;
+document.getElementById('quest-prev').onclick = () => browseQuestPuzzle(-1);
+document.getElementById('quest-next').onclick = () => browseQuestPuzzle(1);
 if(puzzleSource==='battle'){
   document.getElementById('puzzle-page-title').textContent='Bataille de problèmes';
   const requestedSeconds=Number(urlParams.get('seconds'));

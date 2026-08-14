@@ -28,6 +28,31 @@ let tgOver = false;
 let tgBotThinking = false;
 let tgSelectedSquare = null;
 let tgSession = 0;
+let tgHistoryCursor = 0;
+
+function trainingPositionAt(ply){
+  const replay=new Chess();
+  tgGame.history().slice(0,ply).forEach(move=>replay.move(move));
+  return replay.fen();
+}
+function renderTrainingMoveBrowser(cursor=tgGame?.history().length||0){
+  if(!tgGame)return;
+  const moves=tgGame.history(),max=moves.length;
+  tgHistoryCursor=Math.max(0,Math.min(max,cursor));
+  const current=document.getElementById('tg-history-current'),sub=document.getElementById('tg-history-position');
+  if(current)current.textContent=tgHistoryCursor?`${Math.ceil(tgHistoryCursor/2)}${tgHistoryCursor%2?'…':'.'} ${moves[tgHistoryCursor-1]}`:'Position initiale';
+  if(sub)sub.textContent=tgHistoryCursor===max?'Position actuelle':`Coup ${tgHistoryCursor} sur ${max}`;
+  const prev=document.getElementById('tg-history-prev'),next=document.getElementById('tg-history-next');
+  if(prev)prev.disabled=tgHistoryCursor===0;
+  if(next)next.disabled=tgHistoryCursor===max;
+}
+function browseTrainingHistory(direction){
+  if(!tgGame||tgBotThinking)return;
+  const next=Math.max(0,Math.min(tgGame.history().length,tgHistoryCursor+direction));
+  tgBoard.position(trainingPositionAt(next),false);
+  clearHighlights('#tg-board');
+  renderTrainingMoveBrowser(next);
+}
 
 function setTrainingRestartButton(isRestart){
   const button=document.getElementById('resign-btn');
@@ -146,6 +171,7 @@ function newTrainingGame(){
   document.getElementById('undo-btn').disabled = true;
   setTrainingRestartButton(false);
   renderTgMoveLog();
+  renderTrainingMoveBrowser(0);
   fitBoards('tg-board', tgBoard, '.training-final-board-wrap');
 }
 
@@ -159,6 +185,7 @@ function onTgDrop(source, target){
   highlightMove('#tg-board', moveObj.from, moveObj.to);
   document.getElementById('undo-btn').disabled = false;
   renderTgMoveLog();
+  renderTrainingMoveBrowser();
   const ply = tgGame.history().length;
   const comment = coachCommentFor(moveObj, tgGame, ply);
   showCoach(comment.text, comment.icon);
@@ -214,6 +241,7 @@ async function playBotMove(){
   }
   playSound('move');
   renderTgMoveLog();
+  renderTrainingMoveBrowser();
   setBotStatus("À toi de jouer");
   checkTgGameOver();
 }
@@ -282,7 +310,11 @@ document.getElementById('undo-btn').onclick = () => {
   setBotStatus('Coup annulé — à toi de rejouer.');
   document.getElementById('undo-btn').disabled = tgGame.history().length === 0;
   renderTgMoveLog();
+  renderTrainingMoveBrowser();
 };
+
+document.getElementById('tg-history-prev').onclick=()=>browseTrainingHistory(-1);
+document.getElementById('tg-history-next').onclick=()=>browseTrainingHistory(1);
 
 document.getElementById('hint-btn2').onclick = async () => {
   if(tgOver || tgBotThinking) return;
