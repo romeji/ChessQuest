@@ -523,6 +523,7 @@ function recordFinishedLineNow(){
   if(!currentLine || trainPly < currentLine.moves.length || currentLine.forColor === null || lineCompletionRecorded) return false;
   lineCompletionRecorded = true;
   recordLineCompletion(currentLineKey,lineMistakes === 0);
+  if(typeof window.onOpeningLessonCompleted==='function') window.onOpeningLessonCompleted(currentLineKey,currentLine);
   return true;
 }
 

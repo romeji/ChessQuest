@@ -61,6 +61,8 @@ let puzzleBattleDuration = 0;
 let puzzleBattleActive = false;
 let puzzleBattleCountdown = null;
 let puzzleResultAction = null;
+let dailyCompletionModalShown = false;
+let emptyMistakesModalShown = false;
 
 const PUZZLE_CURRICULUM_LEVELS = 180;
 const PUZZLES_PER_LEVEL = 3;
@@ -263,6 +265,7 @@ function loadPuzzle(idx){
       if(container) container.innerHTML = '';
       setPuzzleFeedback('Mission accomplie : 3 sur 3. Le coffre et les récompenses sont gagnés. Reviens demain pour une nouvelle série.', 'good');
       setPuzzleResultAction('Retour à la carte', () => { location.href='problems.html'; });
+      showDailyPuzzleCompletion();
       return;
     }
     puzzleGame = new Chess();
@@ -272,6 +275,7 @@ function loadPuzzle(idx){
     setHtml('puzzle-dots', '');
     if(container) container.innerHTML = '';
     setPuzzleFeedback(puzzleSource === 'mistakes' ? "Bien joué. Joue une partie sur Chess.com puis analyse-la pour débloquer de nouvelles erreurs à corriger." : "Reviens dans un instant.", 'prompt');
+    if(puzzleSource === 'mistakes') showEmptyMistakesCelebration();
     return;
   }
   puzzleIndex = ((idx % puzzleQueue.length) + puzzleQueue.length) % puzzleQueue.length;
@@ -407,6 +411,7 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
     if(completed >= 3){
       setPuzzleFeedback('Excellent ! Mission accomplie : 3 sur 3. Ton coffre, tes points et ton XP sont gagnés. Reviens demain pour une nouvelle série.', 'good');
       setPuzzleResultAction('Retour à la carte', () => { location.href='problems.html'; });
+      showDailyPuzzleCompletion();
     } else {
       setPuzzleResultAction('Problème suivant', () => { buildPuzzleQueue(); loadPuzzle(0); refreshPuzzleHeader(); });
     }
@@ -415,6 +420,30 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
   } else {
     setPuzzleResultAction('Problème suivant', () => loadPuzzle(puzzleIndex+1));
   }
+}
+
+function showDailyPuzzleCompletion(){
+  if(dailyCompletionModalShown || typeof showQuestCompletionModal!=='function') return;
+  dailyCompletionModalShown=true;
+  const back={label:'Voir mon nouveau socle',primary:true,href:'problems.html'};
+  setTimeout(()=>showQuestCompletionModal({
+    icon:'🎁',eyebrow:'3 problèmes sur 3',title:'Défi du jour terminé !',
+    message:'Ton coffre est gagné. Le pion va maintenant avancer sur la carte des problèmes.',
+    actions:[back],autoAction:back,autoDelay:2800
+  }),350);
+}
+
+function showEmptyMistakesCelebration(){
+  if(emptyMistakesModalShown || typeof showQuestCompletionModal!=='function') return;
+  emptyMistakesModalShown=true;
+  setTimeout(()=>showQuestCompletionModal({
+    icon:'🧠',tone:'info',eyebrow:'File d’erreurs vide',title:'Toutes tes erreurs sont corrigées !',
+    message:'Joue de nouvelles parties sur Chess.com puis analyse-les ici : le coach transformera tes prochains faux pas en nouveaux problèmes.',
+    actions:[
+      {label:'Jouer sur Chess.com',primary:true,onClick:()=>window.open('https://www.chess.com/play/online','_blank','noopener')},
+      {label:'Retour à la carte',href:'problems.html'}
+    ]
+  }),250);
 }
 
 function showRatingDelta(delta){
@@ -507,11 +536,31 @@ function startPuzzleBattle(seconds){
         stopPuzzleBattle(); mcqLocked = true;
         PROGRESS.puzzleBattleScores=PROGRESS.puzzleBattleScores||{30:[],45:[],60:[]};
         const scores=PROGRESS.puzzleBattleScores[duration]||(PROGRESS.puzzleBattleScores[duration]=[]);
+        const previousBest=scores.length ? Math.max(...scores.map(item=>Number(item.score)||0)) : 0;
         scores.push({score,date:new Date().toISOString()});scores.sort((a,b)=>b.score-a.score);PROGRESS.puzzleBattleScores[duration]=scores.slice(0,10);saveProgress();
         setPuzzleFeedback(`Temps écoulé ! ${score} problème${score>1?'s':''} résolu${score>1?'s':''}. Record : ${scores[0].score}.`,'prompt');
+        const comparison=score>previousBest ? (previousBest ? `Nouveau record ! Ton ancien meilleur score était ${previousBest}.` : 'Premier record enregistré !') : score===previousBest ? 'Tu égales ton meilleur score.' : `Ton record reste ${previousBest}. Encore un effort et il tremble.`;
+        if(typeof showQuestCompletionModal==='function') showQuestCompletionModal({
+          icon:'⚡',tone:'battle',eyebrow:`Bataille de ${duration} secondes`,title:`${score} problème${score>1?'s':''} résolu${score>1?'s':''} !`,
+          message:comparison,
+          actions:[
+            {label:'Rejouer',primary:true,onClick:()=>startPuzzleBattle(duration)},
+            {label:'Changer la durée',onClick:choosePuzzleBattleDuration},
+            {label:'Retour à la carte',href:'problems.html'}
+          ]
+        });
       }
     },250);
   },850);
+}
+function choosePuzzleBattleDuration(){
+  stopPuzzleBattle(); mcqLocked=true;
+  if(typeof showQuestCompletionModal!=='function'){startPuzzleBattle(30);return;}
+  showQuestCompletionModal({
+    icon:'⚡',tone:'battle',confetti:false,eyebrow:'Mode chrono',title:'Choisis ta bataille',
+    message:'Résous le plus de problèmes possible avant la fin du chronomètre.',
+    actions:[30,45,60].map(seconds=>({label:`${seconds} secondes`,primary:seconds===45,onClick:()=>startPuzzleBattle(seconds)}))
+  });
 }
 function setText(id, text){ const el = document.getElementById(id); if(el) el.textContent = text; }
 function setHtml(id, html){ const el = document.getElementById(id); if(el) el.innerHTML = html; }

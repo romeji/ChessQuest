@@ -243,6 +243,19 @@ function checkTgGameOver(){
   bumpDailyCounter('gamesPlayedToday');
   checkNewBadges();
   if(won && typeof fireConfetti === 'function') fireConfetti('mastery');
+  if(typeof showQuestCompletionModal==='function'){
+    const draw=tgGame.in_draw() || tgGame.in_stalemate() || tgGame.in_threefold_repetition();
+    showQuestCompletionModal({
+      icon:won?'🏆':(draw?'🤝':'♞'),tone:won?'success':'info',
+      eyebrow:won?'Victoire contre l’entraîneur':(draw?'Partie nulle':'Partie terminée'),
+      title:won?'Magnifique victoire !':(draw?'Belle résistance !':'On en rejoue une ?'),
+      message:`${result} Tu gagnes ${won?40:15} XP.${crownReward?` Et ${crownReward} couronne${crownReward>1?'s':''}.`:''}`,
+      actions:[
+        {label:'Rejouer',primary:true,onClick:newTrainingGame},
+        {label:'Retour à l’accueil',href:'index.html'}
+      ]
+    });
+  }
   return true;
 }
 

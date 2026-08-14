@@ -278,6 +278,44 @@ window.addEventListener('cq:chesscom-sync', () => {
   initQuestNotifications();
 });
 
+/* ---- Fin de parcours : une célébration cohérente sur tous les modules. ---- */
+function closeQuestCompletionModal(){
+  document.getElementById('quest-completion-modal')?.remove();
+  document.body.classList.remove('quest-modal-open');
+}
+function showQuestCompletionModal(options={}){
+  closeQuestCompletionModal();
+  const modal=document.createElement('div');
+  modal.id='quest-completion-modal'; modal.className=`quest-completion-modal ${options.tone||'success'}`;
+  modal.setAttribute('role','dialog'); modal.setAttribute('aria-modal','true'); modal.setAttribute('aria-labelledby','quest-completion-title');
+  const card=document.createElement('section'); card.className='quest-completion-card';
+  const icon=document.createElement('span'); icon.className='quest-completion-icon'; icon.textContent=options.icon||'🏆';
+  const eyebrow=document.createElement('small'); eyebrow.className='quest-completion-eyebrow'; eyebrow.textContent=options.eyebrow||'Mission accomplie';
+  const title=document.createElement('h2'); title.id='quest-completion-title'; title.textContent=options.title||'Bravo !';
+  const message=document.createElement('p'); message.textContent=options.message||'Le royaume est fier de toi.';
+  const actions=document.createElement('div'); actions.className='quest-completion-actions';
+  let finished=false,timer=null;
+  const finish=action=>{
+    if(finished) return; finished=true;
+    if(timer) clearTimeout(timer);
+    closeQuestCompletionModal();
+    if(action?.href) location.href=action.href;
+    else if(typeof action?.onClick==='function') action.onClick();
+  };
+  (options.actions||[{label:'Continuer',primary:true}]).forEach(action=>{
+    const button=document.createElement('button'); button.type='button'; button.textContent=action.label;
+    button.className=action.primary?'primary':'secondary'; button.onclick=()=>finish(action); actions.appendChild(button);
+  });
+  card.append(icon,eyebrow,title,message,actions); modal.appendChild(card); document.body.appendChild(modal);
+  document.body.classList.add('quest-modal-open'); requestAnimationFrame(()=>modal.classList.add('visible'));
+  (actions.querySelector('.primary')||actions.querySelector('button'))?.focus();
+  if(options.confetti!==false && typeof fireConfetti==='function') fireConfetti('mastery');
+  if(options.autoAction && Number(options.autoDelay)>0) timer=setTimeout(()=>finish(options.autoAction),Number(options.autoDelay));
+  return {close:closeQuestCompletionModal};
+}
+window.showQuestCompletionModal=showQuestCompletionModal;
+window.closeQuestCompletionModal=closeQuestCompletionModal;
+
 /* ---- PWA : installation propre et navigation dans le scope de l'app ---- */
 function initPwa(){
   if(window.__CQ_PWA_UPDATE__) return;
@@ -285,7 +323,7 @@ function initPwa(){
   const isFile = window.location.protocol === 'file:';
   if(isFile) return;
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js?v=106', { updateViaCache:'none' }).then(registration => registration.update()).catch(() => {});
+    navigator.serviceWorker.register('./sw.js?v=107', { updateViaCache:'none' }).then(registration => registration.update()).catch(() => {});
   });
 }
 initPwa();

@@ -24,11 +24,11 @@
 <link rel="stylesheet" href="assets/css/final-views.css?v=106">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
-<link rel="stylesheet" href="assets/css/ux-refinement.css?v=106">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=107">
 <link rel="stylesheet" href="assets/css/navigation.css?v=101" data-quest-navigation>
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
-<script defer src="assets/js/navigation.js?v=106"></script>
+<script defer src="assets/js/navigation.js?v=107"></script>
 </head>
 <body data-page="puzzles" class="final-shell-page puzzle-final-page">
 <div id="toast-container"></div>
@@ -93,11 +93,11 @@
 <script src="assets/js/progress.js?v=105"></script>
 <script src="assets/js/chesscom.js"></script>
 <script src="assets/js/animations.js"></script>
-<script src="assets/js/app.js?v=106"></script>
+<script src="assets/js/app.js?v=107"></script>
 <script src="assets/js/mascot-coach.js?v=44"></script>
 <script src="assets/js/board.js"></script>
 <script src="assets/js/openings.js"></script>
-<script src="assets/js/puzzles.js?v=85"></script>
+<script src="assets/js/puzzles.js?v=107"></script>
 <script>
 const urlParams = new URLSearchParams(location.search);
 const secretLevel = urlParams.get('secret');
@@ -128,7 +128,9 @@ document.getElementById('mistake-next').onclick=()=>loadPuzzle(puzzleIndex+1);
 document.getElementById('puzzle-hint-btn').onclick = showPuzzleHint;
 if(puzzleSource==='battle'){
   document.getElementById('puzzle-page-title').textContent='Bataille de problèmes';
-  startPuzzleBattle(Math.max(30,Math.min(60,Number(urlParams.get('seconds'))||30)));
+  const requestedSeconds=Number(urlParams.get('seconds'));
+  if([30,45,60].includes(requestedSeconds)) startPuzzleBattle(requestedSeconds);
+  else choosePuzzleBattleDuration();
 }else selectPuzzleSource(puzzleSource);
 </script>
 </body>
