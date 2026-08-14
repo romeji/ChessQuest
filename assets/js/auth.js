@@ -1,7 +1,10 @@
 /* Compte ChessQuest : Firebase Auth, sauvegarde cloud et premier parcours guidé. */
+const QUEST_PRODUCTION_HOST='chessle.vercel.app';
 const QUEST_FIREBASE_CONFIG = {
   apiKey:'AIzaSyAYFoAYo-f9clafg0ArzTNrwZwtGvHhvjc',
-  authDomain:'chessquest-251ed.firebaseapp.com',
+  /* /__/auth est proxifié par Vercel en production. Le helper OAuth reste
+     ainsi sur le domaine de la PWA, ce que Safari/iOS exige désormais. */
+  authDomain:location.hostname===QUEST_PRODUCTION_HOST ? QUEST_PRODUCTION_HOST : 'chessquest-251ed.firebaseapp.com',
   projectId:'chessquest-251ed',
   storageBucket:'chessquest-251ed.firebasestorage.app',
   messagingSenderId:'113306734865',
@@ -51,6 +54,28 @@ let questCloudRef=null;
 let questCloudTimer=null;
 let questCloudListenerInstalled=false;
 
+function questRedirectWasPending(){
+  let localPending=false,sessionPending=false;
+  try{localPending=localStorage.getItem('cq-google-redirect-pending')==='1';}catch(error){}
+  try{sessionPending=sessionStorage.getItem('cq-google-redirect-pending')==='1';}catch(error){}
+  return localPending || sessionPending;
+}
+function setQuestRedirectPending(pending){
+  const action=pending?'setItem':'removeItem';
+  try{localStorage[action]('cq-google-redirect-pending','1');}catch(error){}
+  try{sessionStorage[action]('cq-google-redirect-pending','1');}catch(error){}
+}
+function waitForQuestRedirectUser(timeout=4500){
+  return new Promise(resolve=>{
+    const auth=firebase.auth();
+    if(auth.currentUser){resolve(auth.currentUser);return;}
+    let settled=false,timer=null,stop=()=>{};
+    const finish=user=>{if(settled)return;settled=true;clearTimeout(timer);stop();resolve(user||null);};
+    stop=auth.onAuthStateChanged(user=>{if(user)finish(user);},()=>finish(null));
+    timer=setTimeout(()=>finish(auth.currentUser),timeout);
+  });
+}
+
 function questRunsAsInstalledPwa(){
   return window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true;
 }
@@ -68,12 +93,19 @@ async function consumeQuestGoogleRedirect(){
   if(questGoogleRedirectPromise) return questGoogleRedirectPromise;
   questGoogleRedirectPromise=(async()=>{
     await ensureQuestFirebaseAuth();
+    const wasPending=questRedirectWasPending();
     try{
       const result=await firebase.auth().getRedirectResult();
-      sessionStorage.removeItem('cq-google-redirect-pending');
-      return result;
+      const user=result?.user || firebase.auth().currentUser || (wasPending ? await waitForQuestRedirectUser() : null);
+      setQuestRedirectPending(false);
+      if(wasPending && !user){
+        const error=new Error('Google a renvoyé vers ChessQuest, mais la session n’a pas été conservée. Vérifie l’URI OAuth autorisée puis réessaie.');
+        error.code='auth/redirect-session-lost';
+        window.__questRedirectError=error;
+      }
+      return result || (user ? {user} : null);
     }catch(error){
-      sessionStorage.removeItem('cq-google-redirect-pending');
+      setQuestRedirectPending(false);
       window.__questRedirectError=error;
       console.warn('[ChessQuest] Retour Google incomplet',error);
       return null;
@@ -88,15 +120,17 @@ async function signInToQuestWithGoogle(){
     const provider=new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({prompt:'select_account'});
     if(questUsesRedirectAuth()){
-      sessionStorage.setItem('cq-google-redirect-pending','1');
-      await firebase.auth().signInWithRedirect(provider);
+      setQuestRedirectPending(true);
+      try{await firebase.auth().signInWithRedirect(provider);}
+      catch(error){setQuestRedirectPending(false);throw error;}
       return null;
     }
     try{return await firebase.auth().signInWithPopup(provider);}
     catch(error){
       if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment'].includes(error.code)){
-        sessionStorage.setItem('cq-google-redirect-pending','1');
-        await firebase.auth().signInWithRedirect(provider);
+        setQuestRedirectPending(true);
+        try{await firebase.auth().signInWithRedirect(provider);}
+        catch(redirectError){setQuestRedirectPending(false);throw redirectError;}
         return null;
       }
       throw error;

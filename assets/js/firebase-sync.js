@@ -12,7 +12,7 @@
    ============================================================ */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyAYFoAYo-f9clafg0ArzTNrwZwtGvHhvjc",
-  authDomain: "chessquest-251ed.firebaseapp.com",
+  authDomain: location.hostname === "chessle.vercel.app" ? "chessle.vercel.app" : "chessquest-251ed.firebaseapp.com",
   projectId: "chessquest-251ed",
   storageBucket: "chessquest-251ed.firebasestorage.app",
   messagingSenderId: "113306734865",

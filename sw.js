@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v102';
+const CACHE_VERSION = 'chessquest-v103';
 const APP_SHELL = [
   './',
   './index.html',
@@ -96,6 +96,9 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
+  /* Le helper OAuth proxifié doit toujours atteindre Firebase directement :
+     une réponse d'authentification ne doit jamais venir du cache PWA. */
+  if (url.origin === self.location.origin && url.pathname.startsWith('/__/auth/')) return;
   const supportedOrigins = [
     self.location.origin,
     'https://cdnjs.cloudflare.com',

@@ -92,7 +92,9 @@
 
   function addBanner(worldNumber){
     const theme=WORLD_THEMES[worldNumber-1],el=document.createElement('div');
-    el.className=`problem-world-banner world-${worldNumber}`; el.style.left=`${boardWidth/2}px`; el.style.top=`${worldBottom(worldNumber)-WORLD_HEIGHT-55}px`;
+    /* La carte se parcourt du bas vers le haut : le panneau annonce donc le
+       monde à son entrée, en bas de sa zone, et non à la sortie au-dessus. */
+    el.className=`problem-world-banner world-${worldNumber}`; el.style.left=`${boardWidth/2}px`; el.style.top=`${worldBottom(worldNumber)-58}px`;
     const first=(worldNumber-1)*LEVELS_PER_WORLD+1,last=worldNumber*LEVELS_PER_WORLD;
     el.innerHTML=`<strong>Monde ${worldNumber} · ${theme.name}</strong><small>Socles ${first} à ${last}</small>`; board.appendChild(el);
   }
@@ -184,7 +186,7 @@
   function updateHud(){
     const worldNumber=Math.ceil(currentLevel/LEVELS_PER_WORLD),within=((currentLevel-1)%LEVELS_PER_WORLD)+1,solved=dailySolvedCount(),theme=WORLD_THEMES[worldNumber-1];
     document.getElementById('problem-level').textContent=currentLevel;
-    document.getElementById('problem-subtitle').textContent=`${theme.name} · Monde ${worldNumber}`;
+    document.getElementById('problem-subtitle').textContent=`Monde ${worldNumber} · Socle ${within}`;
     document.getElementById('problem-rating').textContent=PROGRESS.puzzleRating||1000;
     document.getElementById('problem-score').textContent=`Socle ${currentLevel}`;
     document.getElementById('problem-step-label').textContent=`Monde ${worldNumber} · ${within} / 20`;
