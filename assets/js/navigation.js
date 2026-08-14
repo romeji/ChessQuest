@@ -1,4 +1,4 @@
-const QUEST_NAVIGATION_VERSION = '99';
+const QUEST_NAVIGATION_VERSION = '100';
 window.QUEST_NAVIGATION_VERSION = QUEST_NAVIGATION_VERSION;
 const QUEST_TABBAR_HEIGHT = '58px';
 const QUEST_TABBAR_PADDING = '2px 4px 5px';
@@ -58,11 +58,23 @@ function lockQuestTabbarGeometry(tabbar){
   tabbar.style.setProperty('box-sizing', 'border-box', 'important');
 }
 
+/* Les vues plein écran contraignent leur body à la hauteur disponible. Sur
+   WebKit en mode PWA, un élément fixed qui reste dans ce body peut alors être
+   ancré 58 px trop haut. La navigation est portée directement par la racine du
+   document : son bottom:0 dépend ainsi toujours du viewport, jamais du layout
+   particulier d'Apprendre, Problèmes ou des échiquiers. */
+function mountQuestTabbarAtViewportRoot(tabbar){
+  if(tabbar.parentElement !== document.documentElement){
+    document.documentElement.appendChild(tabbar);
+  }
+}
+
 function renderQuestTabbar(){
   ensureQuestNavigationStyles();
   const tabbars = [...document.querySelectorAll('nav.tabbar')];
-  const tabbar = tabbars.shift() || document.body.appendChild(document.createElement('nav'));
+  const tabbar = tabbars.shift() || document.createElement('nav');
   tabbars.forEach(duplicate => duplicate.remove());
+  mountQuestTabbarAtViewportRoot(tabbar);
   tabbar.className = 'tabbar';
   tabbar.setAttribute('aria-label', 'Navigation principale');
   lockQuestTabbarGeometry(tabbar);

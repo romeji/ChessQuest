@@ -142,7 +142,7 @@ ol.move-list .empty{color:var(--text-dim);grid-column:1/-1;padding:8px 0;}
 
 /* ---- Centre de notifications ---- */
 .quest-notifications{position:fixed;z-index:150;right:max(14px,env(safe-area-inset-right,0px));bottom:max(18px,env(safe-area-inset-bottom,0px));pointer-events:none;}
-body:has(.tabbar) .quest-notifications{bottom:calc(82px + env(safe-area-inset-bottom,0px))}
+html.cq-has-tabbar .quest-notifications{bottom:calc(82px + env(safe-area-inset-bottom,0px))}
 .quest-notification-toggle{position:relative;width:48px;height:48px;border:1px solid rgba(244,204,91,.7);border-radius:50%;background:linear-gradient(145deg,#0f8056,#034433);color:#fff8dc;box-shadow:0 10px 25px rgba(0,47,34,.3),inset 0 1px rgba(255,255,255,.24);display:grid;place-items:center;cursor:pointer;pointer-events:auto;transition:transform .18s ease,filter .18s ease;}
 .quest-notification-toggle:hover{filter:brightness(1.08);transform:translateY(-2px)}
 .quest-notification-toggle:active{transform:scale(.94)}
