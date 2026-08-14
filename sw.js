@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v96';
+const CACHE_VERSION = 'chessquest-v98';
 const APP_SHELL = [
   './',
   './index.html',

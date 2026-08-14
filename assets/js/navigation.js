@@ -1,8 +1,11 @@
-const QUEST_NAVIGATION_VERSION = '96';
+const QUEST_NAVIGATION_VERSION = '98';
 window.QUEST_NAVIGATION_VERSION = QUEST_NAVIGATION_VERSION;
+const QUEST_TABBAR_HEIGHT = '58px';
+const QUEST_TABBAR_PADDING = '2px 4px 5px';
+const QUEST_NAVIGATION_SCRIPT = document.currentScript;
 const QUEST_NAVIGATION_STYLESHEET = new URL(
   `../css/navigation.css?v=${QUEST_NAVIGATION_VERSION}`,
-  document.currentScript?.src || document.baseURI
+  QUEST_NAVIGATION_SCRIPT?.src || document.baseURI
 ).href;
 
 const QUEST_TABS = [
@@ -44,6 +47,22 @@ function syncQuestViewport(){
   if(height > 0) document.documentElement.style.setProperty('--cq-viewport-height', `${height}px`);
 }
 
+/* WebKit peut recalculer env(safe-area-inset-bottom) pendant une transition
+   entre deux documents plein écran. La barre ne doit jamais dépendre de cette
+   valeur fluctuante : sa géométrie est donc verrouillée à chaque affichage.
+   Son pseudo-élément CSS continue, lui, à peindre le fond jusqu'au bord. */
+function lockQuestTabbarGeometry(tabbar){
+  const root = document.documentElement.style;
+  root.setProperty('--cq-tabbar-content-height', QUEST_TABBAR_HEIGHT);
+  root.setProperty('--cq-tabbar-height', QUEST_TABBAR_HEIGHT);
+  root.setProperty('--tabbar-height', QUEST_TABBAR_HEIGHT);
+  tabbar.style.setProperty('height', QUEST_TABBAR_HEIGHT, 'important');
+  tabbar.style.setProperty('min-height', QUEST_TABBAR_HEIGHT, 'important');
+  tabbar.style.setProperty('padding', QUEST_TABBAR_PADDING, 'important');
+  tabbar.style.setProperty('bottom', '0px', 'important');
+  tabbar.style.setProperty('box-sizing', 'border-box', 'important');
+}
+
 function renderQuestTabbar(){
   syncQuestViewport();
   ensureQuestNavigationStyles();
@@ -52,6 +71,7 @@ function renderQuestTabbar(){
   tabbars.forEach(duplicate => duplicate.remove());
   tabbar.className = 'tabbar';
   tabbar.setAttribute('aria-label', 'Navigation principale');
+  lockQuestTabbarGeometry(tabbar);
   document.body.classList.add('cq-has-tabbar');
   document.documentElement.classList.add('cq-has-tabbar');
   const activeTab = currentQuestTab();
@@ -84,11 +104,11 @@ window.addEventListener('pageshow', event => {
     setTimeout(syncQuestViewport, 300);
   }
 });
-// Un handler 'unload', même vide, suffit à rendre la page inéligible au
-// bfcache sur la plupart des moteurs : chaque navigation redevient un
-// chargement complet et frais, ce qui élimine la classe entière de bugs
-// « ça dépend de la page d'où je viens ».
-window.addEventListener('unload', () => {});
-window.addEventListener('resize', syncQuestViewport, { passive:true });
-window.visualViewport?.addEventListener('resize', syncQuestViewport, { passive:true });
+function syncQuestNavigationLayout(){
+  syncQuestViewport();
+  const tabbar = document.querySelector('nav.tabbar');
+  if(tabbar) lockQuestTabbarGeometry(tabbar);
+}
+window.addEventListener('resize', syncQuestNavigationLayout, { passive:true });
+window.visualViewport?.addEventListener('resize', syncQuestNavigationLayout, { passive:true });
 window.addEventListener('load', registerQuestServiceWorker, { once:true });
