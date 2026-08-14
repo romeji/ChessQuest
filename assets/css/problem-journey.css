@@ -1,5 +1,6 @@
 :root{--problem-safe-top:max(8px,env(safe-area-inset-top,0px));--problem-head:70px;--problem-hud:84px}
-html,body.problem-journey-page{width:100%;height:100%;margin:0;background:#132820}
+html:has(body.problem-journey-page){width:100%;height:100%;margin:0;overflow:hidden;background:#132820}
+body.problem-journey-page{width:100%;min-height:100%;height:auto;margin:0;background:#132820}
 body.problem-journey-page{overflow:hidden;overscroll-behavior:none;color:#f8f2e5;font-family:Nunito,sans-serif}.problem-journey-page::before,.problem-journey-page::after{display:none!important}
 .problem-journey{position:fixed;z-index:1;inset:0 0 var(--cq-tabbar-height,58px);width:min(100%,430px);margin:auto;overflow:hidden;background:#2d6b4a;box-shadow:0 0 42px rgba(0,0,0,.32)}
 .problem-journey-topbar{position:absolute;z-index:60;top:0;left:0;right:0;height:calc(var(--problem-head) + var(--problem-safe-top));padding:var(--problem-safe-top) 13px 8px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,#19372d,rgba(20,49,39,.96) 72%,rgba(20,49,39,.72));color:#fff;box-shadow:0 4px 18px rgba(0,0,0,.28)}

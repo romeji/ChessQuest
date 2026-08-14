@@ -1,0 +1,64 @@
+/* Couche de migration PWA v99.
+   Ce fichier possède volontairement un nom versionné : les anciens service
+   workers de ChessQuest utilisaient `ignoreSearch` et pouvaient donc servir
+   navigation.css v96 à la place de navigation.css?v=99. Ce nom inédit force
+   WebKit à télécharger les règles stables dès la première navigation. */
+:root{
+  --cq-tabbar-content-height:58px!important;
+  --cq-tabbar-controls-bottom:5px!important;
+  --cq-tabbar-safe-bottom:0px!important;
+  --cq-tabbar-height:58px!important;
+  --tabbar-height:58px!important;
+}
+
+body nav.tabbar{
+  bottom:0!important;
+  height:58px!important;
+  min-height:58px!important;
+  padding:2px 4px 5px!important;
+  box-sizing:border-box!important;
+}
+
+@media (display-mode:standalone){
+  body nav.tabbar{
+    bottom:0!important;
+    height:58px!important;
+    min-height:58px!important;
+    padding:2px 4px 5px!important;
+  }
+}
+
+html.cq-has-tabbar:has(body.problem-journey-page),
+html.cq-has-tabbar:has(body.opening-swipe-page){
+  height:100%!important;
+  min-height:100%!important;
+  overflow:hidden!important;
+}
+
+body.problem-journey-page,
+body.opening-swipe-page{
+  height:auto!important;
+  min-height:100%!important;
+  overflow:hidden!important;
+}
+
+.problem-journey{
+  position:fixed!important;
+  inset:0 0 58px!important;
+}
+
+.opening-swipe-app{
+  position:fixed!important;
+  inset:0 0 58px!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0 auto!important;
+}
+
+@media(min-width:700px){
+  .opening-swipe-app{
+    top:18px!important;
+    bottom:76px!important;
+    height:auto!important;
+  }
+}

@@ -6,14 +6,16 @@
   --opening-deep:#082f28;
 }
 
-html,body.opening-swipe-page{width:100%;height:100%;margin:0;overflow:hidden;background:#082f28}
+html:has(body.opening-swipe-page){width:100%;height:100%;margin:0;overflow:hidden;background:#082f28}
+body.opening-swipe-page{width:100%;min-height:100%;height:auto;margin:0;overflow:hidden;background:#082f28}
 body.opening-swipe-page::before,body.opening-swipe-page::after{display:none!important}
 .opening-swipe-app{
-  position:relative;
+  position:fixed;
+  inset:0 0 var(--cq-tabbar-height,58px);
   width:min(100%,430px);
-  height:calc(100dvh - var(--cq-tabbar-height,58px));
+  height:auto;
   min-height:0;
-  margin:auto;
+  margin:0 auto;
   overflow:hidden;
   display:grid;
   grid-template-rows:auto auto minmax(0,1fr) auto auto;
@@ -110,5 +112,5 @@ body.opening-swipe-page::before,body.opening-swipe-page::after{display:none!impo
   .opening-selection-panel{padding-top:5px;padding-bottom:5px}.opening-swipe-actions{padding-top:5px;padding-bottom:6px}.opening-swipe-menu,.opening-swipe-primary{min-height:48px}
 }
 
-@media(min-width:700px){.opening-swipe-app{margin-top:18px;height:calc(100dvh - var(--cq-tabbar-height,58px) - 36px);border-radius:30px 30px 0 0}}
+@media(min-width:700px){.opening-swipe-app{top:18px;bottom:calc(var(--cq-tabbar-height,58px) + 18px);height:auto;border-radius:30px}}
 @media(prefers-reduced-motion:reduce){.opening-card{transition:none}}

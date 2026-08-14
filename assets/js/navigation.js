@@ -1,4 +1,4 @@
-const QUEST_NAVIGATION_VERSION = '98';
+const QUEST_NAVIGATION_VERSION = '99';
 window.QUEST_NAVIGATION_VERSION = QUEST_NAVIGATION_VERSION;
 const QUEST_TABBAR_HEIGHT = '58px';
 const QUEST_TABBAR_PADDING = '2px 4px 5px';
@@ -42,11 +42,6 @@ function currentQuestTab(){
   return QUEST_ROUTE_TABS[route] || 'home';
 }
 
-function syncQuestViewport(){
-  const height = Math.round(window.visualViewport?.height || window.innerHeight || 0);
-  if(height > 0) document.documentElement.style.setProperty('--cq-viewport-height', `${height}px`);
-}
-
 /* WebKit peut recalculer env(safe-area-inset-bottom) pendant une transition
    entre deux documents plein écran. La barre ne doit jamais dépendre de cette
    valeur fluctuante : sa géométrie est donc verrouillée à chaque affichage.
@@ -64,7 +59,6 @@ function lockQuestTabbarGeometry(tabbar){
 }
 
 function renderQuestTabbar(){
-  syncQuestViewport();
   ensureQuestNavigationStyles();
   const tabbars = [...document.querySelectorAll('nav.tabbar')];
   const tabbar = tabbars.shift() || document.body.appendChild(document.createElement('nav'));
@@ -95,20 +89,12 @@ if(document.body) renderQuestTabbar();
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderQuestTabbar, { once:true });
 window.addEventListener('pageshow', event => {
   renderQuestTabbar();
-  if(event.persisted){
-    // Restauration depuis le bfcache : les dimensions rapportées à cet
-    // instant précis peuvent être transitoires sur iOS. On remesure sur
-    // quelques frames suivantes pour être sûr d'avoir la vraie valeur.
-    requestAnimationFrame(syncQuestViewport);
-    setTimeout(syncQuestViewport, 60);
-    setTimeout(syncQuestViewport, 300);
-  }
 });
 function syncQuestNavigationLayout(){
-  syncQuestViewport();
   const tabbar = document.querySelector('nav.tabbar');
   if(tabbar) lockQuestTabbarGeometry(tabbar);
 }
 window.addEventListener('resize', syncQuestNavigationLayout, { passive:true });
-window.visualViewport?.addEventListener('resize', syncQuestNavigationLayout, { passive:true });
-window.addEventListener('load', registerQuestServiceWorker, { once:true });
+/* Ne jamais attendre `load` : les polices et illustrations distantes peuvent
+   le retarder, surtout dans une PWA restaurée depuis le cache. */
+registerQuestServiceWorker();
