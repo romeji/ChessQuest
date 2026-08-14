@@ -52,7 +52,15 @@
     return 58+((card.worldIndex*7+card.islandIndex*3)%16);
   }
   function illustrationFor(card){
-    if(card.worldIndex===0 && card.island.id==='italienne') return 'assets/images/openings/italian-swipe-card-v1.png';
+    const bespoke={
+      italienne:'assets/images/openings/italian-swipe-card-v1.png',
+      gambit_dame:'assets/images/openings/queen-gambit-swipe-card-v1.png',
+      francaise:'assets/images/openings/french-defense-swipe-card-v1.png',
+      sicilienne:'assets/images/openings/sicilian-defense-swipe-card-v1.png',
+      carokann:'assets/images/openings/caro-kann-swipe-card-v1.png',
+      aventures:'assets/images/openings/rare-openings-swipe-card-v1.png'
+    };
+    if(card.worldIndex===0 && bespoke[card.island.id]) return bespoke[card.island.id];
     return card.world.background;
   }
   function initialCardIndex(){

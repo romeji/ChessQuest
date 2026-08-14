@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v105';
+const CACHE_VERSION = 'chessquest-v106';
 const APP_SHELL = [
   './',
   './index.html',
@@ -63,6 +63,13 @@ const APP_SHELL = [
   './assets/js/firebase-sync.js',
   './assets/js/auth.js',
   './assets/js/courses.js',
+  './assets/illustrations/reward-chest-transparent-v1.png',
+  './assets/images/openings/italian-swipe-card-v1.png',
+  './assets/images/openings/queen-gambit-swipe-card-v1.png',
+  './assets/images/openings/french-defense-swipe-card-v1.png',
+  './assets/images/openings/sicilian-defense-swipe-card-v1.png',
+  './assets/images/openings/caro-kann-swipe-card-v1.png',
+  './assets/images/openings/rare-openings-swipe-card-v1.png',
   './assets/chesspieces/wK.png',
   './assets/chesspieces/wQ.png',
   './assets/chesspieces/wR.png',

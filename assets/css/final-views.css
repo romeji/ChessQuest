@@ -250,7 +250,7 @@ body.home-final-page{overflow-x:hidden}
   position:absolute;
   right:6px;bottom:4px;
   width:76px;height:72px;
-  background:url("../illustrations/rewards-spritesheet.png") 100% 0/200% 200% no-repeat;
+  background:url("../illustrations/reward-chest-transparent-v1.png") center/contain no-repeat;
 }
 .home-final-analysis{
   display:grid;

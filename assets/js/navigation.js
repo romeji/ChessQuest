@@ -1,4 +1,4 @@
-const QUEST_NAVIGATION_VERSION = '101';
+const QUEST_NAVIGATION_VERSION = '106';
 window.QUEST_NAVIGATION_VERSION = QUEST_NAVIGATION_VERSION;
 const QUEST_TABBAR_HEIGHT = '58px';
 const QUEST_TABBAR_PADDING = '2px 4px 5px';
@@ -13,7 +13,7 @@ const QUEST_TABS = [
   { id:'puzzles', href:'problems.html', label:'Problèmes', icon:'<path d="M9 3h6v4a3 3 0 1 0 3 3h3v11h-6v-3a3 3 0 1 0-3 3H3v-7h4a3 3 0 1 0 0-6H3V3h6Z"/>' },
   { id:'learn', href:'learn.html', label:'Apprendre', icon:'<path d="M4 19V6a2 2 0 0 1 2-2h6v16H6a2 2 0 0 0-2 2Z"/><path d="M20 19V6a2 2 0 0 0-2-2h-6v16h6a2 2 0 0 1 2 2Z"/>' },
   { id:'observer', href:'analysis.html', label:'Observer', icon:'<circle cx="7.5" cy="14" r="4"/><circle cx="16.5" cy="14" r="4"/><path d="M11.5 14h1M4 13l1.5-7h4l2 8M20 13l-1.5-7h-4l-2 8"/>' },
-  { id:'more', href:'profile.html', label:'Plus', icon:'<path d="M4 6h16M4 12h16M4 18h16"/>' }
+  { id:'more', href:'profile.html', label:'Profil', icon:'<circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>' }
 ];
 
 const QUEST_ROUTE_TABS = {

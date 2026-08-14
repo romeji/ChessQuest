@@ -24,11 +24,11 @@
 <link rel="stylesheet" href="assets/css/polish.css">
 <link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
 <link rel="stylesheet" href="assets/css/gamification.css?v=44">
-<link rel="stylesheet" href="assets/css/ux-refinement.css?v=102">
+<link rel="stylesheet" href="assets/css/ux-refinement.css?v=106">
 <link rel="stylesheet" href="assets/css/navigation.css?v=101" data-quest-navigation>
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
-<script defer src="assets/js/navigation.js?v=101"></script>
+<script defer src="assets/js/navigation.js?v=106"></script>
 </head>
 <body data-page="analyze" class="final-shell-page analysis-review-page">
 <div id="toast-container"></div>
@@ -47,6 +47,7 @@
     <div id="analysis-results" style="display:none;margin-top:4px;">
       <section id="review-overview" class="review-overview">
         <div class="review-hero-comment"><img src="assets/illustrations/mascot-knight-home.png" alt="Coach ChessQuest"><div><strong>Bilan royal</strong><p id="review-overview-copy">Je passe chaque coup au peigne fin. Oui, même celui que tu espérais oublier.</p></div></div>
+        <div class="review-outcome" id="review-outcome" aria-live="polite"><span id="review-outcome-icon">♟</span><div><strong id="review-outcome-title">Résultat de la partie</strong><small id="review-outcome-copy">Le résultat va apparaître ici.</small></div></div>
         <div class="review-chart-card"><div class="review-chart-heading"><strong>Évolution de la partie</strong><span id="review-result-label"></span></div><svg id="review-eval-chart" viewBox="0 0 640 150" preserveAspectRatio="none" role="img" aria-label="Évolution de l'évaluation"></svg></div>
         <div class="review-players"><article><span class="review-piece white">♙</span><div><strong id="review-white-name">Blancs</strong><small id="review-white-elo">—</small></div></article><span class="review-versus">VS</span><article><span class="review-piece black">♟</span><div><strong id="review-black-name">Noirs</strong><small id="review-black-elo">—</small></div></article></div>
         <div class="review-accuracy"><article><strong id="review-white-accuracy">—</strong><small>Blancs</small></article><div><span>Précision</span><small>Qualité globale des coups</small></div><article><strong id="review-black-accuracy">—</strong><small>Noirs</small></article></div>
@@ -292,6 +293,32 @@ function renderReviewOverview(headers, sums, whiteAcc, blackAcc){
   document.getElementById('review-white-accuracy').textContent = whiteAcc.toFixed(1);
   document.getElementById('review-black-accuracy').textContent = blackAcc.toFixed(1);
   document.getElementById('review-result-label').textContent = headers.Result || '';
+  const linkedUsername = String((typeof chessComState === 'function' ? chessComState().username : '') || PROGRESS.settings?.chessComUsername || '').trim().toLowerCase();
+  const userColor = linkedUsername && white.toLowerCase() === linkedUsername ? 'w' : (linkedUsername && black.toLowerCase() === linkedUsername ? 'b' : '');
+  const winnerColor = headers.Result === '1-0' ? 'w' : (headers.Result === '0-1' ? 'b' : '');
+  const outcome = document.getElementById('review-outcome');
+  let outcomeTitle = 'Résultat non disponible';
+  let outcomeCopy = `${white} contre ${black}`;
+  let outcomeIcon = '♟';
+  let outcomeClass = 'unknown';
+  if(headers.Result === '1/2-1/2'){
+    outcomeTitle = 'Partie nulle'; outcomeCopy = 'La partie se termine sur un score de ½–½.'; outcomeIcon = '½'; outcomeClass = 'draw';
+  }else if(winnerColor){
+    const winnerName = winnerColor === 'w' ? white : black;
+    const loserName = winnerColor === 'w' ? black : white;
+    if(userColor){
+      const won = userColor === winnerColor;
+      outcomeTitle = won ? 'Victoire !' : 'Défaite';
+      outcomeCopy = won ? `Bravo, tu as battu ${loserName}.` : `${winnerName} remporte cette partie. On va voir comment rebondir.`;
+      outcomeIcon = won ? '♛' : '♟'; outcomeClass = won ? 'win' : 'loss';
+    }else{
+      outcomeTitle = `Victoire de ${winnerName}`; outcomeCopy = winnerColor === 'w' ? 'Les Blancs gagnent 1–0.' : 'Les Noirs gagnent 0–1.'; outcomeIcon = winnerColor === 'w' ? '♕' : '♛'; outcomeClass = 'win';
+    }
+  }
+  outcome.className = `review-outcome ${outcomeClass}`;
+  document.getElementById('review-outcome-title').textContent = outcomeTitle;
+  document.getElementById('review-outcome-copy').textContent = outcomeCopy;
+  document.getElementById('review-outcome-icon').textContent = outcomeIcon;
   const gap = Math.abs(whiteAcc-blackAcc);
   const copy = gap < 4 ? 'Partie très équilibrée. On regarde ensemble où elle a vraiment basculé ?' : (whiteAcc>blackAcc ? `${white} a été plus précis. Voyons les coups qui ont construit cet avantage.` : `${black} a été plus précis. Rien de tragique : les erreurs savent très bien enseigner.`);
   document.getElementById('review-overview-copy').textContent = copy;
