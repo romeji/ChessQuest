@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/layout.css">
-<link rel="stylesheet" href="assets/css/components.css?v=104">
+<link rel="stylesheet" href="assets/css/components.css?v=105">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/analysis.css">
 <link rel="stylesheet" href="assets/css/polish.css">
@@ -112,7 +112,8 @@
         <button id="review-back" class="review-back-summary">← Retour au résumé</button>
       </div>
     <div id="no-game-msg" class="hidden">
-      <p class="section-sub">Aucune partie sélectionnée. Retourne à la liste de tes parties pour en choisir une.</p>
+      <p class="section-sub">Impossible de retrouver cette partie. Retourne à la liste et sélectionne-la à nouveau.</p>
+      <a class="review-start-button" style="display:inline-flex;text-decoration:none;margin-top:12px" href="analysis.html">Voir mes parties</a>
     </div>
   </section>
 </div>
@@ -128,7 +129,7 @@
 <script src="assets/js/chesscom.js"></script>
 <script src="assets/js/firebase-sync.js?v=104"></script>
 <script src="assets/js/animations.js"></script>
-<script src="assets/js/app.js?v=107"></script>
+<script src="assets/js/app.js?v=108"></script>
 <script src="assets/js/mascot-coach.js?v=44"></script>
 <script src="assets/js/board.js?v=83"></script>
 <script>
@@ -522,17 +523,27 @@ document.addEventListener('keydown', (e) => {
 });
 
 async function initGameView(){
-  const raw = sessionStorage.getItem('cq_selected_game');
+  let raw = null;
+  try { raw = sessionStorage.getItem('cq_selected_game'); } catch(e) {}
+  if(!raw){ try { raw = localStorage.getItem('cq_selected_game'); } catch(e) {} }
   if(!raw){ document.getElementById('no-game-msg').classList.remove('hidden'); return; }
-  const g = JSON.parse(raw);
-  g.username = chessComState().username || (PROGRESS.settings||{}).chessComUsername || '';
-  const pre = g.url ? await fetchPrecomputedAnalysis(g.url) : null;
-  if(pre && Array.isArray(pre.results) && pre.results.length){
-    analysisResults = pre.results;
-    renderAnalysis(pre.headers || { White: g.white && g.white.username, Black: g.black && g.black.username });
-    showToast('Analyse chargée', 'Déjà calculée en arrière-plan — instantané !');
-  } else {
-    runAnalysis(g.pgn, g);
+  let g;
+  try { g = JSON.parse(raw); } catch(e) { document.getElementById('no-game-msg').classList.remove('hidden'); return; }
+  if(!g || !g.pgn){ document.getElementById('no-game-msg').classList.remove('hidden'); return; }
+  try {
+    g.username = chessComState().username || (PROGRESS.settings||{}).chessComUsername || '';
+    const pre = g.url ? await fetchPrecomputedAnalysis(g.url) : null;
+    if(pre && Array.isArray(pre.results) && pre.results.length){
+      analysisResults = pre.results;
+      renderAnalysis(pre.headers || { White: g.white && g.white.username, Black: g.black && g.black.username });
+      showToast('Analyse chargée', 'Déjà calculée en arrière-plan — instantané !');
+    } else {
+      await runAnalysis(g.pgn, g);
+    }
+  } catch(error) {
+    console.error('[ChessQuest] Impossible d’ouvrir le bilan :', error);
+    document.getElementById('analysis-progress').classList.add('hidden');
+    document.getElementById('no-game-msg').classList.remove('hidden');
   }
 }
 initGameView();

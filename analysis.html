@@ -17,7 +17,7 @@
 <link rel="stylesheet" href="assets/css/variables.css">
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/layout.css">
-<link rel="stylesheet" href="assets/css/components.css?v=104">
+<link rel="stylesheet" href="assets/css/components.css?v=105">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/analysis.css">
 <link rel="stylesheet" href="assets/css/polish.css">
@@ -72,7 +72,7 @@
 <script src="assets/js/chesscom.js"></script>
 <script src="assets/js/firebase-sync.js?v=104"></script>
 <script src="assets/js/animations.js"></script>
-<script src="assets/js/app.js?v=107"></script>
+<script src="assets/js/app.js?v=108"></script>
 <script src="assets/js/mascot-coach.js?v=44"></script>
 <script>
 let fetchedGames = [];
@@ -172,8 +172,12 @@ async function refreshStatuses(games){
 function openGame(index){
   const game = fetchedGames[index];
   if(!game) return;
-  sessionStorage.setItem('cq_selected_game',JSON.stringify(game));
-  location.href = 'game-view.html';
+  const serialized = JSON.stringify(game);
+  // sessionStorage est parfois vidé par iOS lorsqu'une PWA change de document.
+  // localStorage garantit que le bilan pourra toujours restaurer la partie.
+  try { sessionStorage.setItem('cq_selected_game', serialized); } catch(e) {}
+  try { localStorage.setItem('cq_selected_game', serialized); } catch(e) {}
+  location.assign('game-view.html');
 }
 
 function refreshChessComUI(){

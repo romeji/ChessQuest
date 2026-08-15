@@ -236,33 +236,15 @@ function initQuestNotifications(){
   }
 }
 
-/* La cloche reste fixe, mais se range à côté du compteur propre à la page au
-   lieu de le recouvrir. Le calcul s'adapte au viewport et aux safe areas. */
+/* La cloche est un contrôle global : elle ne doit jamais dépendre de la mise
+   en page d'un écran. Les anciens calculs basés sur les compteurs de chaque
+   page produisaient des positions différentes au changement de vue. */
 function positionQuestNotifications(root=document.getElementById('quest-notifications')){
   if(!root) return;
-  const anchor=document.querySelector([
-    '.home-final-tools .home-fire-chip',
-    '.problem-journey-topbar .problem-rating',
-    '.opening-swipe-header .opening-match-button',
-    '.quest-page-title .quest-currency',
-    '.shop-header .quest-currency'
-  ].join(','));
   root.classList.remove('header-adjacent');
   root.style.removeProperty('--quest-notification-left');
-  root.style.removeProperty('--quest-notification-top');
   root.style.removeProperty('--quest-notification-panel-left');
-  if(!anchor || getComputedStyle(anchor).display==='none') return;
-  const box=anchor.getBoundingClientRect();
-  const bellSize=42,gap=7,edge=8;
-  let left=box.left-bellSize-gap;
-  if(left<edge) left=Math.min(innerWidth-bellSize-edge,box.right+gap);
-  const top=Math.max(edge,box.top+(box.height-bellSize)/2);
-  const panelWidth=Math.min(356,innerWidth-28);
-  const panelAbsoluteLeft=Math.max(14,Math.min(innerWidth-panelWidth-14,left+bellSize-panelWidth));
-  root.style.setProperty('--quest-notification-left',`${Math.round(left)}px`);
-  root.style.setProperty('--quest-notification-top',`${Math.round(top)}px`);
-  root.style.setProperty('--quest-notification-panel-left',`${Math.round(panelAbsoluteLeft-left)}px`);
-  root.classList.add('header-adjacent');
+  root.style.setProperty('--quest-notification-top','max(12px, calc(env(safe-area-inset-top, 0px) + 8px))');
 }
 if(!window.__questNotificationPositionListener){
   window.addEventListener('resize',()=>requestAnimationFrame(()=>positionQuestNotifications()),{passive:true});
