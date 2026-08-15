@@ -16,7 +16,7 @@ const QUEST_TOUR = [
   ['Résous, gagne de l’XP','Chaque problème réussi te rapporte de l’XP. Trois problèmes quotidiens font avancer ton pion sur la carte et remplissent ton coffre.','encourage'],
   ['Ton ELO tactique évolue','L’ELO affiché au-dessus de la carte mesure ta progression dans les problèmes. Plus les paliers montent, plus les positions deviennent exigeantes.','haughty'],
   ['Débloque les ouvertures','Maîtrise une ligne pour ouvrir la suivante. Les cours expliquent les idées, puis l’échiquier vérifie que tu sais vraiment les jouer.','encourage'],
-  ['Les couronnes ont une utilité','Gagne des couronnes dans les défis, analyses et ouvertures. Dépense-les dans la boutique pour les plateaux, pièces et niveaux secrets.','ecstatic'],
+  ['Les pièces d’argent ont une utilité','Gagne des pièces dans les défis, analyses et ouvertures. Dépense-les dans la boutique pour les plateaux, pièces et niveaux secrets.','ecstatic'],
   ['Tes parties deviennent des leçons','Ton pseudo Chess.com permet de conserver tes parties récentes, d’analyser tes erreurs et de créer des exercices personnels. Oui, je surveille tout.','haughty']
 ];
 

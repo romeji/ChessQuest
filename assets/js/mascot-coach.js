@@ -83,11 +83,11 @@ document.addEventListener('quest:currency',event => {
   if(amount > 0){
     const floater = document.createElement('div');
     floater.className = 'currency-float';
-    floater.textContent = `♛ +${amount}`;
+    floater.textContent = `🪙 +${amount}`;
     document.body.appendChild(floater);
     setTimeout(() => floater.remove(), 1350);
   }
-  if(amount >= 30) showMascotReaction('treasure',`+${amount} couronnes.`,{toast:true,speak:false});
+  if(amount >= 30) showMascotReaction('treasure',`+${amount} pièces d'argent.`,{toast:true,speak:false});
 });
 document.addEventListener('quest:purchase',event => {
   showMascotReaction('purchase',`${event.detail.item.name} rejoint ta collection.`,{toast:true});

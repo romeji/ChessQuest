@@ -156,10 +156,13 @@
     document.getElementById('opening-coach-copy').textContent=COACH_LINES[style];
     renderCards();
     const candidates=cards.map((card,index)=>({card,index,score:scoreFor(card)}));
-    candidates.sort((a,b)=>b.score-a.score);
+    /* Une recommandation ne doit jamais envoyer un débutant sur une île
+       verrouillée : on privilégie la meilleure île accessible, puis seulement
+       les scores des familles encore à débloquer. */
+    candidates.sort((a,b)=>Number(islandUnlocked(b.card))-Number(islandUnlocked(a.card)) || b.score-a.score);
     if(candidates[0]) activeIndex=candidates[0].index;
     updateDeck(); closeMatch();
-    if(typeof showToast==='function') showToast('Match trouvé',`${cards[activeIndex].island.title} correspond à ton style ${STYLE_LABELS[style].toLowerCase()}${islandUnlocked(cards[activeIndex])?'':' — poursuis le parcours pour la débloquer'}.`);
+    if(typeof showToast==='function') showToast('Recommandation prête',`${cards[activeIndex].island.title} correspond à ton style ${STYLE_LABELS[style].toLowerCase()}.`);
   }
 
   document.getElementById('opening-card-prev').onclick=()=>move(-1);

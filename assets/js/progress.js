@@ -5,7 +5,8 @@
    ============================================================ */
 
 const PROGRESS_KEY = 'chessQuestProgress';
-const QUEST_CURRENCY = Object.freeze({ name:'couronne', plural:'couronnes', icon:'♛' });
+/* Monnaie unique : une pièce d'argent lisible dans toute l'interface. */
+const QUEST_CURRENCY = Object.freeze({ name:'pièce', plural:'pièces', icon:'🪙' });
 const QUEST_REWARDS = Object.freeze({
   puzzle:2,
   daily:35,
