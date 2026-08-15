@@ -32,7 +32,7 @@ function defaultProgress(){
       crowns: 120,
       owned: ['board-royal','pieces-classic'],
       equippedBoard: 'board-royal',
-      equippedPieces: 'pieces-classic',
+      equippedPieces: 'pieces-gilded',
       equippedBackground: 'background-ivory',
       treasures: {},
       secrets: []
@@ -134,7 +134,7 @@ const QUEST_STORE = [
   {id:'pieces-classic', type:'pieces', name:'Armée classique', desc:'Les pièces officielles de ton royaume.', price:0, icon:'♞'},
   {id:'pieces-silver', type:'pieces', name:'Garde d’argent', desc:'Un léger éclat argenté pour tes pièces.', price:95, icon:'♘'},
   {id:'pieces-ivory', type:'pieces', name:'Ivoire enchanté', desc:'Un éclat doux et sculpté.', price:220, icon:'♘'},
-  {id:'pieces-gilded', type:'pieces', name:'Garde dorée', desc:'Une aura d’or autour de chaque pièce.', price:360, icon:'♛'},
+  {id:'pieces-gilded', type:'pieces', name:'Pièces d’or', desc:'Une finition dorée et lisible sur chaque pièce.', price:0, icon:'♛'},
   {id:'pieces-arcane', type:'pieces', name:'Armée arcanique', desc:'Une lueur violette venue des archives.', price:420, icon:'♝'},
   {id:'background-night', type:'background', name:'Arène nocturne', desc:'Un décor noir immersif inspiré des salles d’entraînement.', price:280, colors:['#211f1d','#080808']},
   {id:'secret-tactics', type:'secret', name:'Le Cabinet des fourchettes', desc:'Une série secrète de tactiques sournoises.', price:300, icon:'🗝️'},
@@ -149,6 +149,10 @@ function ensureEconomy(){
     if(economy[key] === undefined) economy[key] = Array.isArray(value) ? value.slice() : (value && typeof value === 'object' ? Object.assign({},value) : value);
   }
   economy.owned = Array.from(new Set([...(defaults.owned || []), ...(economy.owned || [])]));
+  if(economy.equippedPieces === 'pieces-classic' || economy.equippedPieces === 'pieces-silver'){
+    economy.equippedPieces = 'pieces-gilded';
+    economy.owned = Array.from(new Set([...economy.owned, 'pieces-gilded']));
+  }
   economy.treasures = economy.treasures || {};
   economy.secrets = economy.secrets || [];
   return economy;
