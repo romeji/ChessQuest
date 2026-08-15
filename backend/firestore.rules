@@ -44,5 +44,36 @@ service cloud.firestore {
       allow update: if false;
       allow delete: if false;
     }
+
+    // Parties amicales ChessQuest : le lien d'invitation permet au second
+    // joueur de rejoindre, puis seuls les deux participants voient/modifient
+    // la partie et son chat.
+    match /matches/{matchId} {
+      allow create: if request.auth != null
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.participantIds.size() == 1
+        && request.resource.data.participantIds.hasAny([request.auth.uid]);
+      // Un défi encore en attente peut être lu par le détenteur du lien afin
+      // qu'il puisse rejoindre la partie ; dès qu'il est actif il redevient privé.
+      allow read: if request.auth != null
+        && (resource.data.status == 'waiting'
+            || resource.data.participantIds.hasAny([request.auth.uid]));
+      allow update: if request.auth != null
+        && request.resource.data.participantIds.size() <= 2
+        && (resource.data.participantIds.hasAny([request.auth.uid])
+            || request.resource.data.participantIds.hasAny([request.auth.uid]));
+      allow delete: if request.auth != null && resource.data.ownerUid == request.auth.uid;
+
+      match /messages/{messageId} {
+        allow read: if request.auth != null
+          && get(/databases/$(database)/documents/matches/$(matchId)).data.participantIds.hasAny([request.auth.uid]);
+        allow create: if request.auth != null
+          && get(/databases/$(database)/documents/matches/$(matchId)).data.participantIds.hasAny([request.auth.uid])
+          && request.resource.data.senderUid == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() <= 160;
+        allow update, delete: if false;
+      }
+    }
   }
 }
