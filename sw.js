@@ -1,10 +1,12 @@
-const CACHE_VERSION = 'chessquest-v116';
+const CACHE_VERSION = 'chessquest-v117';
 const APP_SHELL = [
   './',
   './index.html',
   './learn.html',
   './openings.html',
   './training-game.html',
+  './friends.html',
+  './friend-game.html',
   './training-target.html',
   './daily-challenge.html',
   './coach.html',
