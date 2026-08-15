@@ -141,7 +141,7 @@ ol.move-list .empty{color:var(--text-dim);grid-column:1/-1;padding:8px 0;}
 .toast .toast-desc{font-size:0.78rem;color:var(--cream);opacity:0.85;}
 
 /* ---- Centre de notifications ---- */
-.quest-notifications{position:fixed!important;z-index:150;left:auto!important;right:max(12px,env(safe-area-inset-right,0px))!important;top:var(--quest-notification-top,max(12px,calc(env(safe-area-inset-top,0px) + 8px)))!important;bottom:auto!important;pointer-events:none;transition:top .18s ease;}
+.quest-notifications{position:fixed!important;z-index:150;left:auto!important;right:max(12px,env(safe-area-inset-right,0px))!important;top:max(12px,calc(env(safe-area-inset-top,0px) + 8px))!important;bottom:auto!important;margin:0!important;transform:none!important;contain:layout paint style;pointer-events:none;transition:none!important;}
 html.cq-has-tabbar .quest-notifications{top:var(--quest-notification-top,max(14px,calc(env(safe-area-inset-top,0px) + 10px)));bottom:auto}
 .quest-notifications.header-adjacent{left:var(--quest-notification-left,auto);right:auto;}
 .quest-notification-toggle{position:relative;width:42px;height:42px;border:1px solid rgba(244,204,91,.7);border-radius:50%;background:linear-gradient(145deg,#0f8056,#034433);color:#fff8dc;box-shadow:0 8px 20px rgba(0,47,34,.28),inset 0 1px rgba(255,255,255,.24);display:grid;place-items:center;cursor:pointer;pointer-events:auto;transition:transform .18s ease,filter .18s ease;}

@@ -237,6 +237,16 @@ function positionQuestNotifications(root=document.getElementById('quest-notifica
   root.classList.remove('header-adjacent');
   root.style.removeProperty('--quest-notification-left');
   root.style.removeProperty('--quest-notification-panel-left');
+  /* Ne jamais laisser la cloche hériter d'un déplacement de page. Les écrans
+     qui possèdent leur propre zone de scroll (Accueil, Profil, Observer) ne
+     peuvent donc plus l'embarquer pendant le défilement. */
+  root.style.position='fixed';
+  root.style.left='auto';
+  root.style.right='max(12px, env(safe-area-inset-right, 0px))';
+  root.style.top='max(12px, calc(env(safe-area-inset-top, 0px) + 8px))';
+  root.style.bottom='auto';
+  root.style.transform='none';
+  root.style.margin='0';
   root.style.setProperty('--quest-notification-top','max(12px, calc(env(safe-area-inset-top, 0px) + 8px))');
 }
 if(!window.__questNotificationPositionListener){
