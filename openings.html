@@ -142,15 +142,24 @@ function firstMovesText(){
   for(let i=0;i<moves.length;i+=2) pairs.push(`${Math.floor(i/2)+1}. ${moves[i] || ''} ${moves[i+1] || ''}`.trim());
   return pairs.join('   ');
 }
-function openingMoveSymbol(san){
-  return ({N:'♘',B:'♗',R:'♖',Q:'♕',K:'♔'})[String(san||'').charAt(0)] || '♙';
+function openingMovePiece(san){
+  const first=String(san||'').charAt(0);
+  return ({N:['cavalier','N'],B:['fou','B'],R:['tour','R'],Q:['dame','Q'],K:['roi','K']})[first] || ['pion','P'];
+}
+function openingMoveDestination(san){
+  const raw=String(san||'').replace(/[+#?!]+$/g,'');
+  if(/^O-O/.test(raw)) return raw==='O-O-O'?'grand roque':'petit roque';
+  return (raw.match(/[a-h][1-8](?:=[QRBN])?$/)||[raw])[0];
 }
 function firstMovesMarkup(){
   if(!currentLine) return '';
   const moves=currentLine.moves.slice(0,4);
   const pairs=[];
   for(let i=0;i<moves.length;i+=2){
-    const rendered=moves.slice(i,i+2).map(move=>`<span class="opening-memory-move"><i aria-hidden="true">${openingMoveSymbol(move.san)}</i><b>${escapeHtml(frenchSan(move.san))}</b></span>`).join('');
+    const rendered=moves.slice(i,i+2).map((move,moveOffset)=>{
+      const [name,piece]=openingMovePiece(move.san),color=(i+moveOffset)%2===0?'w':'b';
+      return `<span class="opening-memory-move"><img src="assets/chesspieces/${color}${piece}.png" aria-hidden="true" alt=""><b>${name} ${escapeHtml(openingMoveDestination(move.san))}</b></span>`;
+    }).join('');
     pairs.push(`<span class="opening-memory-pair"><em>${Math.floor(i/2)+1}.</em>${rendered}</span>`);
   }
   return pairs.join('');

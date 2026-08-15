@@ -36,7 +36,7 @@ function defaultProgress(){
       treasures: {},
       secrets: []
     },
-    account: {uid:null,email:null,displayName:null}, onboardingVersion:0, onboarded: false,
+    account: {uid:null,email:null,displayName:null,photoURL:null}, onboardingVersion:0, onboarded: false,
     updatedAt: null
   };
 }
@@ -126,10 +126,12 @@ try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(PROGRESS)); }catch(error)
    ============================================================ */
 const QUEST_STORE = [
   {id:'board-royal', type:'board', name:'Jardin royal', desc:'Le vert crème emblématique de ChessQuest.', price:0, colors:['#f2ecd8','#6f9a63']},
+  {id:'board-slate', type:'board', name:'Ardoise', desc:'Un plateau gris moderne, sobre et lisible.', price:75, colors:['#e0ded8','#747a7d']},
   {id:'board-amethyst', type:'board', name:'Améthyste', desc:'Un plateau violet digne de la cour.', price:180, colors:['#eadffc','#7851a9']},
   {id:'board-midnight', type:'board', name:'Minuit', desc:'Bleu nuit et or pour les longues batailles.', price:260, colors:['#d6dbe8','#263651']},
   {id:'board-candy', type:'board', name:'Confiserie', desc:'Rose et vanille, étonnamment redoutable.', price:320, colors:['#fff0dc','#d77f9e']},
   {id:'pieces-classic', type:'pieces', name:'Armée classique', desc:'Les pièces officielles de ton royaume.', price:0, icon:'♞'},
+  {id:'pieces-silver', type:'pieces', name:'Garde d’argent', desc:'Un léger éclat argenté pour tes pièces.', price:95, icon:'♘'},
   {id:'pieces-ivory', type:'pieces', name:'Ivoire enchanté', desc:'Un éclat doux et sculpté.', price:220, icon:'♘'},
   {id:'pieces-gilded', type:'pieces', name:'Garde dorée', desc:'Une aura d’or autour de chaque pièce.', price:360, icon:'♛'},
   {id:'pieces-arcane', type:'pieces', name:'Armée arcanique', desc:'Une lueur violette venue des archives.', price:420, icon:'♝'},
@@ -176,6 +178,14 @@ function purchaseStoreItem(id){
   economy.owned.push(id);
   if(item.type === 'secret' && !economy.secrets.includes(id)) economy.secrets.push(id);
   saveProgress();
+  /* On équipe immédiatement les objets visuels : l'achat est visible dès
+     le retour de la boutique, et il est inclus dans la même sauvegarde. */
+  if(['board','pieces','background'].includes(item.type)){
+    if(item.type === 'board') economy.equippedBoard = item.id;
+    if(item.type === 'pieces') economy.equippedPieces = item.id;
+    if(item.type === 'background') economy.equippedBackground = item.id;
+    saveProgress(); applyQuestCosmetics();
+  }
   document.dispatchEvent(new CustomEvent('quest:purchase',{detail:{item,balance:crownBalance()}}));
   return {ok:true, item};
 }

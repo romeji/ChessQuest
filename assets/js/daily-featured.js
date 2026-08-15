@@ -40,7 +40,7 @@ function onFeaturedDrop(from,to){
 }
 function playFeaturedReply(){
   const reply=featuredMoveObject(featuredProblem.line[featuredLineIndex]);if(!reply){finishFeaturedProblem();return;}
-  featuredGame.move(reply.san);featuredLineIndex++;featuredSnapshots.push(featuredGame.fen());featuredCursor=featuredSnapshots.length-1;featuredBoard.position(featuredGame.fen(),false);highlightMove('#daily-board',reply.from,reply.to);renderFeaturedStatus();
+  featuredGame.move(reply.san);featuredLineIndex++;featuredSnapshots.push(featuredGame.fen());featuredCursor=featuredSnapshots.length-1;featuredBoard.position(featuredGame.fen(),true);highlightMove('#daily-board',reply.from,reply.to);renderFeaturedStatus();
   if(featuredLineIndex>=featuredProblem.line.length)finishFeaturedProblem();
 }
 function renderFeaturedStatus(){

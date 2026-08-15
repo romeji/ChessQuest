@@ -32,6 +32,15 @@
 </head>
 <body data-page="play" class="final-shell-page training-final-page">
 <div id="toast-container"></div>
+<section class="training-setup-modal" id="training-setup-modal" role="dialog" aria-modal="true" aria-labelledby="training-setup-title">
+  <div class="training-setup-card">
+    <header><a class="subpage-back" href="index.html" aria-label="Retour">‹</a><h1 id="training-setup-title">Jouer avec l’entraîneur</h1></header>
+    <div class="training-setup-coach"><img src="assets/illustrations/mascot-coach-encourage.webp" alt="Le coach"><p>Bienvenue ! Choisis le niveau qui te convient : je m’adapterai, mais je ne ferai pas semblant de perdre.</p></div>
+    <label class="training-setup-field">Niveau de l’entraîneur<select id="training-setup-elo" aria-label="Niveau de l’entraîneur"></select></label>
+    <p class="training-setup-note">Tu joues les Blancs. Le bouton « Revenir » reste disponible pendant toute la partie.</p>
+    <button class="training-setup-start" id="training-setup-start" type="button">Jouer</button>
+  </div>
+</section>
 <main class="app">
   <section class="page">
     <header class="final-page-title">

@@ -206,7 +206,7 @@ async function hydrateQuestProgress(user){
   const shouldApply=!!remote?.progress && (localOwner!==user.uid || remoteTime>=localTime);
   if(shouldApply && typeof replaceProgressSnapshot==='function') replaceProgressSnapshot(remote.progress);
 
-  PROGRESS.account={uid:user.uid,email:user.email||null,displayName:user.displayName||'Joueur'};
+  PROGRESS.account={uid:user.uid,email:user.email||null,displayName:user.displayName||'Joueur',photoURL:user.photoURL||null};
   saveProgress({localOnly:true,preserveTimestamp:shouldApply});
   installQuestCloudListeners();
   if(!remote?.progress || !shouldApply) await uploadQuestProgress();
@@ -230,7 +230,7 @@ function finishQuestEntry(){
 }
 function storeQuestUser(user){
   if(!user) return;
-  PROGRESS.account={uid:user.uid,email:user.email||null,displayName:user.displayName||'Joueur'};
+  PROGRESS.account={uid:user.uid,email:user.email||null,displayName:user.displayName||'Joueur',photoURL:user.photoURL||null};
   saveProgress();
 }
 

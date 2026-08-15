@@ -344,5 +344,16 @@ document.getElementById('bot-elo-select').onchange = event => {
 };
 
 renderBotElo();
-newTrainingGame();
+function initTrainingSetup(){
+  const modal=document.getElementById('training-setup-modal');
+  const select=document.getElementById('training-setup-elo');
+  if(!modal || !select){ newTrainingGame(); return; }
+  select.innerHTML=BOT_LEVELS.map(level=>`<option value="${level.elo}">${level.elo} ELO · ${level.elo<=600?'Novice':level.elo<=1000?'Intermédiaire':level.elo<=1400?'Confirmé':'Expert'}</option>`).join('');
+  select.value=String(botElo);
+  document.getElementById('training-setup-start').onclick=()=>{
+    botElo=Number(select.value);PROGRESS.settings.botElo=botElo;saveProgress();renderBotElo();
+    modal.classList.add('hidden');newTrainingGame();
+  };
+}
+initTrainingSetup();
 watchBoardResize('tg-board', () => tgBoard, '.training-final-board-wrap');

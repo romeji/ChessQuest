@@ -173,7 +173,7 @@
       if(level===currentLevel){
         if(dailySolvedCount()>=3) showCoach('Tu as déjà gagné ton socle aujourd’hui. Reviens demain, champion impatient.');
         else location.href='puzzles.html?source=daily';
-      } else if(level<currentLevel) location.href='puzzles.html?source=random';
+      }
     });
     board.appendChild(button);
   }

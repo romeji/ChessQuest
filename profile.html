@@ -43,13 +43,14 @@
     <section class="quest-card profile-summary">
       <div class="profile-summary-main">
         <div>
-          <img class="profile-avatar" src="assets/illustrations/mascot-knight-home.png" alt="Avatar cavalier ChessQuest">
+          <img class="profile-avatar" id="profile-avatar" src="assets/illustrations/mascot-knight-home.png" alt="Avatar du joueur">
           <span class="profile-edit">✎</span>
         </div>
         <div class="profile-identity">
           <div class="profile-name" id="profile-name">Alex</div>
           <div class="profile-elo-label">ELO actuel</div>
           <div class="profile-elo" id="profile-elo">—</div>
+          <div class="profile-tactical-elo">♟ ELO tactique <b id="profile-tactical-elo">300</b></div>
           <div class="profile-rank">♛ <span id="profile-rank">Stratège</span></div>
         </div>
       </div>
@@ -61,15 +62,15 @@
     </section>
 
     <section class="quest-card profile-section">
-      <div class="profile-section-head"><strong>Badges obtenus</strong><a href="progress.html">Voir tout</a></div>
-      <div class="profile-badges">
+      <div class="profile-section-head"><strong>Badges obtenus</strong><a href="progress.html#badges">Voir tout</a></div>
+      <a class="profile-badges" href="progress.html#badges" aria-label="Voir tous les badges">
         <div class="profile-badge" title="Tacticien"></div>
         <div class="profile-badge" title="Visionnaire"></div>
         <div class="profile-badge" title="Finisseur"></div>
         <div class="profile-badge" title="Stratège"></div>
         <div class="profile-badge" title="Régulier"></div>
         <div class="profile-badge-more" id="profile-extra-badges">+0</div>
-      </div>
+      </a>
     </section>
 
     <section class="quest-card profile-section">
@@ -83,6 +84,7 @@
     </section>
 
     <a class="quest-card profile-progress-entry" href="progress.html"><span>📈</span><span><strong>Mes progrès</strong><small>Évolution ELO, régularité et objectifs</small></span><b>›</b></a>
+    <a class="quest-card profile-xp-entry" href="progress.html"><span>✦</span><span><strong>Niveau ChessQuest · <b id="profile-level">1</b></strong><small><i><b id="profile-xp-fill"></b></i><em id="profile-xp-copy">0 / 100 XP</em></small></span><b>›</b></a>
 
     <section class="quest-card profile-section">
       <div class="profile-section-head"><strong>Diagnostic du coach</strong><a href="training-target.html">M’entraîner</a></div>
@@ -159,7 +161,14 @@ function renderProfile(){
   const badges = computeBadges().filter(badge => badge.unlocked).length;
   document.getElementById('profile-gem-count').textContent = crownBalance();
   document.getElementById('profile-name').textContent = username;
+  const avatar=String(PROGRESS.account?.photoURL||'').trim();
+  if(avatar){ const image=document.getElementById('profile-avatar'); image.src=avatar; image.alt=`Photo de profil de ${username}`; }
   document.getElementById('profile-elo').textContent = current;
+  document.getElementById('profile-tactical-elo').textContent = Number(PROGRESS.puzzleRating||300);
+  const xp=Number(PROGRESS.xp||0),level=Math.floor(xp/100)+1,inLevel=xp%100;
+  document.getElementById('profile-level').textContent=level;
+  document.getElementById('profile-xp-fill').style.width=`${inLevel}%`;
+  document.getElementById('profile-xp-copy').textContent=`${inLevel} / 100 XP avant le niveau ${level+1}`;
   document.getElementById('profile-rank').textContent = profileRank(current);
   document.getElementById('profile-games').textContent = games.length;
   document.getElementById('profile-winrate').textContent = `${winrate}%`;
