@@ -26,9 +26,6 @@ body.opening-final-page{
   min-height:100%;
   background:var(--final-cream)!important;
 }
-body.puzzle-final-page .quest-notification-toggle,
-body.opening-final-page .quest-notification-toggle,
-body.training-final-page .quest-notification-toggle{display:none!important}
 .final-shell-page .app{
   width:min(100%,430px);
   max-width:430px;

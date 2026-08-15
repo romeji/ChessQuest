@@ -166,8 +166,6 @@
 }
 .opening-map-page .map-header .subpage-back svg{stroke:#fff}
 .opening-map-page .map-header-spacer{width:34px;height:34px}
-.opening-map-page .quest-notification-toggle,
-.opening-map-page .quest-notification-panel{display:none!important}
 .opening-map-page .world-switcher{
   position:absolute;
   z-index:12;

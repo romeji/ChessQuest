@@ -168,6 +168,19 @@ async function uploadQuestProgress(){
     return false;
   }
 }
+function questPublicHandle(user){
+  return String(PROGRESS.account?.handle || user?.displayName || 'joueur')
+    .trim().toLowerCase().replace(/[^a-z0-9_-]+/g,'-').replace(/^-+|-+$/g,'').slice(0,24) || `joueur-${String(user?.uid||'').slice(0,5)}`;
+}
+async function syncQuestPublicProfile(user){
+  if(!user || !firebase?.firestore) return;
+  try{
+    await firebase.firestore().collection('publicProfiles').doc(user.uid).set({
+      uid:user.uid, handle:questPublicHandle(user), displayName:user.displayName || 'Joueur', photoURL:user.photoURL || '',
+      updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    },{merge:true});
+  }catch(error){ console.warn('[ChessQuest] Annuaire amis différé',error); }
+}
 function scheduleQuestCloudUpload(){
   if(!questCloudRef) return;
   clearTimeout(questCloudTimer);
@@ -207,6 +220,7 @@ async function hydrateQuestProgress(user){
   if(shouldApply && typeof replaceProgressSnapshot==='function') replaceProgressSnapshot(remote.progress);
 
   PROGRESS.account={uid:user.uid,email:user.email||null,displayName:user.displayName||'Joueur',photoURL:user.photoURL||null};
+  syncQuestPublicProfile(user);
   saveProgress({localOnly:true,preserveTimestamp:shouldApply});
   installQuestCloudListeners();
   if(!remote?.progress || !shouldApply) await uploadQuestProgress();

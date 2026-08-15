@@ -131,6 +131,11 @@ function questNotificationState(){
 }
 function questNotifications(){
   const items = [];
+  const invites = Array.isArray(PROGRESS.friendInvitations) ? PROGRESS.friendInvitations : [];
+  invites.filter(invite=>invite.status==='waiting').forEach(invite=>items.push({
+    id:`invite-${invite.id}`, icon:'⚔️', title:`Défi de ${invite.senderName || 'un ami'}`,
+    text:`${invite.timeLabel || 'Partie amicale'} · appuie pour accepter.`, href:`friends.html?invite=${encodeURIComponent(invite.id)}`, priority:10
+  }));
   if(typeof ensureDailyProgressFresh === 'function' && typeof todayChallenge === 'function'){
     ensureDailyProgressFresh();
     const challenge = todayChallenge();
@@ -162,18 +167,6 @@ function questNotifications(){
 }
 function initQuestNotifications(){
   if(document.getElementById('quest-notifications')) return;
-  /* La cloche appartient aux hubs de l'application. Sur un échiquier, un
-     cours ou une partie immersive, elle masquerait forcément une commande. */
-  const stableNotificationSurface = document.body.matches([
-    '[data-page="home"]',
-    '.problem-journey-page',
-    '.opening-swipe-page',
-    '.profile-page',
-    '.progress-page',
-    '.analysis-page',
-    '.shop-page'
-  ].join(','));
-  if(!stableNotificationSurface) return;
   const items = questNotifications();
   const root = document.createElement('aside');
   root.id = 'quest-notifications';
@@ -254,6 +247,17 @@ if(!window.__questNotificationPositionListener){
   window.__questNotificationPositionListener=true;
 }
 document.addEventListener('DOMContentLoaded', initQuestNotifications);
+let questInviteUnsubscribe=null;
+async function installQuestInvitationNotifications(){
+  if(questInviteUnsubscribe || !window.firebase?.firestore || typeof questCurrentUser!=='function') return;
+  const user=await questCurrentUser(); if(!user) return;
+  questInviteUnsubscribe=firebase.firestore().collection('invitations').where('recipientUid','==',user.uid).where('status','==','waiting').limit(12).onSnapshot(snapshot=>{
+    PROGRESS.friendInvitations=snapshot.docs.map(doc=>Object.assign({id:doc.id},doc.data()));
+    saveProgress({localOnly:true});
+    document.getElementById('quest-notifications')?.remove(); initQuestNotifications();
+  },error=>console.warn('[ChessQuest] Invitations indisponibles',error));
+}
+window.addEventListener('load',()=>setTimeout(installQuestInvitationNotifications,900));
 window.addEventListener('cq:chesscom-sync', () => {
   const existing = document.getElementById('quest-notifications');
   if(existing) existing.remove();
