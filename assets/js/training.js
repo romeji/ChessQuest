@@ -29,6 +29,7 @@ let tgBotThinking = false;
 let tgSelectedSquare = null;
 let tgSession = 0;
 let tgHistoryCursor = 0;
+let playerColor = 'w';
 
 function trainingPositionAt(ply){
   const replay=new Chess();
@@ -113,7 +114,7 @@ function ensureTgBoard(){
   if(tgBoard) return;
   tgBoard = Chessboard('tg-board', {
     position:'start', draggable:true, pieceTheme: PIECE_THEME, showNotation:false,
-    onDragStart:(source)=>{ if(tgGame && !tgOver && !tgBotThinking && tgGame.turn()==='w') showLegalMoveDots('#tg-board',tgGame,source); },
+    onDragStart:(source)=>{ if(tgGame && !tgOver && !tgBotThinking && tgGame.turn()===playerColor) showLegalMoveDots('#tg-board',tgGame,source); },
     onDrop: onTgDrop, onSnapEnd: () => { clearLegalMoveDots('#tg-board'); if(tgGame) tgBoard.position(tgGame.fen()); }
   });
   renderCoords('tg-ranks', 'tg-files', 'white');
@@ -127,11 +128,11 @@ function clearTgSelection(){
   tgSelectedSquare = null;
 }
 function tgSquareClick(square){
-  if(!tgGame || tgOver || tgBotThinking || tgGame.turn() !== 'w') return;
+  if(!tgGame || tgOver || tgBotThinking || tgGame.turn() !== playerColor) return;
   if(tgSelectedSquare === square){ clearTgSelection(); return; }
   if(tgSelectedSquare === null){
     const piece = tgGame.get(square);
-    if(piece && piece.color === 'w'){
+    if(piece && piece.color === playerColor){
       tgSelectedSquare = square;
       $(`#tg-board [data-square="${square}"]`).addClass('selected-square');
       showLegalMoveDots('#tg-board',tgGame,square);
@@ -160,9 +161,9 @@ function newTrainingGame(){
   tgOver = false;
   tgBotThinking = false;
   ensureTgBoard();
-  tgBoard.orientation('white');
+  tgBoard.orientation(playerColor === 'b' ? 'black' : 'white');
   tgBoard.start();
-  renderCoords('tg-ranks', 'tg-files', 'white');
+  renderCoords('tg-ranks', 'tg-files', playerColor === 'b' ? 'black' : 'white');
   clearHighlights('#tg-board');
   clearTgSelection();
   hideCoach();
@@ -173,11 +174,16 @@ function newTrainingGame(){
   renderTgMoveLog();
   renderTrainingMoveBrowser(0);
   fitBoards('tg-board', tgBoard, '.training-final-board-wrap');
+  if(playerColor === 'b'){
+    tgBotThinking = true;
+    const session = tgSession;
+    setTimeout(()=>{ if(session === tgSession) playBotMove(); }, 500);
+  }
 }
 
 function onTgDrop(source, target){
   if(tgOver || tgBotThinking) return 'snapback';
-  if(tgGame.turn() !== 'w') return 'snapback';
+  if(tgGame.turn() !== playerColor) return 'snapback';
   const moveObj = tgGame.move({from:source, to:target, promotion:'q'});
   if(moveObj === null) return 'snapback';
   clearTgSelection();
@@ -253,7 +259,7 @@ function checkTgGameOver(){
   setTrainingRestartButton(true);
   let result, won = false, crownReward = 0;
   if(tgGame.in_checkmate()){
-    won = tgGame.turn() !== 'w';
+    won = tgGame.turn() !== playerColor;
     result = won ? 'Échec et mat — tu as gagné ! 🏆' : 'Échec et mat — le bot gagne cette fois.';
     crownReward = won ? QUEST_REWARDS.trainingWin : 0;
   } else if(tgGame.in_draw() || tgGame.in_stalemate() || tgGame.in_threefold_repetition()){
@@ -354,6 +360,8 @@ function initTrainingSetup(){
   select.value=String(botElo);
   document.getElementById('training-setup-start').onclick=()=>{
     botElo=Number(select.value);PROGRESS.settings.botElo=botElo;saveProgress();renderBotElo();
+    const selected=document.querySelector('input[name="training-color"]:checked')?.value || 'w';
+    playerColor = selected === 'random' ? (Math.random() < .5 ? 'w' : 'b') : selected;
     modal.classList.add('hidden');newTrainingGame();
   };
 }
