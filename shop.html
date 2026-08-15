@@ -24,16 +24,16 @@
   <header class="shop-header">
     <a class="subpage-back" href="profile.html" aria-label="Retour au profil"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
     <h1>Boutique royale</h1>
-    <span class="shop-balance" id="shop-balance">♛ 0</span>
+    <span class="shop-balance" id="shop-balance">🪙 0</span>
   </header>
   <section class="shop-content">
     <div class="shop-hero">
       <img src="assets/illustrations/mascot-coach-haughty.webp" data-mascot-image alt="Le coach royal">
-      <div><h2>Un peu de distinction</h2><p data-mascot-text>Utilise tes couronnes pour personnaliser ton royaume. Je jugerai tes choix avec une grande impartialité, évidemment.</p></div>
+      <div><h2>Un peu de distinction</h2><p data-mascot-text>Utilise tes pièces d'argent pour personnaliser ton royaume. Je jugerai tes choix avec une grande impartialité, évidemment.</p></div>
     </div>
     <aside class="shop-howto" aria-label="Comment gagner des couronnes">
-      <span aria-hidden="true">♛</span>
-      <div><strong>Comment débloquer les objets ?</strong><p>Gagne des couronnes avec les puzzles, le défi quotidien, les parties d’entraînement, les analyses, les ouvertures maîtrisées et les trésors des cartes.</p></div>
+      <span aria-hidden="true">🪙</span>
+      <div><strong>Comment débloquer les objets ?</strong><p>Gagne des pièces avec les problèmes, le défi quotidien, les parties d'entraînement, les analyses, les ouvertures maîtrisées et les trésors des cartes.</p></div>
     </aside>
     <h2 class="shop-section-title">Plateaux</h2><div class="shop-grid" id="shop-boards"></div>
     <h2 class="shop-section-title">Armées</h2><div class="shop-grid" id="shop-pieces"></div>
@@ -63,7 +63,7 @@ function shopCard(item){
   </article>`;
 }
 function renderShop(){
-  document.getElementById('shop-balance').textContent = `♛ ${crownBalance()}`;
+  document.getElementById('shop-balance').textContent = `🪙 ${crownBalance()}`;
   document.getElementById('shop-boards').innerHTML = QUEST_STORE.filter(x=>x.type==='board').map(shopCard).join('');
   document.getElementById('shop-pieces').innerHTML = QUEST_STORE.filter(x=>x.type==='pieces').map(shopCard).join('');
   document.getElementById('shop-backgrounds').innerHTML = QUEST_STORE.filter(x=>x.type==='background').map(shopCard).join('');
@@ -77,10 +77,11 @@ function renderShop(){
     }
     const result = purchaseStoreItem(item.id);
     if(!result.ok){
-      showMascotReaction('locked',`Il te manque ${item.price-crownBalance()} couronnes.`,{imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]'});
+       showMascotReaction('locked',`Il te manque ${item.price-crownBalance()} pièces.`,{imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]'});
       return;
     }
     if(item.type !== 'secret') equipStoreItem(item.id);
+    if(typeof showToast === 'function') showToast('Objet débloqué', `${item.name} est maintenant disponible et équipé.`);
     renderShop();
   });
 }

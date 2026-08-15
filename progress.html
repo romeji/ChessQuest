@@ -71,15 +71,9 @@
       </section>
     </div>
 
-    <section class="quest-card progress-badges-card">
-      <div class="progress-card-head"><strong>Badges</strong><a href="profile.html">Voir tout ›</a></div>
-      <div class="progress-badge-row">
-        <div class="progress-badge-item"><div class="badge-shield"></div><span>Tacticien</span></div>
-        <div class="progress-badge-item"><div class="badge-shield"></div><span>Visionnaire</span></div>
-        <div class="progress-badge-item"><div class="badge-shield"></div><span>Finisseur</span></div>
-        <div class="progress-badge-item"><div class="badge-shield"></div><span>Stratège</span></div>
-        <div class="progress-badge-item"><div class="badge-shield"></div><span>Régulier</span></div>
-      </div>
+    <section class="quest-card progress-badges-card" id="badges">
+      <div class="progress-card-head"><strong>Badges</strong><a href="#badges" aria-label="Voir tous les badges">Voir tout ›</a></div>
+      <div class="progress-badge-row" id="progress-badge-list"></div>
     </section>
 
     <section class="quest-card progress-xp-card">
@@ -185,6 +179,10 @@ function renderProgress(){
   document.getElementById('weekly-xp').textContent = levelXp;
   document.getElementById('level-xp-target').textContent = XP_PER_LEVEL;
   document.getElementById('weekly-xp-fill').style.width = `${(levelXp / XP_PER_LEVEL) * 100}%`;
+  const badgeList = document.getElementById('progress-badge-list');
+  if(badgeList && typeof computeBadges === 'function'){
+    badgeList.innerHTML = computeBadges().map(badge => `<div class="progress-badge-item ${badge.unlocked ? '' : 'is-locked'}" title="${escapeHtml(badge.desc)}"><div class="badge-shield">${badge.unlocked ? '★' : '🔒'}</div><span>${escapeHtml(badge.name)}</span></div>`).join('');
+  }
   drawProgressChart(points,current);
 }
 

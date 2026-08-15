@@ -866,6 +866,9 @@
 .progress-badge-item:nth-child(4) .badge-shield{background-position:100% 0}
 .progress-badge-item:nth-child(5) .badge-shield{filter:hue-rotate(150deg)}
 .progress-badge-item span{display:block;font-size:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.progress-badge-item.is-locked{opacity:.42;filter:grayscale(.55)}
+.progress-badge-item .badge-shield{display:grid;place-items:center}
+@media (max-width:420px){.progress-badge-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px 6px}.progress-badge-item span{font-size:.58rem}}
 .progress-xp-card{position:relative;padding-right:76px}
 .progress-xp-card strong{display:block;font-size:.72rem}
 .progress-xp-value{margin:7px 0 8px;font-size:.68rem}

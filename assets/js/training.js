@@ -277,7 +277,7 @@ function checkTgGameOver(){
       icon:won?'🏆':(draw?'🤝':'♞'),tone:won?'success':'info',
       eyebrow:won?'Victoire contre l’entraîneur':(draw?'Partie nulle':'Partie terminée'),
       title:won?'Magnifique victoire !':(draw?'Belle résistance !':'On en rejoue une ?'),
-      message:`${result} Tu gagnes ${won?40:15} XP.${crownReward?` Et ${crownReward} couronne${crownReward>1?'s':''}.`:''}`,
+      message:`${result} Tu gagnes ${won?40:15} XP.${crownReward?` Et ${crownReward} pièce${crownReward>1?'s':''} d'argent.`:''}`,
       actions:[
         {label:'Rejouer',primary:true,onClick:newTrainingGame},
         {label:'Retour à l’accueil',href:'index.html'}
@@ -297,6 +297,8 @@ document.getElementById('resign-btn').onclick = () => {
   setTrainingRestartButton(true);
   recordActivity();
   addXP(5);
+  bumpDailyCounter('gamesPlayedToday');
+  checkNewBadges();
 };
 
 document.getElementById('undo-btn').onclick = () => {
