@@ -149,7 +149,7 @@ function loadDailyPuzzle(){
   const colorLabel = dailyGame.turn() === 'b' ? 'Noirs' : 'Blancs';
   document.getElementById('daily-question').textContent = `Quel est le meilleur coup pour les ${colorLabel} ?`;
   document.getElementById('daily-coach-text').textContent = puzzle.hint || 'Cherche d’abord les échecs, puis les prises et les menaces.';
-  const hintButton=document.getElementById('daily-hint-button'); if(hintButton){hintButton.disabled=false;hintButton.textContent='Indice';}
+const hintButton=document.getElementById('daily-hint-button'); if(hintButton){hintButton.disabled=false;hintButton.innerHTML='<b>?</b><span>Indication</span>';}
   const solution = puzzle.solution.replace(/[!?]+$/,'');
   const moverColor = dailyGame.turn();
   const options = buildMcqOptions(dailyGame,solution,4);
