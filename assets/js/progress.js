@@ -17,7 +17,7 @@ const QUEST_REWARDS = Object.freeze({
 
 function defaultProgress(){
   return {
-    mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal', voiceName:null, soundEnabled:true, chessComUsername:''},
+    mastered:{}, attempts:{}, games:[], settings:{engineSpeed:'normal', voiceName:null, soundEnabled:true, chessComUsername:'', appTheme:'light'},
     chessCom:{ username:'', games:[], lastSync:null, syncing:false },
     mistakes: [], solvedMistakeIds: [], mistakeReviewHistory: [], completedTargets: [], puzzleRating: 300, puzzleRatingVersion: 2, puzzleRatingHistory: [], puzzlesSolved: 0, puzzlesFailed: 0,
     puzzleStreak: 0, puzzleBestStreak: 0, puzzleBattleScores:{30:[],45:[],60:[]},
@@ -194,6 +194,8 @@ function applyQuestCosmetics(){
   document.documentElement.dataset.boardSkin = (economy.equippedBoard || 'board-royal').replace('board-','');
   document.documentElement.dataset.pieceSkin = (economy.equippedPieces || 'pieces-classic').replace('pieces-','');
   document.documentElement.dataset.backgroundSkin = (economy.equippedBackground || 'background-ivory').replace('background-','');
+  document.documentElement.dataset.questTheme = PROGRESS.settings?.appTheme === 'dark' ? 'dark' : 'light';
+  if(typeof window.applyQuestAppearance === 'function') window.applyQuestAppearance(PROGRESS);
 }
 function worldTreasureReward(worldNumber){ return 80 + Math.max(0, Number(worldNumber || 1) - 1) * 20; }
 function claimWorldTreasure(worldId, worldNumber){

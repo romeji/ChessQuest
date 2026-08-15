@@ -56,6 +56,13 @@
     </div>
     <p class="section-sub" id="engine-speed-hint">~0,45 s par coup — bon équilibre vitesse/précision.</p>
 
+    <label class="field-label">Thème de l'application</label>
+    <div class="segmented" id="app-theme-picker" style="margin:10px 0 16px;">
+      <button data-theme="light">Clair</button>
+      <button data-theme="dark">Sombre</button>
+    </div>
+    <p class="section-sub">Le thème sombre gris anthracite réduit l'éblouissement tout en conservant les couleurs des échiquiers.</p>
+
     <label class="field-label">Effets sonores</label>
     <div style="margin:10px 0 20px;"><button class="tts-btn active" id="sound-toggle">Sons activés</button></div>
     </section>
@@ -109,6 +116,16 @@ document.querySelectorAll('#engine-speed-picker button').forEach(b=>{
     PROGRESS.settings.engineSpeed = this.dataset.speed;
     document.getElementById('engine-speed-hint').textContent = ENGINE_SPEED_HINTS[this.dataset.speed] || '';
     saveProgress();
+  };
+});
+
+document.querySelectorAll('#app-theme-picker button').forEach(button=>{
+  button.classList.toggle('active', button.dataset.theme === (PROGRESS.settings.appTheme || 'light'));
+  button.onclick = function(){
+    PROGRESS.settings.appTheme = this.dataset.theme === 'dark' ? 'dark' : 'light';
+    saveProgress();
+    applyQuestCosmetics();
+    document.querySelectorAll('#app-theme-picker button').forEach(item=>item.classList.toggle('active',item===this));
   };
 });
 

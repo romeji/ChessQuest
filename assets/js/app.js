@@ -329,4 +329,4 @@ function initPwa(){
 initPwa();
 
 const questThemeMeta = document.querySelector('meta[name="theme-color"]');
-if(questThemeMeta) questThemeMeta.setAttribute('content', '#063427');
+if(questThemeMeta) questThemeMeta.setAttribute('content', document.documentElement.dataset.questTheme === 'dark' ? '#262522' : '#063427');

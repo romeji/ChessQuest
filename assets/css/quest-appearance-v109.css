@@ -1,0 +1,36 @@
+/* Apparence ChessQuest globale : thème de l'application et objets équipés. */
+html[data-board-skin="royal"]{--quest-light:#f5edda;--quest-dark:#6f9862}
+html[data-board-skin="amethyst"]{--quest-light:#eadffc;--quest-dark:#7851a9}
+html[data-board-skin="midnight"]{--quest-light:#d6dbe8;--quest-dark:#263651}
+html[data-board-skin="candy"]{--quest-light:#fff0dc;--quest-dark:#d77f9e}
+html[data-board-skin] .white-1e1d7{background-color:var(--quest-light)!important;color:var(--quest-dark)!important}
+html[data-board-skin] .black-3c85d{background-color:var(--quest-dark)!important;color:var(--quest-light)!important}
+html[data-piece-skin="ivory"] .piece-417db{filter:saturate(.65) brightness(1.12) drop-shadow(0 2px 1px rgba(68,48,28,.28))!important}
+html[data-piece-skin="gilded"] .piece-417db{filter:sepia(.62) saturate(1.55) hue-rotate(350deg) drop-shadow(0 0 3px #e6b53d)!important}
+html[data-piece-skin="arcane"] .piece-417db{filter:saturate(1.35) hue-rotate(38deg) drop-shadow(0 0 4px #9e63ef)!important}
+
+html[data-quest-theme="dark"]{
+  color-scheme:dark;
+  --bg:#262522;--bg-panel:#312e2b;--bg-panel-2:#3a3836;--line:#4b4844;
+  --navy:#f4f1e8;--navy-2:#d6d1c8;--ink:#f4f1e8;--text:#eeeae1;
+  --text-dim:#b8b2a9;--cream:#262522;--shadow:0 10px 26px rgba(0,0,0,.28);
+}
+html[data-quest-theme="dark"] body:not(.opening-map-page):not(.problem-journey-page){background:#262522!important;color:var(--text)}
+html[data-quest-theme="dark"] body:not(.opening-map-page):not(.problem-journey-page) .app,
+html[data-quest-theme="dark"] body:not(.opening-map-page):not(.problem-journey-page) .page{background:#262522!important;color:var(--text)}
+html[data-quest-theme="dark"] :is(.card,.final-card,.settings-group,.profile-card,.analysis-card,.lesson-card,.course-card,.target-card,.result-card,.move-history,.opening-info-card,.shop-card,.shop-howto){background:#312e2b!important;color:#f4f1e8!important;border-color:#4b4844!important}
+html[data-quest-theme="dark"] :is(h1,h2,h3,h4,.lesson-title,.section-title,.field-label,strong){color:#f4f1e8}
+html[data-quest-theme="dark"] :is(input,select,textarea,.segmented){background:#3a3836!important;color:#f4f1e8!important;border-color:#57534e!important}
+html[data-quest-theme="dark"] .segmented button:not(.active){color:#c8c2b8!important;background:transparent!important}
+html[data-quest-theme="dark"] .tabbar{background:#211f1d!important;border-color:#47433f!important}
+html[data-quest-theme="dark"] .tabbar a:not(.active){color:#aaa59d!important}
+html[data-quest-theme="dark"] .lesson-back,
+html[data-quest-theme="dark"] .subpage-back{background:#35322f!important;border-color:#504c47!important}
+html[data-quest-theme="dark"] .section-sub,
+html[data-quest-theme="dark"] small{color:#b8b2a9}
+html[data-quest-theme="dark"] :is(.home-final-analysis,.home-final-quick-card,.home-final-speech,.home-final-secondary-card){background:#312e2b!important;color:#f4f1e8!important;border-color:#4b4844!important}
+html[data-quest-theme="dark"] .home-final-speech::after{background:#312e2b!important}
+html[data-quest-theme="dark"] .home-final-brand{color:#f4f1e8!important}
+html[data-background-skin="night"] body:not(.opening-map-page):not(.problem-journey-page){background:#171614!important}
+html[data-background-skin="night"] body:not(.opening-map-page):not(.problem-journey-page) .app,
+html[data-background-skin="night"] body:not(.opening-map-page):not(.problem-journey-page) .page{background:linear-gradient(180deg,#252320,#111)!important;color:#f8f4e8}
