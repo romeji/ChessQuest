@@ -155,6 +155,9 @@ function ensureEconomy(){
   }
   economy.treasures = economy.treasures || {};
   economy.secrets = economy.secrets || [];
+  ['equippedBoard','equippedPieces','equippedBackground'].forEach(key=>{
+    if(economy[key] && !economy.owned.includes(economy[key])) economy.owned.push(economy[key]);
+  });
   return economy;
 }
 ensureEconomy();

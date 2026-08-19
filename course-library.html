@@ -18,22 +18,45 @@
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
 <script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
+<link rel="stylesheet" href="assets/css/lessons-chesscom-authentic.css">
 </head>
 <body class="academy-page">
 <main class="academy-shell">
-  <header class="academy-header">
-    <a class="subpage-back" href="index.html" aria-label="Retour"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
-    <div><span>Académie ChessQuest</span><h1>Du premier coup au niveau expert</h1></div>
-  </header>
-  <section class="academy-hero">
-    <img src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest">
-    <div><strong>Pas de panique, débutant.</strong><p>On part de zéro. Un jour, tu comprendras même pourquoi je fronce les sourcils devant 1. f3.</p><small id="academy-total-progress"></small></div>
-  </section>
-  <nav class="academy-levels" aria-label="Niveaux de cours">
+  <div class="cq-lessons-top">
+    <a class="back-btn" href="learn.html" aria-label="Retour">←</a>
+    <h1>Leçons</h1>
+  </div>
+
+  <a class="cq-next-lesson" id="academy-next-lesson" href="course.html">
+    <div class="thumb">♟</div>
+    <div class="body">
+      <div class="eyebrow">Leçon suivante</div>
+      <div class="title" id="academy-next-title">Développez vos pièces</div>
+      <div class="sub" id="academy-total-progress"></div>
+    </div>
+    <div class="go">▶</div>
+  </a>
+
+  <div class="cq-lessons-tabs">
+    <button class="active" type="button" data-tab="category">Catégorie</button>
+    <button type="button" data-tab="level">Niveau</button>
+    <button type="button" data-tab="instructor">Instructeur</button>
+  </div>
+
+  <nav class="cq-lessons-levels" aria-label="Niveaux de cours">
     <button class="active" data-level="0">0–300</button><button data-level="300">300–700</button><button data-level="700">700–1200</button><button data-level="1200">1200–1800</button><button data-level="1800">1800+</button>
   </nav>
-  <section id="academy-courses" class="academy-courses"></section>
-  <section id="openings" class="academy-opening-library">
+
+  <a class="cq-featured-course" id="academy-featured-course" href="course.html">
+    <h2 id="academy-featured-title">Le mouvement des pièces</h2>
+    <div class="arrow-fab">→</div>
+  </a>
+  <p class="cq-featured-meta"><b id="academy-featured-title2">Le mouvement des pièces</b><br>ChessQuest Team · 🎓 <span id="academy-featured-count">13</span> leçons</p>
+
+  <section id="academy-courses" class="cq-lessons-list"></section>
+
+  <section id="openings" class="academy-opening-library" style="margin-top:26px;">
     <h2>Bibliothèque des ouvertures</h2>
     <p>Choisis une famille pour comprendre son histoire, ses idées et ses pièges avant de mémoriser les coups.</p>
     <div id="academy-openings"></div>
@@ -48,15 +71,28 @@ function renderCourses(level){
   const courses=writtenCoursesForLevel(level);
   document.getElementById('academy-courses').innerHTML=courses.map((course,index)=>{
     const complete=(PROGRESS.completedCourses||[]).includes(course.id);
-    return `<a class="academy-course-card ${complete?'complete':''}" href="course.html?id=${encodeURIComponent(course.id)}"><span>${escapeHtml(course.icon||String(index+1))}</span><div><h2>${escapeHtml(course.title)}</h2><p>${escapeHtml(course.summary)}</p><small>${escapeHtml(course.duration)} · +20 XP</small></div><b>${complete?'✓':'›'}</b></a>`;
+    return `<a class="${complete?'complete':''}" href="course.html?id=${encodeURIComponent(course.id)}"><span class="ic">${escapeHtml(course.icon||String(index+1))}</span><div class="body"><div class="title">${escapeHtml(course.title)}</div><div class="sub">${escapeHtml(course.summary)} · ${escapeHtml(course.duration)} · +20 XP</div></div><b>${complete?'✓':'›'}</b></a>`;
   }).join('');
+  const first = courses.find(course => !(PROGRESS.completedCourses||[]).includes(course.id)) || courses[0];
+  if(first){
+    document.getElementById('academy-featured-title').textContent = first.title;
+    document.getElementById('academy-featured-title2').textContent = first.title;
+    document.getElementById('academy-featured-count').textContent = courses.length;
+    document.getElementById('academy-featured-course').href = `course.html?id=${encodeURIComponent(first.id)}`;
+    document.getElementById('academy-next-title').textContent = first.title;
+    document.getElementById('academy-next-lesson').href = `course.html?id=${encodeURIComponent(first.id)}`;
+  }
 }
-document.querySelectorAll('[data-level]').forEach(button=>button.onclick=()=>{
-  document.querySelectorAll('[data-level]').forEach(item=>item.classList.remove('active'));
+document.querySelectorAll('.cq-lessons-levels [data-level]').forEach(button=>button.onclick=()=>{
+  document.querySelectorAll('.cq-lessons-levels [data-level]').forEach(item=>item.classList.remove('active'));
   button.classList.add('active');renderCourses(Number(button.dataset.level));
 });
+document.querySelectorAll('.cq-lessons-tabs button').forEach(tab=>tab.onclick=()=>{
+  document.querySelectorAll('.cq-lessons-tabs button').forEach(item=>item.classList.remove('active'));
+  tab.classList.add('active');
+});
 const completedCount=(PROGRESS.completedCourses||[]).filter(id=>writtenCourseById(id)).length;
-document.getElementById('academy-total-progress').textContent=`${completedCount} cours maîtrisé${completedCount>1?'s':''} sur ${WRITTEN_COURSES.length}`;
+document.getElementById('academy-total-progress').textContent=`✓ ${completedCount} cours maîtrisé${completedCount>1?'s':''} sur ${WRITTEN_COURSES.length}`;
 function recommendedAcademyLevel(){
   const state=PROGRESS.chessCom||{};
   const rapid=Number(state.stats?.chess_rapid?.last?.rating);
@@ -67,7 +103,7 @@ function recommendedAcademyLevel(){
   if(elo>=1800)return 1800;if(elo>=1200)return 1200;if(elo>=700)return 700;if(elo>=300)return 300;return 0;
 }
 const initialLevel=recommendedAcademyLevel();
-document.querySelectorAll('[data-level]').forEach(button=>button.classList.toggle('active',Number(button.dataset.level)===initialLevel));
+document.querySelectorAll('.cq-lessons-levels [data-level]').forEach(button=>button.classList.toggle('active',Number(button.dataset.level)===initialLevel));
 renderCourses(initialLevel);
 const featured=['italienne','espagnole','qgd','qga','slav','najdorf','carokann','francaise'].filter(key=>OPENINGS[key]);
 document.getElementById('academy-openings').innerHTML=featured.map(key=>`<a href="openings.html?opening=${encodeURIComponent(key)}"><strong>${escapeHtml(OPENINGS[key].name)}</strong><small>${escapeHtml(OPENINGS[key].intro||'Comprendre les idées de cette ouverture.')}</small><span>Lire et pratiquer ›</span></a>`).join('');

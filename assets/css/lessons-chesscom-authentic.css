@@ -1,0 +1,62 @@
+/* ============================================================
+   ChessQuest — Leçons "chess.com" (fidèle à la maquette)
+   ============================================================ */
+
+.cq-lessons-top{display:flex; align-items:center; gap:14px; padding:4px 0 16px;}
+.cq-lessons-top .back-btn{
+  width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.07);
+  display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:#f0ece2; text-decoration:none; flex-shrink:0;
+}
+.cq-lessons-top h1{font-size:1.15rem; font-weight:800; color:#f0ece2;}
+
+.cq-next-lesson{
+  display:flex; align-items:center; gap:14px; background:rgba(255,255,255,0.055); border-radius:16px; padding:12px 14px; margin-bottom:18px;
+  text-decoration:none;
+}
+.cq-next-lesson .thumb{
+  width:56px; height:56px; border-radius:12px; flex-shrink:0; overflow:hidden;
+  background:linear-gradient(135deg,#ecd9b0,#c8975c); display:flex; align-items:center; justify-content:center; font-size:1.5rem;
+}
+.cq-next-lesson .body{flex:1; min-width:0;}
+.cq-next-lesson .eyebrow{font-size:0.68rem; font-weight:800; color:#9fce62; text-transform:uppercase; letter-spacing:0.05em;}
+.cq-next-lesson .title{font-weight:800; font-size:0.95rem; color:#f0ece2; margin-top:2px;}
+.cq-next-lesson .sub{font-size:0.78rem; color:#8b867c; margin-top:2px;}
+.cq-next-lesson .go{
+  width:38px; height:38px; border-radius:50%; background:#7fae42; color:#12220a; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:1rem;
+}
+
+.cq-lessons-tabs{display:flex; gap:22px; margin-bottom:18px; border-bottom:1px solid rgba(255,255,255,0.09); padding-bottom:10px;}
+.cq-lessons-tabs button{background:none; border:none; color:#8b867c; font-weight:700; font-size:0.85rem;}
+.cq-lessons-tabs button.active{color:#f0ece2;}
+
+.cq-lessons-levels{display:flex; gap:8px; overflow-x:auto; margin-bottom:18px;}
+.cq-lessons-levels button{
+  flex-shrink:0; background:rgba(255,255,255,0.055); border:none; color:#c4bfb5; font-weight:700; font-size:0.8rem;
+  padding:8px 14px; border-radius:100px;
+}
+.cq-lessons-levels button.active{background:#7fae42; color:#12220a;}
+
+.cq-featured-course{
+  border-radius:18px; padding:24px 20px; margin-bottom:14px; position:relative; overflow:hidden; min-height:110px;
+  display:flex; align-items:center; justify-content:space-between; text-decoration:none;
+  background:linear-gradient(120deg,#8fc25a,#547a2a);
+}
+.cq-featured-course h2{font-size:1.25rem; font-weight:800; color:#12220a; max-width:70%; line-height:1.2;}
+.cq-featured-course .arrow-fab{
+  width:38px; height:38px; border-radius:50%; background:#12220a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0;
+}
+.cq-featured-meta{margin:0 0 22px; font-size:0.78rem; color:#8b867c;}
+.cq-featured-meta b{color:#f0ece2; font-weight:700;}
+
+.cq-lessons-list{display:flex; flex-direction:column; gap:8px;}
+.cq-lessons-list a{
+  display:flex; align-items:center; gap:14px;
+  background:rgba(255,255,255,0.055); border-radius:14px; padding:14px 16px; text-decoration:none;
+}
+.cq-lessons-list .ic{font-size:1.15rem; width:22px; text-align:center; flex-shrink:0;}
+.cq-lessons-list .body{flex:1; min-width:0;}
+.cq-lessons-list .title{font-weight:700; font-size:0.88rem; color:#f0ece2;}
+.cq-lessons-list .sub{font-size:0.76rem; color:#8b867c; margin-top:2px;}
+.cq-lessons-list b{color:#5c584f; font-weight:400;}
+.cq-lessons-list a.complete .title::after{content:' ✓'; color:#9fce62;}

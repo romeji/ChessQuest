@@ -12,8 +12,8 @@ const QUEST_TABS = [
   { id:'home', href:'index.html', label:'Accueil', icon:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/>' },
   { id:'puzzles', href:'problems.html', label:'Problèmes', icon:'<path d="M9 3h6v4a3 3 0 1 0 3 3h3v11h-6v-3a3 3 0 1 0-3 3H3v-7h4a3 3 0 1 0 0-6H3V3h6Z"/>' },
   { id:'learn', href:'learn.html', label:'Apprendre', icon:'<path d="M4 19V6a2 2 0 0 1 2-2h6v16H6a2 2 0 0 0-2 2Z"/><path d="M20 19V6a2 2 0 0 0-2-2h-6v16h6a2 2 0 0 1 2 2Z"/>' },
-  { id:'observer', href:'analysis.html', label:'Observer', icon:'<circle cx="7.5" cy="14" r="4"/><circle cx="16.5" cy="14" r="4"/><path d="M11.5 14h1M4 13l1.5-7h4l2 8M20 13l-1.5-7h-4l-2 8"/>' },
-  { id:'more', href:'profile.html', label:'Profil', icon:'<circle cx="12" cy="8" r="4"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/>' }
+  { id:'observer', href:'progress.html', label:'Progrès', icon:'<path d="M4 20V10M10 20V4M16 20v-7M22 20v-3"/>' },
+  { id:'more', href:'profile.html', label:'Plus', icon:'<path d="M4 7h16M4 12h16M4 17h16"/>' }
 ];
 
 const QUEST_ROUTE_TABS = {
@@ -22,8 +22,8 @@ const QUEST_ROUTE_TABS = {
   'problems.html':'puzzles', 'puzzles.html':'puzzles', 'daily-challenge.html':'puzzles',
   'training-target.html':'puzzles',
   'learn.html':'learn', 'openings.html':'learn', 'course.html':'learn', 'course-library.html':'learn',
-  'analysis.html':'observer', 'game-view.html':'observer',
-  'profile.html':'more', 'progress.html':'more', 'settings.html':'more', 'shop.html':'more'
+  'progress.html':'observer', 'analysis.html':'observer', 'game-view.html':'observer',
+  'profile.html':'more', 'settings.html':'more', 'shop.html':'more', 'friends.html':'more', 'friend-game.html':'more'
 };
 
 function ensureQuestNavigationStyles(){

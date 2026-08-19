@@ -1,0 +1,53 @@
+/* ============================================================
+   ChessQuest — Boutique "chess.com" (fidèle à la maquette fournie)
+   ============================================================ */
+
+.cq-shop-top{
+  display:flex; align-items:center; gap:14px; padding:4px 0 22px;
+}
+.cq-shop-top .back-btn{
+  width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.07);
+  display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:#f0ece2; text-decoration:none; flex-shrink:0;
+}
+.cq-shop-top h1{font-size:1.2rem; font-weight:800; color:#f0ece2; flex:1;}
+.cq-shop-top .balance{
+  display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.07); border-radius:100px; padding:6px 12px;
+  font-weight:800; font-size:0.85rem; color:#e8b93f;
+}
+
+.cq-shop-section{margin-bottom:26px;}
+.cq-shop-section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;}
+.cq-shop-section-head h2{font-size:1.02rem; font-weight:800; color:#f0ece2;}
+.cq-shop-section-head span{font-size:0.8rem; color:#8b867c; font-weight:600;}
+.cq-shop-section-head a{font-size:0.8rem; color:#8b867c; font-weight:600; text-decoration:none;}
+
+.cq-tile-row{display:flex; gap:14px; flex-wrap:wrap;}
+.cq-shop-tile{width:80px; text-align:center; background:none; border:none; cursor:pointer; position:relative; padding-top:6px;}
+.cq-shop-tile .ic{
+  width:72px; height:72px; border-radius:18px; display:flex; align-items:center; justify-content:center;
+  font-size:1.9rem; margin:0 auto 9px; color:#fff; position:relative;
+}
+.cq-shop-tile .nm{font-size:0.74rem; color:#c4bfb5; font-weight:600; line-height:1.3; display:block;}
+.cq-shop-tile.equipped .ic{box-shadow:0 0 0 3px #e8b93f;}
+.cq-shop-tile .price-pill{
+  position:absolute; top:-4px; right:2px;
+  background:#1d1b1a; border:1px solid rgba(255,255,255,0.16); border-radius:100px;
+  font-size:0.6rem; font-weight:800; color:#e8b93f; padding:2px 6px; display:flex; align-items:center; gap:2px;
+  white-space:nowrap; z-index:2;
+}
+
+.cq-secret-rows{display:flex; flex-direction:column; gap:8px;}
+.cq-secret-row{
+  display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+  background:rgba(255,255,255,0.055); border:none; border-radius:14px; padding:15px 16px; cursor:pointer;
+}
+.cq-secret-row .ic{color:#e8b93f; font-size:1.1rem; width:20px; flex-shrink:0;}
+.cq-secret-row .nm{flex:1; font-weight:700; font-size:0.9rem; color:#f0ece2;}
+.cq-secret-row .price{display:flex; align-items:center; gap:5px; font-weight:800; font-size:0.85rem; color:#e8b93f;}
+.cq-secret-row.owned .price{color:#9fce62;}
+
+.cq-shop-info{
+  background:linear-gradient(120deg,#2a6a9e,#1a4a70); border-radius:16px; padding:18px; margin-top:6px;
+}
+.cq-shop-info h3{font-size:1rem; color:#fff; font-weight:800; margin-bottom:6px;}
+.cq-shop-info p{font-size:0.82rem; color:#dceefa; line-height:1.5;}

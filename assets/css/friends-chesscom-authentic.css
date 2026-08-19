@@ -1,0 +1,71 @@
+/* ============================================================
+   ChessQuest — Amis "chess.com" (fidèle à la maquette fournie)
+   ============================================================ */
+
+.cq-friends-top{
+  display:flex; align-items:center; gap:14px; padding:4px 0 18px;
+}
+.cq-friends-top .back-btn{
+  width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.07);
+  display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:#f0ece2; text-decoration:none; flex-shrink:0;
+}
+.cq-friends-top h1{font-size:1.2rem; font-weight:800; color:#f0ece2; flex:1;}
+.cq-friends-top .icon-btn{color:#c4bfb5; font-size:1.15rem; text-decoration:none;}
+
+.cq-friends-menu{display:flex; flex-direction:column; gap:8px; margin-bottom:18px;}
+.cq-friends-menu-row{
+  display:flex; align-items:center; gap:14px;
+  background:rgba(255,255,255,0.055); border-radius:14px; padding:15px 16px;
+  font-weight:700; font-size:0.9rem; color:#f0ece2; border:none; width:100%; text-align:left; cursor:pointer;
+}
+.cq-friends-menu-row .ic{
+  width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-size:1.05rem; flex-shrink:0;
+}
+.cq-friends-menu-row.fb .ic{color:#4a86e8;}
+.cq-friends-menu-row.qr .ic{color:#c4bfb5;}
+.cq-friends-menu-row.link .ic{color:#c4bfb5;}
+
+.cq-friends-search{
+  background:rgba(255,255,255,0.055); border:none; border-radius:14px; padding:15px 16px;
+  color:#f0ece2; font-size:0.9rem; font-weight:600; width:100%; margin-bottom:22px;
+}
+.cq-friends-search::placeholder{color:#8b867c; font-weight:600;}
+
+.cq-friends-section-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:10px;}
+.cq-friends-section-head h2{font-size:1rem; font-weight:800; color:#f0ece2;}
+.cq-friends-section-head h2 span{color:#8b867c; font-weight:600; font-size:0.85rem;}
+.cq-friends-section-head a{font-size:0.82rem; color:#e8b93f; font-weight:700; text-decoration:none; display:flex; align-items:center; gap:5px;}
+
+.cq-friend-list-row{
+  display:flex; align-items:center; gap:12px;
+  background:rgba(255,255,255,0.055); border-radius:14px; padding:12px 14px; margin-bottom:8px;
+}
+.cq-friend-list-row .av{
+  width:44px; height:44px; border-radius:12px; background:#332f2d; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:1.4rem;
+}
+.cq-friend-list-row .body{flex:1; min-width:0;}
+.cq-friend-list-row .name{font-weight:700; font-size:0.9rem; color:#f0ece2; display:flex; align-items:center; gap:6px;}
+.cq-friend-list-row .sub{font-size:0.78rem; color:#8b867c; margin-top:2px;}
+.cq-friend-list-row .rt{font-size:0.78rem; color:#9fce62; margin-top:2px; display:flex; align-items:center; gap:4px;}
+.cq-friend-list-row .actions{display:flex; align-items:center; gap:8px; flex-shrink:0;}
+.cq-friend-list-row .go{
+  width:36px; height:36px; border-radius:10px; background:#7fae42; color:#12220a; font-size:1.1rem; font-weight:800;
+  display:flex; align-items:center; justify-content:center; border:none;
+}
+.cq-friend-list-row .remove{
+  width:26px; height:26px; border-radius:50%; background:transparent; color:#5c584f; font-size:0.9rem;
+  display:flex; align-items:center; justify-content:center; border:none;
+}
+
+.cq-friends-empty{
+  background:rgba(255,255,255,0.04); border:1px dashed rgba(255,255,255,0.12); border-radius:14px;
+  padding:26px 16px; text-align:center; color:#8b867c; font-size:0.85rem;
+}
+.cq-friends-empty span{font-size:1.6rem; display:block; margin-bottom:8px;}
+
+.cq-challenge-toggle{
+  display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+  background:rgba(255,255,255,0.055); border:none; border-radius:14px; padding:14px; margin:22px 0 4px;
+  color:#f0ece2; font-weight:700; font-size:0.88rem;
+}

@@ -28,16 +28,53 @@
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
 <script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
+<link rel="stylesheet" href="assets/css/progress-chesscom-authentic.css">
 </head>
 <body data-page="progress" class="quest-screen progress-page">
 <div id="toast-container"></div>
 <main class="app">
   <section class="page">
-    <header class="quest-page-title">
-      <span></span>
-      <h1>Mes progrès</h1>
-      <a class="quest-currency" id="progress-gem-count" href="shop.html" aria-label="Ouvrir la boutique royale">0</a>
-    </header>
+    <div class="cq-stats-top">
+      <a class="back-btn" href="index.html" aria-label="Retour">←</a>
+      <h1>📊 Statistiques</h1>
+    </div>
+
+    <div class="cq-stats-id">
+      <div class="av"><img src="assets/illustrations/mascot-knight-home.png" alt="Avatar"></div>
+      <div>
+        <div class="name">Alex 🇫🇷</div>
+        <div class="joined" id="progress-joined">Inscrit le —</div>
+      </div>
+    </div>
+
+    <button class="cq-stats-dropdown" type="button"><span>📊</span><span>Toutes les statistiques</span><span>⌄</span></button>
+
+    <div class="cq-stats-filters">
+      <button data-range="7">7J</button>
+      <button data-range="30">30J</button>
+      <button class="active" data-range="90">90J</button>
+      <button data-range="365">1A</button>
+      <button data-range="all">TOUT</button>
+    </div>
+
+    <div class="cq-stats-hero-num"><span class="emoji">✊</span><span class="num" id="stats-games-count">0</span><span class="lbl">Parties</span></div>
+
+    <div class="cq-stats-rows">
+      <div class="cq-stats-row"><span class="ic">⏱</span><span class="lbl">Rapide</span><span class="val" id="stats-rapid">—</span><a href="#" class="chev">›</a></div>
+      <div class="cq-stats-row"><span class="ic">☀️</span><span class="lbl">En différé</span><span class="val">?</span><a href="#" class="chev">›</a></div>
+      <div class="cq-stats-row"><span class="ic">‼</span><span class="lbl">Coups brillants</span><span class="val">?</span><a href="#" class="chev">›</a></div>
+      <div class="cq-stats-row"><span class="ic">🧩</span><span class="lbl">Problèmes</span><span class="val" id="stats-puzzle">300</span><a href="progress.html" class="chev">›</a></div>
+      <div class="cq-stats-row"><span class="ic">🏅</span><span class="lbl">Tournois</span><span class="val">—</span><a href="#" class="chev">›</a></div>
+    </div>
+
+    <div class="cq-stats-promo">
+      <h3>Obtenir des statistiques avancées</h3>
+      <p>Découvrez vos points forts et vos points faibles dans l'ouverture et les tactiques et retrouvez tous vos coups brillants !</p>
+      <button type="button">◆ Mettre à niveau</button>
+    </div>
+
+    <div class="cq-stats-divider">Suivi ChessQuest</div>
 
     <section class="quest-card progress-rank-card">
       <div class="progress-rank-emblem" aria-hidden="true"></div>
@@ -82,6 +119,8 @@
       <div class="track"><div class="track-fill" id="weekly-xp-fill"></div></div>
       <div class="progress-xp-chest" aria-hidden="true"></div>
     </section>
+
+    <span id="progress-gem-count" style="display:none"></span>
   </section>
 </main>
 <nav class="tabbar" aria-label="Navigation principale"></nav>
@@ -184,7 +223,19 @@ function renderProgress(){
     badgeList.innerHTML = computeBadges().map(badge => `<div class="progress-badge-item ${badge.unlocked ? '' : 'is-locked'}" title="${escapeHtml(badge.desc)}"><div class="badge-shield">${badge.unlocked ? '★' : '🔒'}</div><span>${escapeHtml(badge.name)}</span></div>`).join('');
   }
   drawProgressChart(points,current);
+
+  // --- Ajouts maquette chess.com ---
+  const games = state.games || [];
+  document.getElementById('stats-games-count').textContent = games.length;
+  document.getElementById('stats-rapid').textContent = Number.isFinite(statRating) ? statRating : '—';
+  document.getElementById('stats-puzzle').textContent = Number(PROGRESS.puzzleRating || 300);
+  if(!PROGRESS.joinedAt) PROGRESS.joinedAt = Date.now();
+  document.getElementById('progress-joined').textContent = `Inscrit le ${new Date(PROGRESS.joinedAt).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}`;
 }
+document.querySelectorAll('.cq-stats-filters button').forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll('.cq-stats-filters button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+});
 
 async function initProgress(){
   renderProgress();

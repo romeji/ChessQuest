@@ -1,0 +1,68 @@
+/* ============================================================
+   ChessQuest — Entraîneur "chess.com" (fidèle à la maquette)
+   ============================================================ */
+
+.cq-train-top{display:flex; align-items:center; gap:14px; padding:4px 0 18px;}
+.cq-train-top .back-btn, .cq-train-top .gear-btn{
+  width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.07);
+  display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:#f0ece2; text-decoration:none; flex-shrink:0;
+}
+.cq-train-top h1{font-size:1.12rem; font-weight:800; color:#f0ece2; flex:1;}
+
+.cq-coach-row{display:flex; align-items:flex-end; gap:0; margin:0 0 18px;}
+.cq-coach-avatar{
+  width:52px; height:52px; border-radius:50%; overflow:hidden; flex-shrink:0; margin-right:-8px; z-index:2;
+  border:2px solid #1d1b1a; background:#332f2d;
+}
+.cq-coach-avatar img{width:100%; height:100%; object-fit:cover;}
+.cq-speech{
+  background:#fff; color:#1c1a18; border-radius:16px; border-bottom-left-radius:4px;
+  padding:13px 16px; font-size:0.87rem; font-weight:600; line-height:1.42; flex:1;
+}
+
+.cq-setup-board-preview{opacity:0.6; margin-bottom:16px; pointer-events:none;}
+
+.cq-level-row{display:flex; gap:10px; align-items:center; margin-bottom:14px;}
+.cq-level-select{
+  flex:1; background:rgba(255,255,255,0.055); border:none; border-radius:14px; padding:14px 16px;
+  color:#f0ece2; font-weight:700; font-size:0.9rem; appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b867c' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 14px center; background-size:16px;
+}
+.cq-diff-row{display:flex; gap:8px;}
+.cq-diff-btn{
+  width:44px; height:44px; border-radius:12px; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center;
+  font-size:1.2rem; border:none; color:#c4bfb5; opacity:0.6;
+}
+.cq-diff-btn.active{opacity:1; box-shadow:0 0 0 2px #9fce62; background:rgba(159,206,98,0.14); color:#9fce62;}
+
+.cq-color-row{display:flex; gap:8px; margin:16px 0;}
+.cq-color-opt{
+  flex:1; text-align:center; padding:12px; border-radius:12px; background:rgba(255,255,255,0.055);
+  font-weight:700; font-size:0.85rem; color:#c4bfb5; cursor:pointer;
+}
+.cq-color-opt input{display:none;}
+.cq-color-opt.active{background:rgba(159,206,98,0.16); color:#9fce62;}
+
+.cq-setup-note{font-size:0.78rem; color:#8b867c; line-height:1.5; margin-bottom:18px;}
+
+.cq-play-btn{
+  display:flex; align-items:center; justify-content:center; width:100%;
+  background:linear-gradient(180deg,#9fce62,#7fae42 55%,#547a2a);
+  color:#12220a; font-weight:800; font-size:0.96rem; padding:15px; border-radius:18px;
+  border:none; box-shadow:0 2px 0 rgba(0,0,0,0.2);
+}
+
+.cq-movebar{background:#2b2827; border-radius:10px; padding:10px 14px; font-size:0.82rem; font-weight:700; color:#c4bfb5; margin-bottom:12px;}
+
+.cq-player-row{display:flex; align-items:center; gap:10px; padding:8px 2px;}
+.cq-player-row .av{width:36px; height:36px; border-radius:9px; background:#2b2827; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:1.05rem; overflow:hidden;}
+.cq-player-row .av img{width:100%; height:100%; object-fit:cover;}
+.cq-player-row .name{font-weight:700; font-size:0.86rem; color:#f0ece2;}
+.cq-player-row .rating{color:#8b867c; font-size:0.78rem; font-weight:600;}
+.cq-player-row .badge{margin-left:auto; background:#2b2827; font-weight:700; font-size:0.8rem; padding:7px 12px; border-radius:9px; color:#c4bfb5;}
+
+.cq-toolbar-row{display:flex; justify-content:space-around; margin-top:12px;}
+.cq-toolbar-row button{
+  width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.055); border:none; color:#c4bfb5; font-size:1.1rem;
+}

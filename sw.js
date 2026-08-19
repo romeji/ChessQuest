@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'chessquest-v120';
+const CACHE_VERSION = 'chessquest-v121';
 const APP_SHELL = [
   './',
   './index.html',
@@ -40,6 +40,15 @@ const APP_SHELL = [
   './assets/css/navigation-stability-v101.css',
   './assets/css/problem-journey.css',
   './assets/css/quest-appearance-v109.css',
+  './assets/css/theme-chesscom-dark.css',
+  './assets/css/theme-chesscom-light.css',
+  './assets/css/home-chesscom-authentic.css',
+  './assets/css/profile-chesscom-authentic.css',
+  './assets/css/progress-chesscom-authentic.css',
+  './assets/css/friends-chesscom-authentic.css',
+  './assets/css/shop-chesscom-authentic.css',
+  './assets/css/training-chesscom-authentic.css',
+  './assets/css/lessons-chesscom-authentic.css',
   './assets/css/home.css',
   './assets/css/learn.css',
   './assets/css/entrainement.css',

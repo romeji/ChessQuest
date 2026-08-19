@@ -26,6 +26,7 @@
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
 <script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
 </head>
 <body data-page="settings">
 <div id="toast-container"></div>
@@ -55,13 +56,6 @@
       <button data-speed="deep">Approfondi</button>
     </div>
     <p class="section-sub" id="engine-speed-hint">~0,45 s par coup — bon équilibre vitesse/précision.</p>
-
-    <label class="field-label">Thème de l'application</label>
-    <div class="segmented" id="app-theme-picker" style="margin:10px 0 16px;">
-      <button data-theme="light">Clair</button>
-      <button data-theme="dark">Sombre</button>
-    </div>
-    <p class="section-sub">Le thème sombre gris anthracite réduit l'éblouissement tout en conservant les couleurs des échiquiers.</p>
 
     <label class="field-label">Effets sonores</label>
     <div style="margin:10px 0 20px;"><button class="tts-btn active" id="sound-toggle">Sons activés</button></div>
@@ -119,15 +113,17 @@ document.querySelectorAll('#engine-speed-picker button').forEach(b=>{
   };
 });
 
-document.querySelectorAll('#app-theme-picker button').forEach(button=>{
-  button.classList.toggle('active', button.dataset.theme === (PROGRESS.settings.appTheme || 'light'));
-  button.onclick = function(){
-    PROGRESS.settings.appTheme = this.dataset.theme === 'dark' ? 'dark' : 'light';
-    saveProgress();
-    applyQuestCosmetics();
-    document.querySelectorAll('#app-theme-picker button').forEach(item=>item.classList.toggle('active',item===this));
-  };
-});
+if(document.getElementById('app-theme-picker')){
+  document.querySelectorAll('#app-theme-picker button').forEach(button=>{
+    button.classList.toggle('active', button.dataset.theme === (PROGRESS.settings.appTheme || 'light'));
+    button.onclick = function(){
+      PROGRESS.settings.appTheme = this.dataset.theme === 'dark' ? 'dark' : 'light';
+      saveProgress();
+      applyQuestCosmetics();
+      document.querySelectorAll('#app-theme-picker button').forEach(item=>item.classList.toggle('active',item===this));
+    };
+  });
+}
 
 const soundBtn = document.getElementById('sound-toggle');
 soundBtn.classList.toggle('active', soundEnabled);

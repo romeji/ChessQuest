@@ -29,37 +29,75 @@
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
 <script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
+<link rel="stylesheet" href="assets/css/training-chesscom-authentic.css">
 </head>
 <body data-page="play" class="final-shell-page training-final-page">
 <div id="toast-container"></div>
 <section class="training-setup-modal" id="training-setup-modal" role="dialog" aria-modal="true" aria-labelledby="training-setup-title">
   <div class="training-setup-card">
-    <header><a class="subpage-back" href="index.html" aria-label="Retour">‹</a><h1 id="training-setup-title">Jouer avec l’entraîneur</h1></header>
-    <div class="training-setup-coach"><img src="assets/illustrations/mascot-coach-encourage.webp" alt="Le coach"><p>Bienvenue ! Choisis le niveau qui te convient : je m’adapterai, mais je ne ferai pas semblant de perdre.</p></div>
-    <label class="training-setup-field">Niveau de l’entraîneur<select id="training-setup-elo" aria-label="Niveau de l’entraîneur"></select></label>
-    <fieldset class="training-color-choice"><legend>Ta couleur</legend><label><input type="radio" name="training-color" value="w" checked> ♙ Blancs</label><label><input type="radio" name="training-color" value="b"> ♟ Noirs</label><label><input type="radio" name="training-color" value="random"> 🎲 Aléatoire</label></fieldset>
-    <p class="training-setup-note">Le niveau se choisit ici. Pendant la partie, tu peux revenir sur un coup ou demander un conseil.</p>
-    <button class="training-setup-start" id="training-setup-start" type="button">Jouer</button>
+    <div class="cq-train-top">
+      <a class="back-btn" href="index.html" aria-label="Retour">←</a>
+      <h1 id="training-setup-title">Jouer avec l’entraîneur</h1>
+      <a class="gear-btn" href="settings.html" aria-label="Paramètres">⚙</a>
+    </div>
+
+    <div class="cq-coach-row">
+      <div class="cq-coach-avatar"><img src="assets/illustrations/mascot-coach-encourage.webp" alt="Le coach"></div>
+      <p class="cq-speech">Bienvenue ! Choisis le niveau qui te convient : je m’adapterai, mais je ne ferai pas semblant de perdre.</p>
+    </div>
+
+    <div class="cq-setup-board-preview board">
+      <div class="sq dark">♜</div><div class="sq light">♞</div><div class="sq dark">♝</div><div class="sq light">♛</div><div class="sq dark">♚</div><div class="sq light">♝</div><div class="sq dark">♞</div><div class="sq light">♜</div>
+      <div class="sq light">♟</div><div class="sq dark">♟</div><div class="sq light">♟</div><div class="sq dark">♟</div><div class="sq light">♟</div><div class="sq dark">♟</div><div class="sq light">♟</div><div class="sq dark">♟</div>
+      <div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div>
+      <div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div>
+      <div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div>
+      <div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div><div class="sq light"></div><div class="sq dark"></div>
+      <div class="sq dark">♙</div><div class="sq light">♙</div><div class="sq dark">♙</div><div class="sq light">♙</div><div class="sq dark">♙</div><div class="sq light">♙</div><div class="sq dark">♙</div><div class="sq light">♙</div>
+      <div class="sq light">♖</div><div class="sq dark">♘</div><div class="sq light">♗</div><div class="sq dark">♕</div><div class="sq light">♔</div><div class="sq dark">♗</div><div class="sq light">♘</div><div class="sq dark">♖</div>
+    </div>
+
+    <div class="cq-level-row">
+      <select id="training-setup-elo" class="cq-level-select" aria-label="Niveau de l’entraîneur"></select>
+      <div class="cq-diff-row">
+        <button type="button" class="cq-diff-btn" data-preset="600">♔</button>
+        <button type="button" class="cq-diff-btn" data-preset="1200">?</button>
+        <button type="button" class="cq-diff-btn active" data-preset="1800">♚</button>
+      </div>
+    </div>
+
+    <div class="cq-color-row" role="radiogroup" aria-label="Ta couleur">
+      <label class="cq-color-opt active"><input type="radio" name="training-color" value="w" checked>♙ Blancs</label>
+      <label class="cq-color-opt"><input type="radio" name="training-color" value="b">♟ Noirs</label>
+      <label class="cq-color-opt"><input type="radio" name="training-color" value="random">🎲 Aléatoire</label>
+    </div>
+
+    <p class="cq-setup-note">Le niveau se choisit ici. Pendant la partie, tu peux revenir sur un coup ou demander un conseil.</p>
+    <button class="cq-play-btn" id="training-setup-start" type="button">Jouer</button>
   </div>
 </section>
 <main class="app">
   <section class="page">
-    <header class="final-page-title">
-      <a class="subpage-back" href="index.html" aria-label="Retour à l’accueil">
-        <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
-      </a>
+    <div class="cq-train-top">
+      <a class="back-btn" href="index.html" aria-label="Retour à l’accueil">←</a>
       <h1>Partie d’entraînement</h1>
-      <span class="final-title-spacer" aria-hidden="true"></span>
-    </header>
+      <a class="gear-btn" href="settings.html" aria-label="Paramètres">⚙</a>
+    </div>
 
     <label class="bot-final-elo is-hidden" for="bot-elo-select">
       <select id="bot-elo-select" aria-label="Niveau ELO du bot"></select>
     </label>
 
-    <aside class="training-final-coach">
-      <img id="training-mascot" data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest">
-      <p class="training-final-tip" data-mascot-text id="training-tip-text">Je regarde. Essaie de ne pas faire honte au royaume.</p>
-    </aside>
+    <div class="cq-movebar">
+      <strong id="tg-history-current">Position initiale</strong> · <span id="tg-history-position">À toi de jouer</span>
+    </div>
+
+    <div class="cq-player-row">
+      <div class="av"><img src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach"></div>
+      <div><div class="name">Coach</div><div class="rating" id="bot-difficulty-label-visible">1200 ELO</div></div>
+      <div class="badge">Sans limite</div>
+    </div>
 
     <div class="training-final-board-wrap">
       <div class="board-frame">
@@ -69,16 +107,25 @@
       </div>
     </div>
 
-    <div class="training-move-browser" aria-label="Navigation dans les coups">
-      <button id="tg-history-prev" type="button" aria-label="Coup précédent">‹</button>
-      <span><strong id="tg-history-current">Position initiale</strong><small id="tg-history-position">À toi de jouer</small></span>
-      <button id="tg-history-next" type="button" aria-label="Coup suivant">›</button>
+    <div class="cq-player-row">
+      <div class="av">🙂</div>
+      <div><div class="name">Toi</div><div class="rating">Entraînement</div></div>
     </div>
 
-    <div class="training-final-controls">
-      <button id="undo-btn" type="button">↶&nbsp; Revenir</button>
-      <button id="resign-btn" type="button">⚑&nbsp; Abandonner</button>
-      <button class="training-advice" id="hint-btn2" type="button">Conseil</button>
+    <aside class="cq-coach-row" style="margin-top:14px;">
+      <div class="cq-coach-avatar"><img id="training-mascot" data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest"></div>
+      <p class="cq-speech" data-mascot-text id="training-tip-text">Je regarde. Essaie de ne pas faire honte au royaume.</p>
+    </aside>
+
+    <div class="cq-toolbar-row">
+      <button id="tg-history-prev" type="button" aria-label="Coup précédent">‹</button>
+      <button type="button" aria-label="Discussion">💬</button>
+      <button id="undo-btn" type="button" aria-label="Revenir">↶</button>
+      <button class="training-advice" id="hint-btn2" type="button" aria-label="Conseil">💡</button>
+      <button id="tg-history-next" type="button" aria-label="Coup suivant">›</button>
+    </div>
+    <div class="cq-toolbar-row">
+      <button id="resign-btn" type="button" aria-label="Abandonner">⚑</button>
     </div>
 
     <div class="training-final-hidden" aria-hidden="true">
@@ -102,5 +149,24 @@
 <nav class="tabbar" aria-label="Navigation principale"></nav>
 <script src="assets/js/board.js"></script>
 <script src="assets/js/training.js?v=108"></script>
+<script>
+document.querySelectorAll('.cq-diff-btn[data-preset]').forEach(btn=>btn.onclick=()=>{
+  document.querySelectorAll('.cq-diff-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const select = document.getElementById('training-setup-elo');
+  if(select){ select.value = btn.dataset.preset; select.dispatchEvent(new Event('change')); }
+});
+document.querySelectorAll('.cq-color-opt input').forEach(input=>input.addEventListener('change',()=>{
+  document.querySelectorAll('.cq-color-opt').forEach(l=>l.classList.remove('active'));
+  input.closest('.cq-color-opt').classList.add('active');
+}));
+const syncBotLabel = () => {
+  const label = document.getElementById('bot-difficulty-label');
+  const visible = document.getElementById('bot-difficulty-label-visible');
+  if(label && visible) visible.textContent = label.textContent;
+};
+new MutationObserver(syncBotLabel).observe(document.getElementById('bot-difficulty-label'),{childList:true,characterData:true,subtree:true});
+syncBotLabel();
+</script>
 </body>
 </html>

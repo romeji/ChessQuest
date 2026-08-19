@@ -1,0 +1,200 @@
+/* ============================================================
+   ChessQuest — Thème clair "chess.com" (vert + mascotte cavalier)
+   À charger EN DERNIER sur chaque page pour surcharger les styles
+   existants sans toucher au JS ni casser la mise en page.
+   ============================================================ */
+
+:root{
+  /* Vert de marque (remplace le violet --coral d'origine) */
+  --coral:#3f9142 !important;
+  --coral-dark:#2c7a34 !important;
+  --gem:#4a9fd8 !important; /* diamant premium façon chess.com */
+
+  --tile-purple:#3f9142 !important;
+  --accent-blue-bg:#E1EAF6; --accent-blue-text:#4A6FA5;
+}
+
+/* ---------------------------------------------------------
+   1) Fonds sombres globaux -> crème clair (cohérent avec le
+      reste de l'app : #fffaf0 / #f8f0df / #fffdf6)
+--------------------------------------------------------- */
+body,
+body[data-page="coach"],
+body[data-page="coach"] .app,
+body.opening-swipe-page,
+html:has(body.opening-swipe-page),
+body.opening-map-page,
+body.problem-journey-page,
+html:has(body.problem-journey-page),
+.shop-page,
+.shop-page .app,
+.academy-page,
+.friend-lounge-page,
+.friend-lounge-page .app,
+.secret-hub,
+.written-course-page{
+  background:#fffaf0 !important;
+  color:#22301f !important;
+}
+.academy-shell,
+.written-course-shell{
+  background:linear-gradient(180deg,#fffdf6,#f7f2e2) !important;
+}
+
+/* Le conteneur générique .app porte son propre fond sombre par défaut
+   (polish.css) indépendamment du body : on le reprend en clair pour
+   toutes les pages qui n'ont pas déjà une variante claire dédiée. */
+.app{background:#fffaf0;}
+body[data-page="training-hub"] .app,
+.training-final-page .app,
+.training-target-page .app,
+body.training-target-page,
+body.training-target-page .app,
+body.training-target-page .page{
+  background:#fffaf0 !important;
+  color:#22301f !important;
+}
+.training-target-page .section-title{color:#22301f !important;}
+.training-target-page .section-sub{color:#5c6b57 !important;}
+.training-target-page .subpage-back{background:#eef0e6 !important; color:#22301f !important;}
+
+/* Modale "Jouer avec l'entraîneur" : carte + champ, gardés clairs */
+.training-setup-card{
+  background:linear-gradient(160deg,#fffdf6,#f3ecd6) !important;
+  color:#22301f !important;
+}
+.training-setup-card header h1{color:#22301f !important;}
+.training-setup-card .subpage-back{background:#eef0e6 !important; color:#22301f !important;}
+.training-setup-field{color:#4c5a48 !important;}
+.training-setup-field select{background:#fff !important; color:#22301f !important; border-color:#bcdca8 !important;}
+.training-setup-note{color:#6b7a66 !important;}
+.training-setup-start{background:linear-gradient(#8fd15c,#3f9142) !important;}
+
+/* Icône boutique royale (accueil) : violet -> or/vert */
+.home-shop-entry-icon{
+  background:linear-gradient(145deg,#e8b93f,#a97918) !important;
+  color:#2b1c02 !important;
+}
+
+/* html.cq-has-tabbar (ajouté par navigation.js) force un fond sombre
+   en !important avec une spécificité supérieure à `body{}` seul :
+   on la reprend ici avec une spécificité au moins égale. */
+html.cq-has-tabbar,
+html.cq-has-tabbar body,
+html.cq-has-tabbar body[data-page]{
+  background:#fffaf0 !important;
+}
+
+/* ---------------------------------------------------------
+   2) Boutique (shop.html)
+--------------------------------------------------------- */
+.shop-action{background:#3f9142 !important;color:#fff !important;}
+.shop-card.owned:not(.equipped) .shop-action{background:#2c7a34 !important;}
+.shop-card.equipped{outline-color:#e8b93f !important;}
+.secret-card .shop-preview{background:radial-gradient(circle,#6fae4c,#1d3a1c) !important;color:#ffe27a !important;}
+.shop-page h1, .shop-page h2, .shop-page .section-title, .shop-page p{color:#22301f !important;}
+
+/* ---------------------------------------------------------
+   3) Archives interdites / niveaux secrets
+--------------------------------------------------------- */
+.secret-hub{
+  background:radial-gradient(circle at 50% 0, #eaf5e2, #fffaf0 58%) !important;
+  color:#22301f !important;
+}
+.secret-title{color:#2c7a34 !important;}
+.secret-intro{color:#5c6b57 !important;}
+.secret-level{
+  background:linear-gradient(145deg,#fffdf6,#eef6e6) !important;
+  border-color:#cfe3c6 !important;
+  color:#22301f !important;
+}
+.secret-level p{color:#5c6b57 !important;}
+.secret-level-icon{background:linear-gradient(160deg,#5cad4f,#2c7a34) !important; color:#fff !important;}
+.secret-back{color:#22301f !important;}
+
+/* ---------------------------------------------------------
+   4) Académie / bibliothèque de cours
+--------------------------------------------------------- */
+.academy-header span{color:#4c7a4a !important;}
+.academy-header h1{color:#1f2e1c !important;}
+.academy-hero{background:#fff8e9 !important; color:#261d2b !important;}
+.academy-hero small{color:#2c7a34 !important;}
+.academy-levels button{background:#eaf5e2 !important; color:#2f4a2c !important; border-color:#cfe3c6 !important;}
+.academy-levels button.active{background:#3f9142 !important; color:#fff !important; border-color:#3f9142 !important;}
+.academy-course-card{background:#fffaf0 !important; color:#18251f !important; border-color:#e9e0c8 !important;}
+.academy-course-card>span{background:#e1f0e6 !important; color:#2c7a34 !important;}
+.academy-courses p{color:#667169 !important;}
+.academy-opening-library>h2{color:#1f2e1c !important;}
+.academy-opening-library>p{color:#5c6b57 !important;}
+.academy-opening-library a{background:#fffaf0 !important; color:#19251f !important; border-color:#e9dcb0 !important;}
+.academy-opening-library a span{color:#2c7a34 !important;}
+
+/* ---------------------------------------------------------
+   5) Amis & défis
+--------------------------------------------------------- */
+.friend-lounge-header span{color:#3f9142 !important;}
+.friend-lounge-header h1{color:#1f2e1c !important;}
+.friend-lounge-hero{
+  background:radial-gradient(circle at 84% 24%, rgba(140,214,100,.35), transparent 28%), linear-gradient(135deg,#3f9142,#215c26) !important;
+  border-color:rgba(232,185,63,.5) !important;
+}
+.friend-lounge-card{background:linear-gradient(145deg,#fffdf6,#f5ebd7) !important; color:#20352d !important;}
+.friend-avatar{background:linear-gradient(135deg,#5cad4f,#2c7a34) !important;}
+.friend-row{background:#fffaf0 !important; color:#22301f !important; border-color:#e9e0c8 !important;}
+.friend-add-row button{background:linear-gradient(135deg,#3f9142,#215c26) !important;}
+.friend-create-button{background:linear-gradient(135deg,#8fd15c,#3f9142) !important; color:#123c2a !important;}
+.friend-invite-card{background:linear-gradient(135deg,#4a86b8,#2c5d82) !important;}
+
+/* ---------------------------------------------------------
+   6) Accueil : bouton "Reprendre la quête" + confettis
+--------------------------------------------------------- */
+.home-final-continue{
+  background:linear-gradient(180deg,#4fa844,#2c7a34) !important;
+  border-color:#e8b93f !important;
+}
+.home-continue-button{
+  background:linear-gradient(135deg,#4fa844,#215c26) !important;
+  border-color:#e8b93f !important;
+}
+.home-final-confetti.c1, .home-confetti.c1{color:#2c7a34 !important;}
+.home-final-confetti.c2, .home-confetti.c2{color:#3f9142 !important;}
+.home-final-confetti.c3, .home-confetti.c3{color:#e8b93f !important;}
+.home-analysis-icon{background:linear-gradient(145deg,#8fd15c,#eee6bc) !important;}
+
+/* ---------------------------------------------------------
+   7) Analyse / bilan de partie — accents violets -> verts
+--------------------------------------------------------- */
+.analysis-tabs button.active{color:#2c7a34 !important; border-color:#2c7a34 !important;}
+.analysis-review-page .nav-controls button{background:#2c7a34 !important;}
+.training-move-browser button{background:#2c7a34 !important;}
+
+/* ---------------------------------------------------------
+   8) Boîte de dialogue mascotte (cohérence dans toute l'app)
+--------------------------------------------------------- */
+.home-final-speech, .home-speech, .puzzle-coach-art + p, .coach-bubble{
+  background:#fffdf6 !important;
+  border-color:#e5e0c8 !important;
+  color:#22301f !important;
+}
+
+/* ---------------------------------------------------------
+   9) Tabbar : vert légèrement éclairci pour rester lisible
+      sur un thème clair, tout en gardant le "chrome" foncé
+      caractéristique de chess.com
+--------------------------------------------------------- */
+body nav.tabbar::before{
+  background:linear-gradient(180deg,#1f4a30 0,#123321 var(--cq-tabbar-height),#123321 100%) !important;
+}
+body nav.tabbar .tabbar-item.active{
+  background:rgba(143,209,92,.22) !important;
+  color:#fff !important;
+}
+
+/* ---------------------------------------------------------
+   10) Filet de sécurité : tout texte resté blanc sur les
+       nouveaux fonds clairs redevient lisible.
+--------------------------------------------------------- */
+.shop-page, .academy-page, .friend-lounge-page, .secret-hub, .written-course-page,
+body[data-page="coach"], body.opening-swipe-page, body.problem-journey-page{
+  --text:#22301f;
+}

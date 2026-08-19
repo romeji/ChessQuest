@@ -29,6 +29,8 @@
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
 <script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
+<link rel="stylesheet" href="assets/css/home-chesscom-authentic.css">
 </head>
 <body data-page="home" class="final-shell-page home-final-page">
 <div id="toast-container"></div>
@@ -60,62 +62,71 @@
 
 <main class="app">
   <section class="page">
-    <header class="home-final-head">
-      <a class="home-final-brand" href="index.html" aria-label="Accueil ChessQuest">Chess<b>Q</b>uest<i>♛</i></a>
-      <div class="home-final-tools">
-        <a class="home-fire-chip" href="progress.html" aria-label="Voir ma série quotidienne"><span>Série</span><b id="home-streak">0 j</b></a>
+    <div class="cq-home-top">
+      <div class="side">
+        <div class="cq-avatar-chip">
+          <span class="av">♞</span>
+          <span class="flame">🔥 <span id="home-streak">0</span></span>
+        </div>
       </div>
-    </header>
-
-    <section class="home-final-stage">
-      <span class="home-final-confetti c1">◆</span>
-      <span class="home-final-confetti c2">◆</span>
-      <span class="home-final-confetti c3">◆</span>
-      <div class="home-final-speech" id="home-greeting" data-mascot-text>Prêt pour une nouvelle quête ?</div>
-      <img class="home-final-mascot" src="assets/illustrations/mascot-coach-haughty.webp" alt="Cavalier ChessQuest couronné" data-mascot-image role="button" tabindex="0" aria-label="Écouter la mascotte">
-    </section>
-
-    <a class="home-final-daily" href="daily-challenge.html">
-      <span class="home-daily-label">Problème du jour</span>
-      <strong class="home-daily-title" id="home-goal-text">Découvre la combinaison du jour</strong>
-      <div class="track"><div class="track-fill" id="home-goal-fill"></div></div>
-      <span class="home-daily-count" id="home-goal-count">0/3</span>
-      <span class="home-final-rewards"><span id="home-crown-reward">♛ +35</span><span id="home-xp-reward">+40 XP</span></span>
-      <span class="home-daily-chest" aria-hidden="true"></span>
-    </a>
-
-    <a class="home-final-analysis" id="home-analysis-prompt" href="analysis.html">
-      <span class="home-analysis-visual" aria-hidden="true">🔍</span>
-      <span>
-        <strong>Ta dernière partie est prête à analyser</strong>
-        <small id="home-analysis-copy">Découvre tes forces et tes opportunités.</small>
-      </span>
-      <span class="home-analysis-next">›</span>
-    </a>
-
-    <a class="home-final-continue" href="problems.html"><span>♟</span>Reprendre la quête</a>
-
-    <div class="home-quick-grid">
-      <a href="learn.html"><span>🏰</span><strong>Apprendre</strong><small>Explore la carte des ouvertures</small></a>
-      <a href="course-library.html"><span>📚</span><strong>Cours écrits</strong><small>Des bases au niveau expert</small></a>
-      <a href="secret-levels.html"><span>🗝</span><strong>Niveaux secrets</strong><small>Défis réservés aux curieux</small></a>
-      <a class="home-progress-link" href="progress.html"><span>📈</span><strong>Mes progrès</strong><small>ELO, séries et conseils du coach</small></a>
-      <a href="training-game.html"><span>♞</span><strong>Jouer l’entraîneur</strong><small>Une partie adaptée à ton ELO</small></a>
-      <a class="home-friends-link" href="friends.html"><span>⚔️</span><strong>Jouer avec un ami</strong><small>Invite, défie et joue en direct</small></a>
+      <div class="cq-home-logo"><span class="mark">♞</span>ChessQuest</div>
+      <div class="side">
+        <a class="icon-circle" href="shop.html" aria-label="Boutique" id="home-shop-balance">🪙</a>
+        <a class="icon-circle" href="profile.html" aria-label="Profil">👤</a>
+      </div>
     </div>
 
-    <a class="home-shop-entry" href="shop.html" aria-label="Ouvrir la boutique royale">
-      <span class="home-shop-entry-icon" aria-hidden="true">♛</span>
-      <span class="home-shop-entry-copy">
-        <strong>Boutique royale</strong>
-        <small>Plateaux, pièces et niveaux secrets</small>
-      </span>
-      <span class="home-shop-entry-balance" id="home-shop-balance">♛ 0</span>
-      <span class="home-shop-entry-next" aria-hidden="true">›</span>
-    </a>
+    <div class="cq-card-scroll">
+      <a class="cq-world-card green" href="daily-challenge.html">
+        <div class="badge-num">15</div>
+        <div class="rating-line">🧩 1000 🔥1</div>
+        <h3 id="home-goal-text">Découvre la combinaison du jour</h3>
+        <div class="cta">Résolvez !</div>
+        <div class="mini-bar"><span id="home-goal-fill"></span></div>
+      </a>
+      <a class="cq-world-card blue" href="analysis.html">
+        <div class="rating-line">🔍 analyse</div>
+        <h3>Ta dernière partie</h3>
+        <p id="home-analysis-copy" style="font-size:0.72rem; color:#bcdcf0; margin:2px 0 0; position:relative;">Découvre tes forces et tes opportunités.</p>
+        <div class="cta">Analyser</div>
+      </a>
+    </div>
+
+    <section class="cq-home-section">
+      <div class="cq-section-head"><h2>Match recommandé</h2></div>
+      <a class="cq-match-card" href="friends.html">
+        <div class="av">♟</div>
+        <div class="body">
+          <div class="name">Etrax-alphax 🇫🇷</div>
+          <div class="sub">400 · il y a 3 jours</div>
+          <div class="tag">NOUVEL AMI</div>
+        </div>
+        <div class="go">+</div>
+      </a>
+    </section>
+
+    <section class="cq-home-section">
+      <div class="cq-section-head"><h2>Statistiques</h2><a class="see-all" href="progress.html">Tout afficher</a></div>
+      <div class="cq-stat-scroll">
+        <a class="cq-stat-card" href="problems.html"><div class="ic">🧩</div><div class="num">1000</div><div class="lbl">Problèmes</div></a>
+        <a class="cq-stat-card" href="entrainement.html"><div class="ic">♞</div><div class="num">—</div><div class="lbl">Entraîneur</div></a>
+        <a class="cq-stat-card" href="course-library.html"><div class="ic">📖</div><div class="num">0</div><div class="lbl">Leçons</div></a>
+        <a class="cq-stat-card" href="progress.html"><div class="ic">🔥</div><div class="num" id="home-streak-2">0</div><div class="lbl">Série</div></a>
+      </div>
+    </section>
+
+    <section class="cq-home-section">
+      <div class="cq-section-head"><h2>Amis</h2><a class="see-all" href="friends.html">Tout afficher</a></div>
+      <div class="cq-friend-scroll">
+        <a class="cq-friend-chip" href="friends.html"><div class="av">🔍</div><div class="nm">Trouver</div></a>
+      </div>
+    </section>
+
+    <a class="cq-play-cta" href="daily-challenge.html">Jouer</a>
   </section>
 </main>
 <nav class="tabbar" aria-label="Navigation principale"></nav>
+
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 <script src="assets/js/progress.js?v=105"></script>
@@ -133,24 +144,26 @@ const resetHomeScroll=()=>requestAnimationFrame(()=>{
 window.addEventListener('pageshow',resetHomeScroll);document.addEventListener('DOMContentLoaded',resetHomeScroll);
 function renderHomeTab(){
   const streak = computeCurrentStreak();
-  document.getElementById('home-streak').textContent = `${streak} j`;
-  document.getElementById('home-shop-balance').textContent = `${QUEST_CURRENCY.icon} ${crownBalance()}`;
+  const streakEl = document.getElementById('home-streak');
+  if(streakEl) streakEl.textContent = streak;
+  const balanceEl = document.getElementById('home-shop-balance');
+  if(balanceEl) balanceEl.textContent = `${QUEST_CURRENCY.icon} ${crownBalance()}`;
   ensureDailyProgressFresh();
   const featuredKey = todayKey();
   const featuredDone = (PROGRESS.featuredProblemsSolved || []).includes(featuredKey);
-  document.getElementById('home-goal-text').textContent = featuredDone ? 'Problème du jour maîtrisé' : 'Découvre la combinaison du jour';
-  document.getElementById('home-goal-count').textContent = featuredDone ? '✓' : 'Nouveau';
-  document.getElementById('home-goal-fill').style.width = featuredDone ? '100%' : '8%';
-  document.getElementById('home-crown-reward').textContent = `${QUEST_CURRENCY.icon} +10`;
-  document.getElementById('home-xp-reward').textContent = '+25 XP';
+  const goalText = document.getElementById('home-goal-text');
+  if(goalText) goalText.textContent = featuredDone ? 'Problème du jour maîtrisé' : 'Découvre la combinaison du jour';
+  const goalFill = document.getElementById('home-goal-fill');
+  if(goalFill) goalFill.style.width = featuredDone ? '100%' : '35%';
 
   const state = chessComState();
   const latest = (state.games || []).slice().sort((a,b) => (b.end_time || 0) - (a.end_time || 0))[0];
-  if(latest){
+  const analysisCopy = document.getElementById('home-analysis-copy');
+  if(latest && analysisCopy){
     const username = (state.username || '').toLowerCase();
     const playerIsWhite = latest.white?.username?.toLowerCase() === username;
     const opponent = playerIsWhite ? latest.black?.username : latest.white?.username;
-    document.getElementById('home-analysis-copy').textContent = opponent
+    analysisCopy.textContent = opponent
       ? `Reviens sur ta partie contre ${opponent}.`
       : 'Découvre tes forces et tes opportunités.';
   }
@@ -168,8 +181,10 @@ function greetFromMascot(){
     : `Encore ${Math.max(0,3-solved)} problème${3-solved>1?'s':''}. Une couronne ne se mérite pas en la regardant.`,
     {imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]'});
 }
-homeMascot.addEventListener('click',greetFromMascot);
-homeMascot.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();greetFromMascot();}});
+if(homeMascot){
+  homeMascot.addEventListener('click',greetFromMascot);
+  homeMascot.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();greetFromMascot();}});
+}
 </script>
 </body>
 </html>

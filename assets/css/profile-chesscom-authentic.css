@@ -1,0 +1,77 @@
+/* ============================================================
+   ChessQuest — Profil "chess.com" (fidèle à la maquette fournie)
+   ============================================================ */
+
+.cq-profile-top{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:4px 0 18px;
+}
+.cq-profile-top .back-btn{
+  width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.07);
+  display:flex; align-items:center; justify-content:center; font-size:1.1rem; color:#f0ece2; text-decoration:none;
+}
+.cq-profile-top .right-icons{display:flex; align-items:center; gap:14px;}
+.cq-profile-top .icon-btn{color:#c4bfb5; font-size:1.1rem; text-decoration:none;}
+
+.cq-profile-id{display:flex; align-items:center; gap:14px; margin-bottom:18px;}
+.cq-profile-id .av{
+  width:64px; height:64px; border-radius:14px; background:#2b2827; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+}
+.cq-profile-id .av img{width:100%; height:100%; object-fit:cover;}
+.cq-profile-id .name-row{font-weight:800; font-size:1.15rem; color:#f0ece2; display:flex; align-items:center; gap:7px;}
+.cq-profile-id .joined{color:#8b867c; font-size:0.8rem; margin-top:3px;}
+
+.cq-profile-actions{display:flex; gap:8px; margin-bottom:20px;}
+.cq-add-friends{
+  flex:1; display:flex; align-items:center; justify-content:center; gap:8px;
+  background:rgba(255,255,255,0.06); border-radius:14px; padding:13px; color:#f0ece2; font-weight:700; font-size:0.9rem;
+  text-decoration:none;
+}
+.cq-share-btn{
+  width:46px; height:46px; border-radius:12px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  display:flex; align-items:center; justify-content:center; color:#f0ece2; font-size:1rem;
+}
+
+.cq-stat-scroll2{display:flex; gap:9px; overflow-x:auto; padding:2px 2px 22px;}
+.cq-stat-card2{
+  flex-shrink:0; width:104px; background:#2b2827; border-radius:12px; padding:13px 10px; text-align:center;
+}
+.cq-stat-card2 .lbl{font-size:0.7rem; color:#8b867c; margin-bottom:8px;}
+.cq-stat-card2 .ic{font-size:1.3rem; margin-bottom:6px;}
+.cq-stat-card2 .num{font-weight:800; font-size:1.05rem; color:#f0ece2;}
+
+.cq-section-head2{display:flex; align-items:baseline; justify-content:space-between; margin:0 0 10px;}
+.cq-section-head2 h2{font-size:0.98rem; font-weight:800; color:#f0ece2; display:flex; align-items:center; gap:6px;}
+.cq-section-head2 h2 small{color:#8b867c; font-weight:600; font-size:0.82rem;}
+.cq-section-head2 .see-all{font-size:0.76rem; color:#8b867c; font-weight:600; text-decoration:none;}
+.cq-profile-section{margin-bottom:24px;}
+
+.cq-history-list{display:flex; flex-direction:column;}
+.cq-history-row{display:flex; align-items:center; gap:10px; padding:11px 0; border-bottom:1px solid rgba(255,255,255,0.08);}
+.cq-history-row:last-child{border-bottom:none;}
+.cq-history-row .type{font-size:1rem; width:18px; text-align:center; color:#9fce62;}
+.cq-history-row .av{width:32px; height:32px; border-radius:7px; background:#332f2d; flex-shrink:0;}
+.cq-history-row .nm{font-weight:700; font-size:0.86rem; flex:1; color:#f0ece2;}
+.cq-history-row .rt{color:#8b867c; font-weight:600; font-size:0.82rem;}
+.cq-history-row .res{width:22px; height:22px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800; color:#fff; flex-shrink:0;}
+.cq-history-row .res.win{background:#7fae42;}
+.cq-history-row .star{width:28px; height:28px; border-radius:50%; background:#7fae42; display:flex; align-items:center; justify-content:center; font-size:0.8rem; flex-shrink:0; margin-left:4px;}
+
+.cq-ghost-row{
+  display:block; width:100%; text-align:center; background:rgba(255,255,255,0.06); border:none;
+  color:#f0ece2; font-weight:700; font-size:0.88rem; padding:13px; border-radius:14px; margin:12px 0 24px; text-decoration:none;
+}
+
+.cq-friend-scroll2{display:flex; gap:10px; overflow-x:auto; padding:2px 2px 6px;}
+.cq-friend-chip2{flex-shrink:0; width:78px; text-align:center; text-decoration:none;}
+.cq-friend-chip2 .av{
+  width:70px; height:70px; border-radius:16px; background:#2b2827; display:flex; align-items:center; justify-content:center;
+  font-size:1.8rem; margin:0 auto 6px;
+}
+.cq-friend-chip2 .nm{font-size:0.74rem; color:#c4bfb5; font-weight:600;}
+
+.cq-prize-scroll{display:flex; gap:11px; overflow-x:auto; padding:2px 2px 8px;}
+.cq-prize-tile{flex-shrink:0; width:88px; text-align:center;}
+.cq-prize-tile .ic{width:72px; height:72px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:1.9rem; margin:0 auto 6px; color:#fff;}
+.cq-prize-tile .nm{font-size:0.72rem; color:#c4bfb5; font-weight:600; line-height:1.3;}

@@ -4,19 +4,83 @@
   <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/icons/chessquest-app-icon.png"><title>ChessQuest — Salon des défis</title>
   <link rel="stylesheet" href="assets/css/variables.css"><link rel="stylesheet" href="assets/css/reset.css"><link rel="stylesheet" href="assets/css/layout.css"><link rel="stylesheet" href="assets/css/components.css?v=105"><link rel="stylesheet" href="assets/css/gamification.css?v=44"><link rel="stylesheet" href="assets/css/profile.css?v=106"><link rel="stylesheet" href="assets/css/navigation.css?v=101"><link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
   <script src="assets/js/pwa-bootstrap-v101.js"></script><script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
+<link rel="stylesheet" href="assets/css/friends-chesscom-authentic.css">
 </head><body class="quest-screen friend-lounge-page"><main class="app"><section class="page">
-  <header class="friend-lounge-header"><a class="subpage-back" href="index.html" aria-label="Retour">‹</a><div><span>LE SALON ROYAL</span><h1>Amis & défis</h1></div><i>♞</i></header>
-  <section class="friend-lounge-hero"><img src="assets/illustrations/mascot-knight-home.png" alt="Mascotte ChessQuest"><div><span class="friend-live-dot">En ligne</span><h2>Qui va tomber de son cheval ?</h2><p>Invite un ami, choisis les règles, et joue une vraie partie synchronisée en direct.</p></div></section>
+  <div class="cq-friends-top">
+    <a class="back-btn" href="index.html" aria-label="Retour">←</a>
+    <h1>Amis</h1>
+    <a class="icon-btn" href="#" id="friend-share-top" aria-label="Partager">☰</a>
+  </div>
+
   <section id="incoming-invite" class="friend-invite-card hidden" aria-live="polite"></section>
-  <section class="friend-lounge-card friend-add-card"><div class="friend-card-title"><span>✦</span><div><strong>Ma cour</strong><small id="friend-count">0 adversaire à défier</small></div></div><label class="friend-input-label" for="friend-name">Ajouter un ami avec son pseudo ChessQuest</label><div class="friend-add-row"><input id="friend-name" autocomplete="off" maxlength="24" placeholder="ex. AlexChess"><button id="friend-add" type="button">Ajouter</button></div><div id="friend-list" class="friend-list"></div></section>
-  <section class="friend-lounge-card friend-create-card"><div class="friend-card-title"><span>⚔</span><div><strong>Créer un défi</strong><small>Ton ami n’aura plus qu’à accepter l’invitation.</small></div></div><label class="friend-input-label" for="challenge-friend">Adversaire</label><select id="challenge-friend" class="friend-full-select"><option value="">Choisir plus tard — partager un lien</option></select><div class="friend-options"><label>Cadence<select id="friend-time"><option value="60">1 min · Bullet</option><option value="300" selected>5 min · Blitz</option><option value="600">10 min · Rapide</option></select></label><label>Ta couleur<select id="friend-color"><option value="random">Aléatoire</option><option value="white">Blancs</option><option value="black">Noirs</option></select></label></div><button id="friend-challenge" class="friend-create-button" type="button"><span>♟</span> Créer mon défi</button><p id="friend-status" class="friend-status" aria-live="polite"></p></section>
+
+  <div class="cq-friends-menu">
+    <button class="cq-friends-menu-row" type="button" id="menu-search-contacts"><span class="ic">🔍</span>Rechercher des contacts</button>
+    <button class="cq-friends-menu-row fb" type="button" id="menu-facebook"><span class="ic">📘</span>Amis Facebook</button>
+    <button class="cq-friends-menu-row" type="button" id="menu-invite"><span class="ic">✉️</span>Inviter des amis</button>
+    <button class="cq-friends-menu-row qr" type="button" id="menu-qr"><span class="ic">▤</span>Partager le code QR</button>
+    <button class="cq-friends-menu-row link" type="button" id="menu-challenge-link"><span class="ic">🔗</span>Envoyez un lien de défi</button>
+  </div>
+
+  <input class="cq-friends-search" id="friend-name" autocomplete="off" maxlength="24" placeholder="Rechercher par nom ou nom d'utilisateur">
+  <p id="friend-status" class="friend-status" aria-live="polite"></p>
+
+  <div class="cq-friends-section-head">
+    <h2>Amis <span id="friend-count-num">0</span></h2>
+    <a href="progress.html#badges">🏅 Classement</a>
+  </div>
+  <div id="friend-list"></div>
+
+  <button class="cq-challenge-toggle" type="button" id="toggle-challenge-form">⚔ Configurer un défi personnalisé</button>
+
+  <section class="friend-lounge-card friend-create-card hidden" id="challenge-form-card">
+    <div class="friend-card-title"><span>⚔</span><div><strong>Créer un défi</strong><small>Ton ami n’aura plus qu’à accepter l’invitation.</small></div></div>
+    <label class="friend-input-label" for="challenge-friend">Adversaire</label>
+    <select id="challenge-friend" class="friend-full-select"><option value="">Choisir plus tard — partager un lien</option></select>
+    <div class="friend-options">
+      <label>Cadence<select id="friend-time"><option value="60">1 min · Bullet</option><option value="300" selected>5 min · Blitz</option><option value="600">10 min · Rapide</option></select></label>
+      <label>Ta couleur<select id="friend-color"><option value="random">Aléatoire</option><option value="white">Blancs</option><option value="black">Noirs</option></select></label>
+    </div>
+    <button id="friend-challenge" class="friend-create-button" type="button"><span>♟</span> Créer mon défi</button>
+  </section>
+
   <section id="friend-invite-card" class="friend-invite-card hidden" aria-live="polite"><span class="friend-invite-icon">✉</span><div><strong>Défi prêt !</strong><p>Envoie ce lien à ton ami. La partie démarre dès qu’il le rejoint.</p></div><div class="friend-invite-actions"><button id="friend-share" type="button">Partager</button><button id="friend-copy" type="button">Copier le lien</button><a id="friend-enter" href="friend-game.html">Ouvrir l’échiquier →</a></div></section>
+  <div id="friend-add-hidden" style="display:none"><button id="friend-add" type="button"></button></div>
 </section></main><nav class="tabbar" aria-label="Navigation principale"></nav>
 <script src="assets/js/progress.js?v=105"></script><script src="assets/js/app.js?v=108"></script>
 <script>
 const FRIENDS_KEY='chessQuestFriends', $=id=>document.getElementById(id);let friends=[];let inviteUrl='';try{friends=JSON.parse(localStorage.getItem(FRIENDS_KEY)||'[]')}catch{}
 function save(){localStorage.setItem(FRIENDS_KEY,JSON.stringify(friends));}
-function render(){ $('friend-count').textContent=friends.length ? `${friends.length} ${friends.length>1?'adversaires à défier':'adversaire à défier'}` : '0 adversaire à défier'; $('friend-list').innerHTML=friends.length?friends.map((name,index)=>`<div class="friend-row"><span class="friend-avatar">${escapeHtml(name.slice(0,1).toUpperCase())}</span><strong>${escapeHtml(name)}</strong><small>Disponible pour un défi</small><button type="button" data-remove="${index}" aria-label="Retirer ${escapeHtml(name)}">×</button></div>`).join(''):'<div class="friend-empty"><span>♞</span><p>Ta cour est vide. Invite quelqu’un à croiser le fer.</p></div>'; $('challenge-friend').innerHTML='<option value="">Choisir plus tard — partager un lien</option>'+friends.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join(''); document.querySelectorAll('[data-remove]').forEach(button=>button.onclick=()=>{friends.splice(Number(button.dataset.remove),1);save();render();}); }
+function render(){
+  $('friend-count-num').textContent = friends.length;
+  $('friend-list').innerHTML = friends.length ? friends.map((name,index)=>`
+    <div class="cq-friend-list-row">
+      <span class="av">🙂</span>
+      <span class="body">
+        <span class="name">${escapeHtml(name)}</span>
+        <span class="sub">Disponible pour un défi</span>
+      </span>
+      <span class="actions">
+        <button type="button" class="go" data-quick-challenge="${escapeHtml(name)}" aria-label="Défier ${escapeHtml(name)}">+</button>
+        <button type="button" class="remove" data-remove="${index}" aria-label="Retirer ${escapeHtml(name)}">✕</button>
+      </span>
+    </div>`).join('') : '<div class="cq-friends-empty"><span>♞</span><p>Ta cour est vide. Invite quelqu’un à croiser le fer.</p></div>';
+  $('challenge-friend').innerHTML='<option value="">Choisir plus tard — partager un lien</option>'+friends.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
+  document.querySelectorAll('[data-remove]').forEach(button=>button.onclick=()=>{friends.splice(Number(button.dataset.remove),1);save();render();});
+  document.querySelectorAll('[data-quick-challenge]').forEach(button=>button.onclick=()=>{
+    $('challenge-form-card').classList.remove('hidden');
+    $('challenge-friend').value=button.dataset.quickChallenge;
+    $('challenge-form-card').scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+}
+$('toggle-challenge-form').onclick=()=>{$('challenge-form-card').classList.toggle('hidden');if(!$('challenge-form-card').classList.contains('hidden'))$('challenge-form-card').scrollIntoView({behavior:'smooth',block:'nearest'});};
+$('menu-challenge-link').onclick=()=>$('toggle-challenge-form').click();
+$('menu-search-contacts').onclick=()=>$('friend-name').focus();
+$('menu-invite').onclick=async()=>{const url=location.origin+location.pathname;if(navigator.share){try{await navigator.share({title:'ChessQuest',text:'Rejoins-moi sur ChessQuest !',url});}catch(e){}}else{try{await navigator.clipboard.writeText(url);$('friend-status').textContent='Lien de l’app copié ✓';}catch(e){}}};
+$('menu-facebook').onclick=()=>{$('friend-status').textContent='La connexion Facebook arrive bientôt.';};
+$('menu-qr').onclick=()=>{$('friend-status').textContent='Le code QR arrive bientôt.';};
+$('friend-share-top').onclick=(e)=>{e.preventDefault();$('menu-invite').click();};
 async function questUserReady(){for(let i=0;i<40&&typeof questCurrentUser!=='function';i++)await new Promise(resolve=>setTimeout(resolve,100));return typeof questCurrentUser==='function'?questCurrentUser():null;}
 function addFriend(){const name=$('friend-name').value.trim();if(!name)return;if(friends.some(friend=>friend.toLowerCase()===name.toLowerCase())){$('friend-status').textContent='Cet ami est déjà dans ta cour.';return;}friends.push(name);save();$('friend-name').value='';$('friend-status').textContent=`${name} est prêt pour un défi.`;render();}
 $('friend-add').onclick=addFriend;$('friend-name').addEventListener('keydown',event=>{if(event.key==='Enter')addFriend();});

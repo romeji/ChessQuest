@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
   <script src="assets/js/pwa-bootstrap-v101.js"></script>
   <script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
 </head>
 <body data-page="learn" class="opening-swipe-page">
   <div id="toast-container"></div>
@@ -64,11 +65,11 @@
     </section>
 
     <div class="opening-swipe-actions">
-      <button class="opening-swipe-menu" id="opening-swipe-menu" type="button" aria-expanded="false" aria-label="Ouvrir le menu">☷</button>
+      <button class="opening-swipe-menu" id="opening-swipe-menu" type="button" aria-expanded="true" aria-label="Ouvrir le menu" style="display:none;">☷</button>
       <button class="opening-swipe-primary" id="opening-swipe-primary" type="button">
         <span id="opening-primary-label">Commencer l’ouverture</span><small id="opening-primary-subtitle">Première leçon disponible</small>
       </button>
-      <div class="opening-swipe-sheet hidden" id="opening-swipe-sheet">
+      <div class="opening-swipe-sheet cq-always-visible" id="opening-swipe-sheet">
         <strong>Apprendre les ouvertures</strong>
         <a href="course-library.html#openings">📚 Bibliothèque de leçons</a>
         <a href="training-game.html">♞ Apprendre avec l’entraîneur</a>

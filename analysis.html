@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
 <script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
 </head>
 <body data-page="analyze" class="quest-screen analysis-page">
 <div id="toast-container"></div>
@@ -61,6 +62,11 @@
         <svg id="analysis-eval-svg" viewBox="0 0 280 92" preserveAspectRatio="none" aria-label="Courbe d'évaluation"></svg>
         <div class="analysis-eval-score" id="analysis-eval-score">—<small>En attente d’analyse</small></div>
       </div>
+    </section>
+
+    <section class="quest-card analysis-section-card" id="analysis-insights-card" style="display:none;">
+      <h2>Ce que révèlent tes analyses</h2>
+      <div class="menu-rows" id="analysis-insights"></div>
     </section>
   </section>
 </main>
@@ -155,6 +161,30 @@ function renderGamesList(games,username){
   });
   renderEvaluation(fetchedGames,username);
   refreshStatuses(fetchedGames);
+  renderAnalysisInsights(fetchedGames, username);
+}
+
+function renderAnalysisInsights(games, username){
+  const card = document.getElementById('analysis-insights-card');
+  const box = document.getElementById('analysis-insights');
+  if(!games.length){ card.style.display = 'none'; return; }
+  const rows = [];
+  const withAccuracy = games.filter(game => Number.isFinite(game.accuracies?.white) || Number.isFinite(game.accuracies?.black));
+  if(withAccuracy.length){
+    const avg = withAccuracy.reduce((sum, game) => {
+      const isWhite = game.white?.username?.toLowerCase() === username.toLowerCase();
+      const value = isWhite ? game.accuracies?.white : game.accuracies?.black;
+      return sum + (Number.isFinite(value) ? value : 0);
+    }, 0) / withAccuracy.length;
+    rows.push(`<div class="menu-row"><span class="ic">📈</span>Précision moyenne : ${avg.toFixed(1)}% sur les ${withAccuracy.length} dernières parties<span class="arrow">›</span></div>`);
+  }
+  const losses = games.filter(game => {
+    const isWhite = game.white?.username?.toLowerCase() === username.toLowerCase();
+    return (isWhite ? game.white?.result : game.black?.result) !== 'win';
+  }).length;
+  rows.push(`<div class="menu-row"><span class="ic">⚠</span>${losses} défaite${losses>1?'s':''} sur les ${games.length} dernières parties suivies<span class="arrow">›</span></div>`);
+  card.style.display = '';
+  box.innerHTML = rows.join('');
 }
 
 async function refreshStatuses(games){

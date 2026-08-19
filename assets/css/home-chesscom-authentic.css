@@ -1,0 +1,93 @@
+/* ============================================================
+   ChessQuest — Accueil "chess.com" (fidèle à la maquette fournie)
+   ============================================================ */
+
+.cq-home-top{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:4px 0 18px;
+}
+.cq-home-top .side{display:flex; align-items:center; gap:10px;}
+.cq-avatar-chip{
+  display:flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,0.07); border-radius:100px; padding:4px 10px 4px 4px;
+}
+.cq-avatar-chip .av{
+  width:26px; height:26px; border-radius:50%; background:#332f2d;
+  display:flex; align-items:center; justify-content:center; font-size:0.85rem;
+}
+.cq-avatar-chip .flame{color:#ff7a33; font-size:0.78rem; font-weight:800;}
+.cq-home-logo{display:flex; align-items:center; gap:7px; font-weight:800; font-size:1.05rem; color:#f0ece2;}
+.cq-home-logo .mark{color:#9fce62; font-size:1.15rem;}
+.cq-home-top .icon-circle{
+  width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:1rem; color:#a8a299; background:transparent;
+}
+
+.cq-card-scroll{display:flex; gap:10px; overflow-x:auto; padding:2px 2px 10px; margin-bottom:22px;}
+.cq-world-card{
+  flex-shrink:0; width:270px; height:150px; border-radius:16px; overflow:hidden; position:relative;
+  display:flex; flex-direction:column; justify-content:flex-end; padding:14px 16px 16px; color:#fff;
+  text-decoration:none;
+}
+.cq-world-card.green{background:linear-gradient(160deg,#3f6b2c,#274018 65%,#1c2e12);}
+.cq-world-card.blue{background:linear-gradient(160deg,#2c4a63,#182c3d 65%,#101d29);}
+.cq-world-card .badge-num{
+  position:absolute; top:12px; left:12px;
+  background:linear-gradient(160deg,#e8b355,#b5762a); color:#3a2306; font-weight:800; font-size:0.72rem;
+  width:24px; height:24px; border-radius:7px; display:flex; align-items:center; justify-content:center;
+  transform:rotate(-8deg);
+}
+.cq-world-card .rating-line{font-size:0.8rem; font-weight:700; color:#dcefc4; display:flex; align-items:center; gap:6px; margin-bottom:8px;}
+.cq-world-card.blue .rating-line{color:#bcdcf0;}
+.cq-world-card h3{font-size:1.15rem; color:#fff; margin:0 0 2px; font-weight:800;}
+.cq-world-card .cta{
+  position:absolute; right:14px; bottom:14px; background:#8fc25a; color:#12220a; font-weight:800;
+  font-size:0.82rem; padding:9px 16px; border-radius:100px;
+}
+.cq-world-card .mini-bar{position:absolute; left:16px; right:16px; bottom:6px; height:5px; background:rgba(255,255,255,0.25); border-radius:100px;}
+.cq-world-card .mini-bar > span{display:block; height:100%; width:35%; background:#9fce62; border-radius:100px;}
+
+.cq-section-head{display:flex; align-items:baseline; justify-content:space-between; margin:0 0 10px;}
+.cq-section-head h2{font-size:0.98rem; font-weight:800; color:#f0ece2;}
+.cq-section-head .see-all{font-size:0.76rem; color:#8b867c; font-weight:600;}
+.cq-home-section{margin-bottom:24px;}
+
+.cq-match-card{
+  display:flex; align-items:center; gap:12px; background:#2b2827; border-radius:16px; padding:10px;
+  text-decoration:none;
+}
+.cq-match-card .av{
+  width:52px; height:52px; border-radius:12px; background:#332f2d; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:1.4rem;
+}
+.cq-match-card .body{flex:1; min-width:0;}
+.cq-match-card .name{font-weight:700; font-size:0.9rem; color:#f0ece2; display:flex; align-items:center; gap:5px;}
+.cq-match-card .sub{font-size:0.78rem; color:#8b867c; margin-top:2px;}
+.cq-match-card .tag{font-size:0.7rem; color:#9fce62; font-weight:800; margin-top:2px;}
+.cq-match-card .go{
+  width:36px; height:36px; border-radius:10px; background:#7fae42; color:#12220a; font-size:1.1rem; font-weight:800;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+
+.cq-stat-scroll{display:flex; gap:9px; overflow-x:auto; padding:2px 2px 6px;}
+.cq-stat-card{
+  flex-shrink:0; width:104px; background:#2b2827; border-radius:12px; padding:13px 10px; text-align:center;
+}
+.cq-stat-card .ic{font-size:1.3rem;}
+.cq-stat-card .num{font-weight:800; font-size:1.02rem; margin-top:5px; color:#f0ece2;}
+.cq-stat-card .lbl{font-size:0.7rem; color:#8b867c; margin-top:2px;}
+
+.cq-friend-scroll{display:flex; gap:10px; overflow-x:auto; padding:2px 2px 6px;}
+.cq-friend-chip{flex-shrink:0; width:78px; text-align:center; text-decoration:none;}
+.cq-friend-chip .av{
+  width:70px; height:70px; border-radius:16px; background:#2b2827; display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem; margin:0 auto 6px; color:#a8a299;
+}
+.cq-friend-chip .nm{font-size:0.74rem; color:#c4bfb5; font-weight:600;}
+
+.cq-play-cta{
+  display:flex; align-items:center; justify-content:center; width:100%;
+  background:linear-gradient(180deg,#9fce62,#7fae42 55%,#547a2a);
+  color:#12220a; font-weight:800; font-size:0.96rem; padding:15px; border-radius:18px;
+  border:none; box-shadow:0 2px 0 rgba(0,0,0,0.2); text-decoration:none; margin:6px 0 20px;
+}

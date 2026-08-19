@@ -18,27 +18,47 @@
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
 <script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
+<link rel="stylesheet" href="assets/css/shop-chesscom-authentic.css">
 </head>
 <body class="shop-page">
 <main class="app">
-  <header class="shop-header">
-    <a class="subpage-back" href="profile.html" aria-label="Retour au profil"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
-    <h1>Boutique royale</h1>
-    <span class="shop-balance" id="shop-balance">🪙 0</span>
-  </header>
-  <section class="shop-content">
-    <div class="shop-hero">
-      <img src="assets/illustrations/mascot-coach-haughty.webp" data-mascot-image alt="Le coach royal">
-      <div><h2>Un peu de distinction</h2><p data-mascot-text>Utilise tes pièces d'argent pour personnaliser ton royaume. Je jugerai tes choix avec une grande impartialité, évidemment.</p></div>
+  <section class="page">
+    <div class="cq-shop-top">
+      <a class="back-btn" href="profile.html" aria-label="Retour au profil">←</a>
+      <h1>Boutique royale</h1>
+      <span class="balance" id="shop-balance">🪙 0</span>
     </div>
-    <aside class="shop-howto" aria-label="Comment gagner des couronnes">
-      <span aria-hidden="true">🪙</span>
-      <div><strong>Comment débloquer les objets ?</strong><p>Gagne des pièces avec les problèmes, le défi quotidien, les parties d'entraînement, les analyses, les ouvertures maîtrisées et les trésors des cartes.</p></div>
-    </aside>
-    <h2 class="shop-section-title">Plateaux</h2><div class="shop-grid" id="shop-boards"></div>
-    <h2 class="shop-section-title">Armées</h2><div class="shop-grid" id="shop-pieces"></div>
-    <h2 class="shop-section-title">Décors</h2><div class="shop-grid" id="shop-backgrounds"></div>
-    <h2 class="shop-section-title">Passages secrets</h2><div class="shop-grid" id="shop-secrets"></div>
+
+    <section class="cq-shop-section">
+      <div class="cq-shop-section-head"><h2>Succès</h2><span id="shop-badges-count">0/0</span></div>
+      <div class="cq-tile-row" id="shop-badges"></div>
+    </section>
+
+    <section class="cq-shop-section">
+      <div class="cq-shop-section-head"><h2>Plateaux</h2><a href="#shop-boards">Tout voir</a></div>
+      <div class="cq-tile-row" id="shop-boards"></div>
+    </section>
+
+    <section class="cq-shop-section">
+      <div class="cq-shop-section-head"><h2>Armées</h2><a href="#shop-pieces">Tout voir</a></div>
+      <div class="cq-tile-row" id="shop-pieces"></div>
+    </section>
+
+    <section class="cq-shop-section" id="shop-backgrounds-wrap">
+      <div class="cq-shop-section-head"><h2>Décors</h2><a href="#shop-backgrounds">Tout voir</a></div>
+      <div class="cq-tile-row" id="shop-backgrounds"></div>
+    </section>
+
+    <section class="cq-shop-section">
+      <div class="cq-shop-section-head"><h2>Passages secrets</h2></div>
+      <div class="cq-secret-rows" id="shop-secrets"></div>
+    </section>
+
+    <div class="cq-shop-info">
+      <h3>Comment débloquer des pièces ?</h3>
+      <p>Gagne des pièces d'or avec les problèmes, le défi quotidien, l'entraîneur, les analyses et les ouvertures maîtrisées.</p>
+    </div>
   </section>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
@@ -47,43 +67,69 @@
 <script src="assets/js/app.js?v=107"></script>
 <script src="assets/js/mascot-coach.js?v=44"></script>
 <script>
-function shopCard(item){
+const TILE_COLORS=['linear-gradient(160deg,#ff9a4a,#e0472c)','linear-gradient(160deg,#e87d7d,#c23e3e)','linear-gradient(160deg,#9fce62,#547a2a)','linear-gradient(160deg,#4a9fd8,#2a6a9e)','linear-gradient(160deg,#e8b93f,#a97918)','linear-gradient(160deg,#b98ae0,#6b4a9e)'];
+function tileBg(item,index){
+  if(item.colors && item.colors.length) return `linear-gradient(160deg,${item.colors[0]},${item.colors[1]})`;
+  return TILE_COLORS[index % TILE_COLORS.length];
+}
+function shopTile(item,index){
   const owned = ownsStoreItem(item.id);
   const equipped = item.type === 'board'
     ? ensureEconomy().equippedBoard === item.id
     : item.type === 'pieces' ? ensureEconomy().equippedPieces === item.id
     : item.type === 'background' && ensureEconomy().equippedBackground === item.id;
-  const colors = item.colors || [];
-  const previewStyle = colors.length ? `--preview-a:${colors[0]};--preview-b:${colors[1]}` : '';
-  const label = equipped ? 'Équipé' : (owned ? (item.type === 'secret' ? 'Explorer' : 'Équiper') : `${item.price}`);
-  return `<article class="shop-card ${owned?'owned':''} ${equipped?'equipped':''} ${item.type==='secret'?'secret-card':''}">
-    <div class="shop-preview" style="${previewStyle}">${item.type==='board'?'':(item.icon||'♞')}</div>
-    <h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.desc)}</p>
-    <button class="shop-action ${owned?'':'price'}" data-item="${item.id}" ${equipped?'disabled':''}>${label}</button>
-  </article>`;
+  return `<button class="cq-shop-tile ${equipped?'equipped':''}" data-item="${item.id}" type="button">
+    <span class="ic" style="background:${tileBg(item,index)}">${item.icon||'♟'}</span>
+    ${!owned ? `<span class="price-pill">🪙 ${item.price}</span>` : ''}
+    <span class="nm">${escapeHtml(item.name)}</span>
+  </button>`;
+}
+function shopSecretRow(item){
+  const owned = ownsStoreItem(item.id);
+  return `<button class="cq-secret-row ${owned?'owned':''}" data-item="${item.id}" type="button">
+    <span class="ic">${item.icon||'🗝️'}</span>
+    <span class="nm">${escapeHtml(item.name)}</span>
+    <span class="price">${owned?'Explorer ›':`🪙 ${item.price}`}</span>
+  </button>`;
+}
+function handleShopClick(id){
+  const item = QUEST_STORE.find(entry=>entry.id===id);
+  if(ownsStoreItem(item.id)){
+    if(item.type === 'secret'){ location.href='secret-levels.html'; return; }
+    equipStoreItem(item.id);
+    if(typeof showToast === 'function') showToast('Équipé', `${item.name} est désormais équipé.`);
+    renderShop(); return;
+  }
+  const result = purchaseStoreItem(item.id);
+  if(!result.ok){
+    if(typeof showToast === 'function') showToast('Pièces insuffisantes', `Il te manque ${item.price-crownBalance()} pièces.`);
+    return;
+  }
+  if(item.type !== 'secret') equipStoreItem(item.id);
+  if(typeof showToast === 'function') showToast('Objet débloqué', `${item.name} est maintenant disponible et équipé.`);
+  renderShop();
 }
 function renderShop(){
   document.getElementById('shop-balance').textContent = `🪙 ${crownBalance()}`;
-  document.getElementById('shop-boards').innerHTML = QUEST_STORE.filter(x=>x.type==='board').map(shopCard).join('');
-  document.getElementById('shop-pieces').innerHTML = QUEST_STORE.filter(x=>x.type==='pieces').map(shopCard).join('');
-  document.getElementById('shop-backgrounds').innerHTML = QUEST_STORE.filter(x=>x.type==='background').map(shopCard).join('');
-  document.getElementById('shop-secrets').innerHTML = QUEST_STORE.filter(x=>x.type==='secret').map(shopCard).join('');
-  document.querySelectorAll('.shop-action[data-item]').forEach(button => button.onclick = () => {
-    const item = QUEST_STORE.find(entry=>entry.id===button.dataset.item);
-    if(ownsStoreItem(item.id)){
-      if(item.type === 'secret'){ location.href='secret-levels.html'; return; }
-      equipStoreItem(item.id); showMascotReaction('purchase',`${item.name} est désormais équipé.`,{imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]'});
-      renderShop(); return;
-    }
-    const result = purchaseStoreItem(item.id);
-    if(!result.ok){
-       showMascotReaction('locked',`Il te manque ${item.price-crownBalance()} pièces.`,{imageSelector:'[data-mascot-image]',textSelector:'[data-mascot-text]'});
-      return;
-    }
-    if(item.type !== 'secret') equipStoreItem(item.id);
-    if(typeof showToast === 'function') showToast('Objet débloqué', `${item.name} est maintenant disponible et équipé.`);
-    renderShop();
-  });
+  document.getElementById('shop-boards').innerHTML = QUEST_STORE.filter(x=>x.type==='board').map(shopTile).join('');
+  document.getElementById('shop-pieces').innerHTML = QUEST_STORE.filter(x=>x.type==='pieces').map(shopTile).join('');
+  const backgrounds = QUEST_STORE.filter(x=>x.type==='background');
+  document.getElementById('shop-backgrounds-wrap').style.display = backgrounds.length ? '' : 'none';
+  document.getElementById('shop-backgrounds').innerHTML = backgrounds.map(shopTile).join('');
+  document.getElementById('shop-secrets').innerHTML = QUEST_STORE.filter(x=>x.type==='secret').map(shopSecretRow).join('');
+  document.querySelectorAll('[data-item]').forEach(el => el.onclick = () => handleShopClick(el.dataset.item));
+
+  if(typeof computeBadges === 'function'){
+    const badges = computeBadges();
+    const unlocked = badges.filter(b=>b.unlocked);
+    const badgeIcon = {medal:'🏅',trophy:'🏆',chart:'📈',target:'🎯',puzzle:'🧩',flame:'🔥',star:'⭐'};
+    document.getElementById('shop-badges-count').textContent = `${unlocked.length}/${badges.length}`;
+    document.getElementById('shop-badges').innerHTML = (unlocked.length ? unlocked : badges.slice(0,4)).map((badge,i)=>`
+      <div class="cq-shop-tile" style="cursor:default;">
+        <span class="ic" style="background:${TILE_COLORS[i%TILE_COLORS.length]}; ${badge.unlocked?'':'opacity:.35;'}">${badgeIcon[badge.icon]||'🏅'}</span>
+        <span class="nm">${escapeHtml(badge.name)}</span>
+      </div>`).join('');
+  }
 }
 renderShop();
 </script>

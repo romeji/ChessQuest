@@ -1,0 +1,403 @@
+/* ============================================================
+   ChessQuest — Thème sombre "chess.com" (v2, en profondeur)
+   Contrairement à la première passe, celui-ci ne change pas
+   seulement les couleurs : il retravaille les formes (rangées
+   translucides, boutons pilule, cartes) pour se rapprocher des
+   captures d'écran de référence chess.com.
+   À charger EN DERNIER sur chaque page.
+   ============================================================ */
+
+:root{
+  /* ---- Fonds ---- */
+  --bg:#1d1b1a !important;
+  --bg-panel:rgba(255,255,255,0.055) !important;
+  --bg-panel-2:rgba(255,255,255,0.09) !important;
+  --line:rgba(255,255,255,0.09) !important;
+  --shadow:none !important;
+
+  /* ---- Texte ---- */
+  --navy:#f5f2ec !important;
+  --navy-2:#f5f2ec !important;
+  --ink:#f5f2ec !important;
+  --text:#f0ece2 !important;
+  --text-dim:#a8a299 !important;
+  --cream:#f5f2ec !important;
+
+  /* ---- Marque : vert chess.com ---- */
+  --coral:#7fae42 !important;
+  --coral-dark:#547a2a !important;
+  --gem:#4a9fd8 !important;
+  --tile-purple:#7fae42 !important;
+
+  /* ---- Sémantique analyse (déjà proches de chess.com, gardées) ---- */
+  --best:#4C86C9;
+  --good:#3CB878;
+  --inaccuracy:#F0A93A;
+  --mistake:#EF8F4E;
+  --blunder:#EF5F63;
+
+  --accent-blue-bg:rgba(74,159,216,.14);   --accent-blue-text:#8fc7ea;
+  --accent-pink-bg:rgba(239,95,99,.14);    --accent-pink-text:#f2a0a3;
+  --accent-yellow-bg:rgba(232,185,63,.16); --accent-yellow-text:#e8c15f;
+  --accent-green-bg:rgba(127,174,66,.16);  --accent-green-text:#9fce62;
+
+  --radius:16px !important;
+  --radius-btn:100px !important;
+}
+
+/* ---------------------------------------------------------
+   1) Fonds de page : noir chaud partout, avec les mêmes
+      sélecteurs "gagnants" identifiés lors de l'audit
+      (html.cq-has-tabbar, .app générique, pages spécifiques).
+--------------------------------------------------------- */
+html, body,
+html.cq-has-tabbar, html.cq-has-tabbar body, html.cq-has-tabbar body[data-page],
+body[data-page="coach"], body[data-page="coach"] .app,
+body.opening-swipe-page, html:has(body.opening-swipe-page),
+body.opening-map-page,
+body.problem-journey-page, html:has(body.problem-journey-page),
+.shop-page, .shop-page .app,
+.academy-page, .academy-shell,
+.friend-lounge-page, .friend-lounge-page .app,
+.secret-hub,
+.written-course-page, .written-course-shell,
+body[data-page="training-hub"] .app,
+.training-final-page .app,
+.training-target-page, .training-target-page .app, .training-target-page .page,
+body.quest-screen{
+  background:#1d1b1a !important;
+  color:#f0ece2 !important;
+}
+.app{background:#1d1b1a;}
+body[data-page="home"] .app,
+body[data-page="puzzles"] .app,
+body[data-page="play"]:not(.opening-lesson-page) .app,
+body.opening-lesson-page .app,
+.analysis-review-page .app,
+.daily-final-page .app,
+body.quest-screen .app{
+  background:#1d1b1a !important;
+}
+body{
+  background:radial-gradient(circle at 16% 0%, rgba(127,174,66,.10), transparent 28rem), #1d1b1a !important;
+}
+
+/* ---------------------------------------------------------
+   2) Cartes / rangées : forme "menu translucide" chess.com
+      au lieu de cartes blanches à ombre — appliqué à tous les
+      types de rangées existants dans le projet.
+--------------------------------------------------------- */
+.card,
+.stat-card,
+.quest-card,
+.home-tile,
+.home-path-card,
+.home-week-card,
+.academy-course-card,
+.academy-opening-library a,
+.academy-hero,
+.academy-levels button,
+.friend-row,
+.friend-lounge-card,
+.entrainement-card,
+.settings-group,
+.puzzle-card,
+.mcq-option,
+.feedback-box,
+.shop-card,
+.secret-level,
+.quest-notification-item,
+ol.move-list,
+.training-setup-card{
+  background:rgba(255,255,255,0.055) !important;
+  border:1px solid rgba(255,255,255,0.09) !important;
+  box-shadow:none !important;
+  color:#f0ece2 !important;
+}
+.academy-course-card>span, .friend-avatar, .secret-level-icon{
+  background:rgba(127,174,66,0.2) !important; color:#9fce62 !important;
+}
+.academy-levels button.active{background:#7fae42 !important; color:#12220a !important;}
+.friend-row strong, .academy-course-card, .entrainement-card .ec-title, .settings-group-title strong{color:#f0ece2 !important;}
+.friend-row small{color:#9fce62 !important;}
+input[type="text"], textarea, .search-input, .friend-full-select, .friend-options select, .training-setup-field select{
+  background:rgba(255,255,255,0.07) !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  color:#f0ece2 !important;
+}
+
+/* ---------------------------------------------------------
+   3) Boutons : pilule verte avec biseau, comme "Jouer" /
+      "Résoudre des problèmes" sur les captures de référence.
+--------------------------------------------------------- */
+button.btn, .training-setup-start, .friend-create-button, .mode-primary-button,
+a.btn, .home-continue-button, .home-final-continue{
+  background:linear-gradient(180deg,#9fce62,#7fae42 60%,#547a2a) !important;
+  color:#12220a !important;
+  border:none !important;
+  border-radius:100px !important;
+  box-shadow:0 3px 0 #3f5f1f !important;
+}
+button.btn.secondary{
+  background:rgba(255,255,255,0.08) !important;
+  color:#f0ece2 !important;
+  border:1px solid rgba(255,255,255,0.16) !important;
+  box-shadow:none !important;
+}
+.shop-action{background:#7fae42 !important; color:#12220a !important; border-radius:100px !important;}
+.shop-card.owned:not(.equipped) .shop-action{background:#547a2a !important;}
+
+/* ---------------------------------------------------------
+   4) Bulles du coach : blanches sur fond sombre (identique
+      aux captures de référence — contraste net et lisible).
+--------------------------------------------------------- */
+.home-final-speech, .home-speech, .coach-bubble, .training-setup-coach p,
+.puzzle-coach-art + p, .training-mascot-tip p, .lesson-coach-strip p{
+  background:#fff !important;
+  color:#1c1a18 !important;
+  border:none !important;
+}
+.training-mascot-tip, .lesson-coach-strip{background:transparent !important;}
+
+/* ---------------------------------------------------------
+   5) Tabbar : chrome sombre déjà correct, on renforce juste
+      le contraste de l'onglet actif.
+--------------------------------------------------------- */
+body nav.tabbar::before{
+  background:linear-gradient(180deg,#1f4a30 0,#123321 var(--cq-tabbar-height),#123321 100%) !important;
+}
+body nav.tabbar .tabbar-item.active{
+  background:rgba(159,206,98,.22) !important;
+  color:#fff !important;
+}
+body nav.tabbar .tabbar-item{color:#9a9488 !important;}
+
+/* ---------------------------------------------------------
+   6) Boutique / niveaux secrets : ambiance premium sombre
+--------------------------------------------------------- */
+.secret-card .shop-preview{background:radial-gradient(circle,#3f5f1f,#12220a) !important; color:#ffe27a !important;}
+.secret-hub{background:radial-gradient(circle at 50% 0, rgba(127,174,66,.12), #1d1b1a 58%) !important;}
+.secret-title{color:#9fce62 !important;}
+.secret-intro{color:#a8a299 !important;}
+
+/* ---------------------------------------------------------
+   7) Puces / badges / accents violets -> verts
+--------------------------------------------------------- */
+.analysis-tabs button.active{color:#9fce62 !important; border-color:#9fce62 !important;}
+.analysis-review-page .nav-controls button{background:#7fae42 !important; color:#12220a !important;}
+.training-move-browser button{background:rgba(255,255,255,0.08) !important; color:#f0ece2 !important;}
+.academy-opening-library a span{color:#9fce62 !important;}
+.home-shop-entry-icon{background:linear-gradient(145deg,#e8b93f,#a97918) !important; color:#2b1c02 !important;}
+.friend-invite-card{background:linear-gradient(135deg,#2a5d82,#1a3d54) !important;}
+
+/* ---------------------------------------------------------
+   8bis) Éléments spécifiques à l'accueil "final" restés en
+        clair : marque, chip série, cloche, grille rapide,
+        et l'image mascotte (mix-blend-mode:multiply se
+        comporte mal sur fond sombre -> désactivé).
+--------------------------------------------------------- */
+.home-final-brand{color:#f0ece2 !important;}
+.home-final-brand i{color:#e8b93f !important;}
+.home-fire-chip{
+  background:rgba(255,255,255,0.07) !important;
+  border-color:rgba(255,255,255,0.14) !important;
+  color:#f0ece2 !important;
+}
+.home-fire-chip span{color:#a8a299 !important;}
+.home-fire-chip b{color:#f0ece2 !important;}
+.home-final-bell{
+  background:rgba(255,255,255,0.07) !important;
+  border-color:rgba(255,255,255,0.14) !important;
+  color:#f0ece2 !important;
+}
+.home-final-mascot,
+.puzzle-coach-art,
+.training-setup-coach img,
+.lesson-coach-strip img{
+  mix-blend-mode:normal !important;
+}
+.home-quick-grid a{
+  background:rgba(255,255,255,0.055) !important;
+  border-color:rgba(255,255,255,0.09) !important;
+  color:#f0ece2 !important;
+}
+.home-quick-grid small{color:#a8a299 !important;}
+.home-final-analysis{
+  background:rgba(74,159,216,0.1) !important;
+  border-color:rgba(74,159,216,0.25) !important;
+  color:#f0ece2 !important;
+}
+.home-final-analysis small{color:#a8a299 !important;}
+.home-shop-entry{
+  background:rgba(255,255,255,0.055) !important;
+  border-color:rgba(255,255,255,0.09) !important;
+  color:#f0ece2 !important;
+}
+.home-shop-entry-copy small{color:#a8a299 !important;}
+
+/* ---------------------------------------------------------
+   9) Filet de sécurité générique : les titres qui héritaient
+      d'une couleur sombre par défaut (nombreux composants
+      "maquette" ponctuels dans le projet) redeviennent clairs,
+      sans écraser les titres déjà correctement colorés.
+--------------------------------------------------------- */
+.page h1, .page h2, .page h3, .app h1, .app h2, .app h3{color:#f0ece2;}
+
+/* Bilan de la partie (game-view.html) : cartes claires -> sombres */
+.review-chart-card,.review-score-card,.review-breakdown,.review-phases,.review-breakdown-card{
+  background:#2b2827 !important; border-color:rgba(255,255,255,0.09) !important; box-shadow:none !important;
+}
+.review-players article, .review-player{background:#2b2827 !important; border-color:rgba(255,255,255,0.09) !important;}
+.review-piece{background:#332f2d !important; color:#f0ece2 !important;}
+.review-piece.black{background:#1d1b1a !important; color:#c4bfb5 !important;}
+.review-players strong, .review-player strong{color:#f0ece2 !important;}
+.review-players small, .review-player small{color:#8b867c !important;}
+.review-versus{color:#8b867c !important;}
+.review-accuracy>article:first-child{background:#f5f2ec !important; color:#1a1917 !important; border:none !important;}
+.review-accuracy>article:last-child{background:#2b2827 !important; color:#f0ece2 !important; border:none !important;}
+.review-accuracy>div span{color:#f0ece2 !important;}
+.review-accuracy>div small{color:#8b867c !important;}
+.review-breakdown-head{color:#8b867c !important;}
+.review-breakdown-row, .review-breakdown>button, .review-phases>div{border-color:rgba(255,255,255,0.08) !important; color:#f0ece2 !important;}
+.review-breakdown-row b{color:#f0ece2 !important;}
+.review-breakdown>button:not(:disabled):active{background:rgba(255,255,255,0.05) !important;}
+.review-breakdown-card h2, .review-phases h2{color:#f0ece2 !important;}
+.review-hero-comment{background:#fff !important; color:#1c1a18 !important; border:none !important;}
+.review-hero-comment strong{color:#1c1a18 !important;}
+.review-outcome{background:#2b2827 !important; border-color:rgba(255,255,255,0.09) !important;}
+.review-outcome strong{color:#f0ece2 !important;}
+.review-outcome small{color:#8b867c !important;}
+.game-row, .games-list .game-row{background:rgba(255,255,255,0.055) !important; border-color:rgba(255,255,255,0.09) !important;}
+.g-name{color:#f0ece2 !important;} .g-rating{color:#8b867c !important;}
+.g-avatar{background:#332f2d !important;}
+
+/* Défi quotidien / problème du jour : cartes claires -> sombres */
+.daily-final-page .daily-coach,
+.daily-coach{
+  background:#2b2827 !important; border-color:rgba(255,255,255,0.09) !important; color:#f0ece2 !important;
+}
+.daily-coach-copy strong{color:#f0ece2 !important;}
+.daily-final-page .daily-question, .daily-question{color:#f0ece2 !important;}
+.daily-final-page .mcq-option, .mcq-option{
+  background:rgba(255,255,255,0.055) !important; color:#f0ece2 !important; border-color:rgba(255,255,255,0.1) !important;
+}
+.mcq-option.correct{background:rgba(159,206,98,0.18) !important; border-color:#9fce62 !important;}
+.mcq-option.wrong{background:rgba(224,87,76,0.18) !important; border-color:#e0574c !important;}
+.featured-problem-heading{background:#2b2827 !important; border-color:rgba(255,255,255,0.09) !important;}
+.featured-problem-heading small{color:#e8b93f !important;}
+.featured-problem-heading h2{color:#f0ece2 !important;}
+.featured-problem-heading button{background:#547a2a !important; color:#fff !important;}
+.featured-problem-controls>button{background:#2b2827 !important; border-color:rgba(255,255,255,0.09) !important; color:#9fce62 !important;}
+.featured-hint b{background:#547a2a !important; color:#fff !important;}
+.daily-final-page #featured-step{color:#e8b93f !important;}
+.featured-result-actions button{background:#547a2a !important; color:#fff !important;}
+.featured-result-actions button:last-child{background:rgba(255,255,255,0.08) !important; color:#f0ece2 !important;}
+.daily-done-banner{color:#f0ece2 !important;}
+.daily-done-banner .big-check{background:#547a2a !important; color:#fff !important;}
+.daily-done-banner p{color:#c4bfb5 !important;}
+.daily-final-page .quest-page-title{color:#f0ece2 !important;}
+.daily-final-page .quest-page-title .subpage-back{background:rgba(255,255,255,0.07) !important; border:none !important; color:#f0ece2 !important;}
+.quest-page-title h1{color:#f0ece2 !important;}
+.quest-currency{background:rgba(255,255,255,0.07) !important; color:#e8b93f !important; border:none !important;}
+#line-name, .final-page-title h1, .final-page-title{color:#f0ece2 !important;}
+
+/* Toast (notification "défi quotidien") : carte sombre lisible */
+.toast{
+  background:linear-gradient(160deg,#332f2d,#242220) !important;
+  color:#f0ece2 !important;
+  border:1px solid rgba(255,255,255,0.1) !important;
+}
+.toast .toast-desc{color:#c4bfb5 !important;}
+body[data-page="home"] #toast-container{top:64px !important;}
+html.cq-has-tabbar .quest-notifications{top:64px !important;}
+.opening-swipe-page .quest-notifications{top:16px !important; right:100px !important;}
+.opening-card-match{background:linear-gradient(145deg,#7fae42,#3f6b2c) !important;}
+.cq-always-visible.opening-swipe-sheet{
+  position:static !important; box-shadow:none !important; margin-top:8px;
+  background:transparent !important; border:none !important; padding:0 !important;
+}
+.cq-always-visible.opening-swipe-sheet strong{display:none;}
+.cq-always-visible.opening-swipe-sheet a, .cq-always-visible.opening-swipe-sheet button{
+  background:rgba(255,255,255,0.07) !important; color:#f0ece2 !important; font-weight:700 !important;
+}
+.opening-swipe-actions{grid-template-columns:1fr !important;}
+.secret-hub .quest-notifications{top:16px !important; right:16px !important;}
+.secret-title{text-align:left !important;}
+
+/* Hub "S'entraîner" : hero clair -> vert foncé (polish.css l.180 écrase en !important) */
+body[data-page="training-hub"] .training-hub-hero{background:linear-gradient(135deg,#177c51,#073d2d) !important; border-color:rgba(219,243,190,.32) !important;}
+body[data-page="training-hub"] .entrainement-title{color:#fff !important;}
+body[data-page="training-hub"] .entrainement-sub{color:#d7eadc !important;}
+body[data-page="training-hub"] .training-hub-kicker{color:#9fce62 !important;}
+.training-hub-page .quest-notifications, body[data-page="training-hub"] .quest-notifications{top:16px !important; right:16px !important;}
+
+/* Analyse de partie (liste) : cartes claires -> sombres, bouton violet -> vert */
+.analysis-page .analysis-section-card h2{color:#f0ece2 !important;}
+.analysis-page .analysis-quest-btn{
+  background:linear-gradient(180deg,#9fce62,#7fae42 55%,#547a2a) !important;
+  border-color:transparent !important; color:#12220a !important; font-weight:800 !important;
+}
+.analysis-eval{color:#f0ece2 !important;}
+.analysis-eval small{color:#8b867c !important;}
+.analysis-empty, .analysis-page p{color:#c4bfb5 !important;}
+.analysis-brand{color:#9fce62 !important;}
+
+.menu-rows{display:flex; flex-direction:column; gap:8px;}
+.menu-row{
+  display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.055); border-radius:14px;
+  padding:13px 15px; font-weight:700; font-size:0.86rem; color:#f0ece2;
+}
+.menu-row .ic{width:20px; text-align:center; flex-shrink:0;}
+.menu-row .arrow{margin-left:auto; color:#8b867c; font-weight:400;}
+
+/* Vue d'une leçon (course.html) */
+.written-course-header .subpage-back{background:rgba(255,255,255,0.07) !important; border:none !important; color:#f0ece2 !important;}
+.written-course-header span{color:#9fce62 !important;}
+.written-course-header h1{color:#f0ece2 !important;}
+.written-course-hero{background:linear-gradient(135deg,#2b2827,#242220) !important; border-color:rgba(255,255,255,0.09) !important;}
+.written-course-hero strong{color:#f0ece2 !important;}
+.written-course-hero p{color:#8b867c !important;}
+.written-course-progress{color:#8b867c !important;}
+.written-course-progress>div{background:rgba(255,255,255,0.08) !important;}
+
+/* Quête des problèmes (puzzles.html) */
+.puzzle-final-rating{background:rgba(255,255,255,0.07) !important; border-color:rgba(255,255,255,0.12) !important;}
+.puzzle-final-rating strong{color:#9fce62 !important;}
+.puzzle-final-turn-copy strong{color:#f0ece2 !important;}
+.puzzle-final-turn-copy small{color:#8b867c !important;}
+.puzzle-final-hint{background:rgba(232,185,63,0.16) !important; color:#e8b93f !important;}
+.problem-journey-page .quest-notifications{top:16px !important; right:120px !important;}
+.problem-journey-menu{background:rgba(30,28,26,.98) !important; border-color:rgba(255,255,255,0.1) !important;}
+.problem-journey-menu>strong{color:#f0ece2 !important;}
+.problem-journey-menu a{background:rgba(255,255,255,0.07) !important; color:#f0ece2 !important;}
+body[data-page="profile"] .quest-notifications{right:56px !important;}
+.shop-page .quest-notifications{right:74px !important;}
+
+/* Confettis d'ambiance hérités (reset.css) : neutralisés en thème sombre */
+body::before, body::after{display:none !important;}
+
+/* Grille d'échiquier décorative réutilisable (maquettes statiques) */
+.board{
+  aspect-ratio:1/1; width:100%; border-radius:6px; overflow:hidden;
+  display:grid; grid-template-columns:repeat(8,1fr); grid-template-rows:repeat(8,1fr);
+}
+.board .sq{display:flex; align-items:center; justify-content:center; font-size:1.55rem;}
+.board .sq.light{background:#ecd9b0;}
+.board .sq.dark{background:#c8975c;}
+.board .sq.hl{box-shadow:inset 0 0 0 3px #e8b93f;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid rgba(127,174,66,.55) !important;
+}
+.quest-card p, .quest-card .profile-objective-copy strong, .quest-card strong{color:#f0ece2 !important;}
+.profile-objective-meta{color:#a8a299 !important;}
+
+/* ---------------------------------------------------------
+   8) Filet de sécurité texte
+--------------------------------------------------------- */
+.shop-page, .academy-page, .friend-lounge-page, .secret-hub, .written-course-page,
+body[data-page="coach"], body.opening-swipe-page, body.problem-journey-page,
+body.training-target-page, body[data-page="training-hub"]{
+  --text:#f0ece2;
+}
+h1,h2,h3,p,span,small,strong,label{color-scheme:dark;}
+.settings-group-title small, .friend-empty p, .academy-courses p, .academy-hero p{color:#a8a299 !important;}

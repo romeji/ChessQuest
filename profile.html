@@ -29,48 +29,58 @@
 <link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
 <script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
+<link rel="stylesheet" href="assets/css/profile-chesscom-authentic.css">
 </head>
 <body data-page="profile" class="quest-screen profile-page">
 <div id="toast-container"></div>
 <main class="app">
   <section class="page">
-    <header class="quest-page-title">
-      <span></span>
-      <h1>Profil</h1>
-      <a class="quest-currency" id="profile-gem-count" href="shop.html" aria-label="Ouvrir la boutique royale">0</a>
-    </header>
-
-    <section class="quest-card profile-summary">
-      <div class="profile-summary-main">
-        <div>
-          <img class="profile-avatar" id="profile-avatar" src="assets/illustrations/mascot-knight-home.png" alt="Avatar du joueur">
-          <span class="profile-edit">✎</span>
-        </div>
-        <div class="profile-identity">
-          <div class="profile-name" id="profile-name">Alex</div>
-          <div class="profile-elo-label">ELO actuel</div>
-          <div class="profile-elo" id="profile-elo">—</div>
-          <div class="profile-tactical-elo">♟ ELO tactique <b id="profile-tactical-elo">300</b></div>
-          <div class="profile-rank">♛ <span id="profile-rank">Stratège</span></div>
-        </div>
+    <div class="cq-profile-top">
+      <a class="back-btn" href="index.html" aria-label="Retour">←</a>
+      <div class="right-icons">
+        <a class="icon-btn" href="shop.html" aria-label="Boutique">☰</a>
+        <a class="icon-btn" href="settings.html" aria-label="Paramètres">⋯</a>
+        <span id="profile-gem-count" style="display:none"></span>
       </div>
-      <div class="profile-stats">
-        <div class="profile-stat"><span>Parties jouées</span><strong id="profile-games">0</strong></div>
-        <div class="profile-stat"><span>Taux de victoire</span><strong id="profile-winrate">0%</strong></div>
-        <div class="profile-stat"><span>Meilleur ELO</span><strong id="profile-best-elo">—</strong></div>
+    </div>
+
+    <div class="cq-profile-id">
+      <div class="av"><img id="profile-avatar" src="assets/illustrations/mascot-knight-home.png" alt="Avatar du joueur"></div>
+      <div>
+        <div class="name-row"><span id="profile-name">Alex</span> <span>🇫🇷</span> <span id="profile-streak-flame">🔥</span></div>
+        <div class="joined" id="profile-joined">Inscrit le —</div>
+      </div>
+    </div>
+
+    <div class="cq-profile-actions">
+      <a class="cq-add-friends" href="friends.html">+ Ajouter des amis</a>
+      <button class="cq-share-btn" type="button" aria-label="Partager le profil">⇪</button>
+    </div>
+
+    <div class="cq-stat-scroll2">
+      <div class="cq-stat-card2"><div class="lbl">ELO tactique</div><div class="ic">🧩</div><div class="num" id="profile-tactical-elo">300</div></div>
+      <div class="cq-stat-card2"><div class="lbl">ELO actuel</div><div class="ic">☀️</div><div class="num" id="profile-elo">—</div></div>
+      <div class="cq-stat-card2"><div class="lbl">Parties</div><div class="ic">♞</div><div class="num" id="profile-games">0</div></div>
+      <div class="cq-stat-card2"><div class="lbl">Victoires</div><div class="ic">🏆</div><div class="num" id="profile-winrate">0%</div></div>
+    </div>
+
+    <section class="cq-profile-section">
+      <div class="cq-section-head2"><h2>Historique des parties</h2><span class="see-all" id="profile-history-count">0</span></div>
+      <div class="cq-history-list" id="profile-history"></div>
+      <a class="cq-ghost-row" href="analysis.html">Voir toutes les parties</a>
+    </section>
+
+    <section class="cq-profile-section">
+      <div class="cq-section-head2"><h2>Amis <small id="profile-friends-count">0</small></h2><a class="see-all" href="progress.html#badges">🏅 Classement</a></div>
+      <div class="cq-friend-scroll2" id="profile-friends-row">
+        <a class="cq-friend-chip2" href="friends.html"><div class="av">🔍</div><div class="nm">Trouver</div></a>
       </div>
     </section>
 
-    <section class="quest-card profile-section">
-      <div class="profile-section-head"><strong>Badges obtenus</strong><a href="progress.html#badges">Voir tout</a></div>
-      <a class="profile-badges" href="progress.html#badges" aria-label="Voir tous les badges">
-        <div class="profile-badge" title="Tacticien"></div>
-        <div class="profile-badge" title="Visionnaire"></div>
-        <div class="profile-badge" title="Finisseur"></div>
-        <div class="profile-badge" title="Stratège"></div>
-        <div class="profile-badge" title="Régulier"></div>
-        <div class="profile-badge-more" id="profile-extra-badges">+0</div>
-      </a>
+    <section class="cq-profile-section">
+      <div class="cq-section-head2"><h2>Prix</h2><a class="see-all" href="progress.html#badges">Tout afficher</a></div>
+      <div class="cq-prize-scroll" id="profile-prize"></div>
     </section>
 
     <section class="quest-card profile-section">
@@ -78,14 +88,7 @@
       <div class="profile-objectives" id="profile-objectives"></div>
     </section>
 
-    <section class="quest-card profile-section">
-      <div class="profile-section-head"><strong>Réalisations récentes</strong><a href="progress.html">Voir tout</a></div>
-      <div class="profile-achievements" id="profile-achievements"></div>
-    </section>
-
-    <a class="quest-card profile-progress-entry" href="progress.html"><span>📈</span><span><strong>Mes progrès</strong><small>Évolution ELO, régularité et objectifs</small></span><b>›</b></a>
     <a class="quest-card profile-xp-entry" href="progress.html"><span>✦</span><span><strong>Niveau ChessQuest · <b id="profile-level">1</b></strong><small><i><b id="profile-xp-fill"></b></i><em id="profile-xp-copy">0 / 100 XP</em></small></span><b>›</b></a>
-    <a class="quest-card profile-progress-entry" href="friends.html"><span>⚔️</span><span><strong>Amis & défis</strong><small>Invite un ami et prépare une partie</small></span><b>›</b></a>
 
     <section class="quest-card profile-section">
       <div class="profile-section-head"><strong>Diagnostic du coach</strong><a href="training-target.html">M’entraîner</a></div>
@@ -100,6 +103,12 @@
     <a class="quest-card profile-settings-row" href="settings.html">
       <span>⚙</span><span>Paramètres</span><span>›</span>
     </a>
+
+    <!-- Champs conservés pour compatibilité JS (non affichés visuellement) -->
+    <span id="profile-rank" style="display:none"></span>
+    <span id="profile-best-elo" style="display:none"></span>
+    <span id="profile-extra-badges" style="display:none"></span>
+    <div id="profile-achievements" style="display:none"></div>
   </section>
 </main>
 <nav class="tabbar" aria-label="Navigation principale"></nav>
@@ -198,6 +207,36 @@ function renderProfile(){
   document.getElementById('profile-diagnostic').innerHTML=diagnostics.map(([label,value])=>`<div><span>${label}</span><i><b style="width:${value}%"></b></i><strong>${value}%</strong></div>`).join('')+`<a href="${pending?'puzzles.html?source=mistakes':'analysis.html'}">${pending?`${pending} erreur${pending>1?'s':''} à corriger`:'Analyse une nouvelle partie pour obtenir un plan personnalisé'} →</a>`;
   const records=PROGRESS.puzzleBattleScores||{30:[],45:[],60:[]};
   document.getElementById('battle-records').innerHTML=[30,45,60].map(duration=>`<div><span>${duration} s</span><strong>${records[duration]?.[0]?.score||0}</strong><small>problèmes</small></div>`).join('');
+
+  // --- Ajouts maquette chess.com : date d'inscription, série, historique, prix ---
+  if(!PROGRESS.joinedAt) PROGRESS.joinedAt = Date.now();
+  const joinedDate = new Date(PROGRESS.joinedAt).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('profile-joined').textContent = `Inscrit le ${joinedDate}`;
+  const streak = (typeof computeCurrentStreak==='function') ? computeCurrentStreak() : 0;
+  document.getElementById('profile-streak-flame').textContent = streak > 0 ? `🔥 ${streak}` : '';
+
+  const historyGames = games.slice(0,5);
+  document.getElementById('profile-history-count').textContent = games.length;
+  document.getElementById('profile-history').innerHTML = historyGames.length ? historyGames.map(game=>{
+    const white = game.white?.username?.toLowerCase() === lower;
+    const oppName = white ? (game.black?.username||'Adversaire') : (game.white?.username||'Adversaire');
+    const oppRating = white ? (game.black?.rating||'—') : (game.white?.rating||'—');
+    const result = (white ? game.white?.result : game.black?.result) === 'win';
+    return `<div class="cq-history-row">
+      <span class="type">⏱</span><span class="av"></span>
+      <span class="nm">${oppName} (${oppRating})</span>
+      ${result ? '<span class="res win">+</span><span class="star">★</span>' : '<span class="rt">—</span>'}
+    </div>`;
+  }).join('') : `<div class="cq-history-row"><span class="nm" style="color:var(--text-dim,#8b867c)">Aucune partie synchronisée pour l'instant.</span></div>`;
+
+  const unlockedBadges = computeBadges().filter(badge => badge.unlocked);
+  const badgeIcon = {medal:'🏅',trophy:'🏆',chart:'📈',target:'🎯',puzzle:'🧩',flame:'🔥',star:'⭐'};
+  const badgeColor = ['linear-gradient(160deg,#ff9a4a,#e0472c)','linear-gradient(160deg,#e87d7d,#c23e3e)','linear-gradient(160deg,#9fce62,#547a2a)','linear-gradient(160deg,#4a9fd8,#2a6a9e)','linear-gradient(160deg,#e8b93f,#a97918)'];
+  document.getElementById('profile-prize').innerHTML = unlockedBadges.length ? unlockedBadges.map((badge,i)=>`
+    <div class="cq-prize-tile">
+      <div class="ic" style="background:${badgeColor[i%badgeColor.length]}">${badgeIcon[badge.icon]||'🏅'}</div>
+      <div class="nm">${badge.name}</div>
+    </div>`).join('') : `<div class="cq-history-row"><span class="nm" style="color:var(--text-dim,#8b867c)">Pas encore de prix débloqué.</span></div>`;
 }
 
 async function initProfile(){
