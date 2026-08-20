@@ -11,7 +11,7 @@ const QUEST_NAVIGATION_STYLESHEET = new URL(
 const QUEST_TABS = [
   { id:'home', href:'index.html', label:'Accueil', icon:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/>' },
   { id:'puzzles', href:'problems.html', label:'Problèmes', icon:'<path d="M9 3h6v4a3 3 0 1 0 3 3h3v11h-6v-3a3 3 0 1 0-3 3H3v-7h4a3 3 0 1 0 0-6H3V3h6Z"/>' },
-  { id:'learn', href:'learn.html', label:'Apprendre', icon:'<path d="M4 19V6a2 2 0 0 1 2-2h6v16H6a2 2 0 0 0-2 2Z"/><path d="M20 19V6a2 2 0 0 0-2-2h-6v16h6a2 2 0 0 1 2 2Z"/>' },
+  { id:'learn', href:'learn.html', label:'Apprendre', icon:'<path d="M12 3 2 8l10 5 10-5-10-5Z"/><path d="M6 10.5v5c0 1 2.5 2.5 6 2.5s6-1.5 6-2.5v-5"/><path d="M22 8v6"/>' },
   { id:'observer', href:'progress.html', label:'Progrès', icon:'<path d="M4 20V10M10 20V4M16 20v-7M22 20v-3"/>' },
   { id:'more', href:'profile.html', label:'Plus', icon:'<path d="M4 7h16M4 12h16M4 17h16"/>' }
 ];

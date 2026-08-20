@@ -217,17 +217,27 @@ function renderProfile(){
 
   const historyGames = games.slice(0,5);
   document.getElementById('profile-history-count').textContent = games.length;
-  document.getElementById('profile-history').innerHTML = historyGames.length ? historyGames.map(game=>{
+  document.getElementById('profile-history').innerHTML = historyGames.length ? historyGames.map((game,index)=>{
     const white = game.white?.username?.toLowerCase() === lower;
     const oppName = white ? (game.black?.username||'Adversaire') : (game.white?.username||'Adversaire');
     const oppRating = white ? (game.black?.rating||'—') : (game.white?.rating||'—');
     const result = (white ? game.white?.result : game.black?.result) === 'win';
-    return `<div class="cq-history-row">
+    return `<button class="cq-history-row" type="button" data-history-idx="${index}" style="width:100%; border:none; text-align:left; cursor:pointer;">
       <span class="type">⏱</span><span class="av"></span>
       <span class="nm">${oppName} (${oppRating})</span>
       ${result ? '<span class="res win">+</span><span class="star">★</span>' : '<span class="rt">—</span>'}
-    </div>`;
+    </button>`;
   }).join('') : `<div class="cq-history-row"><span class="nm" style="color:var(--text-dim,#8b867c)">Aucune partie synchronisée pour l'instant.</span></div>`;
+  document.querySelectorAll('#profile-history [data-history-idx]').forEach(row=>{
+    row.onclick = () => {
+      const game = historyGames[Number(row.dataset.historyIdx)];
+      if(!game) return;
+      const serialized = JSON.stringify(game);
+      try { sessionStorage.setItem('cq_selected_game', serialized); } catch(e) {}
+      try { localStorage.setItem('cq_selected_game', serialized); } catch(e) {}
+      location.assign('game-view.html');
+    };
+  });
 
   const unlockedBadges = computeBadges().filter(badge => badge.unlocked);
   const badgeIcon = {medal:'🏅',trophy:'🏆',chart:'📈',target:'🎯',puzzle:'🧩',flame:'🔥',star:'⭐'};

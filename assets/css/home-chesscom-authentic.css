@@ -91,3 +91,30 @@
   color:#12220a; font-weight:800; font-size:0.96rem; padding:15px; border-radius:18px;
   border:none; box-shadow:0 2px 0 rgba(0,0,0,0.2); text-decoration:none; margin:6px 0 20px;
 }
+
+.cq-match-empty{
+  display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.055); border:1px dashed rgba(255,255,255,0.14);
+  border-radius:16px; padding:16px; text-decoration:none;
+}
+.cq-match-empty .ic{width:42px; height:42px; border-radius:11px; background:rgba(127,174,66,0.16); color:#9fce62; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;}
+.cq-match-empty .title{font-weight:700; font-size:0.88rem; color:#f0ece2;}
+.cq-match-empty .sub{font-size:0.78rem; color:#8b867c; margin-top:2px;}
+
+.cq-world-card.square{
+  width:130px; height:150px; justify-content:flex-start; align-items:center; text-align:center; gap:8px;
+  background:linear-gradient(160deg,#3a3733,#242220) !important;
+}
+.cq-world-card.square .sq-icon{
+  width:52px; height:52px; border-radius:14px; background:rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center;
+  font-size:1.5rem; margin-top:6px;
+}
+.cq-world-card.square h3{font-size:0.92rem; text-align:center; max-width:100%;}
+.cq-world-card.square .cta{position:static; margin-top:auto;}
+
+.cq-history-fixed{padding-bottom:0;}
+
+.cq-play-cta-fixed{
+  position:fixed; left:0; right:0; bottom:var(--cq-tabbar-height,64px); z-index:50;
+  max-width:430px; margin:0 auto; padding:10px 16px; background:linear-gradient(0deg,#1d1b1a 65%,rgba(29,27,26,0));
+}
+body[data-page="home"] .page{padding-bottom:78px;}

@@ -164,10 +164,11 @@ button.btn.secondary{
       le contraste de l'onglet actif.
 --------------------------------------------------------- */
 body nav.tabbar::before{
-  background:linear-gradient(180deg,#1f4a30 0,#123321 var(--cq-tabbar-height),#123321 100%) !important;
+  background:#181716 !important;
+  border-top:1px solid rgba(255,255,255,0.08) !important;
 }
 body nav.tabbar .tabbar-item.active{
-  background:rgba(159,206,98,.22) !important;
+  background:transparent !important;
   color:#fff !important;
 }
 body nav.tabbar .tabbar-item{color:#9a9488 !important;}
@@ -310,6 +311,34 @@ body nav.tabbar .tabbar-item{color:#9a9488 !important;}
 .toast .toast-desc{color:#c4bfb5 !important;}
 body[data-page="home"] #toast-container{top:64px !important;}
 html.cq-has-tabbar .quest-notifications{top:64px !important;}
+/* Nav du bas : suppression de la pastille de fond, actif = icône/texte blancs uniquement */
+body nav.tabbar .tabbar-item.active{background:transparent !important; color:#fff !important;}
+body nav.tabbar .tabbar-item{color:#7c776e !important;}
+body nav.tabbar{font-family:'Inter',-apple-system,sans-serif !important;}
+
+/* Défi du jour : bouton Indication centré + bulle coach noire/texte blanc */
+.featured-problem-controls .featured-hint{justify-self:center !important; margin:0 auto !important;}
+.daily-coach, .daily-final-page .daily-coach{
+  background:#141312 !important; border-color:rgba(255,255,255,0.1) !important;
+}
+.daily-coach-copy strong, .daily-final-page .daily-question, .daily-question{color:#fff !important;}
+.daily-coach-copy, .daily-coach p, .daily-final-page .daily-coach-copy{color:#e5e0d5 !important; background:transparent !important;}
+.daily-final-page .daily-coach-copy strong{color:#fff !important;}
+
+/* Bulles de commentaire du coach — cohérence noir/texte blanc partout */
+.lesson-coach-strip p, .opening-swipe-coach p, .problem-journey-coach p, .cq-speech{
+  background:#141312 !important; color:#fff !important; border-color:rgba(255,255,255,0.1) !important;
+}
+
+/* Profil : diagnostic du coach + records de bataille */
+.profile-diagnostic i{background:rgba(255,255,255,0.08) !important;}
+.profile-diagnostic i b{background:linear-gradient(90deg,#547a2a,#9fce62) !important;}
+.profile-diagnostic>div span{color:#c4bfb5 !important;}
+.profile-diagnostic>div strong{color:#f0ece2 !important;}
+.profile-diagnostic>a{background:rgba(127,174,66,0.16) !important; color:#9fce62 !important; font-weight:800 !important;}
+.battle-records>div{background:rgba(255,255,255,0.055) !important;}
+.battle-records span, .battle-records small{color:#8b867c !important;}
+.battle-records strong{color:#9fce62 !important;}
 .opening-swipe-page .quest-notifications{top:16px !important; right:100px !important;}
 .opening-card-match{background:linear-gradient(145deg,#7fae42,#3f6b2c) !important;}
 .cq-always-visible.opening-swipe-sheet{
@@ -320,7 +349,14 @@ html.cq-has-tabbar .quest-notifications{top:64px !important;}
 .cq-always-visible.opening-swipe-sheet a, .cq-always-visible.opening-swipe-sheet button{
   background:rgba(255,255,255,0.07) !important; color:#f0ece2 !important; font-weight:700 !important;
 }
-.opening-swipe-actions{grid-template-columns:1fr !important;}
+.opening-swipe-menu{
+  background:rgba(255,255,255,0.07) !important; border-color:rgba(255,255,255,0.1) !important; color:#f0ece2 !important;
+}
+.opening-swipe-sheet{
+  background:rgba(30,28,26,.98) !important; border-color:rgba(255,255,255,0.1) !important; box-shadow:0 -8px 24px rgba(0,0,0,.4) !important;
+}
+.opening-swipe-sheet>strong{color:#f0ece2 !important;}
+.opening-swipe-sheet a, .opening-swipe-sheet button{background:rgba(255,255,255,0.07) !important; color:#f0ece2 !important;}
 .secret-hub .quest-notifications{top:16px !important; right:16px !important;}
 .secret-title{text-align:left !important;}
 
@@ -341,6 +377,13 @@ body[data-page="training-hub"] .training-hub-kicker{color:#9fce62 !important;}
 .analysis-eval small{color:#8b867c !important;}
 .analysis-empty, .analysis-page p{color:#c4bfb5 !important;}
 .analysis-brand{color:#9fce62 !important;}
+
+/* Hero "Analyse de partie" : vert -> bleu (identité chess.com) */
+.analysis-page .analysis-hero{
+  background:linear-gradient(145deg,#2c4a63,#182c3d) !important;
+  border-color:rgba(74,159,216,0.3) !important;
+}
+.analysis-quest-btn{background:linear-gradient(180deg,#9fce62,#7fae42 55%,#547a2a) !important; color:#12220a !important;}
 
 .menu-rows{display:flex; flex-direction:column; gap:8px;}
 .menu-row{
@@ -401,3 +444,45 @@ body.training-target-page, body[data-page="training-hub"]{
 }
 h1,h2,h3,p,span,small,strong,label{color-scheme:dark;}
 .settings-group-title small, .friend-empty p, .academy-courses p, .academy-hero p{color:#a8a299 !important;}
+
+/* ============================================================
+   Correctif "zone sécurisée" (Dynamic Island / encoche iPhone) :
+   tous les en-têtes personnalisés (cq-*-top) ajoutés lors du
+   retheme n'intégraient pas env(safe-area-inset-top), donc le
+   contenu se retrouvait sous la caméra frontale sur iPhone 14/15
+   Pro et modèles à encoche/Dynamic Island.
+   ============================================================ */
+.cq-home-top,
+.cq-profile-top,
+.cq-friends-top,
+.cq-shop-top,
+.cq-stats-top,
+.cq-train-top,
+.cq-lessons-top{
+  padding-top:max(14px, env(safe-area-inset-top,0px)) !important;
+}
+
+/* Les bulles/cloches de notification en position fixed doivent
+   elles aussi tenir compte de la zone sécurisée, sans quoi elles
+   restent collées sous la caméra quel que soit l'en-tête. */
+html.cq-has-tabbar .quest-notifications{
+  top:calc(env(safe-area-inset-top,0px) + 14px) !important;
+}
+.opening-swipe-page .quest-notifications,
+.problem-journey-page .quest-notifications,
+.secret-hub .quest-notifications,
+.training-hub-page .quest-notifications,
+body[data-page="training-hub"] .quest-notifications{
+  top:calc(env(safe-area-inset-top,0px) + 14px) !important;
+}
+
+/* Header générique (retour + titre) utilisé sur les pages non
+   converties au style cq-*-top : même filet de sécurité. */
+header.quest-page-title,
+.daily-final-page header,
+.written-course-header,
+.shop-header,
+.academy-header,
+.friend-lounge-header{
+  padding-top:max(10px, env(safe-area-inset-top,0px)) !important;
+}
