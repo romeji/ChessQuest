@@ -432,11 +432,16 @@ function handleMcqAnswer(btn, isCorrect, solutionClean){
 }
 
 function refreshQuestPuzzleTools(){
-  const tools=document.getElementById('quest-puzzle-tools'),daily=puzzleSource==='daily';if(!tools)return;
-  tools.classList.toggle('hidden',!daily);document.body.classList.toggle('quest-puzzle-mode',daily);
-  if(!daily)return;
-  const fill=document.getElementById('quest-xp-fill');if(fill)fill.style.width=`${Math.round(dailyPuzzleCompletedCount()/3*100)}%`;
-  const prev=document.getElementById('quest-prev'),next=document.getElementById('quest-next');if(prev)prev.disabled=questPuzzlePositionIndex===0;if(next)next.disabled=questPuzzlePositionIndex>=questPuzzlePositions.length-1;
+  const tools=document.getElementById('quest-puzzle-tools');if(!tools)return;
+  tools.classList.remove('hidden');document.body.classList.add('quest-puzzle-mode');
+  const daily=puzzleSource==='daily';
+  const fill=document.getElementById('quest-xp-fill');if(fill)fill.style.width=daily?`${Math.round(dailyPuzzleCompletedCount()/3*100)}%`:'0%';
+  const prev=document.getElementById('quest-prev'),next=document.getElementById('quest-next');
+  if(daily){
+    if(prev)prev.disabled=questPuzzlePositionIndex===0;if(next)next.disabled=questPuzzlePositionIndex>=questPuzzlePositions.length-1;
+  } else {
+    if(prev)prev.disabled=puzzleIndex<=0; if(next)next.disabled=false;
+  }
   const retry=document.getElementById('puzzle-retry-action');if(retry){retry.classList.toggle('hidden',!puzzleLastSuccess);retry.onclick=()=>loadPuzzle(puzzleIndex);}
 }
 function browseQuestPuzzle(delta){

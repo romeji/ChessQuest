@@ -31,6 +31,7 @@
 <script src="assets/js/pwa-bootstrap-v101.js"></script>
 <script defer src="assets/js/navigation.js?v=107"></script>
 <link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
+<link rel="stylesheet" href="assets/css/home-chesscom-authentic.css">
 </head>
 <body data-page="play" class="final-shell-page opening-final-page">
 <div id="toast-container"></div>
@@ -48,7 +49,10 @@
 
     <div class="lesson-coach-strip">
       <img data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest">
-      <p data-mascot-text>Observe le centre. Je te laisse trouver le coup, par pure générosité royale.</p>
+      <div>
+        <p class="cq-turn-row" id="opening-turn-row"><span class="cq-turn-box"></span><strong id="opening-turn-label">Trait aux Blancs</strong></p>
+        <p data-mascot-text>Observe le centre. Je te laisse trouver le coup, par pure générosité royale.</p>
+      </div>
     </div>
 
     <div class="opening-final-board-wrap">
@@ -86,8 +90,22 @@
     <section class="final-card opening-hint-card" aria-live="polite">
       <span class="opening-hint-card-icon" aria-hidden="true">♞</span>
       <span><strong>Besoin d’un coup de pouce ?</strong><small>Le coach indiquera la pièce et sa case d’arrivée.</small></span>
-      <button class="mode-primary-button" id="opening-next" type="button">Afficher un indice</button>
     </section>
+
+    <div class="cq-defi-track" id="opening-defi-track">
+      <div class="cq-defi-label"><span>Défi <b id="opening-defi-current">1</b>/<b id="opening-defi-total">1</b></span></div>
+      <div class="cq-defi-bar"><span id="opening-defi-fill"></span></div>
+    </div>
+
+    <div class="cq-bottom-hint">
+      <button id="opening-next" type="button" aria-label="Afficher un indice">
+        <span class="ic">💡</span><span>Indication</span>
+      </button>
+    </div>
+
+    <div class="opening-intro-gate" id="opening-intro-gate">
+      <button class="cq-play-cta" id="opening-start-button" type="button" style="margin:0; position:fixed; left:16px; right:16px; bottom:calc(var(--cq-tabbar-height,58px) + 12px); z-index:60;">Commencer</button>
+    </div>
 
     <div class="opening-final-progress-data hidden"><span id="lesson-progress-label"></span><span class="opening-next-label"></span><div id="lesson-track-fill"></div></div>
 
@@ -115,6 +133,11 @@
 <script src="assets/js/openings.js?v=107"></script>
 <script src="assets/js/opening-curriculum.js?v=40"></script>
 <script>
+document.getElementById('opening-start-button').onclick = () => {
+  document.getElementById('opening-intro-gate').classList.add('hidden');
+  document.getElementById('opening-defi-track').classList.add('visible');
+  document.getElementById('opening-next').closest('.cq-bottom-hint').classList.add('visible');
+};
 const OPENING_FACTS = {
   italienne: ['♞|Développement rapide', '◎|Pression sur f7', '▤|Popularisée au XVIe siècle'],
   espagnole: ['♞|Pression durable sur e5', '◎|Une richesse stratégique immense', '▤|Étudiée depuis le XVIe siècle'],
@@ -188,8 +211,18 @@ function renderDots(){
   document.getElementById('lesson-track-fill').style.width = `${Math.round((trainPly / currentLine.moves.length) * 100)}%`;
   const lineComplete = trainPly >= currentLine.moves.length;
   document.querySelector('.opening-next-label').textContent = lineComplete ? 'Ouverture suivante' : 'Indice';
-  document.getElementById('opening-next').textContent = lineComplete ? 'Ouverture suivante' : 'Afficher un indice';
-  document.getElementById('opening-next').setAttribute('aria-label',lineComplete ? 'Continuer vers la prochaine ouverture' : 'Afficher le prochain coup');
+  const nextBtn = document.getElementById('opening-next');
+  const nextLabel = nextBtn.querySelector('span:last-child');
+  if(nextLabel) nextLabel.textContent = lineComplete ? 'Suivant' : 'Indication';
+  nextBtn.setAttribute('aria-label',lineComplete ? 'Continuer vers la prochaine ouverture' : 'Afficher le prochain coup');
+  document.getElementById('opening-defi-current').textContent = Math.min(step + 1, total);
+  document.getElementById('opening-defi-total').textContent = total;
+  document.getElementById('opening-defi-fill').style.width = `${Math.round((step / total) * 100)}%`;
+  if(trainGame){
+    const whiteToMove = trainGame.turn() === 'w';
+    document.getElementById('opening-turn-label').textContent = whiteToMove ? 'Trait aux Blancs' : 'Trait aux Noirs';
+    document.getElementById('opening-turn-row').querySelector('.cq-turn-box').classList.toggle('filled', !whiteToMove);
+  }
   renderTheory();
 }
 function renderTrainMoveList(){
@@ -266,7 +299,6 @@ document.getElementById('opening-next').onclick = function(){
 };
 ensureTrainBoard();
 loadLine(OPENINGS[startKey],startKey);
-watchBoardResize('train-board',() => trainBoard,'.opening-final-board-wrap');
-</script>
+watchBoardResize('train-board',() => trainBoard,'.opening-final-board-wrap');</script>
 </body>
 </html>

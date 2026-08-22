@@ -31,6 +31,7 @@
 <script defer src="assets/js/navigation.js?v=107"></script>
 <link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
 <link rel="stylesheet" href="assets/css/profile-chesscom-authentic.css">
+<link rel="stylesheet" href="assets/css/home-chesscom-authentic.css">
 </head>
 <body data-page="profile" class="quest-screen profile-page">
 <div id="toast-container"></div>
@@ -217,17 +218,17 @@ function renderProfile(){
 
   const historyGames = games.slice(0,5);
   document.getElementById('profile-history-count').textContent = games.length;
-  document.getElementById('profile-history').innerHTML = historyGames.length ? historyGames.map((game,index)=>{
+  document.getElementById('profile-history').innerHTML = historyGames.length ? `<div class="cq-friend-scroll" style="flex-direction:column; overflow:visible;">${historyGames.map((game,index)=>{
     const white = game.white?.username?.toLowerCase() === lower;
     const oppName = white ? (game.black?.username||'Adversaire') : (game.white?.username||'Adversaire');
     const oppRating = white ? (game.black?.rating||'—') : (game.white?.rating||'—');
     const result = (white ? game.white?.result : game.black?.result) === 'win';
-    return `<button class="cq-history-row" type="button" data-history-idx="${index}" style="width:100%; border:none; text-align:left; cursor:pointer;">
-      <span class="type">⏱</span><span class="av"></span>
-      <span class="nm">${oppName} (${oppRating})</span>
-      ${result ? '<span class="res win">+</span><span class="star">★</span>' : '<span class="rt">—</span>'}
+    return `<button class="cq-match-card" type="button" data-history-idx="${index}" style="width:100%; border:none; cursor:pointer; text-align:left; margin-bottom:8px;">
+      <div class="av">⏱</div>
+      <div class="body"><div class="name">${oppName} (${oppRating})</div></div>
+      ${result ? '<div class="go">+</div>' : '<div class="sub">−</div>'}
     </button>`;
-  }).join('') : `<div class="cq-history-row"><span class="nm" style="color:var(--text-dim,#8b867c)">Aucune partie synchronisée pour l'instant.</span></div>`;
+  }).join('')}</div>` : `<div class="cq-match-empty" style="border-style:solid;"><div class="ic">♟</div><div><div class="title">Aucune partie synchronisée</div><div class="sub">Ajoute ton pseudo Chess.com dans les réglages</div></div></div>`;
   document.querySelectorAll('#profile-history [data-history-idx]').forEach(row=>{
     row.onclick = () => {
       const game = historyGames[Number(row.dataset.historyIdx)];

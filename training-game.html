@@ -93,12 +93,6 @@
       <strong id="tg-history-current">Position initiale</strong> · <span id="tg-history-position">À toi de jouer</span>
     </div>
 
-    <div class="cq-player-row">
-      <div class="av"><img src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach"></div>
-      <div><div class="name">Coach</div><div class="rating" id="bot-difficulty-label-visible">1200 ELO</div></div>
-      <div class="badge">Sans limite</div>
-    </div>
-
     <div class="training-final-board-wrap">
       <div class="board-frame">
         <div class="coord-ranks" id="tg-ranks"></div>
@@ -106,16 +100,6 @@
         <div class="coord-files" id="tg-files"></div>
       </div>
     </div>
-
-    <div class="cq-player-row">
-      <div class="av">🙂</div>
-      <div><div class="name">Toi</div><div class="rating">Entraînement</div></div>
-    </div>
-
-    <aside class="cq-coach-row" style="margin-top:14px;">
-      <div class="cq-coach-avatar"><img id="training-mascot" data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest"></div>
-      <p class="cq-speech" data-mascot-text id="training-tip-text">Je regarde. Essaie de ne pas faire honte au royaume.</p>
-    </aside>
 
     <div class="cq-toolbar-row">
       <button id="tg-history-prev" type="button" aria-label="Coup précédent">‹</button>
@@ -127,6 +111,11 @@
     <div class="cq-toolbar-row">
       <button id="resign-btn" type="button" aria-label="Abandonner">⚑</button>
     </div>
+
+    <aside class="cq-coach-row" style="margin-top:14px;">
+      <div class="cq-coach-avatar"><img id="training-mascot" data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest"></div>
+      <p class="cq-speech" data-mascot-text id="training-tip-text">Je regarde. Essaie de ne pas faire honte au royaume.</p>
+    </aside>
 
     <div class="training-final-hidden" aria-hidden="true">
       <span id="bot-difficulty-label">1200 ELO</span>
@@ -160,13 +149,6 @@ document.querySelectorAll('.cq-color-opt input').forEach(input=>input.addEventLi
   document.querySelectorAll('.cq-color-opt').forEach(l=>l.classList.remove('active'));
   input.closest('.cq-color-opt').classList.add('active');
 }));
-const syncBotLabel = () => {
-  const label = document.getElementById('bot-difficulty-label');
-  const visible = document.getElementById('bot-difficulty-label-visible');
-  if(label && visible) visible.textContent = label.textContent;
-};
-new MutationObserver(syncBotLabel).observe(document.getElementById('bot-difficulty-label'),{childList:true,characterData:true,subtree:true});
-syncBotLabel();
 </script>
 </body>
 </html>

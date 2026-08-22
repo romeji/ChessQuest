@@ -133,8 +133,8 @@ document.getElementById('mistake-prev').onclick=()=>loadPuzzle(puzzleIndex-1);
 document.getElementById('mistake-next').onclick=()=>loadPuzzle(puzzleIndex+1);
 document.getElementById('puzzle-hint-btn').onclick = showPuzzleHint;
 document.getElementById('quest-hint').onclick = showPuzzleHint;
-document.getElementById('quest-prev').onclick = () => browseQuestPuzzle(-1);
-document.getElementById('quest-next').onclick = () => browseQuestPuzzle(1);
+document.getElementById('quest-prev').onclick = () => puzzleSource==='daily' ? browseQuestPuzzle(-1) : loadPuzzle(puzzleIndex-1);
+document.getElementById('quest-next').onclick = () => puzzleSource==='daily' ? browseQuestPuzzle(1) : loadPuzzle(puzzleIndex+1);
 if(puzzleSource==='battle'){
   document.getElementById('puzzle-page-title').textContent='Bataille de problèmes';
   const requestedSeconds=Number(urlParams.get('seconds'));

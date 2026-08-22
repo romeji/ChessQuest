@@ -185,6 +185,7 @@ body nav.tabbar .tabbar-item{color:#9a9488 !important;}
    7) Puces / badges / accents violets -> verts
 --------------------------------------------------------- */
 .analysis-tabs button.active{color:#9fce62 !important; border-color:#9fce62 !important;}
+.analysis-tabs button{background:transparent !important; color:#8b867c !important;}
 .analysis-review-page .nav-controls button{background:#7fae42 !important; color:#12220a !important;}
 .training-move-browser button{background:rgba(255,255,255,0.08) !important; color:#f0ece2 !important;}
 .academy-opening-library a span{color:#9fce62 !important;}
@@ -409,7 +410,7 @@ body[data-page="training-hub"] .training-hub-kicker{color:#9fce62 !important;}
 .puzzle-final-turn-copy strong{color:#f0ece2 !important;}
 .puzzle-final-turn-copy small{color:#8b867c !important;}
 .puzzle-final-hint{background:rgba(232,185,63,0.16) !important; color:#e8b93f !important;}
-.problem-journey-page .quest-notifications{top:16px !important; right:120px !important;}
+.problem-journey-page .quest-notifications{top:14px !important; right:132px !important;}
 .problem-journey-menu{background:rgba(30,28,26,.98) !important; border-color:rgba(255,255,255,0.1) !important;}
 .problem-journey-menu>strong{color:#f0ece2 !important;}
 .problem-journey-menu a{background:rgba(255,255,255,0.07) !important; color:#f0ece2 !important;}
@@ -486,3 +487,150 @@ header.quest-page-title,
 .friend-lounge-header{
   padding-top:max(10px, env(safe-area-inset-top,0px)) !important;
 }
+
+/* ============================================================
+   Passe de finition (retours utilisateur) : cloche discrète,
+   boutons carrés/moins arrondis, plus de bouton blanc, etc.
+   ============================================================ */
+
+/* Cloche de notification : plus petite, moins "flottante",
+   couleur neutre alignée sur les headers sombres au lieu du
+   vert/or brillant qui gênait la lecture. */
+.quest-notification-toggle{
+  width:34px !important; height:34px !important;
+  border:1px solid rgba(255,255,255,0.12) !important;
+  background:rgba(255,255,255,0.07) !important;
+  color:#c4bfb5 !important;
+  box-shadow:none !important;
+}
+.quest-notification-toggle svg{width:18px !important; height:18px !important;}
+.quest-notification-toggle b{
+  min-width:15px !important; height:15px !important; font-size:.56rem !important;
+  border-color:#141312 !important; background:#e0574c !important; line-height:11px !important;
+}
+.quest-notification-panel{
+  background:linear-gradient(160deg,#242220,#1a1917) !important;
+  border-color:rgba(255,255,255,0.1) !important; color:#f0ece2 !important;
+}
+.quest-notification-heading{color:#f0ece2 !important;}
+.quest-notification-item:hover{background:rgba(255,255,255,0.06) !important;}
+.quest-notification-copy strong{color:#f0ece2 !important;}
+.quest-notification-copy small{color:#8b867c !important;}
+.quest-notification-icon{background:rgba(127,174,66,0.16) !important; color:#9fce62 !important;}
+.quest-notification-dismiss{color:#8b867c !important;}
+.quest-notification-empty{color:#8b867c !important;}
+
+/* Boutons verts : carrés avec un tout petit arrondi (chess.com),
+   pas des pilules complètement rondes. */
+button.btn, a.btn, .cq-play-cta, .btn-cta, .cq-featured-course,
+.training-setup-start, .friend-create-button{
+  border-radius:8px !important;
+}
+.cq-world-card, .cq-world-card.square{border-radius:12px !important;}
+
+/* Plus de boutons blancs : tout bouton "secondaire" clair passe
+   dans la même charte sombre que le bouton retour de Progrès. */
+button.btn.secondary, .btn-ghost, .cq-share-btn, .cq-add-friends,
+.written-course-header .subpage-back, .analysis-page .subpage-back,
+button:not([class*="btn-primary"]):not([class*="quest-notification"]):not(.tabbar-item){
+  background-color:inherit;
+}
+.back-btn, .subpage-back, .icon-btn, .cq-stats-dropdown, .cq-friends-menu-row,
+.cq-lessons-tabs button, .quest-page-title .subpage-back{
+  background:rgba(255,255,255,0.07) !important;
+  color:#f0ece2 !important;
+  border-color:rgba(255,255,255,0.1) !important;
+}
+
+/* Page Problèmes : la nav du bas doit se fondre avec le bandeau
+   vert "Socle / Reprendre la quête" juste au-dessus (un seul bloc
+   visuel, pas de rupture de couleur), et le titre est recentré. */
+.problem-journey-page nav.tabbar::before{
+  background:linear-gradient(180deg,#173d2d,#0f2e21) !important;
+  border-top:none !important;
+}
+.problem-journey-page .problem-hud{border-bottom:none !important;}
+.problem-journey-title{justify-content:center !important; text-align:center !important;}
+.problem-journey-title h1{text-align:center !important;}
+
+/* Vrai centrage du titre "Problèmes", indépendant de la largeur
+   du badge à gauche et du chip ELO à droite. */
+.problem-journey-topbar{position:relative !important;}
+.problem-journey-title{
+  position:absolute !important; left:0 !important; right:0 !important;
+  justify-content:center !important; pointer-events:none;
+}
+.problem-journey-title > span{pointer-events:auto;}
+.problem-rating{pointer-events:auto; position:relative; z-index:2; margin-left:auto;}
+
+/* Pièces "argentées" (glyphes ♞/♟ blancs par défaut) -> or,
+   cohérent avec le reste de l'identité chess.com. */
+.cq-stat-card .ic, .cq-world-card.square .sq-icon,
+.cq-match-empty .ic, .cq-match-card .av{
+  color:#e8b93f !important;
+}
+
+/* Apprendre : fond vert -> noir chess.com, harmonisé avec le
+   reste de l'app (seule la carte illustrée d'ouverture garde
+   ses couleurs, c'est une image). */
+.opening-swipe-app{
+  background:
+    radial-gradient(circle at 110% 5%, rgba(127,174,66,.10), transparent 34%),
+    #1d1b1a !important;
+}
+html:has(body.opening-swipe-page), body.opening-swipe-page{background:#1d1b1a !important;}
+.opening-swipe-page nav.tabbar::before{background:#181716 !important;}
+.opening-map-page{background:#1d1b1a !important;}
+.opening-swipe-header{background:rgba(15,14,13,.85) !important;}
+
+/* ============================================================
+   Échiquier (chessboard.js) : couleurs bois saturées + pièces
+   avec contour plus marqué, pour se rapprocher du rendu demandé
+   (référence utilisateur : plateau bois, pièces cartoon nettes).
+   Classes stables de chessboard.js 1.0.0 : .white-1e1d7 / .black-3c85d
+   pour les cases, .piece-417db pour les pièces.
+   ============================================================ */
+.white-1e1d7{
+  background:#f0dab0 !important;
+  background-image:repeating-linear-gradient(115deg, rgba(139,94,42,0.05) 0 2px, transparent 2px 6px) !important;
+}
+.black-3c85d{
+  background:#c9915a !important;
+  background-image:repeating-linear-gradient(115deg, rgba(74,46,20,0.12) 0 2px, transparent 2px 6px) !important;
+}
+.piece-417db{
+  filter:
+    drop-shadow(1px 0 0 rgba(20,15,10,0.9))
+    drop-shadow(-1px 0 0 rgba(20,15,10,0.9))
+    drop-shadow(0 1px 0 rgba(20,15,10,0.9))
+    drop-shadow(0 -1px 0 rgba(20,15,10,0.9))
+    drop-shadow(0 2px 2px rgba(0,0,0,0.35));
+}
+.board-frame{
+  background:linear-gradient(160deg,#5a3a20 0%, #8B5E3C 45%, #6b4526 100%) !important;
+}
+.coord-ranks, .coord-files{color:#f0dab0 !important; opacity:0.9 !important; font-weight:800 !important;}
+
+/* Page Ouvertures : écran d'intro "Commencer" + suivi "Défi X/N"
+   + bouton Indication en bas, fidèles aux captures de référence. */
+.opening-intro-gate.hidden{display:none;}
+.cq-turn-row{display:flex; align-items:center; gap:10px; margin-bottom:4px;}
+.cq-turn-box{width:18px; height:18px; border-radius:5px; border:2px solid #b8b2a3; flex-shrink:0; display:inline-block;}
+.cq-turn-box.filled{background:#141312; border-color:#141312;}
+.puzzle-final-hint{display:none !important;}
+.puzzle-final-rating{background:rgba(255,255,255,0.07) !important; border-color:rgba(255,255,255,0.1) !important;}
+.puzzle-final-rating strong{color:#9fce62 !important;}
+html.cq-has-tabbar .puzzle-final-rating ~ .quest-notifications, .puzzle-final-rating{margin-right:8px;}
+.cq-defi-track{display:none; margin:16px 0 6px;}
+.cq-defi-track.visible{display:block;}
+.cq-defi-label{font-weight:800; font-size:0.95rem; color:#f0ece2; margin-bottom:10px;}
+.cq-defi-bar{height:8px; background:rgba(255,255,255,0.09); border-radius:100px; overflow:hidden;}
+.cq-defi-bar > span{display:block; height:100%; width:0%; background:#9fce62; transition:width .25s ease;}
+.cq-bottom-hint{display:none; text-align:center; margin:26px 0;}
+.cq-bottom-hint.visible{display:block;}
+.cq-bottom-hint button{
+  background:none; border:none; color:#8b867c; font-weight:700; font-size:0.82rem;
+  display:flex; flex-direction:column; align-items:center; gap:6px; margin:0 auto;
+}
+.cq-bottom-hint button .ic{font-size:1.4rem;}
+.opening-hint-card{display:none !important;}
