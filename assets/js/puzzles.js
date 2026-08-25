@@ -538,6 +538,7 @@ function stopPuzzleBattle(){
   puzzleBattleTimer = null; puzzleBattleCountdown = null; puzzleBattleEndsAt = 0; puzzleBattleActive = false;
   const timer = document.getElementById('puzzle-battle-timer'); if(timer) timer.classList.add('hidden');
   document.getElementById('puzzle-countdown')?.classList.add('hidden');
+  document.body.classList.remove('puzzle-battle-active');
 }
 function startPuzzleBattle(seconds){
   stopPuzzleBattle();
@@ -550,7 +551,7 @@ function startPuzzleBattle(seconds){
     count--;
     if(count>0){if(value)value.textContent=count;return;}
     if(count===0){if(value)value.textContent='GO !';return;}
-    clearInterval(puzzleBattleCountdown);puzzleBattleCountdown=null;overlay?.classList.add('hidden');mcqLocked=false;puzzleBattleActive=true;
+    clearInterval(puzzleBattleCountdown);puzzleBattleCountdown=null;overlay?.classList.add('hidden');mcqLocked=false;puzzleBattleActive=true;document.body.classList.add('puzzle-battle-active');
     puzzleBattleEndsAt = Date.now() + seconds * 1000;
     const timer = document.getElementById('puzzle-battle-timer');
     if(timer){timer.classList.remove('hidden');timer.textContent=`${seconds}s · 0`;}

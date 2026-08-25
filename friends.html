@@ -75,7 +75,25 @@ function render(){
 }
 $('toggle-challenge-form').onclick=()=>{$('challenge-form-card').classList.toggle('hidden');if(!$('challenge-form-card').classList.contains('hidden'))$('challenge-form-card').scrollIntoView({behavior:'smooth',block:'nearest'});};
 $('menu-challenge-link').onclick=()=>$('toggle-challenge-form').click();
-$('menu-search-contacts').onclick=()=>$('friend-name').focus();
+$('menu-search-contacts').onclick=async()=>{
+  /* L'accès aux contacts est toujours déclenché par un geste explicite.
+     Le navigateur affiche alors sa propre demande d'autorisation. */
+  if(!navigator.contacts?.select){
+    $('friend-name').focus();
+    $('friend-status').textContent='La lecture des contacts n’est pas disponible ici. Entre le pseudo ChessQuest de ton ami.';
+    return;
+  }
+  try{
+    const contacts=await navigator.contacts.select(['name'],{multiple:true});
+    const names=contacts.map(contact=>String(contact.name?.[0]||'').trim()).filter(Boolean);
+    if(!names.length){$('friend-status').textContent='Aucun contact sélectionné.';return;}
+    $('friend-name').value=names[0];
+    $('friend-status').textContent=`${names.length} contact${names.length>1?'s':''} sélectionné${names.length>1?'s':''}. Vérifie leur pseudo ChessQuest puis ajoute-les.`;
+    $('friend-name').focus();
+  }catch(error){
+    $('friend-status').textContent='Lecture des contacts annulée. Tu peux rechercher un ami par son pseudo.';
+  }
+};
 $('menu-invite').onclick=async()=>{const url=location.origin+location.pathname;if(navigator.share){try{await navigator.share({title:'ChessQuest',text:'Rejoins-moi sur ChessQuest !',url});}catch(e){}}else{try{await navigator.clipboard.writeText(url);$('friend-status').textContent='Lien de l’app copié ✓';}catch(e){}}};
 $('menu-qr').onclick=()=>openQrModal(location.origin+location.pathname);
 $('friend-share-top').onclick=(e)=>{e.preventDefault();$('menu-invite').click();};

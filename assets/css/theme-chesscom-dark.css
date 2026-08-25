@@ -766,3 +766,97 @@ html.cq-has-tabbar .puzzle-final-rating ~ .quest-notifications, .puzzle-final-ra
 }
 .cq-bottom-hint button .ic{font-size:1.4rem;}
 .opening-hint-card{display:none !important;}
+
+/* ============================================================
+   Finition cohérente des écrans de jeu
+   Les styles historiques violet/crème restaient chargés après le thème
+   sombre. Ces règles ciblent seulement les écrans concernés et reprennent
+   le contraste lisible du Problème du jour.
+   ============================================================ */
+.puzzle-final-page .puzzle-final-turn,
+.puzzle-final-page .puzzle-final-turn-copy,
+.puzzle-final-page .puzzle-final-turn-copy strong,
+.puzzle-final-page .puzzle-final-turn-copy small,
+.puzzle-final-page .puzzle-final-feedback,
+.puzzle-final-page .puzzle-final-feedback *{
+  color:#fff !important;
+  text-shadow:none !important;
+}
+.puzzle-final-page .puzzle-final-turn-copy{background:transparent !important;}
+.puzzle-final-page .puzzle-final-coach,
+.puzzle-final-page [data-mascot-image]{
+  opacity:1 !important;
+  filter:none !important;
+  mix-blend-mode:normal !important;
+  background:transparent !important;
+}
+.puzzle-final-page .puzzle-final-hint,
+.puzzle-final-page .quest-puzzle-buttons button,
+.puzzle-final-page .puzzle-next-action,
+.puzzle-final-page .puzzle-retry-action{
+  background:linear-gradient(180deg,#9fce62,#6d9f39) !important;
+  border:1px solid #b8e37b !important;
+  color:#132411 !important;
+  box-shadow:0 4px 0 #3f6b2b !important;
+}
+.puzzle-final-page .mcq-option{
+  background:rgba(14,60,43,.96) !important;
+  border-color:rgba(159,206,98,.45) !important;
+  color:#fff !important;
+}
+.puzzle-final-page .mcq-option.correct{background:#3f7f42 !important;color:#fff !important;}
+.puzzle-final-page .mcq-option.wrong{background:#903f45 !important;color:#fff !important;}
+.puzzle-final-page.puzzle-battle-active #quest-hint{display:none !important;}
+.puzzle-final-page.puzzle-battle-active .quest-puzzle-buttons{justify-content:flex-end !important;}
+.puzzle-final-page .puzzle-battle-timer{
+  left:auto !important;right:max(14px,env(safe-area-inset-right)) !important;
+  transform:none !important;background:#b9453d !important;color:#fff !important;
+}
+
+/* Même langage d'icônes sous l'échiquier d'entraînement. */
+.training-final-page .cq-toolbar-row{gap:8px !important;justify-content:center !important;}
+.training-final-page .cq-toolbar-row button{
+  min-width:46px !important;min-height:42px !important;border-radius:14px !important;
+  background:#262321 !important;color:#f0ece2 !important;
+  border:1px solid rgba(255,255,255,.14) !important;box-shadow:none !important;
+}
+.training-final-page .cq-toolbar-row button.training-advice{
+  background:linear-gradient(180deg,#9fce62,#6d9f39) !important;color:#132411 !important;
+  border-color:#b8e37b !important;
+}
+
+/* Carte Ouvertures : le dock et son monde appartiennent à la barre sombre. */
+.opening-map-page .opening-map-dock,
+.opening-map-page .world-switcher,
+.opening-map-page .map-world-subtitle{
+  background:#181716 !important;color:#f0ece2 !important;border-color:rgba(255,255,255,.14) !important;
+}
+.opening-map-page .world-switcher *,
+.opening-map-page .map-world-subtitle *{color:inherit !important;}
+
+/* La nouvelle sélection par cartes conserve le même socle noir que la
+   navigation : aucun ancien vert clair ne doit réapparaître sous les actions. */
+.opening-swipe-page .opening-selection-panel,
+.opening-swipe-page .opening-swipe-actions{
+  background:#181716 !important;
+}
+.opening-swipe-page .opening-selection-panel{border-top-color:rgba(255,255,255,.14) !important;}
+.opening-swipe-page .opening-swipe-menu{background:#262321 !important;}
+
+/* Toutes les flèches de retour restent lisibles sur les surfaces sombres. */
+.back-btn,.subpage-back,.opening-swipe-back,.opening-deck-arrow{
+  color:#fff !important;
+}
+.back-btn svg,.subpage-back svg,.opening-swipe-back svg{stroke:#fff !important;fill:none !important;}
+
+/* Accueil : pièces d'or statiques, cloche à côté de la boutique. */
+.home-currency-display{color:#e8b93f !important;cursor:default !important;}
+.cq-home-top .side:last-child{display:flex;align-items:center;gap:8px;}
+.cq-home-top #home-notification-slot{display:grid;place-items:center;flex:0 0 auto;}
+.cq-home-top .quest-notifications.quest-notifications-slot{position:relative !important;display:grid !important;place-items:center !important;}
+.cq-home-top .quest-notifications-slot .quest-notification-toggle{
+  width:42px !important;height:42px !important;margin:0 !important;border-radius:50% !important;
+  background:#174d39 !important;border:1px solid rgba(232,185,63,.55) !important;
+}
+.cq-home-top .quest-notifications-slot .nm{display:none !important;}
+.cq-home-top .quest-notification-panel-slotted{bottom:auto !important;top:calc(env(safe-area-inset-top) + 62px) !important;right:12px !important;left:auto !important;transform:none !important;}
