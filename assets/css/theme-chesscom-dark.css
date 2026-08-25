@@ -860,3 +860,26 @@ html.cq-has-tabbar .puzzle-final-rating ~ .quest-notifications, .puzzle-final-ra
 }
 .cq-home-top .quest-notifications-slot .nm{display:none !important;}
 .cq-home-top .quest-notification-panel-slotted{bottom:auto !important;top:calc(env(safe-area-inset-top) + 62px) !important;right:12px !important;left:auto !important;transform:none !important;}
+
+/* Cloche globale : une seule position sur toutes les pages hors accueil.
+   Ces règles arrivent après les anciennes exceptions propres aux écrans. */
+.quest-notifications:not(.quest-notifications-slot){
+  position:fixed !important;
+  z-index:900 !important;
+  top:max(12px,calc(env(safe-area-inset-top,0px) + 8px)) !important;
+  right:max(12px,env(safe-area-inset-right,0px)) !important;
+  left:auto !important;
+  bottom:auto !important;
+  margin:0 !important;
+  transform:none !important;
+}
+.quest-notifications:not(.quest-notifications-slot) .nm{display:none !important;}
+.quest-notifications:not(.quest-notifications-slot) .quest-notification-panel{
+  position:fixed !important;
+  z-index:901 !important;
+  top:calc(max(12px,env(safe-area-inset-top,0px)) + 52px) !important;
+  right:max(12px,env(safe-area-inset-right,0px)) !important;
+  left:auto !important;
+  bottom:auto !important;
+  transform:none !important;
+}

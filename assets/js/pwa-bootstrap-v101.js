@@ -1,6 +1,6 @@
 /* Migration PWA indépendante du cache applicatif. */
 (() => {
-const VERSION = '117';
+const VERSION = '118';
   const RELOAD_KEY = `chessquest-sw-reloaded-${VERSION}`;
   window.QUEST_PWA_BOOTSTRAP_VERSION = VERSION;
 

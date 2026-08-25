@@ -168,11 +168,11 @@ function questNotifications(){
 function initQuestNotifications(){
   if(document.getElementById('quest-notifications')) return;
   const slot = document.getElementById('home-notification-slot');
-  if(!slot) return; // la cloche n'existe plus qu'à l'accueil, plus de bulle flottante ailleurs
+  const inHome = document.body.dataset.page === 'home' && Boolean(slot);
   const items = questNotifications();
   const root = document.createElement('div');
   root.id = 'quest-notifications';
-  root.className = 'quest-notifications quest-notifications-slot';
+  root.className = `quest-notifications${inHome ? ' quest-notifications-slot' : ''}`;
   const toggle = document.createElement('button');
   toggle.type = 'button'; toggle.className = 'quest-notification-toggle';
   toggle.setAttribute('aria-label', `${items.length} notification${items.length > 1 ? 's' : ''}`);
@@ -222,13 +222,17 @@ function initQuestNotifications(){
     window.__questNotificationGlobalHandlers=true;
   }
   toggle.setAttribute('aria-expanded','false');
-  root.append(toggle,label,panel); slot.appendChild(root); render();
+  root.append(toggle,label,panel);
+  if(inHome) slot.appendChild(root);
+  else document.body.appendChild(root);
+  render();
   // .app applique overflow:hidden, ce qui coupe visuellement tout
   // enfant en position fixed malgré un positionnement correct :
   // on sort le panneau du flux vers le <body> pour l'en affranchir.
   document.body.appendChild(panel);
-  // plus de positionnement fixe : la cloche vit désormais dans la
-  // grille "Amis" de l'accueil, comme un chip normal.
+  // Sur l'accueil elle vit dans la barre du haut ; ailleurs elle est un
+  // contrôle global fixe, jamais dépendant du scroll de la page.
+  positionQuestNotifications(root);
   const state = questNotificationState();
   if(document.body.dataset.page === 'home' && state.lastToastDate !== todayKey()){
     state.lastToastDate = todayKey(); saveProgress();
