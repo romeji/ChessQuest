@@ -167,16 +167,19 @@ function questNotifications(){
 }
 function initQuestNotifications(){
   if(document.getElementById('quest-notifications')) return;
+  const slot = document.getElementById('home-notification-slot');
+  if(!slot) return; // la cloche n'existe plus qu'à l'accueil, plus de bulle flottante ailleurs
   const items = questNotifications();
-  const root = document.createElement('aside');
+  const root = document.createElement('div');
   root.id = 'quest-notifications';
-  root.className = 'quest-notifications';
+  root.className = 'quest-notifications quest-notifications-slot';
   const toggle = document.createElement('button');
   toggle.type = 'button'; toggle.className = 'quest-notification-toggle';
   toggle.setAttribute('aria-label', `${items.length} notification${items.length > 1 ? 's' : ''}`);
   toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 6.5-2.7 7.2-2.7 9h17.4c0-1.8-2.7-2.5-2.7-9Z"/><path d="M9.7 20h4.6"/></svg><b></b>';
+  const label = document.createElement('div'); label.className = 'nm'; label.textContent = 'Notification';
   const panel = document.createElement('div');
-  panel.className = 'quest-notification-panel hidden';
+  panel.className = 'quest-notification-panel quest-notification-panel-slotted hidden';
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Notifications');
   const heading = document.createElement('div'); heading.className = 'quest-notification-heading'; heading.textContent = 'Notifications royales'; panel.appendChild(heading);
   function render(){
@@ -219,8 +222,13 @@ function initQuestNotifications(){
     window.__questNotificationGlobalHandlers=true;
   }
   toggle.setAttribute('aria-expanded','false');
-  root.append(toggle,panel); document.body.appendChild(root); render();
-  positionQuestNotifications(root);
+  root.append(toggle,label,panel); slot.appendChild(root); render();
+  // .app applique overflow:hidden, ce qui coupe visuellement tout
+  // enfant en position fixed malgré un positionnement correct :
+  // on sort le panneau du flux vers le <body> pour l'en affranchir.
+  document.body.appendChild(panel);
+  // plus de positionnement fixe : la cloche vit désormais dans la
+  // grille "Amis" de l'accueil, comme un chip normal.
   const state = questNotificationState();
   if(document.body.dataset.page === 'home' && state.lastToastDate !== todayKey()){
     state.lastToastDate = todayKey(); saveProgress();
@@ -234,6 +242,7 @@ function initQuestNotifications(){
    page produisaient des positions différentes au changement de vue. */
 function positionQuestNotifications(root=document.getElementById('quest-notifications')){
   if(!root) return;
+  if(root.classList.contains('quest-notifications-slot')) return; // ancrée dans la grille, pas de positionnement fixe
   root.classList.remove('header-adjacent');
   root.style.removeProperty('--quest-notification-left');
   root.style.removeProperty('--quest-notification-panel-left');

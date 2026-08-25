@@ -226,15 +226,40 @@ function renderProgress(){
 
   // --- Ajouts maquette chess.com ---
   const games = state.games || [];
-  document.getElementById('stats-games-count').textContent = games.length;
-  document.getElementById('stats-rapid').textContent = Number.isFinite(statRating) ? statRating : '—';
+  window.__cqAllGames = games;
+  applyStatsRange(window.__cqStatsRange || 90);
   document.getElementById('stats-puzzle').textContent = Number(PROGRESS.puzzleRating || 300);
   if(!PROGRESS.joinedAt) PROGRESS.joinedAt = Date.now();
   document.getElementById('progress-joined').textContent = `Inscrit le ${new Date(PROGRESS.joinedAt).toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}`;
 }
+function applyStatsRange(range){
+  window.__cqStatsRange = range;
+  const games = window.__cqAllGames || [];
+  const now = Date.now() / 1000;
+  const cutoff = range === 'all' ? 0 : now - (Number(range) * 86400);
+  const filtered = games.filter(game => (game.end_time || 0) >= cutoff);
+  document.getElementById('stats-games-count').textContent = filtered.length;
+  const state = chessComState();
+  const username = (state.username || PROGRESS.settings?.chessComUsername || '').toLowerCase();
+  const withRating = filtered.filter(game => {
+    const isWhite = game.white?.username?.toLowerCase() === username;
+    return Number.isFinite(isWhite ? game.white?.rating : game.black?.rating);
+  }).sort((a,b) => (b.end_time||0) - (a.end_time||0));
+  const latest = withRating[0];
+  let rangeRating = '—';
+  if(latest){
+    const isWhite = latest.white?.username?.toLowerCase() === username;
+    rangeRating = isWhite ? latest.white.rating : latest.black.rating;
+  } else {
+    const statRating = Number(state.stats?.chess_rapid?.last?.rating);
+    if(Number.isFinite(statRating)) rangeRating = statRating;
+  }
+  document.getElementById('stats-rapid').textContent = rangeRating;
+}
 document.querySelectorAll('.cq-stats-filters button').forEach(btn=>btn.onclick=()=>{
   document.querySelectorAll('.cq-stats-filters button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  applyStatsRange(btn.dataset.range);
 });
 
 async function initProgress(){

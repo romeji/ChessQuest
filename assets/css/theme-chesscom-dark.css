@@ -186,6 +186,129 @@ body nav.tabbar .tabbar-item{color:#9a9488 !important;}
 --------------------------------------------------------- */
 .analysis-tabs button.active{color:#9fce62 !important; border-color:#9fce62 !important;}
 .analysis-tabs button{background:transparent !important; color:#8b867c !important;}
+
+/* Cloche de notification : ancrée dans la grille "Amis" de
+   l'accueil comme un chip normal, plus de position flottante. */
+.quest-notifications.quest-notifications-slot{
+  position:relative !important; display:flex; flex-direction:column; align-items:center;
+}
+.quest-notifications-slot .quest-notification-toggle{
+  width:70px !important; height:70px !important; border-radius:16px !important;
+  background:rgba(255,255,255,0.055) !important; border:none !important;
+  font-size:1.6rem !important; margin:0 auto 6px !important;
+}
+.quest-notifications-slot .quest-notification-toggle svg{width:26px !important; height:26px !important;}
+.quest-notifications-slot .nm{font-size:0.74rem; color:#c4bfb5; font-weight:600; text-align:center;}
+.quest-notification-panel-slotted{
+  position:fixed !important; top:auto !important; bottom:150px !important;
+  left:50% !important; right:auto !important; transform:translateX(-50%);
+  width:min(356px, calc(100vw - 32px)) !important;
+  z-index:500 !important;
+}
+
+/* Modale de partage (QR) — amis */
+.cq-qr-modal{
+  position:fixed; inset:0; z-index:600; background:rgba(0,0,0,0.6);
+  display:none; align-items:center; justify-content:center; padding:20px;
+}
+.cq-qr-modal.open{display:flex;}
+.cq-qr-card{
+  background:linear-gradient(160deg,#242220,#1a1917); border:1px solid rgba(255,255,255,0.1);
+  border-radius:18px; padding:26px 22px; max-width:340px; width:100%; text-align:center; position:relative;
+}
+.cq-qr-close{position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.07); border:none; color:#f0ece2; width:28px; height:28px; border-radius:50%;}
+.cq-qr-icon{font-size:2.2rem; margin-bottom:10px;}
+.cq-qr-card strong{color:#f0ece2; font-size:1rem;}
+.cq-qr-card p{color:#8b867c; font-size:0.8rem; margin:10px 0 18px; word-break:break-all;}
+.cq-qr-actions{display:flex; gap:8px;}
+.cq-qr-actions button{flex:1; padding:11px; border-radius:8px; border:none; font-weight:700; font-size:0.85rem;}
+.cq-qr-copy{background:linear-gradient(180deg,#9fce62,#7fae42 55%,#547a2a); color:#12220a;}
+.cq-qr-native-share{background:rgba(255,255,255,0.08); color:#f0ece2;}
+
+/* Ouvertures : bandeau "Mémorise les premiers coups" -> sombre,
+   coups présentés en chips au lieu du bloc texte brut. */
+.opening-final-memory{
+  background:rgba(255,255,255,0.055) !important; border:1px solid rgba(255,255,255,0.09) !important;
+  border-radius:14px !important;
+}
+.opening-final-memory > small{color:#9fce62 !important; font-weight:800 !important; text-transform:uppercase; letter-spacing:0.04em; font-size:0.68rem !important;}
+.opening-memory-number{color:#8b867c !important;}
+.opening-memory-move{background:rgba(255,255,255,0.08) !important;}
+.opening-memory-move b{color:#f0ece2 !important;}
+.final-icon-button{
+  background:rgba(255,255,255,0.07) !important; color:#f0ece2 !important; border-color:rgba(255,255,255,0.1) !important;
+}
+
+/* Entraîneur (partie en cours) : une règle historique fixe l'ordre
+   d'affichage via flex "order" en ciblant d'anciennes classes
+   (.training-final-coach/.training-final-controls) qui n'existent
+   plus dans notre nouveau balisage. Nos nouveaux blocs restaient
+   donc à order:0 par défaut et remontaient au-dessus du plateau
+   (qui, lui, garde .training-final-board-wrap et son order:2).
+   On fixe explicitement l'ordre voulu : bandeau de coups, plateau,
+   boutons, puis le mot du coach. */
+.training-final-page .page{display:flex !important; flex-direction:column !important;}
+.training-final-page .cq-movebar{order:1 !important;}
+.training-final-page .training-final-board-wrap{order:2 !important;}
+.training-final-page .cq-toolbar-row{order:3 !important;}
+.training-final-page .cq-coach-row{order:4 !important;}
+.training-final-page .bot-final-elo{order:0 !important;}
+
+/* Idem sur la page Problèmes (puzzles.html) : la barre
+   Indication/Précédent/Suivant (#quest-puzzle-tools) est un ajout
+   qui n'existait pas dans le système d'ordre historique -> elle
+   remontait par défaut au-dessus du plateau. On la replace juste
+   après les options de réponse, et on corrige son fond clair. */
+.puzzle-final-page #quest-puzzle-tools{order:4 !important; background:transparent !important;}
+.mcq-options{background:transparent !important;}
+.mcq-option{background:rgba(255,255,255,0.07) !important; color:#f0ece2 !important; border-color:rgba(255,255,255,0.1) !important;}
+.quest-puzzle-buttons{display:flex !important; align-items:center !important; justify-content:center !important; gap:40px !important;}
+.quest-puzzle-buttons > span{display:none !important;}
+.quest-puzzle-buttons button{background:transparent !important; border:none !important; color:#8b867c !important;}
+#quest-hint{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:0.72rem !important; order:0 !important;}
+#quest-prev{order:-1 !important; font-size:1.3rem !important;}
+#quest-next{order:1 !important; font-size:1.3rem !important;}
+.puzzle-final-feedback{background:rgba(255,255,255,0.055) !important; color:#f0ece2 !important; border-color:rgba(255,255,255,0.1) !important;}
+
+/* Statistiques : bloc "Suivi ChessQuest" harmonisé (carte rang,
+   graphique ELO, série, badges, XP), au lieu de l'ancien style
+   crème/violet hérité du premier thème clair. */
+.progress-page .quest-card, .progress-rank-card, .progress-streak-card,
+.progress-badges-card, .progress-xp-card{
+  background:rgba(255,255,255,0.055) !important; border:1px solid rgba(255,255,255,0.09) !important;
+  box-shadow:none !important;
+}
+.progress-rank-copy .eyebrow{color:#9fce62 !important;}
+.progress-rank-copy h2{color:#f0ece2 !important; font-family:'Inter',sans-serif !important;}
+.progress-rank-rating{color:#8b867c !important;}
+.progress-rank-number{color:#f0ece2 !important;}
+.progress-rank-number small{color:#9fce62 !important;}
+.rank-track .track{background:rgba(255,255,255,0.09) !important;}
+.rank-track .track-fill{background:#7fae42 !important;}
+.rank-scale{color:#8b867c !important;}
+.progress-page .progress-chart-panel{
+  background:linear-gradient(180deg,#242220,#1a1917) !important; border-color:rgba(255,255,255,0.1) !important;
+}
+.progress-period{background:rgba(255,255,255,0.1) !important;}
+.progress-streak-card{color:#f0ece2 !important;}
+.progress-streak-card > span{color:#c4bfb5 !important;}
+.progress-streak-card strong{color:#e8b93f !important;}
+.progress-streak-card small{color:#8b867c !important;}
+.progress-card-head strong{color:#f0ece2 !important;}
+.progress-card-head a{color:#8b867c !important;}
+.progress-badge-item span{color:#c4bfb5 !important;}
+.progress-xp-card strong{color:#f0ece2 !important;}
+.progress-xp-value{color:#c4bfb5 !important;}
+.progress-xp-card .track{background:rgba(255,255,255,0.09) !important;}
+.progress-xp-card .track-fill{background:linear-gradient(90deg,#547a2a,#9fce62) !important;}
+.cq-stats-divider{color:#8b867c !important;}
+.cq-stats-divider::before, .cq-stats-divider::after{background:rgba(255,255,255,0.1) !important;}
+
+/* Objectifs quotidiens (Plus) : barre violette -> verte */
+.profile-objective .mini-track{background:rgba(255,255,255,0.09) !important;}
+.profile-objective .mini-track i{background:#7fae42 !important;}
+.profile-objective-copy small{color:#8b867c !important;}
+.profile-objective{border-color:rgba(255,255,255,0.08) !important;}
 .analysis-review-page .nav-controls button{background:#7fae42 !important; color:#12220a !important;}
 .training-move-browser button{background:rgba(255,255,255,0.08) !important; color:#f0ece2 !important;}
 .academy-opening-library a span{color:#9fce62 !important;}
@@ -553,15 +676,24 @@ button:not([class*="btn-primary"]):not([class*="quest-notification"]):not(.tabba
 .problem-journey-title{justify-content:center !important; text-align:center !important;}
 .problem-journey-title h1{text-align:center !important;}
 
-/* Vrai centrage du titre "Problèmes", indépendant de la largeur
-   du badge à gauche et du chip ELO à droite. */
+/* Vrai centrage du titre "Problèmes" : badge et chip ELO sortis
+   du flux (ancrés aux coins), le bloc titre prend toute la
+   largeur et se centre sans jamais chevaucher. */
 .problem-journey-topbar{position:relative !important;}
 .problem-journey-title{
-  position:absolute !important; left:0 !important; right:0 !important;
-  justify-content:center !important; pointer-events:none;
+  display:block !important; width:100% !important;
 }
-.problem-journey-title > span{pointer-events:auto;}
-.problem-rating{pointer-events:auto; position:relative; z-index:2; margin-left:auto;}
+.problem-journey-title > span{
+  position:absolute !important; left:13px !important; top:50% !important;
+  transform:translateY(-50%) !important; z-index:2;
+}
+.problem-journey-title > div{
+  width:100%; text-align:center !important;
+}
+.problem-rating{
+  position:absolute !important; right:13px !important; top:50% !important;
+  transform:translateY(-50%) !important; z-index:2;
+}
 
 /* Pièces "argentées" (glyphes ♞/♟ blancs par défaut) -> or,
    cohérent avec le reste de l'identité chess.com. */

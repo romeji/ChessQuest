@@ -17,7 +17,6 @@
 
   <div class="cq-friends-menu">
     <button class="cq-friends-menu-row" type="button" id="menu-search-contacts"><span class="ic">🔍</span>Rechercher des contacts</button>
-    <button class="cq-friends-menu-row fb" type="button" id="menu-facebook"><span class="ic">📘</span>Amis Facebook</button>
     <button class="cq-friends-menu-row" type="button" id="menu-invite"><span class="ic">✉️</span>Inviter des amis</button>
     <button class="cq-friends-menu-row qr" type="button" id="menu-qr"><span class="ic">▤</span>Partager le code QR</button>
     <button class="cq-friends-menu-row link" type="button" id="menu-challenge-link"><span class="ic">🔗</span>Envoyez un lien de défi</button>
@@ -78,9 +77,26 @@ $('toggle-challenge-form').onclick=()=>{$('challenge-form-card').classList.toggl
 $('menu-challenge-link').onclick=()=>$('toggle-challenge-form').click();
 $('menu-search-contacts').onclick=()=>$('friend-name').focus();
 $('menu-invite').onclick=async()=>{const url=location.origin+location.pathname;if(navigator.share){try{await navigator.share({title:'ChessQuest',text:'Rejoins-moi sur ChessQuest !',url});}catch(e){}}else{try{await navigator.clipboard.writeText(url);$('friend-status').textContent='Lien de l’app copié ✓';}catch(e){}}};
-$('menu-facebook').onclick=()=>{$('friend-status').textContent='La connexion Facebook arrive bientôt.';};
-$('menu-qr').onclick=()=>{$('friend-status').textContent='Le code QR arrive bientôt.';};
+$('menu-qr').onclick=()=>openQrModal(location.origin+location.pathname);
 $('friend-share-top').onclick=(e)=>{e.preventDefault();$('menu-invite').click();};
+
+function openQrModal(text){
+  let modal=document.getElementById('qr-modal');
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='qr-modal';
+    modal.className='cq-qr-modal';
+    modal.innerHTML='<div class="cq-qr-card"><button type="button" class="cq-qr-close" aria-label="Fermer">✕</button><div class="cq-qr-icon">📱</div><strong>Ton lien ChessQuest</strong><p id="qr-link-text"></p><div class="cq-qr-actions"><button type="button" class="cq-qr-copy">Copier le lien</button><button type="button" class="cq-qr-native-share">Partager</button></div></div>';
+    document.body.appendChild(modal);
+    modal.querySelector('.cq-qr-close').onclick=()=>modal.classList.remove('open');
+    modal.onclick=(e)=>{ if(e.target===modal) modal.classList.remove('open'); };
+    modal.querySelector('.cq-qr-copy').onclick=async()=>{ try{ await navigator.clipboard.writeText(modal.dataset.link||''); const btn=modal.querySelector('.cq-qr-copy'); btn.textContent='Copié ✓'; setTimeout(()=>btn.textContent='Copier le lien',1500);}catch(e){} };
+    modal.querySelector('.cq-qr-native-share').onclick=async()=>{ if(navigator.share){ try{ await navigator.share({title:'ChessQuest', url:modal.dataset.link}); }catch(e){} } };
+  }
+  modal.dataset.link=text;
+  modal.querySelector('#qr-link-text').textContent=text;
+  modal.classList.add('open');
+}
 async function questUserReady(){for(let i=0;i<40&&typeof questCurrentUser!=='function';i++)await new Promise(resolve=>setTimeout(resolve,100));return typeof questCurrentUser==='function'?questCurrentUser():null;}
 function addFriend(){const name=$('friend-name').value.trim();if(!name)return;if(friends.some(friend=>friend.toLowerCase()===name.toLowerCase())){$('friend-status').textContent='Cet ami est déjà dans ta cour.';return;}friends.push(name);save();$('friend-name').value='';$('friend-status').textContent=`${name} est prêt pour un défi.`;render();}
 $('friend-add').onclick=addFriend;$('friend-name').addEventListener('keydown',event=>{if(event.key==='Enter')addFriend();});
