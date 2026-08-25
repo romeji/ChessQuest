@@ -861,25 +861,33 @@ html.cq-has-tabbar .puzzle-final-rating ~ .quest-notifications, .puzzle-final-ra
 .cq-home-top .quest-notifications-slot .nm{display:none !important;}
 .cq-home-top .quest-notification-panel-slotted{bottom:auto !important;top:calc(env(safe-area-inset-top) + 62px) !important;right:12px !important;left:auto !important;transform:none !important;}
 
-/* Cloche globale : une seule position sur toutes les pages hors accueil.
-   Ces règles arrivent après les anciennes exceptions propres aux écrans. */
-.quest-notifications:not(.quest-notifications-slot){
-  position:fixed !important;
-  z-index:900 !important;
-  top:max(12px,calc(env(safe-area-inset-top,0px) + 8px)) !important;
-  right:max(12px,env(safe-area-inset-right,0px)) !important;
+/* Carte des problèmes : le niveau accompagne le titre, et le monde/socle
+   reste strictement centré juste dessous. */
+.problem-journey-title{
+  position:absolute !important;
+  left:50% !important;
+  top:calc(50% - 4px) !important;
+  width:max-content !important;
+  display:grid !important;
+  grid-template-columns:42px max-content !important;
+  align-items:center !important;
+  column-gap:9px !important;
+  transform:translate(-50%,-50%) !important;
+}
+.problem-journey-title > span{
+  position:static !important;
   left:auto !important;
-  bottom:auto !important;
-  margin:0 !important;
+  top:auto !important;
   transform:none !important;
 }
-.quest-notifications:not(.quest-notifications-slot) .nm{display:none !important;}
-.quest-notifications:not(.quest-notifications-slot) .quest-notification-panel{
-  position:fixed !important;
-  z-index:901 !important;
-  top:calc(max(12px,env(safe-area-inset-top,0px)) + 52px) !important;
-  right:max(12px,env(safe-area-inset-right,0px)) !important;
-  left:auto !important;
-  bottom:auto !important;
-  transform:none !important;
+.problem-journey-title > div{width:auto !important;text-align:center !important;}
+.problem-journey-title h1{width:max-content !important;text-align:center !important;}
+.problem-journey-title small{
+  position:absolute !important;
+  left:50% !important;
+  top:calc(100% + 3px) !important;
+  width:max-content !important;
+  margin:0 !important;
+  transform:translateX(-50%) !important;
+  text-align:center !important;
 }

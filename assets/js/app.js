@@ -168,11 +168,11 @@ function questNotifications(){
 function initQuestNotifications(){
   if(document.getElementById('quest-notifications')) return;
   const slot = document.getElementById('home-notification-slot');
-  const inHome = document.body.dataset.page === 'home' && Boolean(slot);
+  if(document.body.dataset.page !== 'home' || !slot) return;
   const items = questNotifications();
   const root = document.createElement('div');
   root.id = 'quest-notifications';
-  root.className = `quest-notifications${inHome ? ' quest-notifications-slot' : ''}`;
+  root.className = 'quest-notifications quest-notifications-slot';
   const toggle = document.createElement('button');
   toggle.type = 'button'; toggle.className = 'quest-notification-toggle';
   toggle.setAttribute('aria-label', `${items.length} notification${items.length > 1 ? 's' : ''}`);
@@ -223,16 +223,13 @@ function initQuestNotifications(){
   }
   toggle.setAttribute('aria-expanded','false');
   root.append(toggle,label,panel);
-  if(inHome) slot.appendChild(root);
-  else document.body.appendChild(root);
+  slot.appendChild(root);
   render();
   // .app applique overflow:hidden, ce qui coupe visuellement tout
   // enfant en position fixed malgré un positionnement correct :
   // on sort le panneau du flux vers le <body> pour l'en affranchir.
   document.body.appendChild(panel);
-  // Sur l'accueil elle vit dans la barre du haut ; ailleurs elle est un
-  // contrôle global fixe, jamais dépendant du scroll de la page.
-  positionQuestNotifications(root);
+  // La cloche est volontairement réservée à l'accueil, à côté des pièces.
   const state = questNotificationState();
   if(document.body.dataset.page === 'home' && state.lastToastDate !== todayKey()){
     state.lastToastDate = todayKey(); saveProgress();
@@ -241,9 +238,8 @@ function initQuestNotifications(){
   }
 }
 
-/* La cloche est un contrôle global : elle ne doit jamais dépendre de la mise
-   en page d'un écran. Les anciens calculs basés sur les compteurs de chaque
-   page produisaient des positions différentes au changement de vue. */
+/* La cloche est ancrée dans la barre de l'accueil ; les autres pages ne la
+   créent pas afin de ne jamais masquer leur contenu. */
 function positionQuestNotifications(root=document.getElementById('quest-notifications')){
   if(!root) return;
   if(root.classList.contains('quest-notifications-slot')) return; // ancrée dans la grille, pas de positionnement fixe
