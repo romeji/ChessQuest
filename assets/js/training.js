@@ -46,6 +46,40 @@ function renderTrainingMoveBrowser(cursor=tgGame?.history().length||0){
   const prev=document.getElementById('tg-history-prev'),next=document.getElementById('tg-history-next');
   if(prev)prev.disabled=tgHistoryCursor===0;
   if(next)next.disabled=tgHistoryCursor===max;
+  renderTrainingTurnBar();
+  renderTrainingMoveList();
+}
+function renderTrainingTurnBar(){
+  if(!tgGame)return;
+  const whiteToMove = tgGame.turn()==='w';
+  document.getElementById('tg-turn-white')?.classList.toggle('active',whiteToMove);
+  document.getElementById('tg-turn-black')?.classList.toggle('active',!whiteToMove);
+}
+function renderTrainingMoveList(){
+  const list=document.getElementById('tg-move-list');
+  if(!list||!tgGame)return;
+  const moves=tgGame.history();
+  if(!moves.length){ list.innerHTML='<li class="tg-move-empty">Aucun coup joué pour l’instant.</li>'; return; }
+  let html='';
+  for(let i=0;i<moves.length;i+=2){
+    const num=i/2+1;
+    const whiteMove=moves[i], blackMove=moves[i+1];
+    const whiteActive=tgHistoryCursor===i+1?' active':'';
+    const blackActive=blackMove!==undefined&&tgHistoryCursor===i+2?' active':'';
+    html+=`<li><span class="tg-move-num">${num}.</span><button type="button" class="tg-move-chip${whiteActive}" data-ply="${i+1}">${whiteMove}</button>${blackMove!==undefined?`<button type="button" class="tg-move-chip${blackActive}" data-ply="${i+2}">${blackMove}</button>`:''}</li>`;
+  }
+  list.innerHTML=html;
+  list.querySelectorAll('.tg-move-chip').forEach(btn=>{
+    btn.onclick=()=>{
+      if(tgBotThinking)return;
+      const ply=Number(btn.dataset.ply);
+      tgBoard.position(trainingPositionAt(ply),false);
+      clearHighlights('#tg-board');
+      renderTrainingMoveBrowser(ply);
+    };
+  });
+  const activeChip=list.querySelector('.tg-move-chip.active');
+  if(activeChip) activeChip.scrollIntoView({block:'nearest',inline:'nearest'});
 }
 function browseTrainingHistory(direction){
   if(!tgGame||tgBotThinking)return;

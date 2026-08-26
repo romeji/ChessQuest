@@ -513,7 +513,7 @@ function applyPuzzleRatingChange(puzzleRating, success){
   PROGRESS.puzzleRating = Math.max(300, userRating + delta);
   PROGRESS.puzzleRatingVersion = 2;
   PROGRESS.puzzleRatingHistory = PROGRESS.puzzleRatingHistory || [];
-  PROGRESS.puzzleRatingHistory.push({date: new Date().toISOString(), rating: PROGRESS.puzzleRating});
+  PROGRESS.puzzleRatingHistory.push({date: new Date().toISOString(), rating: PROGRESS.puzzleRating, success: Boolean(success)});
   PROGRESS.puzzleRatingHistory = PROGRESS.puzzleRatingHistory.slice(-50);
   return delta;
 }

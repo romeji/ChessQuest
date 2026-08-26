@@ -1,4 +1,4 @@
-.entrainement-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-top:4px;}
+.entrainement-header{display:flex;align-items:center;gap:14px;margin-bottom:24px;padding-top:max(14px, env(safe-area-inset-top,0px));}
 .entrainement-home{margin-right:0;}
 .entrainement-icon{
   width:46px;height:46px;border-radius:16px;flex:0 0 auto;

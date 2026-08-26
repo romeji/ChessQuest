@@ -248,11 +248,13 @@ body nav.tabbar .tabbar-item{color:#9a9488 !important;}
    On fixe explicitement l'ordre voulu : bandeau de coups, plateau,
    boutons, puis le mot du coach. */
 .training-final-page .page{display:flex !important; flex-direction:column !important;}
-.training-final-page .cq-movebar{order:1 !important;}
-.training-final-page .training-final-board-wrap{order:2 !important;}
-.training-final-page .cq-toolbar-row{order:3 !important;}
-.training-final-page .cq-coach-row{order:4 !important;}
 .training-final-page .bot-final-elo{order:0 !important;}
+.training-final-page .tg-color-bar{order:1 !important;}
+.training-final-page .cq-movebar{order:2 !important;}
+.training-final-page .cq-coach-row{order:3 !important;}
+.training-final-page .training-final-board-wrap{order:4 !important;}
+.training-final-page .tg-move-list{order:5 !important;}
+.training-final-page .cq-toolbar-row{order:6 !important;}
 
 /* Idem sur la page Problèmes (puzzles.html) : la barre
    Indication/Précédent/Suivant (#quest-puzzle-tools) est un ajout
@@ -813,17 +815,20 @@ html.cq-has-tabbar .puzzle-final-rating ~ .quest-notifications, .puzzle-final-ra
   transform:none !important;background:#b9453d !important;color:#fff !important;
 }
 
-/* Même langage d'icônes sous l'échiquier d'entraînement. */
+/* Même langage d'icônes sous l'échiquier d'entraînement : 3 boutons
+   d'action (Annuler / Abandonner / Indice), icône + libellé. */
 .training-final-page .cq-toolbar-row{gap:8px !important;justify-content:center !important;}
-.training-final-page .cq-toolbar-row button{
-  min-width:46px !important;min-height:42px !important;border-radius:14px !important;
+.training-final-page .cq-toolbar-row .tg-action{
+  border-radius:14px !important;
   background:#262321 !important;color:#f0ece2 !important;
   border:1px solid rgba(255,255,255,.14) !important;box-shadow:none !important;
 }
-.training-final-page .cq-toolbar-row button.training-advice{
+.training-final-page .cq-toolbar-row .tg-action.training-advice{
   background:linear-gradient(180deg,#9fce62,#6d9f39) !important;color:#132411 !important;
   border-color:#b8e37b !important;
 }
+.training-final-page .cq-toolbar-row .tg-action.training-advice .tg-action-ic,
+.training-final-page .cq-toolbar-row .tg-action.training-advice .tg-action-lbl{color:#132411 !important;}
 
 /* Carte Ouvertures : le dock et son monde appartiennent à la barre sombre. */
 .opening-map-page .opening-map-dock,
@@ -891,3 +896,45 @@ html.cq-has-tabbar .puzzle-final-rating ~ .quest-notifications, .puzzle-final-ra
   transform:translateX(-50%) !important;
   text-align:center !important;
 }
+
+/* Compteur "problèmes résolus" en bataille : pastille blanche en haut à droite,
+   distincte du minuteur central, qui s'incrémente à chaque problème réussi. */
+.battle-solved-counter{position:absolute; z-index:5; top:calc(env(safe-area-inset-top) + 66px); right:14px; min-width:30px; height:30px; padding:0 9px; border-radius:15px; background:#fffaf0; color:#173d2d; font-weight:1000; font-size:.85rem; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,.28);}
+.battle-solved-counter.hidden{display:none !important;}
+.battle-solved-counter::before{content:"🧩"; margin-right:5px; font-size:.78rem;}
+/* En bataille, le bouton "?" reste dans la grille mais s'efface visuellement
+   (au lieu de disparaître et de casser l'alignement < / >). */
+.puzzle-final-page.puzzle-battle-active #quest-hint{visibility:hidden !important; pointer-events:none !important;}
+
+/* ============================================================
+   Bilan / Analyse de partie (game-view.html) : plusieurs cartes
+   gardaient un fond ivoire codé en dur dans analysis.css, ce qui
+   restait blanc même en thème sombre. On assombrit toute la
+   hiérarchie et on adapte les couleurs de texte pour la lisibilité.
+   ============================================================ */
+.analysis-review-page{background:#1d1b1a !important;}
+.analysis-review-page .app{background:radial-gradient(circle at 50% 0,#2a2724,#1d1b1a 76%) !important;}
+.analysis-review-page .final-page-title{background:rgba(29,27,26,.94) !important;}
+.analysis-review-page .final-page-title h1{color:#f0ece2 !important;}
+.analysis-review-page .gi-players{color:#f0ece2 !important;}
+.analysis-review-page .gi-meta{color:#8b867c !important;}
+.analysis-review-page .acc-card{background:#2b2827 !important; border:1px solid #3a352f !important;}
+.analysis-review-page .acc-label{color:#8b867c !important;}
+.analysis-review-page .acc-value{color:#9fce62 !important;}
+.analysis-review-page .acc-sub,.analysis-review-page .acc-vs{color:#8b867c !important;}
+.analysis-review-comment{background:#2b2827 !important; border:1px solid #3a352f !important; color:#f0ece2 !important;}
+.analysis-mascot-comment p{color:#f0ece2 !important;}
+.analysis-mascot-comment .tag{filter:brightness(1.15);}
+.analysis-review-page .analysis-tabs{background:#1d1b1a !important; border-bottom-color:#3a352f !important;}
+.analysis-review-page .analysis-tabs button{color:#8b867c !important;}
+.analysis-review-page .analysis-tabs button.active{color:#9fce62 !important; border-color:#9fce62 !important;}
+.analysis-review-page .stat-card{background:#2b2827 !important; border:1px solid #3a352f !important;}
+.analysis-review-page .stat-line{border-bottom-color:#3a352f !important; color:#c4bfb5 !important;}
+.analysis-review-page .eval-bar{background:#332f2d !important;}
+.analysis-review-page .eval-bar-label{color:#f0ece2 !important;}
+.analysis-review-page #move-list,.analysis-review-page ol#move-list{background:#2b2827 !important; border-color:#3a352f !important;}
+.analysis-review-page ol#move-list li{border-bottom-color:#3a352f !important; color:#f0ece2 !important;}
+.analysis-review-page .move-chip:hover{background:#332f2d !important;}
+.analysis-review-page .error-card{background:#2b2827 !important;}
+.analysis-review-page .ec-desc{color:#c4bfb5 !important;}
+.analysis-review-page .ec-best{color:#f0ece2 !important;}

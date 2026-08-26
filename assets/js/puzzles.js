@@ -443,6 +443,11 @@ function refreshQuestPuzzleTools(){
     if(prev)prev.disabled=puzzleIndex<=0; if(next)next.disabled=false;
   }
   const retry=document.getElementById('puzzle-retry-action');if(retry){retry.classList.toggle('hidden',!puzzleLastSuccess);retry.onclick=()=>loadPuzzle(puzzleIndex);}
+  const battleCounter=document.getElementById('battle-solved-counter');
+  if(battleCounter){
+    battleCounter.classList.toggle('hidden',puzzleSource!=='battle');
+    if(puzzleSource==='battle') battleCounter.textContent = puzzleBattleScore;
+  }
 }
 function browseQuestPuzzle(delta){
   if(!questPuzzlePositions.length)return;questPuzzlePositionIndex=Math.max(0,Math.min(questPuzzlePositions.length-1,questPuzzlePositionIndex+delta));puzzleBoard.position(questPuzzlePositions[questPuzzlePositionIndex],false);clearHighlights('#puzzle-board');refreshQuestPuzzleTools();

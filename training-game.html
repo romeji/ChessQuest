@@ -87,9 +87,19 @@
       <select id="bot-elo-select" aria-label="Niveau ELO du bot"></select>
     </label>
 
+    <div class="tg-color-bar" aria-hidden="true">
+      <span class="tg-color-half tg-color-black" id="tg-turn-black">♚ Noirs</span>
+      <span class="tg-color-half tg-color-white active" id="tg-turn-white">♔ Blancs</span>
+    </div>
+
     <div class="cq-movebar">
       <strong id="tg-history-current">Position initiale</strong> · <span id="tg-history-position">À toi de jouer</span>
     </div>
+
+    <aside class="cq-coach-row" id="tg-coach-row">
+      <div class="cq-coach-avatar"><img id="training-mascot" data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest"></div>
+      <p class="cq-speech" data-mascot-text id="training-tip-text">Je regarde. Essaie de ne pas faire honte au royaume.</p>
+    </aside>
 
     <div class="training-final-board-wrap">
       <div class="board-frame">
@@ -99,27 +109,21 @@
       </div>
     </div>
 
-    <div class="cq-toolbar-row">
-      <button id="tg-history-prev" type="button" aria-label="Coup précédent">‹</button>
-      <button type="button" aria-label="Discussion">💬</button>
-      <button id="undo-btn" type="button" aria-label="Revenir">↶</button>
-      <button class="training-advice" id="hint-btn2" type="button" aria-label="Conseil">💡</button>
-      <button id="tg-history-next" type="button" aria-label="Coup suivant">›</button>
-    </div>
-    <div class="cq-toolbar-row">
-      <button id="resign-btn" type="button" aria-label="Abandonner">⚑</button>
-    </div>
+    <ol class="tg-move-list" id="tg-move-list" aria-label="Coups joués"></ol>
 
-    <aside class="cq-coach-row" style="margin-top:14px;">
-      <div class="cq-coach-avatar"><img id="training-mascot" data-mascot-image src="assets/illustrations/mascot-coach-encourage.webp" alt="Coach ChessQuest"></div>
-      <p class="cq-speech" data-mascot-text id="training-tip-text">Je regarde. Essaie de ne pas faire honte au royaume.</p>
-    </aside>
+    <div class="cq-toolbar-row tg-actions-row">
+      <button id="undo-btn" type="button" class="tg-action" aria-label="Annuler"><span class="tg-action-ic">↩</span><span class="tg-action-lbl">Annuler</span></button>
+      <button id="resign-btn" type="button" class="tg-action" aria-label="Abandonner"><span class="tg-action-ic">⚑</span><span class="tg-action-lbl">Abandonner</span></button>
+      <button class="training-advice tg-action" id="hint-btn2" type="button" aria-label="Conseil"><span class="tg-action-ic">💡</span><span class="tg-action-lbl">Indice</span></button>
+    </div>
 
     <div class="training-final-hidden" aria-hidden="true">
       <span id="bot-difficulty-label">1200 ELO</span>
       <span id="bot-status">Ta partie contre l’ordinateur</span>
       <div id="coach-bubble" class="hidden"><span id="coach-icon">👍</span><span id="coach-text"></span></div>
       <button id="next-btn" type="button" disabled>Suivant</button>
+      <button id="tg-history-prev" type="button" aria-label="Coup précédent">‹</button>
+      <button id="tg-history-next" type="button" aria-label="Coup suivant">›</button>
     </div>
   </section>
 </main>
