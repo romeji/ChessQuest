@@ -71,8 +71,7 @@
       </div>
       <div class="cq-home-logo"><span class="mark">♞</span>ChessQuest</div>
       <div class="side">
-        <span class="icon-circle home-currency-display" aria-label="Pièces gagnées" id="home-shop-balance">🪙</span>
-        <div id="home-notification-slot" aria-label="Notifications"></div>
+        <span class="icon-circle home-currency-display" aria-label="Pièces gagnées" id="home-shop-balance"><svg class="coin-gold-icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><defs><radialGradient id="coinGoldGrad" cx="35%" cy="30%" r="75%"><stop offset="0%" stop-color="#fff3c4"/><stop offset="45%" stop-color="#f7cd4c"/><stop offset="80%" stop-color="#d99a1f"/><stop offset="100%" stop-color="#a9700f"/></radialGradient></defs><circle cx="12" cy="12" r="10.5" fill="url(#coinGoldGrad)" stroke="#8a5c0c" stroke-width="1"/><circle cx="12" cy="12" r="7.6" fill="none" stroke="#a9700f" stroke-width="1" opacity="0.55"/><text x="12" y="16.2" text-anchor="middle" font-size="10" font-weight="900" fill="#8a5c0c" font-family="Nunito, sans-serif">♞</text></svg><span id="home-shop-balance-num">0</span></span>
         <a class="icon-circle" href="profile.html" aria-label="Profil">👤</a>
       </div>
     </div>
@@ -126,8 +125,19 @@
       <div class="cq-friend-scroll">
         <a class="cq-friend-chip" href="friends.html"><div class="av">🔍</div><div class="nm">Trouver</div></a>
         <a class="cq-friend-chip" href="shop.html"><div class="av">👑</div><div class="nm">Boutique</div></a>
+        <button type="button" class="cq-friend-chip" id="home-notif-chip"><div class="av">🔔<span class="notif-badge hidden" id="home-notif-badge"></span></div><div class="nm">Notifs</div></button>
       </div>
     </section>
+
+    <div class="notif-view-overlay" id="notif-view-overlay" role="dialog" aria-modal="true" aria-label="Notifications">
+      <div class="notif-view-card">
+        <div class="notif-view-head">
+          <h2>Notifications royales</h2>
+          <button type="button" class="notif-view-close" id="notif-view-close" aria-label="Fermer">×</button>
+        </div>
+        <div class="notif-view-list" id="notif-view-list"></div>
+      </div>
+    </div>
 
     <section class="cq-home-section">
       <div class="cq-section-head"><h2>Historique de tes parties</h2><a class="see-all" href="analysis.html">Tout afficher</a></div>
@@ -157,8 +167,8 @@ function renderHomeTab(){
   const streak = computeCurrentStreak();
   const streakEl = document.getElementById('home-streak');
   if(streakEl) streakEl.textContent = streak;
-  const balanceEl = document.getElementById('home-shop-balance');
-  if(balanceEl) balanceEl.textContent = `${QUEST_CURRENCY.icon} ${crownBalance()}`;
+  const balanceNumEl = document.getElementById('home-shop-balance-num');
+  if(balanceNumEl) balanceNumEl.textContent = crownBalance();
   ensureDailyProgressFresh();
   const featuredKey = todayKey();
   const featuredDone = (PROGRESS.featuredProblemsSolved || []).includes(featuredKey);

@@ -165,105 +165,57 @@ function questNotifications(){
   const dismissed = questNotificationState().dismissed || {};
   return items.filter(item => !dismissed[item.id]).sort((a,b) => b.priority - a.priority);
 }
+/* Vue complète des notifications : un bouton rectangulaire ("Notifs", au
+   style des autres puces comme "Boutique") ouvre une carte plein écran qui
+   liste toutes les notifications reçues. Plus d'icône flottante. */
+function renderNotifView(){
+  const list = document.getElementById('notif-view-list');
+  const badge = document.getElementById('home-notif-badge');
+  if(!list) return;
+  const fresh = questNotifications();
+  if(badge){
+    badge.textContent = fresh.length > 9 ? '9+' : String(fresh.length);
+    badge.classList.toggle('hidden', fresh.length === 0);
+  }
+  list.innerHTML = '';
+  if(!fresh.length){
+    const empty=document.createElement('p'); empty.className='quest-notification-empty'; empty.textContent='Tu es à jour. Bien joué !';
+    list.appendChild(empty); return;
+  }
+  fresh.forEach(item => {
+    const row=document.createElement('div'); row.className='quest-notification-item';
+    const go=document.createElement('button'); go.type='button'; go.className='quest-notification-go';
+    const icon=document.createElement('span'); icon.className='quest-notification-icon'; icon.textContent=item.icon;
+    const copy=document.createElement('span'); copy.className='quest-notification-copy';
+    const title=document.createElement('strong'); title.textContent=item.title;
+    const text=document.createElement('small'); text.textContent=item.text;
+    copy.append(title,text); go.append(icon,copy); go.onclick=()=>{ location.href=item.href; };
+    const close=document.createElement('button'); close.type='button'; close.className='quest-notification-dismiss'; close.setAttribute('aria-label','Masquer cette notification'); close.textContent='×';
+    close.onclick=()=>{ questNotificationState().dismissed[item.id]=Date.now(); saveProgress(); renderNotifView(); };
+    row.append(go,close); list.appendChild(row);
+  });
+}
+function openNotifView(){ document.getElementById('notif-view-overlay')?.classList.add('open'); renderNotifView(); }
+function closeNotifView(){ document.getElementById('notif-view-overlay')?.classList.remove('open'); }
 function initQuestNotifications(){
-  if(document.getElementById('quest-notifications')) return;
-  const slot = document.getElementById('home-notification-slot');
-  if(document.body.dataset.page !== 'home' || !slot) return;
-  const items = questNotifications();
-  const root = document.createElement('div');
-  root.id = 'quest-notifications';
-  root.className = 'quest-notifications quest-notifications-slot';
-  const toggle = document.createElement('button');
-  toggle.type = 'button'; toggle.className = 'quest-notification-toggle';
-  toggle.setAttribute('aria-label', `${items.length} notification${items.length > 1 ? 's' : ''}`);
-  toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 6.5-2.7 7.2-2.7 9h17.4c0-1.8-2.7-2.5-2.7-9Z"/><path d="M9.7 20h4.6"/></svg><b></b>';
-  const label = document.createElement('div'); label.className = 'nm'; label.textContent = 'Notification';
-  const panel = document.createElement('div');
-  panel.className = 'quest-notification-panel quest-notification-panel-slotted hidden';
-  panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-label', 'Notifications');
-  const heading = document.createElement('div'); heading.className = 'quest-notification-heading'; heading.textContent = 'Notifications royales'; panel.appendChild(heading);
-  function render(){
-    const fresh = questNotifications();
-    toggle.querySelector('b').textContent = fresh.length > 9 ? '9+' : fresh.length;
-    toggle.querySelector('b').classList.toggle('hidden', fresh.length === 0);
-    panel.querySelectorAll('.quest-notification-item,.quest-notification-empty').forEach(el => el.remove());
-    if(!fresh.length){ const empty=document.createElement('p'); empty.className='quest-notification-empty'; empty.textContent='Tu es à jour. Bien joué !'; panel.appendChild(empty); return; }
-    fresh.forEach(item => {
-      const row=document.createElement('div'); row.className='quest-notification-item';
-      const go=document.createElement('button'); go.type='button'; go.className='quest-notification-go';
-      const icon=document.createElement('span'); icon.className='quest-notification-icon'; icon.textContent=item.icon;
-      const copy=document.createElement('span'); copy.className='quest-notification-copy';
-      const title=document.createElement('strong'); title.textContent=item.title;
-      const text=document.createElement('small'); text.textContent=item.text;
-      copy.append(title,text); go.append(icon,copy); go.onclick=()=>{ location.href=item.href; };
-      const close=document.createElement('button'); close.type='button'; close.className='quest-notification-dismiss'; close.setAttribute('aria-label','Masquer cette notification'); close.textContent='×';
-      close.onclick=()=>{ questNotificationState().dismissed[item.id]=Date.now(); saveProgress(); render(); };
-      row.append(go,close); panel.appendChild(row);
-    });
-  }
-  toggle.onclick=event=>{
-    event.stopPropagation();
-    const opening = panel.classList.contains('hidden');
-    panel.classList.toggle('hidden',!opening);
-    toggle.setAttribute('aria-expanded',String(opening));
-  };
-  panel.onclick=event=>event.stopPropagation();
-  if(!window.__questNotificationGlobalHandlers){
-    document.addEventListener('click',()=>{
-      const currentPanel=document.querySelector('.quest-notification-panel');
-      const currentToggle=document.querySelector('.quest-notification-toggle');
-      currentPanel?.classList.add('hidden'); currentToggle?.setAttribute('aria-expanded','false');
-    });
-    document.addEventListener('keydown',event=>{
-      if(event.key !== 'Escape') return;
-      document.querySelector('.quest-notification-panel')?.classList.add('hidden');
-      document.querySelector('.quest-notification-toggle')?.setAttribute('aria-expanded','false');
-    });
-    window.__questNotificationGlobalHandlers=true;
-  }
-  toggle.setAttribute('aria-expanded','false');
-  root.append(toggle,label,panel);
-  slot.appendChild(root);
-  render();
-  // .app applique overflow:hidden, ce qui coupe visuellement tout
-  // enfant en position fixed malgré un positionnement correct :
-  // on sort le panneau du flux vers le <body> pour l'en affranchir.
-  document.body.appendChild(panel);
-  // La cloche est volontairement réservée à l'accueil, à côté des pièces.
+  if(document.body.dataset.page !== 'home') return;
+  const chip = document.getElementById('home-notif-chip');
+  const overlay = document.getElementById('notif-view-overlay');
+  if(!chip || !overlay || chip.dataset.bound) { renderNotifView(); return; }
+  chip.dataset.bound = '1';
+  chip.addEventListener('click', openNotifView);
+  document.getElementById('notif-view-close')?.addEventListener('click', closeNotifView);
+  overlay.addEventListener('click', event=>{ if(event.target === overlay) closeNotifView(); });
+  document.addEventListener('keydown', event=>{ if(event.key === 'Escape') closeNotifView(); });
+  renderNotifView();
+  // La puce "Notifs" est volontairement réservée à l'accueil.
   const state = questNotificationState();
-  if(document.body.dataset.page === 'home' && state.lastToastDate !== todayKey()){
+  const items = questNotifications();
+  if(state.lastToastDate !== todayKey()){
     state.lastToastDate = todayKey(); saveProgress();
     const first = items[0];
     if(first && typeof showToast === 'function') showToast(first.title, first.text);
   }
-}
-
-/* La cloche est ancrée dans la barre de l'accueil ; les autres pages ne la
-   créent pas afin de ne jamais masquer leur contenu. */
-function positionQuestNotifications(root=document.getElementById('quest-notifications')){
-  if(!root) return;
-  if(root.classList.contains('quest-notifications-slot')) return; // ancrée dans la grille, pas de positionnement fixe
-  root.classList.remove('header-adjacent');
-  root.style.removeProperty('--quest-notification-left');
-  root.style.removeProperty('--quest-notification-panel-left');
-  /* Ne jamais laisser la cloche hériter d'un déplacement de page. Les écrans
-     qui possèdent leur propre zone de scroll (Accueil, Profil, Observer) ne
-     peuvent donc plus l'embarquer pendant le défilement. */
-  root.style.position='fixed';
-  root.style.left='auto';
-  root.style.right='max(12px, env(safe-area-inset-right, 0px))';
-  root.style.top='max(12px, calc(env(safe-area-inset-top, 0px) + 8px))';
-  root.style.bottom='auto';
-  root.style.transform='none';
-  root.style.margin='0';
-  root.style.setProperty('--quest-notification-top','max(12px, calc(env(safe-area-inset-top, 0px) + 8px))');
-}
-if(!window.__questNotificationPositionListener){
-  window.addEventListener('resize',()=>requestAnimationFrame(()=>positionQuestNotifications()),{passive:true});
-  window.addEventListener('orientationchange',()=>setTimeout(()=>positionQuestNotifications(),160),{passive:true});
-  window.addEventListener('load',()=>positionQuestNotifications(),{once:true});
-  document.fonts?.ready?.then(()=>positionQuestNotifications());
-  window.__questNotificationPositionListener=true;
 }
 document.addEventListener('DOMContentLoaded', initQuestNotifications);
 let questInviteUnsubscribe=null;
@@ -273,15 +225,11 @@ async function installQuestInvitationNotifications(){
   questInviteUnsubscribe=firebase.firestore().collection('invitations').where('recipientUid','==',user.uid).where('status','==','waiting').limit(12).onSnapshot(snapshot=>{
     PROGRESS.friendInvitations=snapshot.docs.map(doc=>Object.assign({id:doc.id},doc.data()));
     saveProgress({localOnly:true});
-    document.getElementById('quest-notifications')?.remove(); initQuestNotifications();
+    renderNotifView();
   },error=>console.warn('[ChessQuest] Invitations indisponibles',error));
 }
 window.addEventListener('load',()=>setTimeout(installQuestInvitationNotifications,900));
-window.addEventListener('cq:chesscom-sync', () => {
-  const existing = document.getElementById('quest-notifications');
-  if(existing) existing.remove();
-  initQuestNotifications();
-});
+window.addEventListener('cq:chesscom-sync', () => { renderNotifView(); });
 
 /* ---- Fin de parcours : une célébration cohérente sur tous les modules. ---- */
 function closeQuestCompletionModal(){
