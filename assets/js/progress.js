@@ -503,8 +503,51 @@ function isOpeningLessonCompleted(key){
 }
 
 /* ============================================================
-   PUZZLES : classement Elo simplifié
+   Module partagé : bande de coups horizontale, glissable, entre
+   les boutons "‹" et "›". Utilisé dans Analyse de partie, Jouer
+   contre un ami et Jouer contre l'entraîneur.
    ============================================================ */
+const CQ_PIECE_GLYPH_WHITE = {N:'♘',B:'♗',R:'♖',Q:'♕',K:'♔'};
+const CQ_PIECE_GLYPH_BLACK = {N:'♞',B:'♝',R:'♜',Q:'♛',K:'♚'};
+function cqMoveGlyph(san, color){
+  const m = /^([NBRQK])/.exec(san);
+  if(!m) return san;
+  return (color === 'w' ? CQ_PIECE_GLYPH_WHITE[m[1]] : CQ_PIECE_GLYPH_BLACK[m[1]]) + san.slice(1);
+}
+/**
+ * Affiche l'historique complet des coups sur une seule ligne défilable :
+ * "1. d3 e5    2. ♕d2 d5 ...". Cliquer sur un coup, ou utiliser les
+ * boutons ‹ / ›, déplace uniquement le curseur de consultation — cela ne
+ * modifie jamais la partie réellement jouée.
+ * @param {HTMLElement} container - élément scrollable qui recevra le HTML
+ * @param {string[]} history - coups au format SAN, dans l'ordre joué
+ * @param {number} activePly - index (1-based) du coup actuellement affiché, 0 = position initiale
+ * @param {(ply:number)=>void} onJump - appelé avec le ply choisi
+ */
+function renderMoveStrip(container, history, activePly, onJump){
+  if(!container) return;
+  if(!history.length){
+    container.innerHTML = '<span class="cq-move-strip-empty">Aucun coup joué pour l’instant.</span>';
+    return;
+  }
+  let html = '';
+  for(let i = 0; i < history.length; i += 2){
+    const num = i / 2 + 1;
+    const whiteSan = history[i], blackSan = history[i + 1];
+    const whiteActive = activePly === i + 1 ? ' active' : '';
+    const blackActive = blackSan !== undefined && activePly === i + 2 ? ' active' : '';
+    html += `<span class="cq-move-strip-pair"><span class="msn">${num}.</span><button type="button" class="msmv${whiteActive}" data-ply="${i + 1}">${cqMoveGlyph(whiteSan, 'w')}</button>${blackSan !== undefined ? `<button type="button" class="msmv${blackActive}" data-ply="${i + 2}">${cqMoveGlyph(blackSan, 'b')}</button>` : ''}</span>`;
+  }
+  container.innerHTML = html;
+  container.querySelectorAll('.msmv').forEach(btn => { btn.onclick = () => onJump(Number(btn.dataset.ply)); });
+  const activeEl = container.querySelector('.msmv.active');
+  if(activeEl) activeEl.scrollIntoView({inline: 'center', block: 'nearest', behavior: 'smooth'});
+}
+/** Câble les boutons ‹ / › d'une bande de coups pour avancer/reculer d'un seul coup. */
+function bindMoveStripNav(prevBtn, nextBtn, getActivePly, getMax, onJump){
+  if(prevBtn) prevBtn.onclick = () => onJump(Math.max(0, getActivePly() - 1));
+  if(nextBtn) nextBtn.onclick = () => onJump(Math.min(getMax(), getActivePly() + 1));
+}
 function applyPuzzleRatingChange(puzzleRating, success){
   const userRating = Math.max(300, Number(PROGRESS.puzzleRating) || 300);
   const expected = 1 / (1 + Math.pow(10, (puzzleRating - userRating) / 400));

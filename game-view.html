@@ -80,7 +80,7 @@
             </div>
           </div>
           <div class="nav-controls">
-            <button id="nav-start" aria-label="Premier coup">«</button><button id="nav-prev" aria-label="Coup précédent">‹</button><button id="nav-next" aria-label="Coup suivant">›</button><button id="nav-end" aria-label="Dernier coup">»</button>
+            <button id="nav-start" aria-label="Premier coup">«</button><button id="nav-prev" aria-label="Coup précédent">‹</button><div class="cq-move-strip" id="review-move-strip"></div><button id="nav-next" aria-label="Coup suivant">›</button><button id="nav-end" aria-label="Dernier coup">»</button>
           </div>
         </div>
       </div>
@@ -397,6 +397,7 @@ function renderAnalysis(headers){
     list.appendChild(li);
   }
   list.querySelectorAll('.move-chip').forEach(chip => chip.onclick = () => goToPly(parseInt(chip.dataset.idx,10)));
+  renderMoveStrip(document.getElementById('review-move-strip'), analysisResults.map(r=>r.san), analysisIndex+1, ply=>goToPly(ply-1));
   renderErrorsTab();
   goToPly(analysisResults.length-1);
 }
@@ -436,6 +437,7 @@ function goToPly(idx){
   requestAnimationFrame(()=>drawBestMoveArrow(r));
   updateEvalBar(r);
   document.querySelectorAll('.move-chip').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.idx,10)===idx));
+  renderMoveStrip(document.getElementById('review-move-strip'), analysisResults.map(r=>r.san), idx+1, ply=>goToPly(ply-1));
   const currentMove = document.getElementById('review-current-move');
   const currentLabel = document.getElementById('review-current-label');
   if(currentMove) currentMove.textContent = `${r.moveNumber}${r.color==='b'?'…':'.'} ${r.san}`;

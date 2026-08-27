@@ -145,9 +145,10 @@ function curriculumPuzzleSelection(level){
   const seedProgress=progress;
   const centre=Math.round(seedProgress*(ordered.length-1));
   const difficulty=puzzleDifficultyForLevel(safeLevel);
-  /* Le palier 1 correspond à un débutant autour de 300 Elo tactique. La
-     difficulté monte ensuite régulièrement jusqu'aux positions expertes. */
-  const targetRating=Math.round(300+progress*2500);
+  /* Le palier 1 correspond à un débutant autour de 380 Elo tactique. La
+     difficulté monte ensuite plus franchement jusqu'à des positions
+     expertes, pour que la progression reste stimulante. */
+  const targetRating=Math.round(380+progress*2700);
   return Array.from({length:PUZZLES_PER_LEVEL},(_,slot)=>{
     const seed=ordered[Math.max(0,Math.min(ordered.length-1,centre+slot-1))];
     const globalIndex=(safeLevel-1)*PUZZLES_PER_LEVEL+slot;
@@ -562,7 +563,7 @@ function startPuzzleBattle(seconds){
     if(timer){timer.classList.remove('hidden');timer.textContent=`${seconds}s · 0`;}
     puzzleBattleTimer = setInterval(()=>{
       const left = Math.max(0,Math.ceil((puzzleBattleEndsAt-Date.now())/1000));
-      if(timer) timer.textContent = `${left}s · ${puzzleBattleScore}`;
+      if(timer) timer.textContent = `${left}s`;
       if(!left){
         const score=puzzleBattleScore, duration=puzzleBattleDuration;
         stopPuzzleBattle(); mcqLocked = true;

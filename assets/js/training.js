@@ -46,47 +46,50 @@ function renderTrainingMoveBrowser(cursor=tgGame?.history().length||0){
   const prev=document.getElementById('tg-history-prev'),next=document.getElementById('tg-history-next');
   if(prev)prev.disabled=tgHistoryCursor===0;
   if(next)next.disabled=tgHistoryCursor===max;
-  renderTrainingTurnBar();
+  updateEvalBar();
   renderTrainingMoveList();
 }
-function renderTrainingTurnBar(){
-  if(!tgGame)return;
-  const whiteToMove = tgGame.turn()==='w';
-  document.getElementById('tg-turn-white')?.classList.toggle('active',whiteToMove);
-  document.getElementById('tg-turn-black')?.classList.toggle('active',!whiteToMove);
+
+/* ---- Barre d'évaluation en temps réel ("qui domine la partie") ---- */
+function evalToWhiteCp(analysis, fen){
+  const turn = fen.split(' ')[1];
+  if(analysis.mate){
+    const sign = analysis.mate > 0 ? 1 : -1;
+    return turn === 'w' ? sign * 100000 : -sign * 100000;
+  }
+  return turn === 'w' ? analysis.scoreForMover : -analysis.scoreForMover;
+}
+function renderEvalBar(whiteCp){
+  const fill = document.getElementById('tg-eval-fill'), label = document.getElementById('tg-eval-label');
+  if(!fill || !label) return;
+  const prob = 1 / (1 + Math.pow(10, -whiteCp / 400));
+  const pct = Math.max(4, Math.min(96, prob * 100));
+  fill.style.width = `${pct}%`;
+  label.style.color = pct >= 50 ? '#173d2d' : '#f0ece2';
+  if(Math.abs(whiteCp) >= 100000){ label.textContent = whiteCp > 0 ? 'Mat pour les Blancs' : 'Mat pour les Noirs'; return; }
+  const pawns = whiteCp / 100;
+  label.textContent = `${pawns >= 0 ? '+' : ''}${pawns.toFixed(1)}`;
+}
+let tgEvalToken = 0;
+async function updateEvalBar(fen = tgGame?.fen()){
+  if(!fen || typeof engineAnalyzeFEN !== 'function') return;
+  const token = ++tgEvalToken;
+  try{
+    const analysis = await engineAnalyzeFEN(fen, 280);
+    if(token !== tgEvalToken) return;
+    renderEvalBar(evalToWhiteCp(analysis, fen));
+  }catch(e){ /* pas de moteur dispo : la barre reste sur sa dernière valeur connue */ }
 }
 function renderTrainingMoveList(){
-  const list=document.getElementById('tg-move-list');
-  if(!list||!tgGame)return;
-  const moves=tgGame.history();
-  if(!moves.length){ list.innerHTML='<li class="tg-move-empty">Aucun coup joué pour l’instant.</li>'; return; }
-  let html='';
-  for(let i=0;i<moves.length;i+=2){
-    const num=i/2+1;
-    const whiteMove=moves[i], blackMove=moves[i+1];
-    const whiteActive=tgHistoryCursor===i+1?' active':'';
-    const blackActive=blackMove!==undefined&&tgHistoryCursor===i+2?' active':'';
-    html+=`<li><span class="tg-move-num">${num}.</span><button type="button" class="tg-move-chip${whiteActive}" data-ply="${i+1}">${whiteMove}</button>${blackMove!==undefined?`<button type="button" class="tg-move-chip${blackActive}" data-ply="${i+2}">${blackMove}</button>`:''}</li>`;
-  }
-  list.innerHTML=html;
-  list.querySelectorAll('.tg-move-chip').forEach(btn=>{
-    btn.onclick=()=>{
-      if(tgBotThinking)return;
-      const ply=Number(btn.dataset.ply);
-      tgBoard.position(trainingPositionAt(ply),false);
-      clearHighlights('#tg-board');
-      renderTrainingMoveBrowser(ply);
-    };
-  });
-  const activeChip=list.querySelector('.tg-move-chip.active');
-  if(activeChip) activeChip.scrollIntoView({block:'nearest',inline:'nearest'});
+  const strip=document.getElementById('tg-move-strip');
+  if(!strip||!tgGame)return;
+  renderMoveStrip(strip, tgGame.history(), tgHistoryCursor, jumpTrainingMove);
 }
-function browseTrainingHistory(direction){
-  if(!tgGame||tgBotThinking)return;
-  const next=Math.max(0,Math.min(tgGame.history().length,tgHistoryCursor+direction));
-  tgBoard.position(trainingPositionAt(next),false);
+function jumpTrainingMove(ply){
+  if(tgBotThinking)return;
+  tgBoard.position(trainingPositionAt(ply),false);
   clearHighlights('#tg-board');
-  renderTrainingMoveBrowser(next);
+  renderTrainingMoveBrowser(ply);
 }
 
 function setTrainingRestartButton(isRestart){
@@ -148,7 +151,7 @@ function ensureTgBoard(){
   if(tgBoard) return;
   tgBoard = Chessboard('tg-board', {
     position:'start', draggable:true, pieceTheme: PIECE_THEME, showNotation:false,
-    onDragStart:(source)=>{ if(tgGame && !tgOver && !tgBotThinking && tgGame.turn()===playerColor) showLegalMoveDots('#tg-board',tgGame,source); },
+    onDragStart:(source)=>{ if(tgGame && !tgOver && !tgBotThinking && tgHistoryCursor===tgGame.history().length && tgGame.turn()===playerColor) showLegalMoveDots('#tg-board',tgGame,source); },
     onDrop: onTgDrop, onSnapEnd: () => { clearLegalMoveDots('#tg-board'); if(tgGame) tgBoard.position(tgGame.fen()); }
   });
   renderCoords('tg-ranks', 'tg-files', 'white');
@@ -215,9 +218,13 @@ function newTrainingGame(){
   }
 }
 
+let tgReviewToken = 0;
+let tgOpeningAnnounced = null;
 function onTgDrop(source, target){
   if(tgOver || tgBotThinking) return 'snapback';
+  if(tgHistoryCursor !== tgGame.history().length) return 'snapback'; // on consulte un coup passé : lecture seule
   if(tgGame.turn() !== playerColor) return 'snapback';
+  const fenBefore = tgGame.fen();
   const moveObj = tgGame.move({from:source, to:target, promotion:'q'});
   if(moveObj === null) return 'snapback';
   clearTgSelection();
@@ -229,6 +236,8 @@ function onTgDrop(source, target){
   const ply = tgGame.history().length;
   const comment = coachCommentFor(moveObj, tgGame, ply);
   showCoach(comment.text, comment.icon);
+  maybeMentionOpening(ply);
+  reviewPlayerMove(fenBefore, moveObj);
 
   if(checkTgGameOver()) return;
 
@@ -236,6 +245,50 @@ function onTgDrop(source, target){
   setBotStatus('Le bot réfléchit…');
   const session=tgSession;
   setTimeout(()=>{if(session===tgSession)playBotMove();}, 550);
+}
+
+/* ---- Détection d'ouverture (bibliothèque partagée avec openings.js) ---- */
+function detectOpeningMatch(sanHistory){
+  if(typeof OPENINGS !== 'object') return null;
+  let best = null;
+  Object.keys(OPENINGS).forEach(key=>{
+    const seq = OPENINGS[key].moves.map(m => m.san.replace(/[!?]+$/,''));
+    let i = 0;
+    while(i < seq.length && i < sanHistory.length && seq[i] === sanHistory[i]) i++;
+    if(i >= 4 && (!best || i > best.depth)) best = {key, depth:i, name:OPENINGS[key].name};
+  });
+  return best;
+}
+function maybeMentionOpening(ply){
+  if(ply > 16 || ply < 4) return;
+  const match = detectOpeningMatch(tgGame.history());
+  if(match && match.name !== tgOpeningAnnounced){
+    tgOpeningAnnounced = match.name;
+    setTimeout(()=>{ if(typeof showToast === 'function') showToast('Ouverture reconnue', `Vous jouez la ${match.name}.`); }, 850);
+  }
+}
+
+/* ---- Analyse du coup joué : le coach propose de revenir en arrière
+   quand le coup fait vraiment perdre du terrain (mêmes seuils que le
+   bilan de partie, via classify() dans board.js). ---- */
+async function reviewPlayerMove(fenBefore, moveObj){
+  if(typeof engineAnalyzeFEN !== 'function') return;
+  const token = ++tgReviewToken;
+  try{
+    const before = await engineAnalyzeFEN(fenBefore, 300);
+    if(token !== tgReviewToken || tgOver) return;
+    const after = await engineAnalyzeFEN(tgGame.fen(), 300);
+    if(token !== tgReviewToken || tgOver) return;
+    const evalBefore = before.scoreForMover;
+    const evalAfter = -after.scoreForMover;
+    const drop = evalBefore - evalAfter;
+    if(drop >= 150){
+      const info = classify(drop, false);
+      showCoach(`${moveObj.san} ressemble à ${info.label.toLowerCase()}. Tu peux appuyer sur ↩ Annuler pour reprendre ce coup si tu veux.`, drop >= 300 ? '🤝' : '😬');
+      const btn = document.getElementById('undo-btn');
+      if(btn){ btn.classList.remove('tg-action-pulse'); void btn.offsetWidth; btn.classList.add('tg-action-pulse'); }
+    }
+  }catch(e){ /* pas d'analyse dispo : on n'interrompt jamais la partie */ }
 }
 
 async function playBotMove(){
@@ -355,8 +408,7 @@ document.getElementById('undo-btn').onclick = () => {
   renderTrainingMoveBrowser();
 };
 
-document.getElementById('tg-history-prev').onclick=()=>browseTrainingHistory(-1);
-document.getElementById('tg-history-next').onclick=()=>browseTrainingHistory(1);
+bindMoveStripNav(document.getElementById('tg-history-prev'), document.getElementById('tg-history-next'), () => tgHistoryCursor, () => tgGame.history().length, jumpTrainingMove);
 
 document.getElementById('hint-btn2').onclick = async () => {
   if(tgOver || tgBotThinking) return;

@@ -18,7 +18,7 @@ const QUEST_TABS = [
 
 const QUEST_ROUTE_TABS = {
   '':'home', 'index.html':'home', 'coach.html':'home', 'entrainement.html':'home',
-  'training-game.html':'home', 'secret-levels.html':'home',
+  'training-game.html':'home', 'secret-levels.html':'home', 'play.html':'home',
   'problems.html':'puzzles', 'puzzles.html':'puzzles', 'daily-challenge.html':'puzzles',
   'training-target.html':'puzzles',
   'learn.html':'learn', 'openings.html':'learn', 'course.html':'learn', 'course-library.html':'learn',

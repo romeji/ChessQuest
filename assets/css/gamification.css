@@ -4,11 +4,13 @@
 .analysis-mascot-comment{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:end;gap:10px;margin:12px 0}.analysis-mascot-comment img{width:72px;height:82px;object-fit:contain;object-position:bottom;filter:drop-shadow(0 8px 8px rgba(16,8,35,.16))}.analysis-mascot-comment .mascot-speech{position:relative;padding:12px 14px;border:1px solid rgba(102,67,150,.2);border-radius:17px 17px 17px 5px;background:linear-gradient(145deg,#fff,#f3eafb);color:#251439;line-height:1.38;box-shadow:0 7px 18px rgba(52,26,82,.09)}
 @media(max-width:360px){.analysis-mascot-comment{grid-template-columns:58px minmax(0,1fr)}.analysis-mascot-comment img{width:58px;height:70px}}
 html[data-board-skin="royal"]{--quest-light:#f5edda;--quest-dark:#6f9862}
+html[data-board-skin="slate"]{--quest-light:#e0ded8;--quest-dark:#747a7d}
 html[data-board-skin="amethyst"]{--quest-light:#eadffc;--quest-dark:#7851a9}
 html[data-board-skin="midnight"]{--quest-light:#d6dbe8;--quest-dark:#263651}
 html[data-board-skin="candy"]{--quest-light:#fff0dc;--quest-dark:#d77f9e}
 html[data-board-skin] .white-1e1d7{background:var(--quest-light)!important;color:var(--quest-dark)!important}
 html[data-board-skin] .black-3c85d{background:var(--quest-dark)!important;color:var(--quest-light)!important}
+html[data-piece-skin="silver"] .piece-417db{filter:grayscale(.72) brightness(1.18) contrast(.94) drop-shadow(0 1px 2px rgba(218,228,235,.7))}
 html[data-piece-skin="ivory"] .piece-417db{filter:saturate(.65) brightness(1.12) drop-shadow(0 2px 1px rgba(68,48,28,.28))}
 html[data-piece-skin="gilded"] .piece-417db{filter:sepia(.62) saturate(1.55) hue-rotate(350deg) drop-shadow(0 0 3px #e6b53d)}
 html[data-piece-skin="arcane"] .piece-417db{filter:saturate(1.35) hue-rotate(38deg) drop-shadow(0 0 4px #9e63ef)}
@@ -137,3 +139,28 @@ html[data-background-skin="night"] body:not(.opening-map-page){background:#17161
 .course-quiz{display:none;margin-top:13px;padding:17px;border:1px solid #d5c49e;border-radius:21px;background:#fff8e8}.course-quiz.visible{display:block}.course-quiz h2{font-size:1rem}.course-quiz>div{display:grid;gap:7px}.course-quiz button{display:flex;align-items:center;gap:9px;min-height:46px;padding:8px 10px;border:1px solid #decfae;border-radius:13px;background:#fffdf7;color:#302b30;text-align:left;font-size:.68rem;font-weight:800}.course-quiz button b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#174d39;color:#fff}.course-quiz button.correct{border-color:#51a65f;background:#e7f6df}.course-quiz button.wrong{border-color:#d25c59;background:#fae4e0}.course-quiz>p{min-height:20px;margin:10px 0 0;color:#36704c;font-size:.66rem;font-weight:800;line-height:1.4}.course-finish,.course-follow-up{display:flex;width:100%;align-items:center;justify-content:center;margin-top:10px;text-decoration:none}.course-follow-up{background:linear-gradient(180deg,#7445a0,#4c267a);border-color:#4c267a}
 /* La boutique affiche la monnaie unique en pièces d'or. */
 .shop-action.price::before{content:"🪙 "!important}
+
+/* ============================================================
+   Bande de coups horizontale partagée (Analyse de partie, Jouer
+   contre un ami, Jouer contre l'entraîneur) : "‹ [1. d3 e5   2. ♕d2 d5 ...] ›"
+   sur une seule ligne, glissable, avec un coup cliquable.
+   ============================================================ */
+.cq-move-strip-row{display:grid;grid-template-columns:40px minmax(0,1fr) 40px;align-items:center;gap:7px;margin:0 0 10px;}
+.cq-move-strip-nav{width:40px;height:40px;flex:none;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:#262321;color:#f0ece2;font-size:1.3rem;line-height:1;display:grid;place-items:center;cursor:pointer;}
+.cq-move-strip-nav:disabled{opacity:.35;cursor:default;}
+.cq-move-strip{
+  overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  display:flex; align-items:center; flex-wrap:nowrap; white-space:nowrap;
+  height:40px; padding:0 12px; border-radius:12px; background:#2b2827; border:1px solid #332f2d;
+}
+.cq-move-strip::-webkit-scrollbar{display:none;}
+.cq-move-strip-empty{color:#8b867c; font-size:.78rem; font-weight:700;}
+.cq-move-strip-pair{display:inline-flex; align-items:center; flex:none; margin-right:18px;}
+.cq-move-strip-pair:last-child{margin-right:4px;}
+.cq-move-strip .msn{color:#8b867c; font-weight:800; font-size:.78rem; margin-right:5px; flex:none;}
+.cq-move-strip .msmv{
+  flex:none; background:transparent; border:0; color:#f0ece2; font-family:var(--font-mono,'IBM Plex Mono',monospace);
+  font-size:.84rem; font-weight:700; padding:4px 6px; border-radius:7px; margin-right:3px; cursor:pointer;
+}
+.cq-move-strip .msmv:last-child{margin-right:0;}
+.cq-move-strip .msmv.active{background:rgba(159,206,98,.22); color:#9fce62;}

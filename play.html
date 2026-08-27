@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#173d2d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ChessQuest">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icons/chessquest-app-icon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/icons/chessquest-app-icon.png">
+<title>ChessQuest — Jouer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/variables.css">
+<link rel="stylesheet" href="assets/css/reset.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css?v=104">
+<link rel="stylesheet" href="assets/css/animations.css">
+<link rel="stylesheet" href="assets/css/entrainement.css">
+<link rel="stylesheet" href="assets/css/polish.css">
+<link rel="stylesheet" href="assets/css/responsive-hardening.css?v=43">
+<link rel="stylesheet" href="assets/css/gamification.css?v=44">
+<link rel="stylesheet" href="assets/css/navigation.css?v=101" data-quest-navigation>
+<link rel="stylesheet" href="assets/css/navigation-stability-v101.css">
+<script src="assets/js/pwa-bootstrap-v101.js"></script>
+<script defer src="assets/js/navigation.js?v=107"></script>
+<link rel="stylesheet" href="assets/css/theme-chesscom-dark.css">
+<style>
+.play-hub-list{display:flex;flex-direction:column;gap:14px;margin-top:6px;}
+.play-hub-btn{
+  display:flex; align-items:center; gap:14px; width:100%; text-align:left; border:none; text-decoration:none;
+  padding:18px 16px; border-radius:20px; box-shadow:0 4px 0 rgba(0,0,0,.22); position:relative; overflow:hidden;
+}
+.play-hub-btn .ph-icon{
+  width:52px; height:52px; flex:none; border-radius:15px; background:rgba(255,255,255,.18);
+  display:flex; align-items:center; justify-content:center; font-size:1.6rem;
+}
+.play-hub-btn .ph-text{min-width:0;flex:1;}
+.play-hub-btn .ph-title{font-size:1.05rem; font-weight:900; line-height:1.15;}
+.play-hub-btn .ph-sub{font-size:.78rem; font-weight:700; opacity:.85; margin-top:3px;}
+.play-hub-btn .ph-chevron{flex:none; opacity:.75;}
+.play-hub-btn .ph-chevron svg{width:20px; height:20px;}
+.play-hub-btn.ph-friend{background:linear-gradient(160deg,#77d84d,#2f8f3c 60%,#1c5c26); color:#0d2a12;}
+.play-hub-btn.ph-coach{background:linear-gradient(160deg,#3a3733,#242220); color:#f0ece2;}
+.play-hub-btn.ph-coach .ph-icon{background:rgba(255,255,255,.1);}
+.play-hub-btn.ph-daily{background:linear-gradient(160deg,#f4c95d,#d99a1f 60%,#a9700f); color:#3c2604;}
+.play-hub-btn.ph-analyze{background:linear-gradient(160deg,#6fb2e8,#2f74b8 60%,#1c4c7c); color:#0c2338;}
+.play-hub-btn .ph-done-pill{
+  position:absolute; top:10px; right:12px; font-size:.6rem; font-weight:900; letter-spacing:.03em;
+  padding:3px 9px; border-radius:20px; background:rgba(0,0,0,.18);
+}
+</style>
+</head>
+<body data-page="play-hub">
+<script>history.scrollRestoration='manual';window.scrollTo(0,0);window.addEventListener('pageshow',()=>window.scrollTo(0,0));</script>
+<div id="toast-container"></div>
+<div class="app">
+  <section class="page">
+    <div class="entrainement-header training-hub-hero">
+      <a class="subpage-back entrainement-home" href="index.html" aria-label="Retour à l'accueil">
+        <svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
+      </a>
+      <div class="entrainement-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4l12 8-12 8V4Z"/></svg>
+      </div>
+      <div class="training-hub-copy">
+        <span class="training-hub-kicker">CHOISIS TA PARTIE</span>
+        <h1 class="entrainement-title">Jouer</h1>
+        <p class="entrainement-sub">Qu'est-ce qu'on fait aujourd'hui ?</p>
+      </div>
+    </div>
+
+    <div class="play-hub-list">
+      <a class="play-hub-btn ph-friend" href="friends.html">
+        <div class="ph-icon">⚔️</div>
+        <div class="ph-text">
+          <div class="ph-title">Jouer contre un ami</div>
+          <div class="ph-sub">Défie un ami et affrontez-vous en direct</div>
+        </div>
+        <div class="ph-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="play-hub-btn ph-coach" href="training-game.html">
+        <div class="ph-icon">♞</div>
+        <div class="ph-text">
+          <div class="ph-title">Jouer contre l'entraîneur</div>
+          <div class="ph-sub">Une partie libre contre le bot, niveau réglable</div>
+        </div>
+        <div class="ph-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="play-hub-btn ph-daily" id="play-hub-daily" href="daily-challenge.html">
+        <div class="ph-icon">🧩</div>
+        <div class="ph-text">
+          <div class="ph-title">Problème du jour</div>
+          <div class="ph-sub" id="play-hub-daily-sub">Résous les 3 problèmes du jour</div>
+        </div>
+        <span class="ph-done-pill hidden" id="play-hub-daily-done">FAIT ✓</span>
+        <div class="ph-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+      </a>
+
+      <a class="play-hub-btn ph-analyze" href="analysis.html">
+        <div class="ph-icon">🔍</div>
+        <div class="ph-text">
+          <div class="ph-title">Analyser mes parties</div>
+          <div class="ph-sub">Revois ta dernière partie coup par coup</div>
+        </div>
+        <div class="ph-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+      </a>
+    </div>
+  </section>
+</div>
+<nav class="tabbar" aria-label="Navigation principale"></nav>
+<script src="assets/js/progress.js?v=105"></script>
+<script src="assets/js/app.js?v=107"></script>
+<script>
+(function(){
+  const run = PROGRESS.dailyPuzzleRun;
+  const done = run && run.date === todayKey() && Array.isArray(run.solvedIds) && run.solvedIds.length >= 3;
+  if(done){
+    document.getElementById('play-hub-daily-done')?.classList.remove('hidden');
+    const sub = document.getElementById('play-hub-daily-sub');
+    if(sub) sub.textContent = 'Déjà résolu aujourd’hui — rejoue-le si tu veux';
+  }
+})();
+</script>
+</body>
+</html>

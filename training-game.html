@@ -87,9 +87,9 @@
       <select id="bot-elo-select" aria-label="Niveau ELO du bot"></select>
     </label>
 
-    <div class="tg-color-bar" aria-hidden="true">
-      <span class="tg-color-half tg-color-black" id="tg-turn-black">♚ Noirs</span>
-      <span class="tg-color-half tg-color-white active" id="tg-turn-white">♔ Blancs</span>
+    <div class="tg-eval-bar" id="tg-eval-bar" aria-hidden="true">
+      <div class="tg-eval-fill" id="tg-eval-fill" style="width:50%"></div>
+      <span class="tg-eval-label" id="tg-eval-label">0.0</span>
     </div>
 
     <div class="cq-movebar">
@@ -109,7 +109,11 @@
       </div>
     </div>
 
-    <ol class="tg-move-list" id="tg-move-list" aria-label="Coups joués"></ol>
+    <div class="cq-move-strip-row">
+      <button id="tg-history-prev" type="button" class="cq-move-strip-nav" aria-label="Coup précédent">‹</button>
+      <div class="cq-move-strip" id="tg-move-strip"></div>
+      <button id="tg-history-next" type="button" class="cq-move-strip-nav" aria-label="Coup suivant">›</button>
+    </div>
 
     <div class="cq-toolbar-row tg-actions-row">
       <button id="undo-btn" type="button" class="tg-action" aria-label="Annuler"><span class="tg-action-ic">↩</span><span class="tg-action-lbl">Annuler</span></button>
@@ -122,8 +126,6 @@
       <span id="bot-status">Ta partie contre l’ordinateur</span>
       <div id="coach-bubble" class="hidden"><span id="coach-icon">👍</span><span id="coach-text"></span></div>
       <button id="next-btn" type="button" disabled>Suivant</button>
-      <button id="tg-history-prev" type="button" aria-label="Coup précédent">‹</button>
-      <button id="tg-history-next" type="button" aria-label="Coup suivant">›</button>
     </div>
   </section>
 </main>
@@ -139,6 +141,8 @@
 <script src="assets/js/mascot-coach.js?v=44"></script>
 <nav class="tabbar" aria-label="Navigation principale"></nav>
 <script src="assets/js/board.js"></script>
+<script src="assets/js/openings.js"></script>
+<script src="assets/js/opening-curriculum.js"></script>
 <script src="assets/js/training.js?v=108"></script>
 <script>
 document.querySelectorAll('.cq-diff-btn[data-preset]').forEach(btn=>btn.onclick=()=>{

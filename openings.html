@@ -207,7 +207,15 @@ function renderDots(){
   if(!currentLine) return;
   const total = currentLine.moves.length;
   const step = Math.min(total,trainPly);
-  document.getElementById('lesson-progress-label').textContent = `${step} / ${total} coups`;
+  /* Le compteur de coups ne doit refléter que les coups du joueur, jamais
+     les réponses automatiques de l'adversaire (sauf en démonstration pure,
+     où personne ne joue vraiment : là on garde le compte complet). */
+  const isDemo = currentLine.forColor === null;
+  const playerColor = currentLine.forColor;
+  const playerTotal = isDemo ? total : currentLine.moves.filter((_,i)=>(i%2===0?'w':'b')===playerColor).length;
+  let playerStep = 0;
+  if(!isDemo){ for(let i=0;i<step;i++){ if((i%2===0?'w':'b')===playerColor) playerStep++; } } else { playerStep = step; }
+  document.getElementById('lesson-progress-label').textContent = `${playerStep} / ${playerTotal} coups`;
   document.getElementById('lesson-track-fill').style.width = `${Math.round((trainPly / currentLine.moves.length) * 100)}%`;
   const lineComplete = trainPly >= currentLine.moves.length;
   document.querySelector('.opening-next-label').textContent = lineComplete ? 'Ouverture suivante' : 'Indice';
