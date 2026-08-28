@@ -169,7 +169,7 @@ body nav.tabbar::before{
 }
 body nav.tabbar .tabbar-item.active{
   background:transparent !important;
-  color:#fff !important;
+  color:#9fce62 !important;
 }
 body nav.tabbar .tabbar-item{color:#9a9488 !important;}
 
@@ -218,6 +218,13 @@ body nav.tabbar .tabbar-item{color:#9a9488 !important;}
 }
 .cq-qr-close{position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.07); border:none; color:#f0ece2; width:28px; height:28px; border-radius:50%;}
 .cq-qr-icon{font-size:2.2rem; margin-bottom:10px;}
+.cq-qr-code{
+  width:180px; height:180px; margin:0 auto 14px; padding:10px; border-radius:16px;
+  background:#fff; border:3px solid #7fae42; box-shadow:0 0 0 4px rgba(127,174,66,.22);
+  display:flex; align-items:center; justify-content:center;
+}
+.cq-qr-code svg{width:100%; height:100%; display:block;}
+.cq-qr-fallback{font-size:3rem;}
 .cq-qr-card strong{color:#f0ece2; font-size:1rem;}
 .cq-qr-card p{color:#8b867c; font-size:0.8rem; margin:10px 0 18px; word-break:break-all;}
 .cq-qr-actions{display:flex; gap:8px;}
@@ -249,12 +256,11 @@ body nav.tabbar .tabbar-item{color:#9a9488 !important;}
    boutons, puis le mot du coach. */
 .training-final-page .page{display:flex !important; flex-direction:column !important;}
 .training-final-page .bot-final-elo{order:0 !important;}
-.training-final-page .tg-eval-bar{order:1 !important;}
-.training-final-page .cq-movebar{order:2 !important;}
-.training-final-page .cq-coach-row{order:3 !important;}
-.training-final-page .training-final-board-wrap{order:4 !important;}
-.training-final-page .cq-move-strip-row{order:5 !important;}
-.training-final-page .cq-toolbar-row{order:6 !important;}
+.training-final-page .cq-coach-row{order:1 !important;}
+.training-final-page .tg-eval-bar{order:2 !important;}
+.training-final-page .training-final-board-wrap{order:3 !important;}
+.training-final-page .cq-move-strip-row{order:4 !important;}
+.training-final-page .cq-toolbar-row{order:5 !important;}
 
 /* Idem sur la page Problèmes (puzzles.html) : la barre
    Indication/Précédent/Suivant (#quest-puzzle-tools) est un ajout
@@ -386,8 +392,14 @@ body nav.tabbar .tabbar-item{color:#9a9488 !important;}
 .review-breakdown-row b{color:#f0ece2 !important;}
 .review-breakdown>button:not(:disabled):active{background:rgba(255,255,255,0.05) !important;}
 .review-breakdown-card h2, .review-phases h2{color:#f0ece2 !important;}
-.review-hero-comment{background:#fff !important; color:#1c1a18 !important; border:none !important;}
-.review-hero-comment strong{color:#1c1a18 !important;}
+.review-hero-comment{background:transparent !important; color:#f0ece2 !important; border:none !important;}
+.review-hero-comment strong{color:#f0ece2 !important;}
+.analysis-review-page .review-hero-comment p{background:#2b2827 !important; border-color:#3a352f !important; color:#f0ece2 !important;}
+.analysis-review-page .review-move-strip button{background:#2b2827 !important; color:#f0ece2 !important;}
+.analysis-review-page .review-move-current strong{color:#f0ece2 !important;}
+.analysis-review-page .review-move-current small{color:#8b867c !important;}
+.analysis-review-page .review-actions button{background:#2b2827 !important; border:1px solid #3a352f !important; color:#f0ece2 !important;}
+.analysis-review-page .review-actions button:last-child{background:linear-gradient(160deg,#77d84d,#2f8f3c) !important; color:#0d2a12 !important; border-color:#7fae42 !important;}
 .review-outcome{background:#2b2827 !important; border-color:rgba(255,255,255,0.09) !important;}
 .review-outcome strong{color:#f0ece2 !important;}
 .review-outcome small{color:#8b867c !important;}
@@ -434,8 +446,8 @@ body nav.tabbar .tabbar-item{color:#9a9488 !important;}
 .toast .toast-desc{color:#c4bfb5 !important;}
 body[data-page="home"] #toast-container{top:64px !important;}
 html.cq-has-tabbar .quest-notifications{top:64px !important;}
-/* Nav du bas : suppression de la pastille de fond, actif = icône/texte blancs uniquement */
-body nav.tabbar .tabbar-item.active{background:transparent !important; color:#fff !important;}
+/* Nav du bas : suppression de la pastille de fond, actif = icône/texte en vert */
+body nav.tabbar .tabbar-item.active{background:transparent !important; color:#9fce62 !important;}
 body nav.tabbar .tabbar-item{color:#7c776e !important;}
 body nav.tabbar{font-family:'Inter',-apple-system,sans-serif !important;}
 
@@ -605,10 +617,11 @@ header.quest-page-title,
 .daily-final-page header,
 .written-course-header,
 .shop-header,
-.academy-header,
 .friend-lounge-header{
   padding-top:max(10px, env(safe-area-inset-top,0px)) !important;
 }
+/* .academy-header n'a PAS ce padding : .academy-shell applique déjà le
+   safe-area en haut de page, l'ajouter ici aussi doublait l'espace. */
 
 /* ============================================================
    Passe de finition (retours utilisateur) : cloche discrète,
@@ -806,9 +819,16 @@ html.cq-has-tabbar .puzzle-final-rating ~ .quest-notifications, .puzzle-final-ra
 .puzzle-final-page .mcq-option.wrong{background:#903f45 !important;color:#fff !important;}
 .puzzle-final-page.puzzle-battle-active #quest-hint{visibility:hidden !important; pointer-events:none !important;}
 .puzzle-final-page .puzzle-battle-timer{
-  left:auto !important;right:max(14px,env(safe-area-inset-right)) !important;
-  transform:none !important;background:#b9453d !important;color:#fff !important;
+  position:static !important; left:auto !important; top:auto !important; right:auto !important;
+  transform:none !important; background:#b9453d !important; color:#fff !important;
+  padding:6px 14px !important; border-radius:16px !important; font-weight:1000 !important;
 }
+.puzzle-final-page .battle-solved-counter{
+  position:static !important; min-width:30px; height:30px; padding:0 9px; border-radius:15px;
+  background:#fffaf0 !important; color:#173d2d !important; font-weight:1000; font-size:.85rem;
+  display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,.28);
+}
+.puzzle-final-page .battle-solved-counter::before{content:"🧩"; margin-right:5px; font-size:.78rem;}
 
 /* Même langage d'icônes sous l'échiquier d'entraînement : 3 boutons
    d'action (Annuler / Abandonner / Indice), icône + libellé. */
@@ -894,9 +914,8 @@ html.cq-has-tabbar .puzzle-final-rating ~ .quest-notifications, .puzzle-final-ra
 
 /* Compteur "problèmes résolus" en bataille : pastille blanche en haut à droite,
    distincte du minuteur central, qui s'incrémente à chaque problème réussi. */
-.battle-solved-counter{position:absolute; z-index:5; top:calc(env(safe-area-inset-top) + 66px); right:14px; min-width:30px; height:30px; padding:0 9px; border-radius:15px; background:#fffaf0; color:#173d2d; font-weight:1000; font-size:.85rem; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,.28);}
-.battle-solved-counter.hidden{display:none !important;}
-.battle-solved-counter::before{content:"🧩"; margin-right:5px; font-size:.78rem;}
+.puzzle-battle-hud{position:absolute; z-index:5; top:calc(env(safe-area-inset-top) + 66px); left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:10px;}
+.puzzle-battle-hud.hidden{display:none !important;}
 /* En bataille, le bouton "?" reste dans la grille mais s'efface visuellement
    (au lieu de disparaître et de casser l'alignement < / >). */
 .puzzle-final-page.puzzle-battle-active #quest-hint{visibility:hidden !important; pointer-events:none !important;}

@@ -41,19 +41,14 @@
       <a class="quest-currency" id="analysis-gem-count" href="shop.html" aria-label="Ouvrir la boutique royale">0</a>
     </header>
 
-    <section class="analysis-hero">
-      <img class="analysis-hero-art" src="assets/illustrations/analysis-hero-chess.png" alt="Pions noir et blanc">
-      <div class="analysis-hero-content">
-        <div class="analysis-brand"><span class="pawn">♟</span>Chess.com</div>
-        <h2 id="analysis-quest-title">Ta dernière partie est prête à analyser</h2>
-        <p id="analysis-quest-copy">Synchronise tes parties récentes, puis découvre les moments clés et les erreurs à corriger.</p>
-        <button class="analysis-quest-btn" id="analysis-quest-btn" type="button">⌕&nbsp; Analyser</button>
-      </div>
+    <section class="cq-home-section" style="margin-top:6px;">
+      <div class="cq-section-head"><h2 id="analysis-last-title">Ta dernière partie</h2></div>
+      <div id="analysis-last-game"></div>
     </section>
 
-    <section class="quest-card analysis-section-card">
-      <h2>Parties récentes</h2>
-      <div class="games-list" id="games-list"></div>
+    <section class="cq-home-section">
+      <div class="cq-section-head"><h2>Historique de tes parties</h2></div>
+      <div id="games-list"></div>
     </section>
 
     <section class="quest-card analysis-section-card">
@@ -124,39 +119,53 @@ function renderEvaluation(games,username){
 
 function renderGamesList(games,username){
   fetchedGames = games || [];
+  const lastBox = document.getElementById('analysis-last-game');
   const list = document.getElementById('games-list');
   const latest = fetchedGames[0];
   document.getElementById('analysis-gem-count').textContent = crownBalance();
+
   if(latest){
     const isWhite = latest.white?.username?.toLowerCase() === username.toLowerCase();
-    const opponent = isWhite ? latest.black?.username : latest.white?.username;
-    document.getElementById('analysis-quest-title').textContent = 'Ta dernière partie est prête à analyser';
-    document.getElementById('analysis-quest-copy').textContent = `${opponent || 'Adversaire'} · ${latest.time_class || 'Partie'} · ouvre l’analyse sans la retélécharger.`;
-    document.getElementById('analysis-quest-btn').onclick = () => openGame(0);
-  }else{
-    document.getElementById('analysis-quest-btn').textContent = 'Connecter Chess.com';
-    document.getElementById('analysis-quest-btn').onclick = () => { location.href = 'settings.html'; };
+    const opponent = (isWhite ? latest.black?.username : latest.white?.username) || 'Adversaire';
+    const opponentRating = (isWhite ? latest.black?.rating : latest.white?.rating) || '—';
+    const meta = resultMeta(latest,isWhite);
+    document.getElementById('analysis-last-title').textContent = `Ta dernière partie contre ${opponent}`;
+    lastBox.innerHTML = `<button class="cq-match-card" type="button" id="analysis-last-game-btn" style="width:100%; border:none; cursor:pointer; text-align:left;">
+      <div class="av">⏱</div>
+      <div class="body">
+        <div class="name">${escapeHtml(opponent)} (${opponentRating})</div>
+        <div class="sub">${latest.time_class || 'Partie'} · ${meta.label}</div>
+      </div>
+      ${meta.score === '1–0' ? '<div class="go">+</div>' : meta.score === '0–1' ? '<div class="sub">−</div>' : '<div class="sub">=</div>'}
+    </button>`;
+    document.getElementById('analysis-last-game-btn').onclick = () => openGame(0);
+  } else {
+    document.getElementById('analysis-last-title').textContent = 'Ta dernière partie';
+    lastBox.innerHTML = `<a class="cq-match-empty" href="settings.html" style="border-style:solid;">
+      <div class="ic">♟</div><div><div class="title">Aucune partie synchronisée</div><div class="sub">Ajoute ton pseudo Chess.com dans les réglages</div></div>
+    </a>`;
   }
+
   if(!fetchedGames.length){
-    list.innerHTML = '<p class="section-sub" style="margin:4px 0">Aucune partie en cache. Ajoute ton pseudo Chess.com dans les réglages.</p>';
+    list.innerHTML = '';
     renderEvaluation([],username);
     return;
   }
-  list.innerHTML = fetchedGames.slice(0,5).map((game,index) => {
+  list.innerHTML = `<div class="cq-friend-scroll" style="flex-direction:column; overflow:visible;">${fetchedGames.slice(0,8).map((game,index) => {
     const isWhite = game.white?.username?.toLowerCase() === username.toLowerCase();
     const opponent = isWhite ? game.black : game.white;
     const meta = resultMeta(game,isWhite);
     const date = game.end_time ? new Date(game.end_time * 1000).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}) : '';
-    return `<button class="game-row" data-idx="${index}" type="button">
-      <span class="g-player">
-        <span class="g-avatar">♞</span>
-        <span><span class="g-name">${escapeHtml(opponent?.username || 'Adversaire')}</span><span class="g-rating">${opponent?.rating || '—'} · ${date}</span></span>
-      </span>
-      <span class="g-score">${meta.score}</span>
-      <span class="g-status ${meta.cls}" data-status-idx="${index}">${meta.label}</span>
+    return `<button class="cq-match-card" type="button" data-idx="${index}" style="width:100%; border:none; cursor:pointer; text-align:left; margin-bottom:8px;">
+      <div class="av">⏱</div>
+      <div class="body">
+        <div class="name">${escapeHtml(opponent?.username || 'Adversaire')} (${opponent?.rating || '—'})</div>
+        <div class="sub">${date} · <span data-status-idx="${index}">${meta.label}</span></div>
+      </div>
+      ${meta.score === '1–0' ? '<div class="go">+</div>' : meta.score === '0–1' ? '<div class="sub">−</div>' : '<div class="sub">=</div>'}
     </button>`;
-  }).join('');
-  list.querySelectorAll('.game-row').forEach(row => {
+  }).join('')}</div>`;
+  list.querySelectorAll('[data-idx]').forEach(row => {
     row.onclick = () => openGame(Number(row.dataset.idx));
   });
   renderEvaluation(fetchedGames,username);
@@ -188,13 +197,12 @@ function renderAnalysisInsights(games, username){
 }
 
 async function refreshStatuses(games){
-  await Promise.all(games.slice(0,5).map(async (game,index) => {
+  await Promise.all(games.slice(0,8).map(async (game,index) => {
     const badge = document.querySelector(`[data-status-idx="${index}"]`);
     if(!badge || !game.url) return;
     const precomputed = await fetchPrecomputedAnalysis(game.url);
     if(precomputed?.results?.length){
       badge.textContent = 'Analyse prête';
-      badge.className = 'g-status ready';
     }
   }));
 }

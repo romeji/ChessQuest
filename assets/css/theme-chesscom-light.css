@@ -187,7 +187,7 @@ body nav.tabbar::before{
 }
 body nav.tabbar .tabbar-item.active{
   background:rgba(143,209,92,.22) !important;
-  color:#fff !important;
+  color:#9fce62 !important;
 }
 
 /* ---------------------------------------------------------

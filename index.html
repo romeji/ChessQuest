@@ -77,17 +77,32 @@
     </div>
 
     <div class="cq-card-scroll">
-      <a class="cq-world-card green" href="daily-challenge.html">
-        <div class="badge-num">15</div>
-        <div class="rating-line">🧩 1000 🔥1</div>
-        <h3 id="home-goal-text">Découvre la combinaison du jour</h3>
-        <div class="cta">Résolvez !</div>
-        <div class="mini-bar"><span id="home-goal-fill"></span></div>
+      <div class="cq-world-card green problems-progress-card">
+        <div class="ppc-top">
+          <span class="ppc-level" id="home-problem-level">1</span>
+          <a class="ppc-title-link" href="problems.html">Problèmes</a>
+        </div>
+        <div class="ppc-bottom">
+          <div class="mini-bar wide"><span id="home-goal-fill"></span></div>
+          <a class="ppc-solve-btn" href="daily-challenge.html" id="home-goal-solve">Résoudre</a>
+        </div>
+      </div>
+      <a class="cq-world-card square" href="daily-challenge.html">
+        <div class="sq-icon daily-puzzle-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#7fae42" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4.5" width="18" height="16" rx="2.4"/>
+            <path d="M3 9.5h18"/>
+            <path d="M8 2.5v4M16 2.5v4"/>
+            <path d="M12.2 12.2a1.7 1.7 0 1 1 2.1 2.6c-.6.5-1 .9-1 1.7v.3" stroke-width="1.6"/>
+            <circle cx="13.2" cy="18.3" r="0.9" fill="#7fae42" stroke="none"/>
+          </svg>
+        </div>
+        <h3>Problème du jour</h3>
       </a>
       <a class="cq-world-card blue" href="analysis.html">
-        <div class="rating-line">🔍 analyse</div>
-        <h3>Ta dernière partie</h3>
-        <p id="home-analysis-copy" style="font-size:0.72rem; color:#bcdcf0; margin:2px 0 0; position:relative;">Découvre tes forces et tes opportunités.</p>
+        <div class="rating-line">🔍</div>
+        <h3 class="ac-big-title">Analyse</h3>
+        <p id="home-analysis-copy" class="ac-small-sub">Ta dernière partie t’attend.</p>
         <div class="cta">Analyser</div>
       </a>
       <a class="cq-world-card square" href="training-game.html">
@@ -124,7 +139,9 @@
       <div class="cq-section-head"><h2>Amis</h2><a class="see-all" href="friends.html">Tout afficher</a></div>
       <div class="cq-friend-scroll">
         <a class="cq-friend-chip" href="friends.html"><div class="av">🔍</div><div class="nm">Trouver</div></a>
+        <a class="cq-friend-chip" href="friends.html?action=challenge"><div class="av">⚔️</div><div class="nm">Défis</div></a>
         <a class="cq-friend-chip" href="shop.html"><div class="av">👑</div><div class="nm">Boutique</div></a>
+        <a class="cq-friend-chip" href="friends.html?action=share"><div class="av qr-chip-icon">▦</div><div class="nm">Partager</div></a>
         <button type="button" class="cq-friend-chip" id="home-notif-chip"><div class="av">🔔<span class="notif-badge hidden" id="home-notif-badge"></span></div><div class="nm">Notifs</div></button>
       </div>
     </section>
@@ -162,7 +179,7 @@ const resetHomeScroll=()=>requestAnimationFrame(()=>{
   const app=document.querySelector('.app');if(app)app.scrollTop=0;
   document.documentElement.scrollTop=0;document.body.scrollTop=0;
 });
-window.addEventListener('pageshow',resetHomeScroll);document.addEventListener('DOMContentLoaded',resetHomeScroll);
+window.addEventListener('pageshow',event=>{resetHomeScroll();if(event.persisted){renderHomeTab();initQuestNotifications();}});document.addEventListener('DOMContentLoaded',resetHomeScroll);
 function renderHomeTab(){
   const streak = computeCurrentStreak();
   const streakEl = document.getElementById('home-streak');
@@ -172,10 +189,12 @@ function renderHomeTab(){
   ensureDailyProgressFresh();
   const featuredKey = todayKey();
   const featuredDone = (PROGRESS.featuredProblemsSolved || []).includes(featuredKey);
-  const goalText = document.getElementById('home-goal-text');
-  if(goalText) goalText.textContent = featuredDone ? 'Problème du jour maîtrisé' : 'Découvre la combinaison du jour';
+  const levelEl = document.getElementById('home-problem-level');
+  if(levelEl) levelEl.textContent = Math.max(1, Math.min(180, Number(PROGRESS.problemJourney?.level) || 1));
   const goalFill = document.getElementById('home-goal-fill');
   if(goalFill) goalFill.style.width = featuredDone ? '100%' : '35%';
+  const goalSolve = document.getElementById('home-goal-solve');
+  if(goalSolve) goalSolve.textContent = featuredDone ? 'Rejouer' : 'Résoudre';
 
   const state = chessComState();
   const latest = (state.games || []).slice().sort((a,b) => (b.end_time || 0) - (a.end_time || 0))[0];
@@ -185,8 +204,8 @@ function renderHomeTab(){
     const playerIsWhite = latest.white?.username?.toLowerCase() === username;
     const opponent = playerIsWhite ? latest.black?.username : latest.white?.username;
     analysisCopy.textContent = opponent
-      ? `Reviens sur ta partie contre ${opponent}.`
-      : 'Découvre tes forces et tes opportunités.';
+      ? `Ta dernière partie contre ${opponent}`
+      : 'Ta dernière partie t’attend.';
   }
 
   renderHomeMatchRecommend();

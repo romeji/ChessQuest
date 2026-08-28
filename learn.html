@@ -82,15 +82,41 @@
   <div class="opening-match-backdrop hidden" id="opening-match-backdrop"></div>
   <section class="opening-match-modal hidden" id="opening-match-modal" role="dialog" aria-modal="true" aria-labelledby="opening-match-title">
     <button class="opening-match-close" id="opening-match-close" type="button" aria-label="Fermer">×</button>
-    <span class="opening-match-crown">♛</span>
-    <small>TON STYLE DE JEU</small>
-    <h2 id="opening-match-title">Quelle victoire te ressemble ?</h2>
-    <p>Choisis ton tempérament. Je classerai les ouvertures sans juger tes ambitions. Enfin, presque.</p>
-    <div class="opening-match-choices">
-      <button type="button" data-style="attack"><span>⚔️</span><b>Attaquer</b><small>Initiative et roi adverse</small></button>
-      <button type="button" data-style="solid"><span>🛡️</span><b>Construire</b><small>Structure et sécurité</small></button>
-      <button type="button" data-style="positional"><span>♟️</span><b>Manœuvrer</b><small>Plans durables</small></button>
-      <button type="button" data-style="creative"><span>✨</span><b>Surprendre</b><small>Gambits et idées rares</small></button>
+
+    <div class="opening-match-step" data-step="style">
+      <span class="opening-match-crown">♛</span>
+      <small>CRITÈRE 1 / 2 · TON STYLE</small>
+      <h2 id="opening-match-title">Quelle victoire te ressemble ?</h2>
+      <p>Choisis ton tempérament. Je classerai les ouvertures sans juger tes ambitions. Enfin, presque.</p>
+      <div class="opening-match-choices">
+        <button type="button" data-style="attack"><span>⚔️</span><b>Attaquer</b><small>Initiative et roi adverse</small></button>
+        <button type="button" data-style="solid"><span>🛡️</span><b>Construire</b><small>Structure et sécurité</small></button>
+        <button type="button" data-style="positional"><span>♟️</span><b>Manœuvrer</b><small>Plans durables</small></button>
+        <button type="button" data-style="creative"><span>✨</span><b>Surprendre</b><small>Gambits et idées rares</small></button>
+      </div>
+    </div>
+
+    <div class="opening-match-step hidden" data-step="level">
+      <span class="opening-match-crown">♞</span>
+      <small>CRITÈRE 2 / 2 · TON NIVEAU</small>
+      <h2>Où en es-tu aujourd’hui ?</h2>
+      <p>Je préfère te proposer une ouverture que tu peux vraiment jouer, pas juste admirer.</p>
+      <div class="opening-match-choices opening-match-choices-3">
+        <button type="button" data-level="beginner"><span>🌱</span><b>Débutant</b><small>Peu de théorie à retenir</small></button>
+        <button type="button" data-level="intermediate"><span>🌿</span><b>Intermédiaire</b><small>Je connais les bases</small></button>
+        <button type="button" data-level="advanced"><span>🌳</span><b>Avancé</b><small>Je veux du contenu riche</small></button>
+      </div>
+    </div>
+
+    <div class="opening-match-step hidden" data-step="result">
+      <span class="opening-match-crown">👑</span>
+      <small>TON OUVERTURE IDÉALE</small>
+      <h2 id="opening-match-result-title">—</h2>
+      <div class="opening-match-result-score"><b id="opening-match-result-pct">—</b><span>de compatibilité</span></div>
+      <p id="opening-match-result-desc"></p>
+      <ul class="opening-match-result-why" id="opening-match-result-why"></ul>
+      <button type="button" class="opening-match-result-cta" id="opening-match-result-cta">Découvrir cette ouverture</button>
+      <button type="button" class="opening-match-restart" id="opening-match-restart">Refaire le test</button>
     </div>
   </section>
 

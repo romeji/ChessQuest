@@ -114,3 +114,15 @@ body.opening-swipe-page::before,body.opening-swipe-page::after{display:none!impo
 
 @media(min-width:700px){.opening-swipe-app{top:18px;bottom:calc(var(--cq-tabbar-height,58px) + 18px);height:auto;border-radius:30px}}
 @media(prefers-reduced-motion:reduce){.opening-card{transition:none}}
+
+/* ---- Test à 2 critères : style + niveau, puis fenêtre de résultat ---- */
+.opening-match-choices-3{grid-template-columns:1fr;}
+.opening-match-choices-3 button{grid-template-columns:34px 1fr;min-height:56px;}
+.opening-match-result-score{display:flex;align-items:baseline;justify-content:center;gap:6px;margin:2px 0 10px;}
+.opening-match-result-score b{font-size:1.8rem;font-weight:1000;color:#3fa35a;}
+.opening-match-result-score span{font-size:.62rem;color:#766f66;font-weight:700;}
+.opening-match-result-why{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:6px;text-align:left;}
+.opening-match-result-why li{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:12px;background:#fffaf0;border:1px solid #e6d9b8;font-size:.68rem;color:#3a352c;line-height:1.35;}
+.opening-match-result-why li::before{content:"✓";flex:none;color:#3fa35a;font-weight:1000;}
+.opening-match-result-cta{width:100%;min-height:44px;border:0;border-radius:14px;background:linear-gradient(160deg,#8ce34e,#48ad42);color:#123a1e;font-weight:1000;font-size:.82rem;margin-bottom:8px;}
+.opening-match-restart{width:100%;min-height:36px;border:1px solid #dfd1b5;border-radius:12px;background:transparent;color:#766f66;font-weight:800;font-size:.66rem;}

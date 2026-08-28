@@ -245,8 +245,26 @@ function sfAnalyzeFEN(fen, movetimeOverride){
   const movetime = movetimeOverride || SF_MOVETIME_MS;
   return new Promise((resolve)=>{
     let lastInfo = null;
-    let stopped = false;
-    const safety = setTimeout(()=>{ if(!stopped){ stopped = true; sfWorker.postMessage('stop'); } }, movetime + 4000);
+    let settled = false;
+    function finish(){
+      if(settled) return;
+      settled = true;
+      clearTimeout(safety);
+      sfWorker.removeEventListener('message', handler);
+      let scoreForMover, mate = null;
+      if(lastInfo && lastInfo.mate !== null){
+        mate = lastInfo.mate;
+        scoreForMover = mate > 0 ? (100000 - mate*100) : -(100000 + mate*100);
+      } else if(lastInfo && lastInfo.cp !== null){
+        scoreForMover = lastInfo.cp;
+      } else { scoreForMover = 0; }
+      resolve({ scoreForMover, bestMoveSan: lastInfo && lastInfo.firstMove ? parseUciMoveToSan(fen, lastInfo.firstMove) : null, mate });
+    }
+    /* Filet de sécurité : si le moteur ne répond jamais (worker distant
+       capricieux, réseau coupé…), on n'attend plus indéfiniment — sans ça,
+       le Bilan de partie restait bloqué et il fallait relancer l'app. On
+       résout avec la meilleure estimation qu'on a, ou une valeur neutre. */
+    const safety = setTimeout(finish, movetime + 2500);
     const handler = (e) => {
       const line = e.data;
       if(typeof line !== 'string') return;
@@ -258,18 +276,10 @@ function sfAnalyzeFEN(fen, movetimeOverride){
           lastInfo = { cp: cpMatch ? parseInt(cpMatch[1],10) : null, mate: mateMatch ? parseInt(mateMatch[1],10) : null, firstMove: pvMatch[1].trim().split(' ')[0] };
         }
       } else if(line.startsWith('bestmove')){
-        clearTimeout(safety);
-        sfWorker.removeEventListener('message', handler);
         const parts = line.split(' ');
         const bestUci = parts[1] && parts[1] !== '(none)' ? parts[1] : (lastInfo ? lastInfo.firstMove : null);
-        let scoreForMover, mate = null;
-        if(lastInfo && lastInfo.mate !== null){
-          mate = lastInfo.mate;
-          scoreForMover = mate > 0 ? (100000 - mate*100) : -(100000 + mate*100);
-        } else if(lastInfo && lastInfo.cp !== null){
-          scoreForMover = lastInfo.cp;
-        } else { scoreForMover = 0; }
-        resolve({ scoreForMover, bestMoveSan: bestUci ? parseUciMoveToSan(fen, bestUci) : null, mate });
+        if(bestUci) lastInfo = Object.assign({}, lastInfo, {firstMove: bestUci});
+        finish();
       }
     };
     sfWorker.addEventListener('message', handler);

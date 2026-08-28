@@ -48,6 +48,7 @@
   <div id="friend-add-hidden" style="display:none"><button id="friend-add" type="button"></button></div>
 </section></main><nav class="tabbar" aria-label="Navigation principale"></nav>
 <script src="assets/js/progress.js?v=105"></script><script src="assets/js/app.js?v=108"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <script>
 const FRIENDS_KEY='chessQuestFriends', $=id=>document.getElementById(id);let friends=[];let inviteUrl='';try{friends=JSON.parse(localStorage.getItem(FRIENDS_KEY)||'[]')}catch{}
 function save(){localStorage.setItem(FRIENDS_KEY,JSON.stringify(friends));}
@@ -104,7 +105,7 @@ function openQrModal(text){
     modal=document.createElement('div');
     modal.id='qr-modal';
     modal.className='cq-qr-modal';
-    modal.innerHTML='<div class="cq-qr-card"><button type="button" class="cq-qr-close" aria-label="Fermer">✕</button><div class="cq-qr-icon">📱</div><strong>Ton lien ChessQuest</strong><p id="qr-link-text"></p><div class="cq-qr-actions"><button type="button" class="cq-qr-copy">Copier le lien</button><button type="button" class="cq-qr-native-share">Partager</button></div></div>';
+    modal.innerHTML='<div class="cq-qr-card"><button type="button" class="cq-qr-close" aria-label="Fermer">✕</button><div class="cq-qr-code" id="qr-code-render"></div><strong>Ton lien ChessQuest</strong><p id="qr-link-text"></p><div class="cq-qr-actions"><button type="button" class="cq-qr-copy">Copier le lien</button><button type="button" class="cq-qr-native-share">Partager</button></div></div>';
     document.body.appendChild(modal);
     modal.querySelector('.cq-qr-close').onclick=()=>modal.classList.remove('open');
     modal.onclick=(e)=>{ if(e.target===modal) modal.classList.remove('open'); };
@@ -113,6 +114,16 @@ function openQrModal(text){
   }
   modal.dataset.link=text;
   modal.querySelector('#qr-link-text').textContent=text;
+  const holder=modal.querySelector('#qr-code-render');
+  holder.innerHTML='';
+  if(typeof qrcode==='function'){
+    const qr=qrcode(0,'M');
+    qr.addData(text);
+    qr.make();
+    holder.innerHTML=qr.createSvgTag({cellSize:5,margin:3});
+  } else {
+    holder.innerHTML='<div class="cq-qr-fallback">📱</div>';
+  }
   modal.classList.add('open');
 }
 async function questUserReady(){for(let i=0;i<40&&typeof questCurrentUser!=='function';i++)await new Promise(resolve=>setTimeout(resolve,100));return typeof questCurrentUser==='function'?questCurrentUser():null;}
@@ -125,4 +136,11 @@ $('friend-challenge').onclick=async()=>{const user=await questUserReady();if(!us
 $('friend-copy').onclick=async()=>{try{await navigator.clipboard.writeText(inviteUrl);$('friend-copy').textContent='Lien copié ✓';setTimeout(()=>{$('friend-copy').textContent='Copier le lien';},1700);}catch(e){prompt('Copie ce lien :',inviteUrl);}};$('friend-share').onclick=async()=>{if(navigator.share){try{await navigator.share({title:'Défi ChessQuest',text:'Je te défie aux échecs !',url:inviteUrl});}catch(e){}}else $('friend-copy').click();};
 async function loadIncomingInvite(){const inviteId=new URLSearchParams(location.search).get('invite');if(!inviteId)return;const user=await questUserReady();if(!user||!window.firebase?.firestore)return;try{const ref=firebase.firestore().collection('invitations').doc(inviteId);const snap=await ref.get();if(!snap.exists)return;const invite=snap.data();if(invite.recipientUid!==user.uid||invite.status!=='waiting')return;const card=$('incoming-invite');card.innerHTML=`<span class="friend-invite-icon">⚔</span><div><strong>${escapeHtml(invite.senderName||'Un ami')} te défie !</strong><p>${escapeHtml(invite.timeLabel||'Partie amicale')} · choisis ton courage et entre dans l’arène.</p></div><div class="friend-invite-actions"><button id="invite-decline" type="button">Décliner</button><button id="invite-accept" type="button">Accepter le défi</button></div>`;card.classList.remove('hidden');$('invite-decline').onclick=()=>ref.update({status:'declined'}).then(()=>card.remove());$('invite-accept').onclick=async()=>{await ref.update({status:'accepted'});location.href=invite.matchUrl||`friend-game.html?match=${encodeURIComponent(invite.matchId)}`;};}catch(error){console.warn(error);}}
 render();loadIncomingInvite();
+/* Puces "Défis" / "Partager mon profil" de l'accueil : ouvrent directement
+   la bonne action ici, sans que l'utilisateur ait à chercher où cliquer. */
+(function applyHomeAction(){
+  const action = new URLSearchParams(location.search).get('action');
+  if(action==='challenge') setTimeout(()=>$('toggle-challenge-form')?.click(), 150);
+  if(action==='share') setTimeout(()=>$('menu-qr')?.click(), 150);
+})();
 </script></body></html>

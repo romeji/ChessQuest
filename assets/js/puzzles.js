@@ -445,10 +445,7 @@ function refreshQuestPuzzleTools(){
   }
   const retry=document.getElementById('puzzle-retry-action');if(retry){retry.classList.toggle('hidden',!puzzleLastSuccess);retry.onclick=()=>loadPuzzle(puzzleIndex);}
   const battleCounter=document.getElementById('battle-solved-counter');
-  if(battleCounter){
-    battleCounter.classList.toggle('hidden',puzzleSource!=='battle');
-    if(puzzleSource==='battle') battleCounter.textContent = puzzleBattleScore;
-  }
+  if(battleCounter && puzzleSource==='battle') battleCounter.textContent = puzzleBattleScore;
 }
 function browseQuestPuzzle(delta){
   if(!questPuzzlePositions.length)return;questPuzzlePositionIndex=Math.max(0,Math.min(questPuzzlePositions.length-1,questPuzzlePositionIndex+delta));puzzleBoard.position(questPuzzlePositions[questPuzzlePositionIndex],false);clearHighlights('#puzzle-board');refreshQuestPuzzleTools();
@@ -542,7 +539,7 @@ function setPuzzleResultAction(label, action){
 function stopPuzzleBattle(){
   clearInterval(puzzleBattleTimer); clearInterval(puzzleBattleCountdown);
   puzzleBattleTimer = null; puzzleBattleCountdown = null; puzzleBattleEndsAt = 0; puzzleBattleActive = false;
-  const timer = document.getElementById('puzzle-battle-timer'); if(timer) timer.classList.add('hidden');
+  document.getElementById('puzzle-battle-hud')?.classList.add('hidden');
   document.getElementById('puzzle-countdown')?.classList.add('hidden');
   document.body.classList.remove('puzzle-battle-active');
 }
@@ -559,8 +556,9 @@ function startPuzzleBattle(seconds){
     if(count===0){if(value)value.textContent='GO !';return;}
     clearInterval(puzzleBattleCountdown);puzzleBattleCountdown=null;overlay?.classList.add('hidden');mcqLocked=false;puzzleBattleActive=true;document.body.classList.add('puzzle-battle-active');
     puzzleBattleEndsAt = Date.now() + seconds * 1000;
+    document.getElementById('puzzle-battle-hud')?.classList.remove('hidden');
     const timer = document.getElementById('puzzle-battle-timer');
-    if(timer){timer.classList.remove('hidden');timer.textContent=`${seconds}s · 0`;}
+    if(timer){timer.textContent=`${seconds}s`;}
     puzzleBattleTimer = setInterval(()=>{
       const left = Math.max(0,Math.ceil((puzzleBattleEndsAt-Date.now())/1000));
       if(timer) timer.textContent = `${left}s`;

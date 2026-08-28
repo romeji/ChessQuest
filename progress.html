@@ -62,7 +62,7 @@
 
     <div class="cq-stats-rows">
       <div class="cq-stats-row"><span class="ic">⏱</span><span class="lbl">Rapide</span><span class="val" id="stats-rapid">—</span><a href="#" class="chev">›</a></div>
-      <div class="cq-stats-row"><span class="ic">☀️</span><span class="lbl">En différé</span><span class="val">?</span><a href="#" class="chev">›</a></div>
+      <div class="cq-stats-row"><span class="ic">☀️</span><span class="lbl">En différé</span><span class="val" id="stats-daily">—</span><a href="#" class="chev">›</a></div>
       <div class="cq-stats-row"><span class="ic">‼</span><span class="lbl">Coups brillants</span><span class="val">?</span><a href="#" class="chev">›</a></div>
       <div class="cq-stats-row"><span class="ic">🧩</span><span class="lbl">Problèmes résolus</span><span class="val" id="stats-puzzle">0</span><a href="progress.html" class="chev">›</a></div>
       <div class="cq-stats-row"><span class="ic">🏅</span><span class="lbl">Tournois</span><span class="val">—</span><a href="#" class="chev">›</a></div>
@@ -243,20 +243,28 @@ function applyStatsRange(range){
   document.getElementById('stats-games-count').textContent = filtered.length;
   const state = chessComState();
   const username = (state.username || PROGRESS.settings?.chessComUsername || '').toLowerCase();
-  const withRating = filtered.filter(game => {
-    const isWhite = game.white?.username?.toLowerCase() === username;
-    return Number.isFinite(isWhite ? game.white?.rating : game.black?.rating);
-  }).sort((a,b) => (b.end_time||0) - (a.end_time||0));
-  const latest = withRating[0];
-  let rangeRating = '—';
-  if(latest){
-    const isWhite = latest.white?.username?.toLowerCase() === username;
-    rangeRating = isWhite ? latest.white.rating : latest.black.rating;
-  } else {
-    const statRating = Number(state.stats?.chess_rapid?.last?.rating);
-    if(Number.isFinite(statRating)) rangeRating = statRating;
+
+  /* Elo le plus récent, sur la période choisie, pour UNE cadence précise
+     (rapide, en différé, etc.) — auparavant on prenait la dernière partie
+     toutes cadences confondues, ce qui pouvait afficher un score de bullet
+     sous "Rapide". */
+  function latestRatingFor(timeClass, statsKey){
+    const withRating = filtered.filter(game => {
+      if(game.time_class !== timeClass) return false;
+      const isWhite = game.white?.username?.toLowerCase() === username;
+      return Number.isFinite(isWhite ? game.white?.rating : game.black?.rating);
+    }).sort((a,b) => (b.end_time||0) - (a.end_time||0));
+    const latest = withRating[0];
+    if(latest){
+      const isWhite = latest.white?.username?.toLowerCase() === username;
+      return isWhite ? latest.white.rating : latest.black.rating;
+    }
+    const statRating = Number(state.stats?.[statsKey]?.last?.rating);
+    return Number.isFinite(statRating) ? statRating : '—';
   }
-  document.getElementById('stats-rapid').textContent = rangeRating;
+  document.getElementById('stats-rapid').textContent = latestRatingFor('rapid','chess_rapid');
+  const dailyEl = document.getElementById('stats-daily');
+  if(dailyEl) dailyEl.textContent = latestRatingFor('daily','chess_daily');
 
   // Problèmes résolus + Elo tactique atteint sur la période sélectionnée
   const puzzleHistory = PROGRESS.puzzleRatingHistory || [];

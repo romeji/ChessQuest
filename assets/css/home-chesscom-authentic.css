@@ -150,3 +150,28 @@ button.cq-friend-chip{border:0;background:transparent;font:inherit;padding:0;cur
 .notif-view-list .quest-notification-icon{background:rgba(127,174,66,.16); color:#9fce62;}
 .notif-view-list .quest-notification-dismiss{color:#8b867c;}
 .notif-view-list .quest-notification-empty{padding:30px 12px; text-align:center; color:#8b867c; font-size:.85rem;}
+
+/* Puce "Partager" (QR code) : icône verte pour rappeler le cadre vert du
+   QR généré dans la fenêtre de partage. */
+.cq-friend-chip .av.qr-chip-icon{color:#9fce62; font-size:1.9rem; font-weight:900;}
+
+/* ---- Carte "Problèmes" (remplace "Découvre la combinaison du jour") :
+   juste le niveau, un titre cliquable, la barre de progression et un
+   bouton Résoudre — plus de texte de mise en avant. ---- */
+.problems-progress-card{justify-content:space-between; padding:16px;}
+.problems-progress-card .ppc-top{display:flex; align-items:center; gap:9px;}
+.problems-progress-card .ppc-level{
+  width:30px; height:30px; border-radius:9px; background:rgba(255,255,255,.16); color:#fff;
+  font-weight:900; font-size:.85rem; display:flex; align-items:center; justify-content:center; flex:none;
+}
+.problems-progress-card .ppc-title-link{font-size:1.2rem; font-weight:900; color:#fff; text-decoration:none;}
+.problems-progress-card .ppc-bottom{display:flex; align-items:center; gap:12px;}
+.problems-progress-card .mini-bar.wide{position:static; flex:1; height:8px;}
+.problems-progress-card .ppc-solve-btn{
+  flex:none; background:#8fc25a; color:#12220a; font-weight:800; font-size:.82rem;
+  padding:9px 16px; border-radius:100px; text-decoration:none; white-space:nowrap;
+}
+
+/* ---- Carte bleue "Analyse" : gros titre, sous-titre "dernière partie" en petit ---- */
+.cq-world-card.blue .ac-big-title{font-size:1.55rem; margin-bottom:1px;}
+.cq-world-card.blue .ac-small-sub{font-size:.7rem; color:#bcdcf0; margin:0; font-weight:600;}

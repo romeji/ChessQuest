@@ -27,7 +27,7 @@
     <div class="cq-shop-top">
       <a class="back-btn" href="profile.html" aria-label="Retour au profil">←</a>
       <h1>Boutique royale</h1>
-      <span class="balance" id="shop-balance">🪙 0</span>
+      <span class="balance" id="shop-balance"><svg class="coin-gold-icon" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><defs><radialGradient id="coinGoldGradShop" cx="35%" cy="30%" r="75%"><stop offset="0%" stop-color="#fff3c4"/><stop offset="45%" stop-color="#f7cd4c"/><stop offset="80%" stop-color="#d99a1f"/><stop offset="100%" stop-color="#a9700f"/></radialGradient></defs><circle cx="12" cy="12" r="10.5" fill="url(#coinGoldGradShop)" stroke="#8a5c0c" stroke-width="1"/><circle cx="12" cy="12" r="7.6" fill="none" stroke="#a9700f" stroke-width="1" opacity="0.55"/><text x="12" y="16.2" text-anchor="middle" font-size="10" font-weight="900" fill="#8a5c0c" font-family="Nunito, sans-serif">♞</text></svg><span id="shop-balance-num">0</span></span>
     </div>
 
     <section class="cq-shop-section">
@@ -72,6 +72,11 @@ function tileBg(item,index){
   if(item.colors && item.colors.length) return `linear-gradient(160deg,${item.colors[0]},${item.colors[1]})`;
   return TILE_COLORS[index % TILE_COLORS.length];
 }
+let coinIconCounter = 0;
+function coinIconSVG(size){
+  const gid = `coinGoldGradShop${++coinIconCounter}`;
+  return `<svg class="coin-gold-icon" viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true" style="vertical-align:-3px;"><defs><radialGradient id="${gid}" cx="35%" cy="30%" r="75%"><stop offset="0%" stop-color="#fff3c4"/><stop offset="45%" stop-color="#f7cd4c"/><stop offset="80%" stop-color="#d99a1f"/><stop offset="100%" stop-color="#a9700f"/></radialGradient></defs><circle cx="12" cy="12" r="10.5" fill="url(#${gid})" stroke="#8a5c0c" stroke-width="1"/><circle cx="12" cy="12" r="7.6" fill="none" stroke="#a9700f" stroke-width="1" opacity="0.55"/></svg>`;
+}
 function shopTile(item,index){
   const owned = ownsStoreItem(item.id);
   const equipped = item.type === 'board'
@@ -80,7 +85,7 @@ function shopTile(item,index){
     : item.type === 'background' && ensureEconomy().equippedBackground === item.id;
   return `<button class="cq-shop-tile ${equipped?'equipped':''}" data-item="${item.id}" type="button">
     <span class="ic" style="background:${tileBg(item,index)}">${item.icon||'♟'}</span>
-    ${!owned ? `<span class="price-pill">🪙 ${item.price}</span>` : ''}
+    ${!owned ? `<span class="price-pill">${coinIconSVG(14)} ${item.price}</span>` : ''}
     <span class="nm">${escapeHtml(item.name)}</span>
   </button>`;
 }
@@ -89,7 +94,7 @@ function shopSecretRow(item){
   return `<button class="cq-secret-row ${owned?'owned':''}" data-item="${item.id}" type="button">
     <span class="ic">${item.icon||'🗝️'}</span>
     <span class="nm">${escapeHtml(item.name)}</span>
-    <span class="price">${owned?'Explorer ›':`🪙 ${item.price}`}</span>
+    <span class="price">${owned?'Explorer ›':`${coinIconSVG(14)} ${item.price}`}</span>
   </button>`;
 }
 function handleShopClick(id){
@@ -110,7 +115,7 @@ function handleShopClick(id){
   renderShop();
 }
 function renderShop(){
-  document.getElementById('shop-balance').textContent = `🪙 ${crownBalance()}`;
+  document.getElementById('shop-balance-num').textContent = crownBalance();
   document.getElementById('shop-boards').innerHTML = QUEST_STORE.filter(x=>x.type==='board').map(shopTile).join('');
   document.getElementById('shop-pieces').innerHTML = QUEST_STORE.filter(x=>x.type==='pieces').map(shopTile).join('');
   const backgrounds = QUEST_STORE.filter(x=>x.type==='background');

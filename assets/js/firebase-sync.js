@@ -68,7 +68,12 @@ async function fetchPrecomputedAnalysis(gameUrlOrId){
   if(!db) return null;
   const id = gameIdFromUrl(gameUrlOrId);
   try{
-    const doc = await db.collection('games').doc(id).get();
+    /* Sur un réseau capricieux, l'appel Firestore peut rester bloqué très
+       longtemps sans jamais rejeter — ce qui bloquait tout le Bilan de
+       partie (rien ne s'affichait, il fallait relancer l'app). On abandonne
+       proprement après 4s et on bascule sur le calcul local. */
+    const timeout = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000));
+    const doc = await Promise.race([db.collection('games').doc(id).get(), timeout]);
     return doc.exists ? doc.data() : null;
   }catch(e){
     console.warn('[ChessQuest] Lecture Firestore impossible :', e.message);

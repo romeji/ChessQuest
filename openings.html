@@ -177,10 +177,16 @@ function openingMoveDestination(san){
 }
 function firstMovesMarkup(){
   if(!currentLine) return '';
-  const moves=currentLine.moves.slice(0,8);
-  return moves.map((move,index)=>{
-    const [,piece]=openingMovePiece(move.san),color=index%2===0?'w':'b';
-    const number=index%2===0?`<em class="opening-memory-number">${Math.floor(index/2)+1}.</em>`:'';
+  /* On ne mémorise que NOS coups (sauf en pure démonstration où personne
+     ne joue vraiment) — et on les affiche tous, pas seulement les premiers. */
+  const isDemo = currentLine.forColor === null;
+  const playerColor = currentLine.forColor;
+  const relevant = currentLine.moves
+    .map((move,index)=>({move,index,color:index%2===0?'w':'b'}))
+    .filter(entry => isDemo || entry.color===playerColor);
+  return relevant.map(({move,index,color})=>{
+    const [,piece]=openingMovePiece(move.san);
+    const number=`<em class="opening-memory-number">${Math.floor(index/2)+1}.</em>`;
     return `${number}<span class="opening-memory-move"><img src="assets/chesspieces/${color}${piece}.png" aria-hidden="true" alt=""><b>${escapeHtml(openingMoveDestination(move.san))}</b></span>`;
   }).join('');
 }

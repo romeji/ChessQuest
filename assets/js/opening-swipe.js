@@ -25,6 +25,7 @@
   const mastered = (window.PROGRESS && PROGRESS.mastered) || {};
   const cards = OPENING_WORLDS.flatMap((world,worldIndex) => world.islands.map((island,islandIndex) => ({world,worldIndex,island,islandIndex})));
   let matchStyle = localStorage.getItem('cq-opening-match-style') || '';
+  let matchLevel = localStorage.getItem('cq-opening-match-level') || '';
   let activeIndex = initialCardIndex();
   let pointerStart = null;
 
@@ -43,13 +44,35 @@
   function firstAvailableLesson(card){return card.island.lessons.find(key=>!lessonCompleted(key)) || card.island.lessons[0];}
   function cardHref(card){const key=firstAvailableLesson(card);return `openings.html?opening=${encodeURIComponent(key)}&world=${encodeURIComponent(card.world.id)}&island=${encodeURIComponent(card.island.id)}`;}
   function difficulty(worldIndex){return worldIndex<2?'Débutant':worldIndex<5?'Intermédiaire':worldIndex<8?'Avancé':'Expert';}
+  const WHY_STYLE = {
+    attack:'Colle à ton envie d’attaquer et de prendre l’initiative vite.',
+    solid:'Une structure fiable, difficile à déstabiliser.',
+    positional:'Des plans qui se jouent sur la durée, pas un coup de bluff.',
+    creative:'De quoi surprendre un adversaire qui a révisé ses lignes classiques.'
+  };
+  const WHY_LEVEL = {
+    beginner:'Peu de théorie à mémoriser pour commencer sereinement.',
+    intermediate:'Assez de profondeur sans te noyer dans la théorie.',
+    advanced:'De quoi explorer des plans riches et des sous-variantes.'
+  };
+  const LEVEL_LABELS = {beginner:'Débutant', intermediate:'Intermédiaire', advanced:'Avancé'};
+  function levelScoreAdjust(card, level){
+    const tier = difficulty(card.worldIndex);
+    if(!level) return 0;
+    if(level==='beginner') return tier==='Débutant'?12:tier==='Intermédiaire'?-4:-14;
+    if(level==='intermediate') return tier==='Intermédiaire'?12:tier==='Débutant'?4:tier==='Avancé'?2:-10;
+    if(level==='advanced') return (tier==='Avancé'||tier==='Expert')?12:tier==='Intermédiaire'?0:-12;
+    return 0;
+  }
   function scoreFor(card){
-    if(!matchStyle) return 82;
-    const preferred=STYLE_WORLDS[matchStyle]||[];
-    const rank=preferred.indexOf(card.world.id);
-    if(rank===0) return 98;
-    if(rank>0) return Math.max(78,94-rank*5);
-    return 58+((card.worldIndex*7+card.islandIndex*3)%16);
+    let base;
+    if(!matchStyle) base=82;
+    else {
+      const preferred=STYLE_WORLDS[matchStyle]||[];
+      const rank=preferred.indexOf(card.world.id);
+      base = rank===0?98:rank>0?Math.max(78,94-rank*5):58+((card.worldIndex*7+card.islandIndex*3)%16);
+    }
+    return Math.max(35,Math.min(99, base + levelScoreAdjust(card, matchLevel)));
   }
   function illustrationFor(card){
     const bespoke={
@@ -144,25 +167,52 @@
     if(next===activeIndex) return;
     activeIndex=next; updateDeck();
   }
+  function showMatchStep(step){
+    document.querySelectorAll('.opening-match-step').forEach(el=>el.classList.toggle('hidden', el.dataset.step!==step));
+  }
   function openMatch(){
     document.getElementById('opening-match-backdrop').classList.remove('hidden');
     document.getElementById('opening-match-modal').classList.remove('hidden');
+    showMatchStep('style');
     document.querySelectorAll('[data-style]').forEach(button=>button.classList.toggle('selected',button.dataset.style===matchStyle));
+    document.querySelectorAll('[data-level]').forEach(button=>button.classList.toggle('selected',button.dataset.level===matchLevel));
   }
   function closeMatch(){document.getElementById('opening-match-backdrop').classList.add('hidden');document.getElementById('opening-match-modal').classList.add('hidden');}
   function selectStyle(style){
     matchStyle=style; localStorage.setItem('cq-opening-match-style',style);
+    const scoreBadge=document.getElementById('opening-match-score'); if(scoreBadge) scoreBadge.textContent=STYLE_LABELS[style];
     document.getElementById('opening-match-score').textContent=STYLE_LABELS[style];
-    document.getElementById('opening-coach-copy').textContent=COACH_LINES[style];
-    renderCards();
+    document.querySelectorAll('[data-style]').forEach(button=>button.classList.toggle('selected',button.dataset.style===style));
+    showMatchStep('level');
+  }
+  function bestCandidate(){
     const candidates=cards.map((card,index)=>({card,index,score:scoreFor(card)}));
     /* Une recommandation ne doit jamais envoyer un débutant sur une île
        verrouillée : on privilégie la meilleure île accessible, puis seulement
        les scores des familles encore à débloquer. */
     candidates.sort((a,b)=>Number(islandUnlocked(b.card))-Number(islandUnlocked(a.card)) || b.score-a.score);
-    if(candidates[0]) activeIndex=candidates[0].index;
-    updateDeck(); closeMatch();
-    if(typeof showToast==='function') showToast('Recommandation prête',`${cards[activeIndex].island.title} correspond à ton style ${STYLE_LABELS[style].toLowerCase()}.`);
+    return candidates[0];
+  }
+  function selectLevel(level){
+    matchLevel=level; localStorage.setItem('cq-opening-match-level',level);
+    document.querySelectorAll('[data-level]').forEach(button=>button.classList.toggle('selected',button.dataset.level===level));
+    document.getElementById('opening-coach-copy').textContent=COACH_LINES[matchStyle];
+    renderCards();
+    const best=bestCandidate();
+    if(!best) return;
+    activeIndex=best.index; updateDeck();
+    const card=best.card;
+    const why=[
+      WHY_STYLE[matchStyle],
+      WHY_LEVEL[matchLevel],
+      `MONDE ${card.world.number} · ${difficulty(card.worldIndex)} — ${islandUnlocked(card)?'accessible dès maintenant':'à débloquer bientôt'}.`
+    ];
+    document.getElementById('opening-match-result-title').textContent=card.island.title;
+    document.getElementById('opening-match-result-pct').textContent=`${best.score}%`;
+    document.getElementById('opening-match-result-desc').textContent=card.world.subtitle;
+    document.getElementById('opening-match-result-why').innerHTML=why.map(reason=>`<li>${reason}</li>`).join('');
+    document.getElementById('opening-match-result-cta').onclick=()=>{ if(islandUnlocked(card)) location.href=cardHref(card); else closeMatch(); };
+    showMatchStep('result');
   }
 
   document.getElementById('opening-card-prev').onclick=()=>move(-1);
@@ -172,7 +222,9 @@
   document.getElementById('opening-match-sheet-button').onclick=openMatch;
   document.getElementById('opening-match-close').onclick=closeMatch;
   document.getElementById('opening-match-backdrop').onclick=closeMatch;
+  document.getElementById('opening-match-restart').onclick=()=>showMatchStep('style');
   document.querySelectorAll('[data-style]').forEach(button=>button.onclick=()=>selectStyle(button.dataset.style));
+  document.querySelectorAll('[data-level]').forEach(button=>button.onclick=()=>selectLevel(button.dataset.level));
   const menu=document.getElementById('opening-swipe-menu');
   const sheet=document.getElementById('opening-swipe-sheet');
   menu.onclick=()=>{const open=sheet.classList.toggle('hidden')===false;menu.setAttribute('aria-expanded',String(open));};

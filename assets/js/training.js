@@ -40,9 +40,6 @@ function renderTrainingMoveBrowser(cursor=tgGame?.history().length||0){
   if(!tgGame)return;
   const moves=tgGame.history(),max=moves.length;
   tgHistoryCursor=Math.max(0,Math.min(max,cursor));
-  const current=document.getElementById('tg-history-current'),sub=document.getElementById('tg-history-position');
-  if(current)current.textContent=tgHistoryCursor?`${Math.ceil(tgHistoryCursor/2)}${tgHistoryCursor%2?'…':'.'} ${moves[tgHistoryCursor-1]}`:'Position initiale';
-  if(sub)sub.textContent=tgHistoryCursor===max?'Position actuelle':`Coup ${tgHistoryCursor} sur ${max}`;
   const prev=document.getElementById('tg-history-prev'),next=document.getElementById('tg-history-next');
   if(prev)prev.disabled=tgHistoryCursor===0;
   if(next)next.disabled=tgHistoryCursor===max;
